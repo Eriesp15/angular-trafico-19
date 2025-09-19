@@ -1,5 +1,5 @@
 import { Component, type OnInit } from "@angular/core"
-import { ActivatedRoute, Router } from "@angular/router"
+import  { ActivatedRoute, Router } from "@angular/router"
 import { CommonModule } from "@angular/common"
 import { MatCardModule } from "@angular/material/card"
 import { MatButtonModule } from "@angular/material/button"

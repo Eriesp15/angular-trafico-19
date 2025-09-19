@@ -9,8 +9,7 @@ const routes: Routes = [
   },
   {
     path: "reclamo/:id",
-    loadComponent: () =>
-      import("C:/Users/Pc/OneDrive/Escritorio/PASANTIA/angular-trafico-19/src/app/modules/admin/detalle-reclamo/detalle-reclamo.component").then((c) => c.DetalleReclamoComponent),
+    loadComponent: () => import("../detalle-reclamo/detalle-reclamo.component").then((c) => c.DetalleReclamoComponent),
     data: { title: "Detalle de Reclamo" },
   },
 ]
