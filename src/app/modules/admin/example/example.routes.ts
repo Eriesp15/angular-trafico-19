@@ -1,9 +1,18 @@
-import { Routes } from '@angular/router';
-import { ExampleComponent } from 'app/modules/admin/example/example.component';
+import type { Routes } from "@angular/router"
+import { ExampleComponent } from "./example.component"
 
-export default [
-    {
-        path     : '',
-        component: ExampleComponent,
-    },
-] as Routes;
+const routes: Routes = [
+  {
+    path: "",
+    component: ExampleComponent,
+    data: { title: "Dashboard de Operador" },
+  },
+  {
+    path: "reclamo/:id",
+    loadComponent: () =>
+      import("C:/Users/Pc/OneDrive/Escritorio/PASANTIA/angular-trafico-19/src/app/modules/admin/detalle-reclamo/detalle-reclamo.component").then((c) => c.DetalleReclamoComponent),
+    data: { title: "Detalle de Reclamo" },
+  },
+]
+
+export default routes

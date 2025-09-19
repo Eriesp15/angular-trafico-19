@@ -1,0 +1,308 @@
+<div class="detalle-container">
+  <!-- Header -->
+  <mat-toolbar color="primary" class="detalle-header">
+    <div class="header-content">
+      <button mat-icon-button (click)="volver()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <mat-icon class="header-icon">description</mat-icon>
+        <div class="header-text">
+          <h1>Informe PIR - {{ reclamoData.id }}</h1>
+          <p>Reporte detallado de irregularidad de equipaje</p>
+        </div>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <div class="detalle-content">
+    <!-- Estado y alertas -->
+    <mat-card class="estado-card">
+      <mat-card-header>
+        <div class="estado-header">
+          <div class="estado-info">
+            <mat-card-title class="estado-title">
+              Estado Actual del Reclamo
+              <mat-icon *ngIf="reclamoData.prioridad === 'Alta'" color="warn">warning</mat-icon>
+            </mat-card-title>
+            <mat-card-subtitle>
+              Última actualización: {{ reclamoData.historial[reclamoData.historial.length - 1].fecha | date:'medium':'es' }}
+            </mat-card-subtitle>
+          </div>
+          <div class="estado-badges">
+            <mat-chip [color]="getEstadoColor(reclamoData.estado, reclamoData.subestado)">
+              {{ reclamoData.subestado }}
+            </mat-chip>
+            <mat-chip color="warn">
+              Prioridad {{ reclamoData.prioridad }}
+            </mat-chip>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="estado-details">
+          <div class="estado-item">
+            <mat-icon>event</mat-icon>
+            <div>
+              <p class="detail-label">Fecha Límite</p>
+              <p class="detail-value">{{ reclamoData.fechaLimite | date:'shortDate':'es' }}</p>
+            </div>
+          </div>
+          <div class="estado-item">
+            <mat-icon>schedule</mat-icon>
+            <div>
+              <p class="detail-label">Tiempo Transcurrido</p>
+              <p class="detail-value">2 días, 4 horas</p>
+            </div>
+          </div>
+          <div class="estado-item">
+            <mat-icon>person</mat-icon>
+            <div>
+              <p class="detail-label">Agente Asignado</p>
+              <p class="detail-value">María Santos</p>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="info-grid">
+      <!-- Información del Pasajero -->
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>person</mat-icon>
+            Datos del Pasajero
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-section">
+            <div class="info-item">
+              <p class="info-label">Nombre Completo</p>
+              <p class="info-value">{{ reclamoData.pasajero.nombre }} {{ reclamoData.pasajero.apellido }}</p>
+            </div>
+            <div class="info-item">
+              <p class="info-label">Documento de Identidad</p>
+              <p class="info-value">{{ reclamoData.pasajero.documento }}</p>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="contact-info">
+              <div class="contact-item">
+                <mat-icon>phone</mat-icon>
+                <p>{{ reclamoData.pasajero.telefono }}</p>
+              </div>
+              <div class="contact-item">
+                <mat-icon>email</mat-icon>
+                <p>{{ reclamoData.pasajero.email }}</p>
+              </div>
+              <div class="contact-item">
+                <mat-icon>place</mat-icon>
+                <p>{{ reclamoData.pasajero.direccion }}</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Información del Vuelo -->
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>flight</mat-icon>
+            Datos del Vuelo
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-section">
+            <div class="vuelo-grid">
+              <div class="info-item">
+                <p class="info-label">Número de Vuelo</p>
+                <p class="info-value">{{ reclamoData.vuelo.numero }}</p>
+              </div>
+              <div class="info-item">
+                <p class="info-label">Aerolínea</p>
+                <p class="info-value">{{ reclamoData.vuelo.aerolinea }}</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <p class="info-label">Fecha del Vuelo</p>
+              <p class="info-value">{{ reclamoData.vuelo.fecha | date:'longDate':'es' }}</p>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="vuelo-route">
+              <div class="route-item">
+                <p class="info-label">Origen</p>
+                <p class="info-value">{{ reclamoData.vuelo.origen.nombre }} ({{ reclamoData.vuelo.origen.codigo }})</p>
+                <p class="route-time">{{ reclamoData.vuelo.hora_salida }}</p>
+              </div>
+              <div class="route-item">
+                <p class="info-label">Destino</p>
+                <p class="info-value">{{ reclamoData.vuelo.destino.nombre }} ({{ reclamoData.vuelo.destino.codigo }})</p>
+                <p class="route-time">{{ reclamoData.vuelo.hora_llegada }}</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Información del Equipaje -->
+    <mat-card class="equipaje-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>luggage</mat-icon>
+          Detalles del Equipaje
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="equipaje-grid">
+          <div class="info-item">
+            <p class="info-label">Tipo</p>
+            <p class="info-value">{{ reclamoData.equipaje.tipo }}</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">Marca</p>
+            <p class="info-value">{{ reclamoData.equipaje.marca }}</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">Color</p>
+            <p class="info-value">{{ reclamoData.equipaje.color }}</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">Peso</p>
+            <p class="info-value">{{ reclamoData.equipaje.peso }}</p>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="equipaje-details">
+          <div class="info-item">
+            <p class="info-label">Descripción</p>
+            <p class="info-value">{{ reclamoData.equipaje.descripcion }}</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">Etiqueta de Equipaje</p>
+            <p class="info-value etiqueta">{{ reclamoData.equipaje.etiqueta }}</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">Problema Reportado</p>
+            <p class="info-value problema">{{ reclamoData.equipaje.problema }}</p>
+          </div>
+          <div class="info-item">
+            <p class="info-label">Ubicación Actual</p>
+            <p class="info-value ubicacion">
+              <mat-icon>place</mat-icon>
+              {{ reclamoData.equipaje.ubicacion_actual }}
+            </p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="bottom-grid">
+      <!-- Historial de Estados -->
+      <mat-card class="historial-card">
+        <mat-card-header>
+          <mat-card-title>Historial del Reclamo</mat-card-title>
+          <mat-card-subtitle>Seguimiento detallado del proceso</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="historial-list">
+            <div *ngFor="let evento of reclamoData.historial" class="historial-item">
+              <div class="historial-icon">
+                <mat-icon>{{ getEstadoIcon(evento.estado) }}</mat-icon>
+              </div>
+              <div class="historial-content">
+                <div class="historial-header">
+                  <p class="historial-estado">{{ evento.estado }}</p>
+                  <p class="historial-fecha">{{ evento.fecha | date:'medium':'es' }}</p>
+                </div>
+                <p class="historial-descripcion">{{ evento.descripcion }}</p>
+                <p class="historial-agente">Agente: {{ evento.agente }}</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Documentos y Costos -->
+      <div class="side-cards">
+        <!-- Documentos -->
+        <mat-card class="documentos-card">
+          <mat-card-header>
+            <mat-card-title>Documentos Adjuntos</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="documentos-list">
+              <div *ngFor="let doc of reclamoData.documentos" class="documento-item">
+                <div class="documento-info">
+                  <mat-icon>description</mat-icon>
+                  <div>
+                    <p class="documento-nombre">{{ doc.nombre }}</p>
+                    <p class="documento-detalles">{{ doc.tipo }} - {{ doc.fecha }}</p>
+                  </div>
+                </div>
+                <button mat-icon-button (click)="descargarDocumento(doc)">
+                  <mat-icon>download</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Costos -->
+        <mat-card class="costos-card">
+          <mat-card-header>
+            <mat-card-title>Resumen de Costos</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="costos-list">
+              <div class="costo-item">
+                <span>Reparación</span>
+                <span>{{ reclamoData.costos.reparacion }} {{ reclamoData.costos.moneda }}</span>
+              </div>
+              <div class="costo-item">
+                <span>Transporte</span>
+                <span>{{ reclamoData.costos.transporte }} {{ reclamoData.costos.moneda }}</span>
+              </div>
+              <div class="costo-item">
+                <span>Compensación</span>
+                <span>{{ reclamoData.costos.compensacion }} {{ reclamoData.costos.moneda }}</span>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="costo-item total">
+                <span>Total</span>
+                <span>{{ reclamoData.costos.total }} {{ reclamoData.costos.moneda }}</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <mat-card class="acciones-card">
+      <mat-card-header>
+        <mat-card-title>Acciones Disponibles</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="acciones-buttons">
+          <button mat-raised-button color="primary" (click)="actualizarEstado()">
+            Actualizar Estado
+          </button>
+          <button mat-stroked-button (click)="enviarNotificacion()">
+            Enviar Notificación
+          </button>
+          <button mat-stroked-button (click)="generarReporte()">
+            Generar Reporte
+          </button>
+          <button mat-stroked-button (click)="contactarPasajero()">
+            Contactar Pasajero
+          </button>
+          <button mat-stroked-button (click)="agregarDocumento()">
+            Agregar Documento
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
