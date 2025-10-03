@@ -1,382 +1,267 @@
-.detalle-container {
+.visualizar-pir {
   min-height: 100vh;
   background-color: #f5f5f5;
+  padding: 24px;
 }
 
-.detalle-header {
-  .header-content {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-
-    .back-button {
-      margin-right: 8px;
-    }
-
-    .header-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      .header-icon {
-        font-size: 32px;
-        width: 32px;
-        height: 32px;
-      }
-
-      .header-text {
-        h1 {
-          margin: 0;
-          font-size: 24px;
-          font-weight: bold;
-        }
-
-        p {
-          margin: 0;
-          font-size: 14px;
-          opacity: 0.8;
-        }
-      }
-    }
-  }
-}
-
-.detalle-content {
+.pir-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 32px;
 }
 
-.estado-card {
-  margin-bottom: 24px;
+.pir-header {
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
 
-  .estado-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-
-    .estado-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .estado-badges {
-      display: flex;
-      gap: 8px;
-    }
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
   }
 
-  .estado-details {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 24px;
-    margin-top: 16px;
-
-    .estado-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      .detail-label {
-        font-size: 14px;
-        font-weight: 500;
-        margin: 0 0 4px 0;
-      }
-
-      .detail-value {
-        font-size: 14px;
-        color: #666;
-        margin: 0;
-      }
-    }
+  .subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
   }
 }
 
-.info-grid {
+.section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+
+  &:last-of-type {
+    margin-bottom: 24px;
+  }
+}
+
+.section-title {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e40af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 24px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
 
-  .info-card {
-    mat-card-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  input,
+  textarea {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #111827;
+    background-color: white;
+
+    &:read-only {
+      background-color: #f9fafb;
+      cursor: default;
     }
 
-    .info-section {
-      .info-item {
-        margin-bottom: 16px;
-
-        .info-label {
-          font-size: 14px;
-          font-weight: 500;
-          margin: 0 0 4px 0;
-        }
-
-        .info-value {
-          font-size: 14px;
-          color: #666;
-          margin: 0;
-        }
-      }
-
-      .contact-info {
-        margin-top: 16px;
-
-        .contact-item {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 8px;
-
-          p {
-            margin: 0;
-            font-size: 14px;
-          }
-        }
-      }
-
-      .vuelo-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        margin-bottom: 16px;
-      }
-
-      .vuelo-route {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 16px;
-
-        .route-item {
-          text-align: center;
-
-          .route-time {
-            font-size: 12px;
-            color: #666;
-            margin: 4px 0 0 0;
-          }
-        }
-      }
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
     }
+  }
+
+  textarea {
+    resize: vertical;
+    font-family: inherit;
   }
 }
 
-.equipaje-card {
-  margin-bottom: 24px;
+.flight-route {
+  margin-top: 24px;
 
-  mat-card-title {
+  h3 {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+  }
+}
+
+.route-visualization {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+}
+
+.route-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+
+  .route-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #1e40af;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 2;
+
+    .route-code {
+      font-size: 14px;
+      font-weight: 700;
+    }
+  }
+
+  .route-info {
+    text-align: center;
+
+    .route-city {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .route-time {
+      font-size: 11px;
+      color: #6b7280;
+    }
+  }
+
+  .route-line {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background-color: #d1d5db;
+    z-index: 1;
+  }
+}
+
+.claim-type {
+  margin-top: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+  }
+}
+
+.claim-type-options {
+  display: flex;
+  gap: 12px;
+}
+
+.claim-type-btn {
+  flex: 1;
+  padding: 12px 24px;
+  border: 2px solid #d1d5db;
+  background: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: not-allowed;
+  transition: all 0.2s;
+
+  &.active {
+    background-color: #1e40af;
+    border-color: #1e40af;
+    color: white;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+
+  button {
     display: flex;
     align-items: center;
     gap: 8px;
   }
+}
 
-  .equipaje-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 16px;
+.btn {
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+
+  &.btn-primary {
+    background-color: #1e40af;
+    color: white;
+
+    &:hover {
+      background-color: #1e3a8a;
+    }
   }
 
-  .equipaje-details {
-    margin-top: 16px;
+  &.btn-secondary {
+    background-color: #6b7280;
+    color: white;
 
-    .info-item {
-      margin-bottom: 12px;
+    &:hover {
+      background-color: #4b5563;
+    }
+  }
 
-      .info-label {
-        font-size: 14px;
-        font-weight: 500;
-        margin: 0 0 4px 0;
-      }
+  &.btn-outline {
+    background-color: transparent;
+    border: 2px solid #d1d5db;
+    color: #374151;
 
-      .info-value {
-        font-size: 14px;
-        color: #666;
-        margin: 0;
-
-        &.etiqueta {
-          font-family: 'Courier New', monospace;
-        }
-
-        &.problema {
-          color: #f44336;
-        }
-
-        &.ubicacion {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-      }
+    &:hover {
+      background-color: #f9fafb;
     }
   }
 }
 
-.bottom-grid {
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 24px;
-  margin-bottom: 24px;
-
-  .historial-card {
-    .historial-list {
-      .historial-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        margin-bottom: 24px;
-
-        .historial-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          background-color: #e3f2fd;
-        }
-
-        .historial-content {
-          flex: 1;
-
-          .historial-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-
-            .historial-estado {
-              font-weight: 500;
-              margin: 0;
-              font-size: 14px;
-            }
-
-            .historial-fecha {
-              font-size: 12px;
-              color: #666;
-              margin: 0;
-            }
-          }
-
-          .historial-descripcion {
-            font-size: 14px;
-            color: #666;
-            margin: 0 0 4px 0;
-          }
-
-          .historial-agente {
-            font-size: 12px;
-            color: #666;
-            margin: 0;
-          }
-        }
-      }
-    }
-  }
-
-  .side-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-
-    .documentos-card {
-      .documentos-list {
-        .documento-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 8px;
-          border: 1px solid #e0e0e0;
-          border-radius: 4px;
-          margin-bottom: 8px;
-
-          .documento-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            .documento-nombre {
-              font-weight: 500;
-              margin: 0 0 4px 0;
-              font-size: 14px;
-            }
-
-            .documento-detalles {
-              font-size: 12px;
-              color: #666;
-              margin: 0;
-            }
-          }
-        }
-      }
-    }
-
-    .costos-card {
-      .costos-list {
-        .costo-item {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 12px;
-          font-size: 14px;
-
-          &.total {
-            font-weight: 500;
-            font-size: 16px;
-          }
-        }
-      }
-    }
-  }
-}
-
-.acciones-card {
-  .acciones-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    align-items: flex-start !important;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .bottom-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .estado-header {
-    flex-direction: column !important;
-    gap: 16px;
-  }
-
-  .estado-details {
-    grid-template-columns: 1fr !important;
-  }
-
-  .equipaje-grid {
-    grid-template-columns: 1fr 1fr !important;
-  }
-
-  .acciones-buttons {
-    flex-direction: column;
-
-    button {
-      width: 100%;
-    }
+@media print {
+  .actions {
+    display: none;
   }
 }
