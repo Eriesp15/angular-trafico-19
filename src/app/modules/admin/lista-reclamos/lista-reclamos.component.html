@@ -1,0 +1,72 @@
+<div class="lista-reclamos-container">
+  <div class="header">
+    <h1>Lista de Reclamos</h1>
+  </div>
+
+  <mat-card class="search-card">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar por PIR, pasajero o BagTag</mat-label>
+      <input 
+        matInput 
+        [(ngModel)]="searchTerm" 
+        (input)="filterReclamos()"
+        placeholder="Buscar por PIR, pasajero o BagTag"
+      />
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+  </mat-card>
+
+  <mat-card class="table-card">
+    <table mat-table [dataSource]="filteredReclamos" class="claims-table">
+      <ng-container matColumnDef="tipo">
+        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+        <td mat-cell *matCellDef="let reclamo">{{ reclamo.tipo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="pasajero">
+        <th mat-header-cell *matHeaderCellDef>Pasajero</th>
+        <td mat-cell *matCellDef="let reclamo">{{ reclamo.pasajero }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="vuelo">
+        <th mat-header-cell *matHeaderCellDef>Vuelo</th>
+        <td mat-cell *matCellDef="let reclamo">{{ reclamo.vuelo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="ruta">
+        <th mat-header-cell *matHeaderCellDef>Ruta</th>
+        <td mat-cell *matCellDef="let reclamo">{{ reclamo.ruta }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let reclamo">{{ reclamo.fecha }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="bagTag">
+        <th mat-header-cell *matHeaderCellDef>BagTag</th>
+        <td mat-cell *matCellDef="let reclamo">{{ reclamo.bagTag }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="pir">
+        <th mat-header-cell *matHeaderCellDef>PIR</th>
+        <td mat-cell *matCellDef="let reclamo" class="pir-cell">
+          <span class="pir-link" (click)="verDetalle(reclamo.pir)">{{ reclamo.pir }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let reclamo">{{ reclamo.estado }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr 
+        mat-row 
+        *matRowDef="let row; columns: displayedColumns"
+        class="table-row"
+        (click)="verDetalle(row.pir)"
+      ></tr>
+    </table>
+  </mat-card>
+</div>

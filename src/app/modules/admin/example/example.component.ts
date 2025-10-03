@@ -10,11 +10,11 @@ import { MatToolbarModule } from "@angular/material/toolbar"
 import { SidebarComponent } from "../sidebar/sidebar.component"
 
 interface Reclamo {
-  id: string
+  pir: string
   pasajero: string
-  vuelo: string
-  estado: "Pendiente" | "En Proceso" | "Resuelto"
-  tiempo: string
+  bagTag: string
+  estado: "En proceso" | "Cerrado" | "Pendiente"
+  fecha: string
 }
 
 @Component({
@@ -37,27 +37,32 @@ interface Reclamo {
 export class ExampleComponent {
   sidebarOpened = false
 
+  totalReclamos = 3
+  enProceso = 1
+  cerrados = 1
+  totalIndemnizado = 850
+
   reclamos: Reclamo[] = [
     {
-      id: "PIR-2024-001",
-      pasajero: "María González",
-      vuelo: "AA-1234",
+      pir: "PIR001234",
+      pasajero: "Juan Pérez",
+      bagTag: "BA789456",
+      estado: "En proceso",
+      fecha: "2024-01-15",
+    },
+    {
+      pir: "PIR001235",
+      pasajero: "María García",
+      bagTag: "BA789457",
+      estado: "Cerrado",
+      fecha: "2024-01-14",
+    },
+    {
+      pir: "PIR001236",
+      pasajero: "Carlos López",
+      bagTag: "BA789458",
       estado: "Pendiente",
-      tiempo: "Hace 15 min",
-    },
-    {
-      id: "PIR-2024-002",
-      pasajero: "Carlos Ruiz",
-      vuelo: "LA-5678",
-      estado: "En Proceso",
-      tiempo: "Hace 1 hora",
-    },
-    {
-      id: "PIR-2024-003",
-      pasajero: "Ana López",
-      vuelo: "UA-9012",
-      estado: "Resuelto",
-      tiempo: "Hace 2 horas",
+      fecha: "2024-01-13",
     },
   ]
 
@@ -71,17 +76,17 @@ export class ExampleComponent {
     this.sidebarOpened = false
   }
 
-  verDetalle(reclamoId: string): void {
-    this.router.navigate(["/example/reclamo", reclamoId])
+  verDetalle(pir: string): void {
+    this.router.navigate(["/example/reclamo", pir])
   }
 
   getEstadoColor(estado: string): string {
     switch (estado) {
       case "Pendiente":
         return "warn"
-      case "En Proceso":
+      case "En proceso":
         return "primary"
-      case "Resuelto":
+      case "Cerrado":
         return "accent"
       default:
         return "primary"

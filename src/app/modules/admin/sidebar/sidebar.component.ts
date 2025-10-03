@@ -27,12 +27,17 @@ export class SidebarComponent {
     {
       label: "Visualizar Reclamo",
       icon: "visibility",
-      route: "/example/reclamo/PIR-2024-001",
+      route: "/example/visualizar-reclamo",
     },
     {
       label: "Realizar Reclamo",
       icon: "add_circle",
       route: "/example/realizar-reclamo",
+    },
+    {
+      label: "Lista de Reclamos",
+      icon: "list",
+      route: "/example/lista-reclamos",
     },
   ]
 

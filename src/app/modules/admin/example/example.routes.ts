@@ -1,4 +1,4 @@
-import type { Routes } from "@angular/router"
+import { Routes } from "@angular/router"
 import { ExampleComponent } from "./example.component"
 
 const routes: Routes = [
@@ -22,6 +22,11 @@ const routes: Routes = [
     loadComponent: () =>
       import("../realizar-reclamo/realizar-reclamo.component").then((c) => c.RealizarReclamoComponent),
     data: { title: "Realizar Reclamo" },
+  },
+  {
+    path: "lista-reclamos",
+    loadComponent: () => import("../lista-reclamos/lista-reclamos.component").then((c) => c.ListaReclamosComponent),
+    data: { title: "Lista de Reclamos" },
   },
 ]
 

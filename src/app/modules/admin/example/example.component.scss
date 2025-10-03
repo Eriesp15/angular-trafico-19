@@ -46,3 +46,101 @@
     gap: 16px;
   }
 }
+
+.dashboard-content {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  .metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    
+    .metric-label {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .metric-badge {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+  
+  .metric-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1976d2;
+  }
+}
+
+.recent-claims-card {
+  mat-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1976d2;
+  }
+  
+  .claims-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .claim-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+      background-color: #f5f5f5;
+      border-color: #1976d2;
+    }
+    
+    .claim-info {
+      .claim-pir {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1976d2;
+        margin-bottom: 4px;
+      }
+      
+      .claim-details {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+    
+    .claim-status {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      
+      .claim-date {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+  }
+}

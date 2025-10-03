@@ -6,6 +6,47 @@
       <p class="subtitle">Detalles del reclamo de irregularidad</p>
     </div>
 
+     <!-- Datos del Reclamo -->
+    <div class="section">
+      <h2 class="section-title">Datos del Reclamo</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Fecha del Reclamo</label>
+          <input type="text" [value]="reclamoData.reclamo.fecha" readonly>
+        </div>
+        <div class="form-group">
+          <label>Hora del Reclamo</label>
+          <input type="text" [value]="reclamoData.reclamo.hora" readonly>
+        </div>
+        <div class="form-group">
+          <label>Estación Originadora</label>
+          <input type="text" [value]="reclamoData.reclamo.estacion" readonly>
+        </div>
+      </div>
+
+      <!-- Tipo de Reclamo -->
+      <div class="claim-type">
+        <label>Tipo de Reclamo</label>
+        <div class="claim-type-options">
+          <button 
+            class="claim-type-btn" 
+            [class.active]="reclamoData.reclamo.tipo === 'AHL'">
+            AHL
+          </button>
+          <button 
+            class="claim-type-btn" 
+            [class.active]="reclamoData.reclamo.tipo === 'DAMAGED'">
+            DAMAGED
+          </button>
+          <button 
+            class="claim-type-btn" 
+            [class.active]="reclamoData.reclamo.tipo === 'PILFERED'">
+            PILFERED
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Datos del Pasajero -->
     <div class="section">
       <h2 class="section-title">Datos del Pasajero</h2>
@@ -77,46 +118,7 @@
       </div>
     </div>
 
-    <!-- Datos del Reclamo -->
-    <div class="section">
-      <h2 class="section-title">Datos del Reclamo</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Fecha del Reclamo</label>
-          <input type="text" [value]="reclamoData.reclamo.fecha" readonly>
-        </div>
-        <div class="form-group">
-          <label>Hora del Reclamo</label>
-          <input type="text" [value]="reclamoData.reclamo.hora" readonly>
-        </div>
-        <div class="form-group">
-          <label>Estación Originadora</label>
-          <input type="text" [value]="reclamoData.reclamo.estacion" readonly>
-        </div>
-      </div>
-
-      <!-- Tipo de Reclamo -->
-      <div class="claim-type">
-        <label>Tipo de Reclamo</label>
-        <div class="claim-type-options">
-          <button 
-            class="claim-type-btn" 
-            [class.active]="reclamoData.reclamo.tipo === 'AHL'">
-            AHL
-          </button>
-          <button 
-            class="claim-type-btn" 
-            [class.active]="reclamoData.reclamo.tipo === 'DAMAGED'">
-            DAMAGED
-          </button>
-          <button 
-            class="claim-type-btn" 
-            [class.active]="reclamoData.reclamo.tipo === 'PILFERED'">
-            PILFERED
-          </button>
-        </div>
-      </div>
-    </div>
+   
 
     <!-- Detalles - Equipaje Perdido -->
     <div class="section">
