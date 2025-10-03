@@ -1,4 +1,4 @@
-import type { Routes } from "@angular/router"
+import { Routes } from "@angular/router"
 import { ExampleComponent } from "./example.component"
 
 const routes: Routes = [
@@ -11,7 +11,7 @@ const routes: Routes = [
     path: "reclamo/:id",
     loadComponent: () => import("../detalle-reclamo/detalle-reclamo.component").then((c) => c.DetalleReclamoComponent),
     data: { title: "Detalle de Reclamo" },
-  },
+  }
 ]
 
 export default routes

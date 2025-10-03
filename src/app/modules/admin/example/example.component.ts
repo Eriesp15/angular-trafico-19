@@ -7,6 +7,7 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatChipsModule } from "@angular/material/chips"
 import { MatGridListModule } from "@angular/material/grid-list"
 import { MatToolbarModule } from "@angular/material/toolbar"
+import { SidebarComponent } from "../sidebar/sidebar.component"
 
 interface Reclamo {
   id: string
@@ -27,12 +28,15 @@ interface Reclamo {
     MatChipsModule,
     MatGridListModule,
     MatToolbarModule,
+    SidebarComponent,
   ],
   templateUrl: "./example.component.html",
   styleUrls: ["./example.component.scss"],
   encapsulation: ViewEncapsulation.None,
 })
 export class ExampleComponent {
+  sidebarOpened = false
+
   reclamos: Reclamo[] = [
     {
       id: "PIR-2024-001",
@@ -57,10 +61,15 @@ export class ExampleComponent {
     },
   ]
 
-  /**
-   * Constructor
-   */
   constructor(private router: Router) {}
+
+  toggleSidebar(): void {
+    this.sidebarOpened = !this.sidebarOpened
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpened = false
+  }
 
   verDetalle(reclamoId: string): void {
     this.router.navigate(["/example/reclamo", reclamoId])
@@ -80,17 +89,14 @@ export class ExampleComponent {
   }
 
   nuevoReclamoPIR(): void {
-    // Implementar lógica para nuevo reclamo
     console.log("Nuevo Reclamo PIR")
   }
 
   registrarPasajero(): void {
-    // Implementar lógica para registrar pasajero
     console.log("Registrar Pasajero")
   }
 
   articulosEncontrados(): void {
-    // Implementar lógica para artículos encontrados
     console.log("Artículos Encontrados")
   }
 }

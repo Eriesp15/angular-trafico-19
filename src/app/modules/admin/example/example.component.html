@@ -1,162 +1,31 @@
-<!-- Replacing empty placeholder with full operator dashboard template -->
-<div class="dashboard-container">
-
-  <div class="dashboard-content">
-    <!-- Métricas principales -->
-    <div class="metrics-grid">
-      <mat-card class="metric-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>inventory</mat-icon>
-            Reclamos Activos
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="metric-value">24</div>
-          <p class="metric-subtitle">+3 desde ayer</p>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="metric-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon color="warn">warning</mat-icon>
-            Pendientes
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="metric-value warn">8</div>
-          <p class="metric-subtitle">Requieren atención</p>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="metric-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon color="accent">trending_up</mat-icon>
-            Resueltos Hoy
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="metric-value accent">12</div>
-          <p class="metric-subtitle">+20% vs ayer</p>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="metric-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>people</mat-icon>
-            Pasajeros Atendidos
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="metric-value">156</div>
-          <p class="metric-subtitle">Esta semana</p>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- Acciones rápidas y alertas -->
-    <div class="actions-grid">
-      <mat-card class="actions-card">
-        <mat-card-header>
-          <mat-card-title>Acciones Rápidas</mat-card-title>
-          <mat-card-subtitle>Operaciones frecuentes</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="actions-buttons">
-            <button mat-stroked-button (click)="nuevoReclamoPIR()" class="action-button">
-              <mat-icon>inventory</mat-icon>
-              Nuevo Reclamo PIR
-            </button>
-            <button mat-stroked-button (click)="registrarPasajero()" class="action-button">
-              <mat-icon>people</mat-icon>
-              Registrar Pasajero
-            </button>
-            <button mat-stroked-button (click)="articulosEncontrados()" class="action-button">
-              <mat-icon>warning</mat-icon>
-              Artículos Encontrados
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="alerts-card">
-        <mat-card-header>
-          <mat-card-title>Alertas Urgentes</mat-card-title>
-          <mat-card-subtitle>Requieren atención inmediata</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="alert-item urgent">
-            <mat-icon color="warn">warning</mat-icon>
-            <div class="alert-content">
-              <p class="alert-title">Reclamo #PIR-2024-001</p>
-              <p class="alert-subtitle">Vence en 2 horas</p>
-            </div>
-          </div>
-          <div class="alert-item">
-            <mat-icon>schedule</mat-icon>
-            <div class="alert-content">
-              <p class="alert-title">Equipaje sin ubicar</p>
-              <p class="alert-subtitle">Vuelo AA-1234</p>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="status-card">
-        <mat-card-header>
-          <mat-card-title>Estado del Sistema</mat-card-title>
-          <mat-card-subtitle>Conexiones y servicios</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="status-item">
-            <span>World Tracer</span>
-            <mat-chip color="accent">Conectado</mat-chip>
-          </div>
-          <div class="status-item">
-            <span>Base de Datos</span>
-            <mat-chip color="accent">Activo</mat-chip>
-          </div>
-          <div class="status-item">
-            <span>Notificaciones</span>
-            <mat-chip color="warn">Parcial</mat-chip>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- Lista de reclamos recientes -->
-    <mat-card class="reclamos-card">
-      <mat-card-header>
-        <mat-card-title>Reclamos Recientes</mat-card-title>
-        <mat-card-subtitle>Últimas actualizaciones del sistema</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="reclamos-list">
-          <div *ngFor="let reclamo of reclamos" class="reclamo-item">
-            <div class="reclamo-info">
-              <div class="reclamo-main">
-                <p class="reclamo-id">{{ reclamo.id }}</p>
-                <p class="reclamo-pasajero">{{ reclamo.pasajero }}</p>
-              </div>
-              <div class="reclamo-details">
-                <p class="reclamo-vuelo">{{ reclamo.vuelo }}</p>
-                <p class="reclamo-tiempo">{{ reclamo.tiempo }}</p>
-              </div>
-            </div>
-            <div class="reclamo-actions">
-              <mat-chip [color]="getEstadoColor(reclamo.estado)">
-                {{ reclamo.estado }}
-              </mat-chip>
-              <button mat-button (click)="verDetalle(reclamo.id)">
-                Ver Detalle
-              </button>
-            </div>
+Wrapped entire component with sidebar 
+<app-sidebar [opened]="sidebarOpened" (closeSidebar)="closeSidebar()">
+  <div class="dashboard-container">
+     Added hamburger menu button to header 
+    <mat-toolbar color="primary" class="dashboard-header">
+      <div class="header-content">
+        <div class="header-left">
+          <button mat-icon-button (click)="toggleSidebar()" class="menu-button">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <mat-icon class="header-icon">dashboard</mat-icon>
+          <div class="header-text">
+            <h1>Dashboard de Operador</h1>
+            <p>Sistema de gestión de reclamos PIR</p>
           </div>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="header-right">
+          <button mat-icon-button>
+            <mat-icon>notifications</mat-icon>
+          </button>
+          <button mat-icon-button>
+            <mat-icon>account_circle</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-toolbar>
+
+    <div class="dashboard-content">
+    </div>
   </div>
-</div>
+</app-sidebar>
