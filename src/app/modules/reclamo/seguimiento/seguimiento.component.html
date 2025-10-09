@@ -1,0 +1,78 @@
+<div class="seguimiento-container p-6">
+    <!-- Título -->
+    <h1 class="page-title">Hoja de seguimiento</h1>
+    <p class="subtitle">Detalles del seguimiento</p>
+
+    <!-- Card Detalles -->
+    <div class="card-section" *ngIf="reclamo">
+        <div class="section-header">Detalles de seguimiento</div>
+        <div class="section-content">
+            <p><strong>Tipo de expediente:</strong> {{ reclamo?.tipo }}</p>
+            <p><strong>Nombres y apellidos:</strong> {{ reclamo?.pasajero?.nombre }} {{ reclamo?.pasajero?.apellido }}</p>
+            <p><strong>Teléfono de contacto/Celular:</strong> {{ reclamo?.pasajero?.telefono }}</p>
+            <p><strong>Correo Electrónico:</strong> {{ reclamo?.pasajero?.email }}</p>
+        </div>
+    </div>
+
+    <!-- Registro de seguimiento -->
+    <div class="card-section mt-4" *ngIf="reclamo?.seguimiento?.length">
+        <div class="section-header">Registro de seguimiento</div>
+        <div class="section-content">
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Encargado</th>
+                    <th>Información</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let s of reclamo?.seguimiento">
+                    <td>{{ s.fecha }}</td>
+                    <td>{{ s.hora }}</td>
+                    <td>{{ s.encargado }}</td>
+                    <td>{{ s.info }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="action-btn">
+            <button mat-fab color="primary" aria-label="Añadir seguimiento" (click)="agregarSeguimiento()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Registro de llamadas -->
+    <div class="card-section mt-4" *ngIf="reclamo?.llamadas?.length">
+        <div class="section-header">Registro de llamadas/Contacto</div>
+        <div class="section-content">
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Celular/Correo</th>
+                    <th>A quien se dio la información</th>
+                    <th>Observaciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let l of reclamo?.llamadas">
+                    <td>{{ l.fecha }}</td>
+                    <td>{{ l.hora }}</td>
+                    <td>{{ l.contacto }}</td>
+                    <td>{{ l.destinatario }}</td>
+                    <td>{{ l.observaciones }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="action-btn">
+            <button mat-fab color="primary" aria-label="Añadir llamada" (click)="agregarLlamada()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>

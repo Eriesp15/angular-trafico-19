@@ -2,17 +2,19 @@ import { Injectable } from '@angular/core';
 import { ErpMockApiService } from '@erp/lib/mock-api';
 import { cloneDeep } from 'lodash-es';
 
+// Simula datos de ejemplo para los reclamos inyectable es una funcion puede devolver cualquier cosa para que sea visible en cualquier parte del proyecto
 @Injectable({ providedIn: 'root' })
 export class ReclamoMockApi {
-    private _reclamos: any[] = [];
+    private _reclamos: any[] = []; // Simulamos una lista de reclamos
 
     constructor(private _erpMockApiService: ErpMockApiService) {
-        this._createMockData();
-        this.registerHandlers();
+        this._createMockData();  // Llenamos los datos de ejemplo
+        this.registerHandlers();  // Registramos los handlers para las rutas mock
     }
 
+
     private _createMockData(): void {
-        // Definimos datos de ejemplo para los reclamos
+
         this._reclamos = [
             {
                 id: 1,
@@ -60,36 +62,19 @@ export class ReclamoMockApi {
         ];
     }
 
-    // Registrar los handlers para las rutas de la API mock
+    // Registramos los handlers para las rutas de la API
     registerHandlers(): void {
-        // GET todos los reclamos
-        this._erpMockApiService.onGet('api/reclamos').reply(() => {
-            return [200, cloneDeep(this._reclamos)];
-        });
 
-        // GET reclamo por id
-        this._erpMockApiService.onGet('api/reclamos/:id').reply(({ request }) => {
+        this._erpMockApiService.onGet('api/reclamo/:id').reply(({ request }) => {
             const url = request.url;
-            const parts = url.split('/');
-            const id = Number(parts[parts.length - 1]);
+            const parts = url.split('/');  // Divide la URL
+            const id = Number(parts[parts.length - 1]);  // Obtiene el ID
             const reclamo = this._reclamos.find((x) => x.id === id);
             return reclamo ? [200, cloneDeep(reclamo)] : [404, { message: 'Reclamo no encontrado' }];
         });
 
-        // POST agregar seguimiento (simula insertar)
-        this._erpMockApiService.onPost('api/reclamos/seguimiento').reply(({ request }) => {
-            const body = request.body;
-            const reclamo = this._reclamos.find((r) => r.id === body.reclamoId);
-            if (!reclamo) return [404, { message: 'Reclamo no encontrado' }];
-            const nuevo = {
-                id: 's' + (reclamo.seguimiento.length + 1),
-                fecha: body.fecha,
-                hora: body.hora,
-                encargado: body.encargado,
-                info: body.info
-            };
-            reclamo.seguimiento.push(nuevo);
-            return [200, cloneDeep(nuevo)];
-        });
+
+
+
     }
 }

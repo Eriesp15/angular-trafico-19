@@ -45,12 +45,13 @@
                             "includePaths": ["src/@erp/styles"]
                         },
                         "styles": [
-                            "src/@erp/styles/tailwind.scss",
-                            "src/@erp/styles/themes.scss",
-                            "src/styles/vendors.scss",
-                            "src/@erp/styles/main.scss",
-                            "src/styles/styles.scss",
-                            "src/styles/tailwind.scss"
+                          "@angular/material/prebuilt-themes/azure-blue.css",
+                          "src/@erp/styles/tailwind.scss",
+                          "src/@erp/styles/themes.scss",
+                          "src/styles/vendors.scss",
+                          "src/@erp/styles/main.scss",
+                          "src/styles/styles.scss",
+                          "src/styles/tailwind.scss"
                         ],
                         "scripts": []
                     },
@@ -105,11 +106,17 @@
                                 "input": "public"
                             }
                         ],
-                        "styles": ["src/styles/styles.scss"],
+                        "styles": [
+                          "@angular/material/prebuilt-themes/azure-blue.css",
+                          "src/styles/styles.scss"
+                        ],
                         "scripts": []
                     }
                 }
             }
         }
+    },
+    "cli": {
+      "analytics": false
     }
 }

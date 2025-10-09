@@ -1,0 +1,58 @@
+<div class="cerrado-container">
+    <mat-card class="cerrado-card">
+        <!-- Título -->
+        <mat-card-header>
+            <mat-card-title class="cerrado-title">Reclamo Cerrado</mat-card-title>
+        </mat-card-header>
+
+        <!-- Recibo de entrega -->
+        <mat-card-content class="cerrado-content">
+            <div class="form-section">
+                <div class="form-field">
+                    <label for="expediente">Número de expediente/PIR:</label>
+                    <input id="expediente" type="text" [value]="reclamo?.codigo" disabled />
+                </div>
+                <div class="form-field">
+                    <label for="fecha">Fecha de reclamo:</label>
+                    <input id="fecha" type="text" [value]="reclamo?.fecha_creacion | date:'shortDate'" disabled />
+                </div>
+                <div class="form-field">
+                    <label for="pasajero">Nombre del pasajero:</label>
+                    <input id="pasajero" type="text" [value]="reclamo?.pasajero.nombre + ' ' + reclamo?.pasajero.apellido" disabled />
+                </div>
+                <div class="form-field">
+                    <label for="tipoReclamo">Tipo de reclamo:</label>
+                    <input id="tipoReclamo" type="text" [value]="reclamo?.tipo" disabled />
+                </div>
+                <div class="form-field">
+                    <label for="equipajesEntregados">Cantidad de equipajes entregados:</label>
+                    <input id="equipajesEntregados" type="text" [value]="reclamo?.equipaje ? 1 : 0" disabled />
+                </div>
+            </div>
+
+            <!-- Notas -->
+            <div class="form-section">
+                <p>Si usted llegó a un acuerdo con la empresa o si no desea continuar con el presente reclamo,
+                    le solicitamos firmar en el siguiente recuadro.</p>
+                <div class="form-field">
+                    <label for="firma">Firma:</label>
+                    <input id="firma" type="text" placeholder="Firma del pasajero" />
+                </div>
+                <div class="form-field">
+                    <label for="ci">C.I.:</label>
+                    <input id="ci" type="text" placeholder="Cédula de Identidad" />
+                </div>
+                <div class="form-field">
+                    <label for="aclaracionFirma">Aclaración de firma:</label>
+                    <input id="aclaracionFirma" type="text" placeholder="Aclaración de firma" />
+                </div>
+            </div>
+
+            <!-- Observaciones -->
+            <div class="form-section">
+                <label for="observaciones">Observaciones:</label>
+                <textarea id="observaciones" placeholder="Escriba sus observaciones aquí"></textarea>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

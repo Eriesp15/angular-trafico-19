@@ -27,7 +27,7 @@ export const appConfig: ApplicationConfig = {
             withPreloading(PreloadAllModules),
             withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })
         ),
-
+        { provide: 'mockApi', useValue: mockApiServices },
         // Material Date Adapter
         {
             provide: DateAdapter,
