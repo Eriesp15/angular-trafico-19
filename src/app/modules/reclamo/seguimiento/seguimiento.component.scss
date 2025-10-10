@@ -1,75 +1,226 @@
-.seguimiento-container {
-    font-family: Arial, sans-serif;
-    color: #333;
+:host {
+    display: block;
+}
+.title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: .25rem;
 }
 
-.page-title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #022F70;
-    margin-bottom: 0.2rem;
+.header-actions button {
+    border-color: #0B4A8E;
+    color: #0B4A8E;
+}
+/* Botón FAB flotante */
+.print-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    background: #0B4A8E !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    z-index: 1000;
 }
 
-.subtitle {
-    font-size: 0.95rem;
-    color: #555;
-    margin-bottom: 1rem;
+/* No imprimir estos elementos */
+.no-print {
+    display: inline-flex;
 }
 
-.card-section {
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    margin-bottom: 20px;
+@media print {
+    /* ocultar botones o elementos interactivos */
+    .no-print,
+    button,
+    mat-icon-button,
+    .table-actions {
+        display: none !important;
+    }
+
+    /* mantener colores de fondos y textos */
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+    }
+
+    .seguimiento-container {
+        padding: 0 !important;
+    }
+
+    /* quitar sombras */
+    .panel,
+    .table-card {
+        box-shadow: none !important;
+        border: 1px solid #b9c6d8;
+    }
+
+    .panel-header,
+    .table-header {
+        background: #A7C1DF !important;
+        color: #0B4A8E !important;
+    }
+
+    /* interlineado más compacto y tipografía menor */
+    * {
+        line-height: 1.1 !important;
+        font-size: 12px !important;
+    }
+
+    /* ajustar filas más pegadas */
+    .table-body .row {
+        padding: 4px 8px !important;
+        margin: 0 !important;
+    }
+
+    /* observaciones más ancha */
+    .table-header.five-cols {
+        grid-template-columns: 100px 60px 140px 160px 2fr !important;
+    }
+    .table-body .row.five-cols {
+        grid-template-columns: 100px 60px 140px 160px 2fr !important;
+    }
+
+    /* evitar saltos raros */
+    .panel {
+        page-break-inside: avoid;
+    }
+
+    /* para que los campos luzcan limpios en papel */
+    input,
+    textarea {
+        border: 1px solid #a5b4c8 !important;
+        background: white !important;
+        box-shadow: none !important;
+        padding: 3px 4px !important;
+        font-size: 12px !important;
+    }
+}
+
+
+.title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #114a86;
+    margin: 0 0 4px 0;
+}
+
+.sub {
+    color: #5a6c80;
+    margin: 0 0 16px 0;
+}
+
+.panel {
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+.panel-header {
+    background: #98b3d4;
+    color: #223b5c;
+    font-weight: 700;
+    padding: 10px 12px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.panel-body {
+    padding: 12px 12px 4px 12px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 12px;
+    margin: 6px 0;
+}
+
+.row.two-cols {
+    grid-template-columns: 1fr 1fr;
+}
+
+.label {
+    font-weight: 600;
+    color: #2f4a66;
+}
+
+.value {
+    color: #1b2b40;
+}
+
+/* Tarjeta tabla */
+.table-card {
     background: #fff;
-    box-shadow: 1px 1px 4px rgba(0,0,0,0.08);
-}
-
-.section-header {
-    background: #E6EEF8;
-    color: #022F70;
-    font-weight: bold;
-    padding: 8px 12px;
-    border-bottom: 1px solid #ccc;
-}
-
-.section-content {
-    padding: 12px 16px;
-}
-
-.section-content p {
-    margin: 4px 0;
-}
-
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
+    border-radius: 12px;
     margin-top: 10px;
+    box-shadow:
+        0 1px 0 rgba(0, 0, 0, 0.04),
+        0 4px 18px rgba(17, 74, 134, 0.08);
 }
 
-.styled-table th {
-    background-color: #E6EEF8;
-    color: #022F70;
-    font-weight: bold;
-    padding: 8px;
-    text-align: left;
-    border-bottom: 2px solid #ccc;
+.table-header {
+    display: grid;
+    grid-template-columns: 120px 80px 170px 1fr;
+    background: #b3c7df;
+    color: #1c3655;
+    font-weight: 700;
+    padding: 10px 12px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
 }
 
-.styled-table td {
-    padding: 8px;
-    border-bottom: 1px solid #eee;
-    font-size: 0.95rem;
+.table-header.five-cols {
+    grid-template-columns: 120px 80px 190px 200px 1fr;
 }
 
-.styled-table tr:last-child td {
-    border-bottom: none;
+.table-body .row {
+    grid-template-columns: 100px 70px 160px 1fr;
+    align-items: start;
+    background: #fff;
+    padding: 10px 12px;
+    border-top: 1px solid #e4ecf5;
+    position: relative;
 }
-.action-btn {
+
+.table-body .row.five-cols {
+    grid-template-columns: 100px 70px 170px 200px 1fr;
+}
+
+.cell-input,
+.cell-textarea {
+    width: 100%;
+    border: 1px solid #d7e3f2;
+    border-radius: 8px;
+    padding: 8px 10px;
+    outline: none;
+    font: inherit;
+    background: #f9fbfe;
+}
+
+.cell-input:focus,
+.cell-textarea:focus {
+    border-color: #6ea1df;
+    background: #fff;
+}
+
+.cell-textarea {
+    min-height: 64px;
+    resize: vertical;
+}
+
+.table-actions {
     display: flex;
     justify-content: flex-end;
-    padding: 10px 16px;
+    padding: 10px 12px 14px 12px;
+}
 
-    button {
-        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
+.icon-trash {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    color: #cc3344;
 }

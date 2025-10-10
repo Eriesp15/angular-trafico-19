@@ -1,78 +1,132 @@
 <div class="seguimiento-container p-6">
-    <!-- Título -->
-    <h1 class="page-title">Hoja de seguimiento</h1>
-    <p class="subtitle">Detalles del seguimiento</p>
+    <!-- Encabezado con acción -->
+    <div class="title-row">
+        <h1 class="title">Hoja de seguimiento</h1>
 
-    <!-- Card Detalles -->
-    <div class="card-section" *ngIf="reclamo">
-        <div class="section-header">Detalles de seguimiento</div>
-        <div class="section-content">
-            <p><strong>Tipo de expediente:</strong> {{ reclamo?.tipo }}</p>
-            <p><strong>Nombres y apellidos:</strong> {{ reclamo?.pasajero?.nombre }} {{ reclamo?.pasajero?.apellido }}</p>
-            <p><strong>Teléfono de contacto/Celular:</strong> {{ reclamo?.pasajero?.telefono }}</p>
-            <p><strong>Correo Electrónico:</strong> {{ reclamo?.pasajero?.email }}</p>
-        </div>
-    </div>
-
-    <!-- Registro de seguimiento -->
-    <div class="card-section mt-4" *ngIf="reclamo?.seguimiento?.length">
-        <div class="section-header">Registro de seguimiento</div>
-        <div class="section-content">
-            <table class="styled-table">
-                <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Encargado</th>
-                    <th>Información</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let s of reclamo?.seguimiento">
-                    <td>{{ s.fecha }}</td>
-                    <td>{{ s.hora }}</td>
-                    <td>{{ s.encargado }}</td>
-                    <td>{{ s.info }}</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="action-btn">
-            <button mat-fab color="primary" aria-label="Añadir seguimiento" (click)="agregarSeguimiento()">
-                <mat-icon>add</mat-icon>
+        <!-- Acciones de cabecera (no se imprimen) -->
+        <div class="no-print header-actions">
+            <button mat-stroked-button color="primary" (click)="print()">
+                <mat-icon style="margin-right:6px">print</mat-icon>
+                Imprimir
             </button>
         </div>
     </div>
 
-    <!-- Registro de llamadas -->
-    <div class="card-section mt-4" *ngIf="reclamo?.llamadas?.length">
-        <div class="section-header">Registro de llamadas/Contacto</div>
-        <div class="section-content">
-            <table class="styled-table">
-                <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Celular/Correo</th>
-                    <th>A quien se dio la información</th>
-                    <th>Observaciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let l of reclamo?.llamadas">
-                    <td>{{ l.fecha }}</td>
-                    <td>{{ l.hora }}</td>
-                    <td>{{ l.contacto }}</td>
-                    <td>{{ l.destinatario }}</td>
-                    <td>{{ l.observaciones }}</td>
-                </tr>
-                </tbody>
-            </table>
+    <p class="sub">Detalles del seguimiento</p>
+
+
+    <!-- Bloque: Detalles de seguimiento -->
+    <div class="panel">
+        <div class="panel-header">Detalles de seguimiento</div>
+        <div class="panel-body">
+            <div class="row">
+                <span class="label">Tipo de expediente</span>
+                <span class="value">{{ expediente.tipo }}</span>
+            </div>
+            <div class="row">
+                <span class="label">Nombres y apellidos:</span>
+                <span class="value">{{ expediente.nombres }}</span>
+            </div>
+            <div class="row two-cols">
+                <div>
+                    <span class="label">Telefono de contacto/Celular:</span>
+                    <span class="value">{{ expediente.celular }}</span>
+                </div>
+                <div>
+                    <span class="label">Correo Electronico:</span>
+                    <span class="value">juanLopez&#64;gmail.com</span>
+                </div>
+            </div>
         </div>
-        <div class="action-btn">
-            <button mat-fab color="primary" aria-label="Añadir llamada" (click)="agregarLlamada()">
-                <mat-icon>add</mat-icon>
-            </button>
+
+        <!-- Tabla: Seguimientos -->
+        <div class="table-card">
+            <div class="table-header">
+                <div>Fecha</div>
+                <div>Hora</div>
+                <div>Encargado</div>
+                <div>Informacion</div>
+            </div>
+
+            <div class="table-body">
+                <div class="row" *ngFor="let s of seguimientos; let i = index; trackBy: trackByIndex">
+                    <div>
+                        <input class="cell-input" [(ngModel)]="s.fecha" placeholder="YYYY-MM-DD" />
+                    </div>
+                    <div>
+                        <input class="cell-input" [(ngModel)]="s.hora" placeholder="HH:mm" />
+                    </div>
+                    <div>
+                        <input class="cell-input" [(ngModel)]="s.encargado" placeholder="Encargado" />
+                    </div>
+                    <div>
+                        <textarea class="cell-textarea" [(ngModel)]="s.info" placeholder="Información"></textarea>
+                    </div>
+
+                    <!-- Botón borrar (solo aparece en filas vacías) -->
+                    <button mat-icon-button class="icon-trash" aria-label="Eliminar fila"
+                            (click)="removeSeguimientoRow(i)"
+                            *ngIf="!s.fecha && !s.hora && !s.encargado && !s.info">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-actions">
+                <button mat-mini-fab color="primary" (click)="addSeguimientoRow()">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bloque: Registro de llamadas / Contacto -->
+    <div class="panel mt-8">
+        <div class="panel-header">Registro de llamadas/Contacto</div>
+
+        <div class="table-card">
+            <div class="table-header five-cols">
+                <div>Fecha</div>
+                <div>Hora</div>
+                <div>Celular/Correo</div>
+                <div>A quien se dio la informacion</div>
+                <div>Observaciones</div>
+            </div>
+
+            <div class="table-body">
+                <div class="row five-cols" *ngFor="let c of llamadas; let i = index; trackBy: trackByIndex">
+                    <div>
+                        <input class="cell-input" [(ngModel)]="c.fecha" placeholder="YYYY-MM-DD" />
+                    </div>
+                    <div>
+                        <input class="cell-input" [(ngModel)]="c.hora" placeholder="HH:mm" />
+                    </div>
+                    <div>
+                        <input class="cell-input" [(ngModel)]="c.celularCorreo" placeholder="Ej: 76543210 o correo" />
+                    </div>
+                    <div>
+                        <input class="cell-input" [(ngModel)]="c.aQuien" placeholder="Nombre" />
+                    </div>
+                    <div>
+                        <input class="cell-input" [(ngModel)]="c.observaciones" placeholder="Observaciones" />
+                    </div>
+
+                    <button mat-icon-button class="icon-trash" aria-label="Eliminar fila"
+                            (click)="removeLlamadaRow(i)"
+                            *ngIf="!c.fecha && !c.hora && !c.celularCorreo && !c.aQuien && !c.observaciones">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-actions">
+                <button mat-mini-fab color="primary" (click)="addLlamadaRow()">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <button class="print-fab no-print" mat-fab color="primary" (click)="print()" aria-label="Imprimir">
+                    <mat-icon>print</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
 </div>
