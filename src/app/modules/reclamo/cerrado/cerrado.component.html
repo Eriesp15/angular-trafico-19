@@ -1,58 +1,108 @@
-<div class="cerrado-container">
-    <mat-card class="cerrado-card">
-        <!-- Título -->
-        <mat-card-header>
-            <mat-card-title class="cerrado-title">Reclamo Cerrado</mat-card-title>
-        </mat-card-header>
+<div class="cerrado-container p-6">
+    <!-- Título + acción -->
+    <div class="title-row">
+        <div>
+            <h1 class="title">Cerrado</h1>
+            <p class="sub">Recibo de entrega</p>
+        </div>
 
-        <!-- Recibo de entrega -->
-        <mat-card-content class="cerrado-content">
-            <div class="form-section">
-                <div class="form-field">
-                    <label for="expediente">Número de expediente/PIR:</label>
-                    <input id="expediente" type="text" [value]="reclamo?.codigo" disabled />
-                </div>
-                <div class="form-field">
-                    <label for="fecha">Fecha de reclamo:</label>
-                    <input id="fecha" type="text" [value]="reclamo?.fecha_creacion | date:'shortDate'" disabled />
-                </div>
-                <div class="form-field">
-                    <label for="pasajero">Nombre del pasajero:</label>
-                    <input id="pasajero" type="text" [value]="reclamo?.pasajero.nombre + ' ' + reclamo?.pasajero.apellido" disabled />
-                </div>
-                <div class="form-field">
-                    <label for="tipoReclamo">Tipo de reclamo:</label>
-                    <input id="tipoReclamo" type="text" [value]="reclamo?.tipo" disabled />
-                </div>
-                <div class="form-field">
-                    <label for="equipajesEntregados">Cantidad de equipajes entregados:</label>
-                    <input id="equipajesEntregados" type="text" [value]="reclamo?.equipaje ? 1 : 0" disabled />
+        <div class="header-actions no-print">
+            <button mat-stroked-button (click)="print()">
+                <mat-icon>print</mat-icon>
+                Imprimir
+            </button>
+        </div>
+    </div>
+
+    <!-- Detalles de seguimiento -->
+    <div class="panel">
+        <div class="panel-header">Detalles de seguimiento</div>
+        <div class="panel-body">
+            <div class="row">
+                <span class="label">Tipo de expediente:</span>
+                <span class="value">{{ seguimiento.tipoExpediente }}</span>
+            </div>
+            <div class="row">
+                <span class="label">Numero de Pir:</span>
+                <span class="value">{{ seguimiento.numeroPir }}</span>
+            </div>
+            <div class="row">
+                <span class="label">Fecha de reclamo:</span>
+                <span class="value">{{ seguimiento.fechaReclamo }}</span>
+            </div>
+            <div class="row">
+                <span class="label">Nombres y apellidos:</span>
+                <span class="value">{{ seguimiento.nombres }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detalles de entrega -->
+    <div class="panel mt-6">
+        <div class="panel-header">Detalles de entrega</div>
+        <div class="panel-body">
+            <!-- Fecha -->
+            <div class="row">
+                <label class="label" for="fent">Fecha de entrega:</label>
+                <input id="fent" class="input" type="date" [(ngModel)]="form.fechaEntrega" />
+            </div>
+
+            <!-- Cantidad -->
+            <div class="row">
+                <label class="label" for="cant">Cantidad de equipajes entregados:</label>
+                <input id="cant" class="input short" type="number" min="0" [(ngModel)]="form.cantidadEquipajes" />
+            </div>
+
+            <!-- Entrega en -->
+            <div class="row">
+                <span class="label">Entrega en:</span>
+                <div class="value">
+                    <mat-radio-group class="radio-line" [(ngModel)]="form.entregaEn">
+                        <mat-radio-button [value]="'aeropuerto'">Entrega en aeropuerto</mat-radio-button>
+                        <mat-radio-button [value]="'domicilio'">Entrega en domicilio</mat-radio-button>
+                    </mat-radio-group>
                 </div>
             </div>
 
-            <!-- Notas -->
-            <div class="form-section">
-                <p>Si usted llegó a un acuerdo con la empresa o si no desea continuar con el presente reclamo,
-                    le solicitamos firmar en el siguiente recuadro.</p>
-                <div class="form-field">
-                    <label for="firma">Firma:</label>
-                    <input id="firma" type="text" placeholder="Firma del pasajero" />
+            <!-- Dirección -->
+            <div class="row">
+                <label class="label" for="dir">Direccion de entrega:</label>
+                <input id="dir" class="input" type="text" [(ngModel)]="form.direccion" placeholder="Calle, nro, zona..." />
+            </div>
+        </div>
+
+        <div class="note">
+            Si usted llegó a un acuerdo con la empresa o si no desea continuar con el presente reclamo,
+            le solicitamos firmar en el siguiente recuadro.
+        </div>
+
+        <!-- Caja de firma -->
+        <div class="signature-card">
+            <div class="sig-row two-cols">
+                <div class="sig-cell">
+                    <div class="sig-label">Firma:</div>
+                    <div class="sig-box"></div>
                 </div>
-                <div class="form-field">
-                    <label for="ci">C.I.:</label>
-                    <input id="ci" type="text" placeholder="Cédula de Identidad" />
-                </div>
-                <div class="form-field">
-                    <label for="aclaracionFirma">Aclaración de firma:</label>
-                    <input id="aclaracionFirma" type="text" placeholder="Aclaración de firma" />
+                <div class="sig-cell">
+                    <div class="sig-label">C.I.:</div>
+                    <input class="sig-input" [(ngModel)]="form.ci" />
                 </div>
             </div>
 
-            <!-- Observaciones -->
-            <div class="form-section">
-                <label for="observaciones">Observaciones:</label>
-                <textarea id="observaciones" placeholder="Escriba sus observaciones aquí"></textarea>
+            <div class="sig-row">
+                <div class="sig-label">Aclaracion de firma:</div>
+                <input class="sig-input" [(ngModel)]="form.aclaracion" />
             </div>
-        </mat-card-content>
-    </mat-card>
+
+            <div class="sig-row">
+                <div class="sig-label">Observaciones:</div>
+                <textarea class="sig-textarea" [(ngModel)]="form.observaciones"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAB imprimir -->
+    <button class="print-fab no-print" mat-fab (click)="print()">
+        <mat-icon>print</mat-icon>
+    </button>
 </div>
