@@ -1,124 +1,67 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
-import { ErpFullscreenComponent } from '@erp/components/fullscreen';
-import { ErpLoadingBarComponent } from '@erp/components/loading-bar';
-import {
-    ErpHorizontalNavigationComponent,
-    ErpNavigationService,
-    ErpVerticalNavigationComponent,
-} from '@erp/components/navigation';
-import { ErpMediaWatcherService } from '@erp/services/media-watcher';
-import { NavigationService } from 'app/core/navigation/navigation.service';
-import { Navigation } from 'app/core/navigation/navigation.types';
-import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
-import { NotificationsComponent } from 'app/layout/common/notifications/notifications.component';
-import { SearchComponent } from 'app/layout/common/search/search.component';
-import { UserComponent } from 'app/layout/common/user/user.component';
-import { Subject, takeUntil } from 'rxjs';
-import { SchemeComponent } from '../../../common/scheme/scheme.component';
-import { ThemeComponent } from '../../../common/theme/theme.component';
+import { Component, type OnDestroy, type OnInit, ViewChild } from "@angular/core"
+import { CommonModule } from "@angular/common"
+import { MatButtonModule } from "@angular/material/button"
+import { MatIconModule } from "@angular/material/icon"
+import { MatSidenavModule } from "@angular/material/sidenav"
+import { MatListModule } from "@angular/material/list"
+import {  Router, RouterOutlet } from "@angular/router"
+import type { MatSidenav } from "@angular/material/sidenav"
+
+interface MenuItem {
+  label: string
+  icon: string
+  route: string
+}
 
 @Component({
-    selector: 'modern-layout',
-    templateUrl: './modern.component.html',
-    encapsulation: ViewEncapsulation.None,
-    imports: [
-        ErpLoadingBarComponent,
-        ErpVerticalNavigationComponent,
-        ErpHorizontalNavigationComponent,
-        MatButtonModule,
-        MatIconModule,
-        LanguagesComponent,
-        ErpFullscreenComponent,
-        SearchComponent,
-        NotificationsComponent,
-        UserComponent,
-        RouterOutlet,
-        SchemeComponent,
-        ThemeComponent,
-    ],
+  selector: "modern-layout",
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatSidenavModule, MatListModule, RouterOutlet],
+  templateUrl: "./modern.component.html",
 })
 export class ModernLayoutComponent implements OnInit, OnDestroy {
-    isScreenSmall: boolean;
-    navigation: Navigation;
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
+  @ViewChild("sidenav") sidenav!: MatSidenav
 
-    /**
-     * Constructor
-     */
-    constructor(
-        private _activatedRoute: ActivatedRoute,
-        private _router: Router,
-        private _navigationService: NavigationService,
-        private _erpMediaWatcherService: ErpMediaWatcherService,
-        private _erpNavigationService: ErpNavigationService
-    ) {}
+  sidebarOpened = false
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Accessors
-    // -----------------------------------------------------------------------------------------------------
+  menuItems: MenuItem[] = [
+    {
+      label: "Visualizar Reclamo",
+      icon: "visibility",
+      route: "/example/visualizar-reclamo",
+    },
+    {
+      label: "Realizar Reclamo",
+      icon: "add_circle",
+      route: "/example/realizar-reclamo",
+    },
+    {
+      label: "Lista de Reclamos",
+      icon: "list",
+      route: "/example/lista-reclamos",
+    },
+  ]
 
-    /**
-     * Getter for current year
-     */
-    get currentYear(): number {
-        return new Date().getFullYear();
-    }
+  constructor(private router: Router) {}
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
+  ngOnInit(): void {}
 
-    /**
-     * On init
-     */
-    ngOnInit(): void {
-        // Subscribe to navigation data
-        this._navigationService.navigation$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((navigation: Navigation) => {
-                this.navigation = navigation;
-            });
+  ngOnDestroy(): void {}
 
-        // Subscribe to media changes
-        this._erpMediaWatcherService.onMediaChange$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(({ matchingAliases }) => {
-                // Check if the screen is small
-                this.isScreenSmall = !matchingAliases.includes('md');
-            });
-    }
+  toggleSidebar(): void {
+    this.sidebarOpened = !this.sidebarOpened
+  }
 
-    /**
-     * On destroy
-     */
-    ngOnDestroy(): void {
-        // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next(null);
-        this._unsubscribeAll.complete();
-    }
+  navigateTo(route: string): void {
+    this.router.navigate([route])
+    this.closeSidebar()
+  }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
+  closeSidebar(): void {
+    this.sidebarOpened = false
+  }
 
-    /**
-     * Toggle navigation
-     *
-     * @param name
-     */
-    toggleNavigation(name: string): void {
-        // Get the navigation
-        const navigation =
-            this._erpNavigationService.getComponent<ErpVerticalNavigationComponent>(
-                name
-            );
-
-        if (navigation) {
-            // Toggle the opened status
-            navigation.toggle();
-        }
-    }
+  get currentYear(): number {
+    return new Date().getFullYear()
+  }
 }

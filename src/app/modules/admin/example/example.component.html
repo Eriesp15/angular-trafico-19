@@ -1,99 +1,81 @@
-<app-sidebar [opened]="sidebarOpened" (closeSidebar)="closeSidebar()">
-  <div class="dashboard-container">
-    <mat-toolbar color="primary" class="dashboard-header">
-      <div class="header-content">
-        <div class="header-left">
-          <button mat-icon-button (click)="toggleSidebar()" class="menu-button">
-            <mat-icon>menu</mat-icon>
-          </button>
-          <mat-icon class="header-icon">dashboard</mat-icon>
-          <div class="header-text">
-            <!-- Updated title to match mockup -->
-            <h1>Dashboard de Reclamos</h1>
-            <p>Resumen general del sistema de reclamos de equipaje</p>
-          </div>
-        </div>
-        <div class="header-right">
-          <button mat-icon-button>
-            <mat-icon>notifications</mat-icon>
-          </button>
-          <button mat-icon-button>
-            <mat-icon>account_circle</mat-icon>
-          </button>
-        </div>
-      </div>
-    </mat-toolbar>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <mat-icon class="header-icon">dashboard</mat-icon>
+    <div class="header-text">
+      <h1>Dashboard de Reclamos</h1>
+      <p>Resumen general del sistema de reclamos de equipaje</p>
+    </div>
+  </div>
 
-    <div class="dashboard-content">
-      <!-- Updated metrics cards to match mockup -->
-      <div class="metrics-grid">
-        <mat-card class="metric-card">
-          <mat-card-content>
-            <div class="metric-header">
-              <span class="metric-label">Total Reclamos</span>
-              <span class="metric-badge">{{ totalReclamos }}</span>
-            </div>
-            <div class="metric-value">{{ totalReclamos }}</div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="metric-card">
-          <mat-card-content>
-            <div class="metric-header">
-              <span class="metric-label">En Proceso</span>
-              <span class="metric-badge">{{ enProceso }}</span>
-            </div>
-            <div class="metric-value">{{ enProceso }}</div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="metric-card">
-          <mat-card-content>
-            <div class="metric-header">
-              <span class="metric-label">Cerrados</span>
-              <span class="metric-badge">{{ cerrados }}</span>
-            </div>
-            <div class="metric-value">{{ cerrados }}</div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="metric-card">
-          <mat-card-content>
-            <div class="metric-header">
-              <span class="metric-label">Total Indemnizado</span>
-              <span class="metric-badge">$</span>
-            </div>
-            <div class="metric-value">${{ totalIndemnizado }}</div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-
-      <!-- Updated recent claims section to match mockup -->
-      <mat-card class="recent-claims-card">
-        <mat-card-header>
-          <mat-card-title>Reclamos Recientes</mat-card-title>
-        </mat-card-header>
+  <div class="dashboard-content">
+    <!-- Updated metrics cards to match mockup -->
+    <div class="metrics-grid">
+      <mat-card class="metric-card">
         <mat-card-content>
-          <div class="claims-list">
-            <div 
-              *ngFor="let reclamo of reclamos" 
-              class="claim-item"
-              (click)="verDetalle(reclamo.pir)"
-            >
-              <div class="claim-info">
-                <div class="claim-pir">{{ reclamo.pir }}</div>
-                <div class="claim-details">{{ reclamo.pasajero }} - {{ reclamo.bagTag }}</div>
-              </div>
-              <div class="claim-status">
-                <mat-chip [color]="getEstadoColor(reclamo.estado)" selected>
-                  {{ reclamo.estado }}
-                </mat-chip>
-                <div class="claim-date">{{ reclamo.fecha }}</div>
-              </div>
-            </div>
+          <div class="metric-header">
+            <span class="metric-label">Total Reclamos</span>
+            <span class="metric-badge">{{ totalReclamos }}</span>
           </div>
+          <div class="metric-value">{{ totalReclamos }}</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <div class="metric-header">
+            <span class="metric-label">En Proceso</span>
+            <span class="metric-badge">{{ enProceso }}</span>
+          </div>
+          <div class="metric-value">{{ enProceso }}</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <div class="metric-header">
+            <span class="metric-label">Cerrados</span>
+            <span class="metric-badge">{{ cerrados }}</span>
+          </div>
+          <div class="metric-value">{{ cerrados }}</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <div class="metric-header">
+            <span class="metric-label">Total Indemnizado</span>
+            <span class="metric-badge">$</span>
+          </div>
+          <div class="metric-value">${{ totalIndemnizado }}</div>
         </mat-card-content>
       </mat-card>
     </div>
+
+    <!-- Updated recent claims section to match mockup -->
+    <mat-card class="recent-claims-card">
+      <mat-card-header>
+        <mat-card-title>Reclamos Recientes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="claims-list">
+          <div 
+            *ngFor="let reclamo of reclamos" 
+            class="claim-item"
+            (click)="verDetalle(reclamo.pir)"
+          >
+            <div class="claim-info">
+              <div class="claim-pir">{{ reclamo.pir }}</div>
+              <div class="claim-details">{{ reclamo.pasajero }} - {{ reclamo.bagTag }}</div>
+            </div>
+            <div class="claim-status">
+              <mat-chip [color]="getEstadoColor(reclamo.estado)" selected>
+                {{ reclamo.estado }}
+              </mat-chip>
+              <div class="claim-date">{{ reclamo.fecha }}</div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
-</app-sidebar>
+</div>
