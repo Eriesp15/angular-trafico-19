@@ -7,64 +7,116 @@
     </div>
 
     <!-- Tipo de Reclamo -->
-      <div class="claim-type">
-        <label>Tipo de Reclamo</label>
-        <div class="claim-type-options">
-          <button 
-            class="claim-type-btn" 
-            [class.active]="reclamoData.reclamo.tipo === 'AHL'">
-            AHL
-          </button>
-          <button 
-            class="claim-type-btn" 
-            [class.active]="reclamoData.reclamo.tipo === 'DAMAGED'">
-            DAMAGED
-          </button>
-          <button 
-            class="claim-type-btn" 
-            [class.active]="reclamoData.reclamo.tipo === 'PILFERED'">
-            PILFERED
-          </button>
-        </div>
+    <div class="claim-type">
+      <label>Tipo de Reclamo</label>
+      <div class="claim-type-options">
+        <button 
+          class="claim-type-btn" 
+          [class.active]="reclamoData.reclamo.tipo === 'AHL'">
+          AHL
+        </button>
+        <button 
+          class="claim-type-btn" 
+          [class.active]="reclamoData.reclamo.tipo === 'DAMAGED'">
+          DAMAGED
+        </button>
+        <button 
+          class="claim-type-btn" 
+          [class.active]="reclamoData.reclamo.tipo === 'PILFERED'">
+          PILFERED
+        </button>
       </div>
+    </div>
 
-
-      <!-- Datos del Pasajero -->
+    <!-- Datos del Pasajero -->
     <div class="section">
       <h2 class="section-title">Datos del Pasajero</h2>
       <div class="form-grid">
+        <!-- Added all passenger fields from realizar-reclamo -->
         <div class="form-group">
-          <label>Nombre Completo</label>
-          <input type="text" [value]="reclamoData.pasajero.nombreCompleto" readonly>
+          <label>Nombre(s)</label>
+          <div class="input-with-code">
+            <span class="code">NM</span>
+            <input type="text" [value]="reclamoData.pasajero.nombre" readonly>
+          </div>
         </div>
         <div class="form-group">
-          <label>Documento de Identidad</label>
-          <input type="text" [value]="reclamoData.pasajero.documento" readonly>
+          <label>Apellido Paterno</label>
+          <input type="text" [value]="reclamoData.pasajero.apellidoPaterno" readonly>
         </div>
         <div class="form-group">
-          <label>Teléfono de Contacto</label>
-          <input type="text" [value]="reclamoData.pasajero.telefono" readonly>
+          <label>Apellido Materno</label>
+          <input type="text" [value]="reclamoData.pasajero.apellidoMaterno" readonly>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Dirección Permanente del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">PA</span>
+            <input type="text" [value]="reclamoData.pasajero.direccionPermanente" readonly>
+          </div>
         </div>
         <div class="form-group">
-          <label>Email</label>
-          <input type="text" [value]="reclamoData.pasajero.email" readonly>
+          <label>Dirección Temporal del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">TA</span>
+            <input type="text" [value]="reclamoData.pasajero.direccionTemporal" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Teléfono Permanente del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">TP</span>
+            <input type="text" [value]="reclamoData.pasajero.telefonoPermanente" readonly>
+          </div>
         </div>
         <div class="form-group">
-          <label>Dirección</label>
-          <input type="text" [value]="reclamoData.pasajero.direccion" readonly>
+          <label>Teléfono Temporal del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">TP</span>
+            <input type="text" [value]="reclamoData.pasajero.telefonoTemporal" readonly>
+          </div>
         </div>
         <div class="form-group">
-          <label>Nacionalidad</label>
-          <input type="text" [value]="reclamoData.pasajero.nacionalidad" readonly>
+          <label>Correo Electrónico del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">TM</span>
+            <input type="email" [value]="reclamoData.pasajero.email" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nro. de Boleto</label>
+          <div class="input-with-code">
+            <span class="code">TK</span>
+            <input type="text" [value]="reclamoData.pasajero.numeroBoleto" readonly>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Iniciales del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">IT</span>
+            <input type="text" [value]="reclamoData.pasajero.iniciales" readonly>
+          </div>
         </div>
       </div>
     </div>
 
-
-     <!-- Datos del Reclamo -->
+    <!-- Datos del Reclamo -->
     <div class="section">
       <h2 class="section-title">Datos del Reclamo</h2>
       <div class="form-grid">
+        <div class="form-group">
+          <label>Estación Originadora</label>
+          <input type="text" [value]="reclamoData.reclamo.estacion" readonly>
+        </div>
         <div class="form-group">
           <label>Fecha del Reclamo</label>
           <input type="text" [value]="reclamoData.reclamo.fecha" readonly>
@@ -73,16 +125,14 @@
           <label>Hora del Reclamo</label>
           <input type="text" [value]="reclamoData.reclamo.hora" readonly>
         </div>
-        <div class="form-group">
-          <label>Estación Originadora</label>
-          <input type="text" [value]="reclamoData.reclamo.estacion" readonly>
-        </div>
       </div>
 
-      
+      <!-- Added estaciones involucradas field -->
+      <div class="form-group">
+        <label>Estaciones Involucradas</label>
+        <input type="text" [value]="reclamoData.reclamo.estacionesInvolucradas" readonly>
+      </div>
     </div>
-
-    
 
     <!-- Datos del Vuelo -->
     <div class="section">
@@ -106,7 +156,7 @@
         </div>
       </div>
 
-      <!-- Ruta del Vuelo -->
+      <!-- Ruta del Vuelo - Keeping the existing visualization -->
       <div class="flight-route">
         <h3>Ruta del Vuelo</h3>
         <div class="route-visualization">
@@ -124,27 +174,93 @@
       </div>
     </div>
 
-   
-
-    <!-- Detalles - Equipaje Perdido -->
+    <!-- Datos del Equipaje -->
     <div class="section">
-      <h2 class="section-title">Detalles - Equipaje Perdido (AHL)</h2>
+      <h2 class="section-title">Datos del Equipaje</h2>
+      <div class="form-grid">
+        <!-- Added all baggage fields from realizar-reclamo -->
+        <div class="form-group">
+          <label>Aerolíneas - Nro. de Ticket</label>
+          <div class="input-with-code">
+            <span class="code">TN</span>
+            <input type="text" [value]="reclamoData.equipaje.numeroTicket" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Ruta y/o Lugar para Hacer Rastreo</label>
+        <div class="input-with-code">
+          <span class="code">OD</span>
+          <input type="text" [value]="reclamoData.equipaje.ruta" readonly>
+        </div>
+      </div>
+
       <div class="form-grid">
         <div class="form-group">
-          <label>Número de Etiqueta</label>
-          <input type="text" [value]="reclamoData.equipaje.numero" readonly>
+          <label>Nro. de Vuelo - Fecha/Mes</label>
+          <div class="flight-input">
+            <div class="input-with-code">
+              <span class="code">FD</span>
+              <input type="text" [value]="reclamoData.equipaje.numeroVuelo" readonly>
+            </div>
+            <input type="text" [value]="reclamoData.equipaje.fechaVuelo" readonly>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Color Tipo Descripción</label>
+        <div class="input-with-code">
+          <span class="code">CT</span>
+          <input type="text" [value]="reclamoData.equipaje.colorTipo" readonly>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Marca de la Maleta</label>
+        <div class="input-with-code">
+          <span class="code">BI</span>
+          <input type="text" [value]="reclamoData.equipaje.marca" readonly>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Contenido</label>
+        <div class="input-with-code">
+          <span class="code">CC</span>
+          <textarea [value]="reclamoData.equipaje.contenido" readonly rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Descripción del Equipaje</label>
+        <textarea [value]="reclamoData.equipaje.descripcion" readonly rows="2"></textarea>
+      </div>
+    </div>
+
+    <!-- Información del Daño -->
+    <div class="section">
+      <h2 class="section-title">Información del Daño</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Tipo de Daño</label>
+          <input type="text" [value]="reclamoData.dano.tipoDano" readonly>
         </div>
         <div class="form-group">
-          <label>Última Ubicación Conocida</label>
-          <input type="text" [value]="reclamoData.equipaje.ubicacion" readonly>
+          <label>Condición</label>
+          <input type="text" [value]="reclamoData.dano.condicion" readonly>
         </div>
-        <div class="form-group full-width">
-          <label>Descripción del Equipaje</label>
-          <textarea [value]="reclamoData.equipaje.descripcion" readonly rows="2"></textarea>
-        </div>
-        <div class="form-group full-width">
-          <label>Contenido Declarado</label>
-          <textarea [value]="reclamoData.equipaje.contenido" readonly rows="2"></textarea>
+      </div>
+
+      <!-- Added damage parts section -->
+      <div class="form-group full-width" *ngIf="reclamoData.dano.partesAfectadas.length > 0">
+        <label>Partes Afectadas</label>
+        <div class="damage-parts-display">
+          <div class="damage-part-item" *ngFor="let parte of reclamoData.dano.partesAfectadas">
+            <span class="part-code">{{ parte.codigo }}</span>
+            <span class="part-name">{{ parte.nombre }}</span>
+          </div>
         </div>
       </div>
     </div>

@@ -99,6 +99,49 @@
   }
 }
 
+.input-with-code {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .code {
+    background-color: #1e40af;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    min-width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  input,
+  textarea {
+    flex: 1;
+  }
+}
+
+.flight-input {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .input-with-code {
+    flex: 2;
+  }
+
+  > input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #111827;
+    background-color: #f9fafb;
+  }
+}
+
 .flight-route {
   margin-top: 24px;
 
@@ -173,7 +216,10 @@
 }
 
 .claim-type {
-  margin-top: 20px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 8px;
 
   label {
     display: block;
@@ -205,6 +251,41 @@
     background-color: #1e40af;
     border-color: #1e40af;
     color: white;
+  }
+}
+
+.damage-parts-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.damage-part-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  background-color: #eff6ff;
+  border: 2px solid #1e40af;
+  border-radius: 6px;
+
+  .part-code {
+    background-color: #1e40af;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 1rem;
+    min-width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .part-name {
+    font-size: 0.875rem;
+    color: #374151;
+    font-weight: 500;
   }
 }
 
@@ -263,5 +344,13 @@
 @media print {
   .actions {
     display: none;
+  }
+
+  .visualizar-pir {
+    padding: 0;
+  }
+
+  .pir-container {
+    box-shadow: none;
   }
 }
