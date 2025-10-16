@@ -38,6 +38,7 @@ type LlamadaRow = {
 })
 export class SeguimientoComponent {
     expediente = {
+        expediente: '71818',
         tipo: 'DPR',
         nombres: 'Juan Andres Lopez Herbas',
         celular: '63878701',

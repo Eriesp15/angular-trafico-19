@@ -6,6 +6,7 @@ import { LayoutComponent } from 'app/layout/layout.component';
 import { CerradoComponent } from 'app/modules/reclamo/cerrado/cerrado.component';
 import { SeguimientoComponent } from 'app/modules/reclamo/seguimiento/seguimiento.component';
 
+
 // @formatter:off
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -59,9 +60,12 @@ export const appRoutes: Route[] = [
         },
         children: [
             { path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes') },
+            { path: 'reclamo/empresas', loadComponent: () => import('app/modules/reclamo/empresas/empresas.component').then(m => m.EmpresasComponent), },
+            { path: 'reclamo/empresas/:id/asignaciones', loadComponent: () => import('app/modules/reclamo/empresas/lista-asignaciones/lista-asignaciones.component').then(m => m.ListaAsignacionesComponent), },
             { path: 'reclamo/:id/hoja', component: SeguimientoComponent },
             { path: 'reclamo', loadChildren: () => import('app/modules/reclamo/reclamo.module').then(m => m.ReclamoModule) },
             { path: 'reclamo/:id/cerrado', component: CerradoComponent },  // Ruta de cerrado
+
         ]
     }
 ];
