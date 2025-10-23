@@ -1,0 +1,15 @@
+@use '../modales/modales.scss' as *;
+
+:root { --celeste:#B9E0FA; --borde:#E5E7EB; --azul:#022F70; --tabla-bg:#FEFDFB; }
+
+:host { display:block; padding:1rem 1.5rem; background:#F3F6FB; }
+
+h1 { color: var(--azul); font-weight:800; margin:0; }
+.header-seccion{ color:#111827; }
+
+.card { border:1px solid var(--borde); border-radius:1rem; background:var(--tabla-bg); box-shadow:0 4px 10px rgba(0,0,0,.06); }
+
+table { width:100%; border-collapse:collapse; }
+thead { background:#E5F0FB; }
+th, td { padding:.75rem; border-bottom: 1px solid var(--borde); }
+.link { color: var(--azul); font-weight:700; text-decoration: underline; }
