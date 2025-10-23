@@ -181,13 +181,14 @@
     grid-template-columns: 100px 70px 160px 1fr;
     align-items: start;
     background: #fff;
-    padding: 10px 12px;
+    padding-right: 400px;
     border-top: 1px solid #e4ecf5;
     position: relative;
 }
 
 .table-body .row.five-cols {
     grid-template-columns: 100px 70px 170px 200px 1fr;
+    padding-right: 220px;
 }
 
 .cell-input,
@@ -223,4 +224,71 @@
     right: 8px;
     top: 8px;
     color: #cc3344;
+}
+/* Estado bloqueado (tras confirmar) */
+.locked-row input,
+.locked-row textarea {
+    background: #f6f7fb !important;
+    border-color: #e0e6f1 !important;
+    color: #55647a !important;
+    pointer-events: none;
+}
+
+.row-tools {
+    position: absolute;
+    right: 12px;
+    top: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    z-index: 5;
+}
+
+.canal-toggle {
+    background: #f2f6fc;
+    border-radius: 8px;
+    padding: 2px;
+}
+
+.confirm-btn {
+    border-color: #0b4a8e !important;
+    color: #0b4a8e !important;
+}
+
+.row-status {
+    position: absolute;
+    right: 12px;
+    top: 8px;
+}
+
+mat-chip {
+    font-weight: 600;
+    color: #123a66;
+    background: #e8f0fe;
+}
+
+.chip-wa {
+    background: #e7f7ee;
+    color: #0f5132;
+}
+.chip-mail {
+    background: #eef4ff;
+    color: #1a3e79;
+}
+.chip-nota {
+    background: #fff7e6;
+    color: #7a4a00;
+}
+/* Chip para el estado de llamada confirmada */
+.chip-llamada {
+    background: #fff3cd;
+    color: #7a4a00;
+    font-weight: 600;
+}
+
+/* Responsive: en pantallas chicas, que los botones bajen y no floten a la derecha */
+@media (max-width: 768px) {
+    .table-body .row,
+    .table-body .row.five-cols { padding-right: 0; }
+    .row-tools { position: static; margin-top: 8px; justify-content: flex-end; }
 }

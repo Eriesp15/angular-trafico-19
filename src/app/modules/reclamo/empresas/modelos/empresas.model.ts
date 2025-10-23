@@ -1,9 +1,12 @@
-export type TipoEmpresa = 'Transporte' | 'Reparación' | 'Limpieza';
+export enum EstadoAsignacion {
+    Pendiente = 'Pendiente',
+    Entregado = 'Entregado',
+}
 
 export interface Tipo {
     id: string;
-    nombre: TipoEmpresa | string;
-    activo: boolean;
+    nombre: string;
+    activo: boolean; // <- lo pide tu servicio
 }
 
 export interface Empresa {
@@ -17,15 +20,13 @@ export interface Empresa {
     activo: boolean;
 }
 
-export type EstadoAsignacion = 'Pendiente' | 'Entregado';
-
 export interface Asignacion {
     id: string;
     empresaId: string;
     tipoReclamo: 'DPR' | 'AHL' | 'PIL' | 'OHD';
-    pir: string; // PIR00....
+    pir: string;
     pasajero: string;
     fechaAsignacion: string; // ISO yyyy-MM-dd
-    fechaEntrega?: string;   // ISO
+    fechaEntrega?: string;   // ISO yyyy-MM-dd
     estado: EstadoAsignacion;
 }

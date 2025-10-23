@@ -1,10 +1,11 @@
 :root {
     --azul:#022F70; --azul-hover:#002D8F; --amarillo:#FFB60D;
     --celeste:#B9E0FA; --celeste-40: rgba(185,224,250,.40); --borde:#E5E7EB;
+    --modal-bg:#FEFDFB; /* solicitado */
 }
 
 .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; }
-.modal { background:#fff; border-radius:1rem; width:min(620px, 92vw); padding:1rem; border:1px solid var(--borde); }
+.modal { background:var(--modal-bg); border-radius:1rem; width:min(620px, 92vw); padding:1rem; border:1px solid var(--borde); box-shadow: 0 10px 20px rgba(0,0,0,.15); }
 .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem; }
 
 .btn { padding:.6rem 1rem; border-radius:.6rem; border:1px solid transparent; cursor:pointer; background:var(--celeste-40); }
@@ -12,5 +13,6 @@
 .btn-primario { background: var(--azul); color: #fff; }
 .btn-primario:hover { background: var(--azul-hover); }
 .btn-amarillo { background: var(--amarillo); color:#1f2937; }
+
 .input, select { width:100%; padding:.55rem .7rem; border:1px solid var(--borde); border-radius:.6rem; }
 .row { display:flex; gap:1rem; } .col { flex:1; }
