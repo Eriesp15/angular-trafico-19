@@ -305,12 +305,12 @@ export class SeguimientoComponent {
             s.info =
                 `Se le envió mensaje con el siguiente contenido: ` +
                 `"Señor/a ${nombre}, le hablamos por el reclamo de su maleta (Exp. ${exp}). ` +
-                `Se le informa que ____________________. Que tenga un buen día."`;
+                `Se le informa que . Que tenga un buen día."`;
         } else {
             // nota en oficina
             s.info =
                 `Atención en oficina: Se brindó información al pasajero ${nombre} ` +
-                `respecto a su reclamo (Exp. ${exp}). Detalle: ____________________.`;
+                `respecto a su reclamo (Exp. ${exp}). Detalle:  .`;
         }
     }
 
