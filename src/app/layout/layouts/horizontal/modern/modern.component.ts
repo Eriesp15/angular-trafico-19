@@ -80,6 +80,10 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
     this.closeSidebar();
   }
 
+  navigateToHome(): void {
+    this.router.navigate(['/example']);
+  }
+
   closeSidebar(): void {
     this.sidebarOpened = false;
   }

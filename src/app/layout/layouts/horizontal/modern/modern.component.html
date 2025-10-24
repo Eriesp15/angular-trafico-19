@@ -8,12 +8,15 @@
     mode="over"
     position="start"
     (closed)="closeSidebar()"
-    class="custom-sidebar"
+    class="dark bg-gray-900"
   >
-    <div class="sidebar-header">
-      <button mat-icon-button (click)="closeSidebar()">
-        <mat-icon>close</mat-icon>
-      </button>
+    <!-- Navigation header -->
+    <div class="flex h-20 items-center px-8 pt-6">
+      <img
+        class="w-24"
+        src="images/logo/logo-text-on-dark.svg"
+        alt="Logo image"
+      />
     </div>
 
     <mat-nav-list>
@@ -32,8 +35,8 @@
     <div class="flex flex-col h-full w-full">
       <!-- Header -->
       <div class="bg-card relative z-49 flex h-16 w-full flex-0 items-center px-4 shadow dark:border-b dark:bg-transparent dark:shadow-none sm:h-20 md:px-6 print:hidden">
-        <!-- Logo -->
-        <div class="mx-2 flex items-center lg:mr-8">
+        <!-- Logo (clickeable) -->
+        <div class="mx-2 flex items-center lg:mr-8 cursor-pointer" (click)="navigateToHome()">
           <div class="hidden lg:flex">
             <img class="w-24 dark:hidden" src="images/erp/boa_logo_blue.png" alt="BoA Logo" />
             <img class="hidden w-24 dark:flex" src="images/erp/boa_logo_white.png" alt="BoA Logo" />
