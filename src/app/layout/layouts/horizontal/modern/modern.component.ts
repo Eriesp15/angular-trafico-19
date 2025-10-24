@@ -73,6 +73,11 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
       icon: "close",
       route: "reclamo/:id/cerrado",
     },
+    {
+      label: "Lista Empresas",
+      icon: "business",
+      route: "reclamo/empresas",
+    },
   ];
 
   constructor(private router: Router) {}
