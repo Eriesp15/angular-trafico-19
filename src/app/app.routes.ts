@@ -3,6 +3,8 @@ import { initialDataResolver } from "app/app.resolvers"
 import { AuthGuard } from "app/core/auth/guards/auth.guard"
 import { NoAuthGuard } from "app/core/auth/guards/noAuth.guard"
 import { LayoutComponent } from "app/layout/layout.component"
+import { CerradoComponent } from "app/modules/reclamo/cerrado/cerrado.component"
+import { SeguimientoComponent } from "app/modules/reclamo/seguimiento/seguimiento.component"
 
 // @formatter:off
 /* eslint-disable max-len */
@@ -12,10 +14,6 @@ export const appRoutes: Route[] = [
   { path: "", pathMatch: "full", redirectTo: "example" },
 
   // Redirect signed-in user to the '/example'
-  //
-  // After the user signs in, the sign-in page will redirect the user to the 'signed-in-redirect'
-  // path. Below is another redirection for that path to redirect the user to the desired
-  // location. This is a small convenience to keep all main routes together here on this file.
   { path: "signed-in-redirect", pathMatch: "full", redirectTo: "example" },
 
   // Auth routes for guests
@@ -56,7 +54,7 @@ export const appRoutes: Route[] = [
     ],
   },
 
-  // Admin routes
+  // Admin routes - Combined from both branches
   {
     path: "",
     canActivate: [AuthGuard],
@@ -65,6 +63,25 @@ export const appRoutes: Route[] = [
     resolve: {
       initialData: initialDataResolver,
     },
-    children: [{ path: "example", loadChildren: () => import("app/modules/admin/example/example.routes") }],
+    children: [
+      { path: "example", loadChildren: () => import("app/modules/admin/example/example.routes") },
+      {
+        path: "reclamo/empresas",
+        loadComponent: () => import("app/modules/reclamo/empresas/empresas.component").then((m) => m.EmpresasComponent),
+      },
+      {
+        path: "reclamo/empresas/:id/asignaciones",
+        loadComponent: () =>
+          import("app/modules/reclamo/empresas/lista-asignaciones/lista-asignaciones.component").then(
+            (m) => m.ListaAsignacionesComponent,
+          ),
+      },
+      { path: "reclamo/:id/hoja", component: SeguimientoComponent },
+      {
+        path: "reclamo",
+        loadChildren: () => import("app/modules/reclamo/reclamo.module").then((m) => m.ReclamoModule),
+      },
+      { path: "reclamo/:id/cerrado", component: CerradoComponent },
+    ],
   },
 ]

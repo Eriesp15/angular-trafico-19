@@ -1,0 +1,42 @@
+<h1 class="link">Reparacion</h1>
+<p class="header-seccion">Lista de Equipajes en Reparación</p>
+
+<div class="pill">Empresa: <b>{{empresa?.nombre}}</b></div>
+
+<div class="card" style="margin-top:.8rem; padding:0">
+    <table style="width:100%; border-collapse:collapse">
+        <thead style="background:#E5F0FB; color:#111827">
+        <tr>
+            <th style="text-align:left; padding:.7rem">Tipo reclamo</th>
+            <th style="text-align:left; padding:.7rem">PIR</th>
+            <th style="text-align:left; padding:.7rem">Pasajero</th>
+            <th style="text-align:left; padding:.7rem">Fecha Asignación</th>
+            <th style="text-align:left; padding:.7rem">Fecha de Entrega</th>
+            <th style="text-align:left; padding:.7rem">Estado</th>
+            <th style="text-align:left; padding:.7rem">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let r of filas()"
+            [style.color]="r.estado==='Pendiente' ? '#DC2626' : '#111827'">
+            <td style="padding:.7rem">{{r.tipoReclamo}}</td>
+            <td style="padding:.7rem"><a class="link">{{r.pir}}</a></td>
+            <td style="padding:.7rem">{{r.pasajero}}</td>
+            <td style="padding:.7rem">{{r.fechaAsignacion}}</td>
+            <td style="padding:.7rem">{{r.fechaEntrega || '-'}}</td>
+            <td style="padding:.7rem"><b>{{r.estado}}</b></td>
+            <td style="padding:.7rem">
+                <button class="btn" (click)="cambiarEstado(r.id, r.estado, r.pir)">Cambiar estado</button>
+                <button class="btn" (click)="eliminar(r.id, r.pir)">🗑️</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<app-modal-confirmacion
+    [abierto]="confirmarAbierto"
+    [mensaje]="confirmarMsg"
+    (confirmar)="confirmar()"
+    (cancelar)="cerrarConfirmacion()">
+</app-modal-confirmacion>

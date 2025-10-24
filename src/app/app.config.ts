@@ -22,6 +22,8 @@ export const appConfig: ApplicationConfig = {
       withPreloading(PreloadAllModules),
       withInMemoryScrolling({ scrollPositionRestoration: "enabled" }),
     ),
+    // Mock API provider from seguimiento-melvi branch
+    { provide: "mockApi", useValue: mockApiServices },
 
     // Material Date Adapter
     {

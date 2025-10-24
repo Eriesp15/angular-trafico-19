@@ -1,0 +1,35 @@
+<div class="empresas-page">
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1 class="titulo">Empresas</h1>
+                <p class="subtitulo">Gestión de empresas</p>
+            </div>
+
+            <button class="btn btn-primario header-add" (click)="agregarTipo()">
+                <span class="header-add-text">Agregar Tipo de Empresa</span>
+                <span class="plus-circle">＋</span>
+            </button>
+        </div>
+
+        <ng-container *ngFor="let t of tipos">
+            <div class="tipo-strip">
+                <span>Tipo de Empresa:&nbsp;<b class="tipo-nombre">{{ t.nombre }}</b></span>
+                <button class="btn btn-amarillo btn-round" (click)="agregarEmpresa(t.id)">＋</button>
+            </div>
+
+            <div class="cards-grid">
+                <app-card-empresa
+                    *ngFor="let e of empresasPorTipo(t.id)"
+                    [empresa]="e"
+                    (verLista)="verLista($event)"
+                    (asignar)="alert('Abrir modal Asignar para ' + $event.nombre)"
+                    (editar)="alert('Abrir modal Editar empresa '+$event.nombre)"
+                    (toggleConfirmado)="confirmarToggle($event)">
+                </app-card-empresa>
+            </div>
+        </ng-container>
+    </div>
+
+    <button class="float-add btn btn-amarillo" (click)="agregarEmpresa('')">＋</button>
+</div>
