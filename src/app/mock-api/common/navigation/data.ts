@@ -7,7 +7,7 @@ export const defaultNavigation: ErpNavigationItem[] = [
         title: 'Ejemplo',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/example'
+        link : '/dashboard'
     }
 ];
 export const compactNavigation: ErpNavigationItem[] = [
@@ -16,7 +16,7 @@ export const compactNavigation: ErpNavigationItem[] = [
         title: 'Ejemplo',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/example'
+        link : '/dashboard'
     }
 ];
 export const futuristicNavigation: ErpNavigationItem[] = [
@@ -25,7 +25,7 @@ export const futuristicNavigation: ErpNavigationItem[] = [
         title: 'Ejemplo',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/example'
+        link : '/dashboard'
     }
 ];
 export const horizontalNavigation: ErpNavigationItem[] = [
@@ -34,6 +34,6 @@ export const horizontalNavigation: ErpNavigationItem[] = [
         title: 'Ejemplo',
         type : 'basic',
         icon : 'heroicons_outline:chart-pie',
-        link : '/example'
+        link : '/dashboard'
     }
 ];

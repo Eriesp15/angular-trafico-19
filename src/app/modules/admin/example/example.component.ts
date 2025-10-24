@@ -77,7 +77,7 @@ export class ExampleComponent {
   }
 
   verDetalle(pir: string): void {
-    this.router.navigate(["/example/reclamo", pir])
+    this.router.navigate(["/dashboard/claim", pir])
   }
 
   getEstadoColor(estado: string): string {

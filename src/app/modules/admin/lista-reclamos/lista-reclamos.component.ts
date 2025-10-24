@@ -93,6 +93,6 @@ export class ListaReclamosComponent {
   }
 
   verDetalle(pir: string): void {
-    this.router.navigate(["/example/reclamo", pir])
+    this.router.navigate(["/dashboard/claim", pir])
   }
 }

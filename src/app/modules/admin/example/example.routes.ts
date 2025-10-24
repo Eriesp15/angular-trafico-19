@@ -8,23 +8,23 @@ const routes: Routes = [
     data: { title: "Dashboard de Operador" },
   },
   {
-    path: "reclamo/:id",
+    path: "claim/:id",
     loadComponent: () => import("../detalle-reclamo/detalle-reclamo.component").then((c) => c.DetalleReclamoComponent),
     data: { title: "Detalle de Reclamo" },
   },
   {
-    path: "visualizar-reclamo",
+    path: "claim-view",
     loadComponent: () => import("../detalle-reclamo/detalle-reclamo.component").then((c) => c.DetalleReclamoComponent),
     data: { title: "Visualizar Reclamo PIR" },
   },
   {
-    path: "realizar-reclamo",
+    path: "make-claim",
     loadComponent: () =>
       import("../realizar-reclamo/realizar-reclamo.component").then((c) => c.RealizarReclamoComponent),
     data: { title: "Realizar Reclamo" },
   },
   {
-    path: "lista-reclamos",
+    path: "claims-list",
     loadComponent: () => import("../lista-reclamos/lista-reclamos.component").then((c) => c.ListaReclamosComponent),
     data: { title: "Lista de Reclamos" },
   },

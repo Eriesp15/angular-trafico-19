@@ -10,10 +10,10 @@ import { SeguimientoComponent } from "app/modules/reclamo/seguimiento/seguimient
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
-  // Redirect empty path to '/example'
-  { path: "", pathMatch: "full", redirectTo: "example" },
+  // Redirect empty path to '/dashboard'
+  { path: "", pathMatch: "full", redirectTo: "dashboard" },
 
-  // Redirect signed-in user to the '/example'
+  // Redirect signed-in user to the '/dashboard'
   { path: "signed-in-redirect", pathMatch: "full", redirectTo: "example" },
 
   // Auth routes for guests
@@ -64,7 +64,7 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: "example", loadChildren: () => import("app/modules/admin/example/example.routes") },
+      { path: "dashboard", loadChildren: () => import("app/modules/admin/example/example.routes") },
       {
         path: "reclamo/empresas",
         loadComponent: () => import("app/modules/reclamo/empresas/empresas.component").then((m) => m.EmpresasComponent),
@@ -78,7 +78,7 @@ export const appRoutes: Route[] = [
       },
       { path: "reclamo/:id/hoja", component: SeguimientoComponent },
       {
-        path: "reclamo",
+        path: "claim",
         loadChildren: () => import("app/modules/reclamo/reclamo.module").then((m) => m.ReclamoModule),
       },
       { path: "reclamo/:id/cerrado", component: CerradoComponent },

@@ -27,17 +27,17 @@ export class SidebarComponent {
     {
       label: "Visualizar Reclamo",
       icon: "visibility",
-      route: "/example/visualizar-reclamo",
+      route: "/dashboard/claim-view",
     },
     {
       label: "Realizar Reclamo",
       icon: "add_circle",
-      route: "/example/realizar-reclamo",
+      route: "/dashboard/make-claim",
     },
     {
       label: "Lista de Reclamos",
       icon: "list",
-      route: "/example/lista-reclamos",
+      route: "/dashboard/claims-list",
     },
   ]
 
