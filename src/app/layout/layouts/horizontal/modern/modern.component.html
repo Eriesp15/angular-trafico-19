@@ -1,3 +1,6 @@
+<!-- Loading bar -->
+<erp-loading-bar></erp-loading-bar>
+
 <mat-sidenav-container class="h-screen w-full">
   <mat-sidenav
     #sidenav
@@ -28,23 +31,42 @@
   <mat-sidenav-content class="h-screen w-full">
     <div class="flex flex-col h-full w-full">
       <!-- Header -->
-      <div class="bg-white relative z-49 flex h-16 items-center px-4 shadow sm:h-20 md:px-6 flex-shrink-0">
+      <div class="bg-card relative z-49 flex h-16 w-full flex-0 items-center px-4 shadow dark:border-b dark:bg-transparent dark:shadow-none sm:h-20 md:px-6 print:hidden">
+        <!-- Logo -->
         <div class="mx-2 flex items-center lg:mr-8">
-          <img class="w-24" src="images/erp/boa_logo_blue.png" alt="BoA Logo" />
+          <div class="hidden lg:flex">
+            <img class="w-24 dark:hidden" src="images/erp/boa_logo_blue.png" alt="BoA Logo" />
+            <img class="hidden w-24 dark:flex" src="images/erp/boa_logo_white.png" alt="BoA Logo" />
+          </div>
         </div>
-        <button mat-icon-button (click)="toggleSidebar()" class="ml-auto">
+
+        <!-- Navigation toggle button -->
+        <button mat-icon-button (click)="toggleSidebar()">
           <mat-icon>menu</mat-icon>
         </button>
+
+        <!-- Components -->
+        <div class="ml-auto flex items-center space-x-0.5 pl-2 sm:space-x-2">
+          <languages></languages>
+          <erp-fullscreen class="hidden md:block"></erp-fullscreen>
+          <search [appearance]="'bar'"></search>
+          <scheme></scheme>
+          <theme></theme>
+          <notifications></notifications>
+          <user></user>
+        </div>
       </div>
 
-      <!-- Contenido principal -->
-      <div class="flex-1 overflow-auto">
-        <router-outlet></router-outlet>
+      <!-- Content -->
+      <div class="flex w-full flex-auto flex-col">
+        @if (true) {
+          <router-outlet></router-outlet>
+        }
       </div>
 
       <!-- Footer -->
-      <div class="bg-white relative z-49 flex h-14 items-center border-t px-4 sm:h-20 md:px-6 flex-shrink-0">
-        <span class="text-gray-600 font-medium">
+      <div class="bg-card relative z-49 flex h-14 w-full flex-0 items-center border-t px-4 dark:bg-transparent sm:h-20 md:px-6 print:hidden">
+        <span class="text-secondary font-medium">
           Erp BoA &copy; {{ currentYear }} Boliviana de Aviación - Todos los derechos reservados
         </span>
       </div>
