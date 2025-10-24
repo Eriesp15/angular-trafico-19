@@ -1,0 +1,339 @@
+<div class="realizar-reclamo-container">
+  <div class="header">
+    <h1>Formulario PIR</h1>
+    <p class="subtitle">Completa la información del reclamo</p>
+  </div>
+
+  <div class="content">
+    <!-- Datos del Pasajero -->
+    <div class="section">
+      <h2 class="section-title">Datos del pasajero</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre(s)</label>
+          <div class="input-with-code">
+            <span class="code">NM</span>
+            <input type="text" [(ngModel)]="passengerData.firstName" placeholder="Juan Andres" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Apellido paterno</label>
+          <input type="text" [(ngModel)]="passengerData.paternalLastName" placeholder="López" />
+        </div>
+        <div class="form-group">
+          <label>Apellido materno</label>
+          <input type="text" [(ngModel)]="passengerData.maternalLastName" placeholder="Herbas" />
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Dirección permanente del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">PA</span>
+            <input type="text" [(ngModel)]="passengerData.permanentAddress" placeholder="Juan Andres" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Dirección temporal del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">TA</span>
+            <input type="text" [(ngModel)]="passengerData.temporaryAddress" placeholder="Av. Segunda c/La paz" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Teléfono permanente del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">TP</span>
+            <input type="text" [(ngModel)]="passengerData.permanentPhone" placeholder="66666666" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Teléfono temporal del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">TP</span>
+            <input type="text" [(ngModel)]="passengerData.temporaryPhone" placeholder="66666666" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico del pasajero</label>
+          <div class="input-with-code">
+            <span class="code">TM</span>
+            <input type="email" [(ngModel)]="passengerData.email" placeholder="ejemplo@gmail.com" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nro. de boleto</label>
+          <div class="input-with-code">
+            <span class="code">TK</span>
+            <input type="text" [(ngModel)]="passengerData.ticketNumber" placeholder="00000" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Iniciales del pasajero</label>
+          <div class="input-with-code">
+            <span class="code">IT</span>
+            <input type="text" [(ngModel)]="passengerData.initials" placeholder="ABCD" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos del Reclamo -->
+    <div class="section">
+      <h2 class="section-title">Datos del reclamo</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Estación originador</label>
+          <input type="text" [(ngModel)]="claimData.originStation" placeholder="CBBLOR" />
+        </div>
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" [(ngModel)]="claimData.date" />
+        </div>
+        <div class="form-group">
+          <label>Hora</label>
+          <input type="time" [(ngModel)]="claimData.time" />
+        </div>
+        <div class="form-group">
+          <label>Tipo reclamo</label>
+          <div class="claim-type-buttons">
+            <button
+              type="button"
+              [class.active]="claimData.claimType === 'AHL'"
+              (click)="claimData.claimType = 'AHL'"
+            >
+              AHL
+            </button>
+            <button
+              type="button"
+              [class.active]="claimData.claimType === 'DAMAGED'"
+              (click)="claimData.claimType = 'DAMAGED'"
+            >
+              DAMAGED
+            </button>
+            <button
+              type="button"
+              [class.active]="claimData.claimType === 'PILFERED'"
+              (click)="claimData.claimType = 'PILFERED'"
+            >
+              PILFERED
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Estaciones involucradas</label>
+        <div class="search-input">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input type="text" [(ngModel)]="claimData.involvedStations" placeholder="Buscar/seleccionar estación" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos del Equipaje -->
+    <div class="section">
+      <h2 class="section-title">Datos del equipaje</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Aerolíneas - Nro. de ticket</label>
+          <div class="input-with-code">
+            <span class="code">TN</span>
+            <input type="text" [(ngModel)]="baggageData.ticketNumber" placeholder="OB2373000" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Ruta y/o lugar para hacer rastreo</label>
+        <div class="route-input">
+          <div class="input-with-code">
+            <span class="code">OD</span>
+            <input type="text" [(ngModel)]="baggageData.route" placeholder="" />
+          </div>
+          <button type="button" class="btn-edit">editar</button>
+          <div class="search-input">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input type="text" placeholder="Buscar/seleccionar estación" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nro. de vuelo - Fecha/mes</label>
+          <div class="flight-input">
+            <div class="input-with-code">
+              <span class="code">FD</span>
+              <input type="text" [(ngModel)]="baggageData.flightNumber" placeholder="OB7564" />
+            </div>
+            <input type="text" [(ngModel)]="baggageData.flightDate" placeholder="03/10" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Color tipo descripción</label>
+        <div class="input-with-button">
+          <button type="button" class="btn-add" (click)="openBaggageModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          <div class="input-with-code">
+            <span class="code">CT</span>
+            <input type="text" [(ngModel)]="baggageData.colorType" placeholder="" readonly />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Marca de la maleta</label>
+        <div class="input-with-button">
+          <button type="button" class="btn-add">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          <div class="input-with-code">
+            <span class="code">BI</span>
+            <input type="text" [(ngModel)]="baggageData.brand" placeholder="" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Contenido</label>
+        <div class="input-with-button">
+          <button type="button" class="btn-add">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+          <div class="input-with-code">
+            <span class="code">CC</span>
+            <input type="text" [(ngModel)]="baggageData.content" placeholder="" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información del Daño -->
+    <div class="section">
+      <h2 class="section-title">Información del daño</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Tipo de daño</label>
+          <input type="text" placeholder="" />
+        </div>
+        <div class="form-group">
+          <label>Condición</label>
+          <input type="text" placeholder="" />
+        </div>
+      </div>
+      <button type="button" class="btn-indicate-damage" (click)="openDamageModal()">
+        Indicar daño
+      </button>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-submit" (click)="submitClaim()">
+        Guardar Reclamo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Selección de Equipaje -->
+<div class="modal-overlay" *ngIf="showBaggageModal" (click)="closeBaggageModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Color equipaje</h3>
+      <button class="btn-close" (click)="closeBaggageModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="baggage-grid">
+        <div
+          *ngFor="let type of baggageTypes"
+          class="baggage-item"
+          [class.selected]="selectedBaggageType?.code === type.code"
+          (click)="selectBaggageType(type)"
+        >
+          <div class="baggage-code">{{ type.code }}</div>
+          <div class="baggage-image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="8" width="18" height="12" rx="2" ry="2"></rect>
+              <path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path>
+              <line x1="12" y1="14" x2="12" y2="14.01"></line>
+            </svg>
+          </div>
+          <div class="baggage-name">{{ type.name }}</div>
+          <div class="baggage-barcode">|||||||||||</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Indicar Daño -->
+<div class="modal-overlay" *ngIf="showDamageModal" (click)="closeDamageModal()">
+  <div class="modal-content modal-damage" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Tipo Daño</h3>
+      <button class="btn-close" (click)="closeDamageModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="damage-selector">
+        <select class="damage-dropdown">
+          <option>Seleccionar daño</option>
+        </select>
+      </div>
+
+      <div class="damage-diagram">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%7BC11D1D16-AD2C-4FF2-95E5-34E4494DE0ED%7D-oBildKzjvnLjWVyBQbdZzkHazwXNyj.png" alt="Diagrama de maleta" />
+      </div>
+
+      <div class="damage-parts">
+        <div
+          *ngFor="let part of damageParts"
+          class="damage-part"
+          [class.selected]="part.selected"
+          (click)="toggleDamagePart(part)"
+        >
+          <div class="part-code">{{ part.code }}</div>
+          <div class="part-name">{{ part.name }}</div>
+        </div>
+      </div>
+
+      <button type="button" class="btn-save-damage" (click)="saveDamage()">
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>
