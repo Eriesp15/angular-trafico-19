@@ -18,67 +18,97 @@
 .no-print{ display:inline-flex; }
 
 /* ===========================
-   IMPRESIÓN (idéntico a tabla en pantalla)
+   IMPRESIÓN
    =========================== */
 @media print {
     .no-print, button, mat-icon-button, .table-actions, .row-tools { display:none!important; }
 
-    body{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    @page{ size:A4 portrait; margin:10mm 12mm; }
-    .seguimiento-container{ padding:0!important; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4 portrait; margin: 8mm 10mm; }
+    .seguimiento-container { padding: 0!important; }
 
-    .panel, .table-card{ box-shadow:none!important; border:1px solid #b9c6d8; }
-    .panel-header, .table-header{ background:#A7C1DF!important; color:#0B4A8E!important; }
+    .panel, .table-card { box-shadow:none!important; border:1px solid #b9c6d8; }
+    .panel-header, .table-header { background:#A7C1DF!important; color:#0B4A8E!important; }
+    * { line-height:1.1!important; font-size:12px!important; }
 
-    *{ line-height:1.1!important; font-size:12px!important; }
-
-    /* Oculta etiquetas móviles ::before para que no dupliquen cabeceras */
+    /* Oculta etiquetas móviles ::before */
     .table-body .row > div::before,
     .table-body .row.five-cols > div::before {
-        content: "" !important;
-        display: none !important;
+        content:"" !important; display:none !important;
     }
 
-    /* Misma grilla que en pantalla */
-    .table-header{
-        display:grid!important;
-        grid-template-columns:120px 80px 170px 1fr !important; /* Seguimientos */
+    /* === PRIMERA TABLA (Seguimientos) — 4 columnas y INFO más ancha === */
+    .table-card:first-of-type .table-header{
+        display:grid !important;
+        grid-template-columns: 90px 65px 110px minmax(0,1fr) !important; /* Fecha | Hora | Encargado | Información */
     }
-    .table-header.five-cols{
-        display:grid!important;
-        grid-template-columns:120px 80px 190px 200px 1fr !important; /* Llamadas */
+    .table-card:first-of-type .table-body .row{
+        display:grid !important;
+        grid-template-columns: 90px 65px 110px minmax(0,1fr) !important;
+        padding: 4px 8px !important;
+        margin: 0 !important;
+        padding-right: 0 !important;
+        position: static !important;
     }
-    .table-body .row{
-        display:grid!important;
-        grid-template-columns:100px 70px 160px 1fr !important; /* Seguimientos */
-        padding:4px 8px !important; margin:0!important; padding-right:0!important;
-        position:static!important;
+    /* Asegura que el área de Información use el 100% del ancho y sea más alta */
+    .table-card:first-of-type .table-body .row > div:nth-child(4) .cell-textarea,
+    .table-card:first-of-type .table-body .row > div:nth-child(4) textarea{
+        width: 100% !important;
+        box-sizing: border-box;
+        min-height: 90px !important;
+        height: auto !important;
+        resize: none !important;
+        overflow: visible !important;
+        white-space: normal !important;
     }
-    .table-body .row.five-cols{
-        grid-template-columns:100px 70px 170px 200px 1fr !important; /* Llamadas */
-        padding-right:0!important;
+    /* “• Guardado” debajo del texto (sin crear nueva columna) */
+    .table-card:first-of-type .table-body .row.locked-row > div:nth-child(4)::after{
+        content: "  •  Guardado";
+        display: block;
+        margin-top: 4px;
+        font-weight: 600;
+        color: #1c3655;
+        white-space: nowrap;
     }
 
-    /* Sin chips/estados flotantes */
-    .row-status { display:none!important; }
-
-    /* Texto “• Guardado” en la misma celda */
-    .table-body .row.locked-row > div:nth-child(4)::after{
-        content:"  •  Guardado";
-        display:inline-block; margin-left:6px; font-weight:600; color:#1c3655; white-space:nowrap;
+    /* === SEGUNDA TABLA (Llamadas/Contacto) — 5 columnas como siempre === */
+    .table-card:nth-of-type(2) .table-header{
+        display:grid !important;
+        grid-template-columns: 100px 60px 140px 160px minmax(0,1fr) !important; /* sin columna extra */
     }
-    .table-body .row.five-cols.locked-row > div:nth-child(5)::after{
-        content:"  •  Guardado";
-        display:inline-block; margin-left:6px; font-weight:600; color:#1c3655; white-space:nowrap;
+    .table-card:nth-of-type(2) .table-body .row{
+        display:grid !important;
+        grid-template-columns: 100px 60px 140px 160px minmax(0,1fr) !important; /* Observaciones = última y flexible */
+        padding: 4px 8px !important;
+        margin: 0 !important;
+        padding-right: 0 !important;
+        position: static !important;
+    }
+    /* “• Guardado” a la DERECHA (en la última celda de cada fila) */
+    .table-card:nth-of-type(2) .table-body .row.locked-row > div:last-child{
+        text-align: right !important;
+    }
+    .table-card:nth-of-type(2) .table-body .row.locked-row > div:last-child::after{
+        content: "• Guardado";
+        display: inline-block;
+        margin-left: 8px;
+        font-weight: 600;
+        color: #1c3655;
+        white-space: nowrap;
     }
 
+    /* Inputs nítidos en papel */
     input, textarea{
         border:1px solid #a5b4c8!important; background:white!important; box-shadow:none!important;
-        padding:3px 4px!important; font-size:12px!important;
+        padding:4px 6px!important; font-size:12px!important;
     }
+
+    /* Oculta cualquier chip/estado flotante para evitar solapes */
+    .row-status { display:none!important; }
 }
+
 /* ===========================
-   Tipografía & paneles
+   Tipografía & paneles (pantalla)
    =========================== */
 .title{ font-size:28px;font-weight:800;color:#114a86;margin:0 0 4px 0; }
 .sub{ color:#5a6c80;margin:0 0 16px 0; }
@@ -107,11 +137,11 @@
     box-shadow:0 1px 0 rgba(0,0,0,.04),0 4px 18px rgba(17,74,134,.08);
 }
 .table-header{
-    display:grid;grid-template-columns:120px 80px 170px 1fr;
+    display:grid;grid-template-columns:120px 80px 170px 1fr; /* Seguimientos */
     background:#b3c7df;color:#1c3655;font-weight:700;padding:10px 12px;
     border-top-left-radius:12px;border-top-right-radius:12px;
 }
-.table-header.five-cols{ grid-template-columns:120px 80px 190px 200px 1fr; }
+.table-header.five-cols{ grid-template-columns:120px 80px 190px 200px 1fr; } /* Llamadas */
 
 .table-body .row{
     display:grid;grid-template-columns:100px 70px 160px 1fr;align-items:start;background:#fff;
@@ -170,16 +200,16 @@ mat-chip{ font-weight:600;color:#123a66;background:#e8f0fe;white-space:nowrap; }
 .chip-llamada{ background:#fff3cd;color:#7a4a00;font-weight:600; }
 
 /* ===========================
-   Responsive
+   Responsive (solo pantalla)
    =========================== */
 /* Tablets */
-@media (max-width:1024px){
+@media screen and (max-width:1024px){
     .table-body .row{ padding-right:180px; }
     .table-body .row.five-cols{ padding-right:160px; }
 }
 
 /* Móvil (layout card/stacked) */
-@media (max-width:768px){
+@media screen and (max-width:768px){
     .table-header, .table-header.five-cols{ display:none; }
     .table-body{ padding:4px 6px 10px; }
     .table-body .row, .table-body .row.five-cols{
