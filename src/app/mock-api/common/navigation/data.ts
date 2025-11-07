@@ -41,7 +41,7 @@ export const defaultNavigation: ErpNavigationItem[] = [
                     title: 'Visualizar reclamo',
                     type : 'basic',
                     icon : 'heroicons_outline:eye',
-                    link : '/baggage/follow'
+                    link : '/baggage/claim/view/:id'
                     }
                 ]
             },

@@ -1,19 +1,69 @@
 import { Component, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { ActivatedRoute, Router } from "@angular/router"
-import type { PIR } from "../../models/pir.model"
+import {  ActivatedRoute,  Router, RouterModule } from "@angular/router"
+import { MatButtonModule } from "@angular/material/button"
+import { MatIconModule } from "@angular/material/icon"
 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule],
   templateUrl: "./view-claim.component.html",
-  styleUrl: "./view-claim.component.scss",
+  styleUrls: ["./view-claim.component.scss"],
 })
 export class ViewClaimComponent implements OnInit {
-  pir: PIR | null = null
-  loading = true
-  claimId: string | null = null
+  claimId = ""
+
+  reclamoData = {
+    pasajero: {
+      nombre: "Juan Andres",
+      apellidoPaterno: "López",
+      apellidoMaterno: "Herbas",
+      direccionPermanente: "Av. América #123, Cochabamba",
+      direccionTemporal: "Av. Segunda c/La paz",
+      telefonoPermanente: "+591 70123456",
+      telefonoTemporal: "+591 71234567",
+      email: "juan.lopez@email.com",
+      numeroBoleto: "OB2373000",
+      iniciales: "JALH",
+    },
+    reclamo: {
+      fecha: "16/03/2025",
+      hora: "09:15",
+      estacion: "CBBA LOR",
+      tipo: "AHL",
+      estacionesInvolucradas: "CBBA, VVI, MAD",
+    },
+    vuelo: {
+      numero: "OB7564",
+      aerolinea: "Boliviana de Aviación",
+      fecha: "15/03/2025",
+      horaSalida: "14:30",
+    },
+    ruta: [
+      { codigo: "CBBA", ciudad: "Cochabamba", tipo: "origen", horario: "Salida: 14:30" },
+      { codigo: "VVI", ciudad: "Santa Cruz", tipo: "conexion", horario: "Conexión: 16:45 - 20:15" },
+      { codigo: "MAD", ciudad: "Madrid", tipo: "destino", horario: "Llegada: 12:30+1" },
+    ],
+    equipaje: {
+      numeroTicket: "OB2373000",
+      ruta: "CBBA-VVI-MAD",
+      numeroVuelo: "OB7564",
+      fechaVuelo: "03/10",
+      colorTipo: "50 - Bag",
+      marca: "Samsonite",
+      contenido: "Ropa personal, documentos, laptop Dell, cámara fotográfica",
+      descripcion: "Maleta rígida color negro, marca Samsonite, tamaño mediano con ruedas",
+    },
+    dano: {
+      tipoDano: "Daño estructural",
+      condicion: "Ruedas dañadas",
+      partesAfectadas: [
+        { codigo: "W", nombre: "Ruedas / Wheels rollers" },
+        { codigo: "H", nombre: "Jalador de mano / Retractable handles" },
+      ],
+    },
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -21,37 +71,18 @@ export class ViewClaimComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.claimId = this.route.snapshot.paramMap.get("id")
-    if (this.claimId) {
-      this.loadClaim()
-    }
+    this.claimId = this.route.snapshot.params["id"]
   }
 
-  private loadClaim(): void {
-    // TODO: Llamar al servicio para obtener el PIR
-    this.loading = false
-  }
-
-  editClaim(): void {
-    // TODO: Navegar a editar
-  }
-
-  deleteClaim(): void {
-    if (confirm("¿Está seguro de que desea eliminar este reclamo?")) {
-      // TODO: Llamar al servicio para eliminar
-      this.router.navigate(["/baggage/claim"])
-    }
-  }
-
-  downloadPDF(): void {
-    // TODO: Generar y descargar PDF
-  }
-
-  printClaim(): void {
+  imprimirPIR(): void {
     window.print()
   }
 
-  backToList(): void {
-    this.router.navigate(["/baggage/claim"])
+  exportarPDF(): void {
+    console.log("[v0] Exporting PDF...")
+  }
+
+  cerrar(): void {
+    this.router.navigate(["/baggage"])
   }
 }
