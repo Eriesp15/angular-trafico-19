@@ -31,6 +31,7 @@ export class NewClaimComponent implements OnInit {
     this.form = this.initializeForm()
     this.initializeDynamicArrays()
     this.setupAutomaticExpansion()
+    this.setupWeightCalculation()
   }
 
   private initializeForm(): FormGroup {
@@ -88,6 +89,10 @@ export class NewClaimComponent implements OnInit {
       pnrRecordLocator: [""],
       frequentTravelerID: [""],
       reasonForLoss: [""],
+      freeText: [""],
+      baggageWeight: [0],
+      deliveredWeight: [0],
+      weightDifference: [{ value: 0, disabled: true }],
       hasInsurance: [false],
       keysAttached: [false],
       lockCombinationCode: [""],
@@ -150,7 +155,6 @@ export class NewClaimComponent implements OnInit {
   }
 
   private initializeDynamicArrays(): void {
-    // Inicializar con un campo vacío para mostrar
     const baggages = this.form.get("baggages") as FormArray
     if (baggages.length === 0) {
       baggages.push(this.createBaggageField())
@@ -192,7 +196,6 @@ export class NewClaimComponent implements OnInit {
       const array = this.form.get(name) as FormArray
       if (array) {
         array.valueChanges.subscribe(() => {
-          // Agregar campo si el último tiene valor y aún no llegamos al máximo
           const lastControl = array.at(array.length - 1)
           if (lastControl && lastControl.value && lastControl.value !== "" && array.length < max) {
             if (name === "baggages") {
@@ -205,6 +208,8 @@ export class NewClaimComponent implements OnInit {
               array.push(this.createMarkField())
             } else if (name === "contents") {
               array.push(this.createContentField())
+            } else if (name === "bagTags") {
+              array.push(this.createBagTagField())
             } else {
               array.push(this.createStationField())
             }
@@ -212,6 +217,22 @@ export class NewClaimComponent implements OnInit {
         })
       }
     })
+  }
+
+  private setupWeightCalculation(): void {
+    this.form.get('baggageWeight')?.valueChanges.subscribe(() => {
+      this.calculateWeightDifference()
+    })
+    this.form.get('deliveredWeight')?.valueChanges.subscribe(() => {
+      this.calculateWeightDifference()
+    })
+  }
+
+  private calculateWeightDifference(): void {
+    const baggageWeight = this.form.get('baggageWeight')?.value || 0
+    const deliveredWeight = this.form.get('deliveredWeight')?.value || 0
+    const difference = baggageWeight - deliveredWeight
+    this.form.get('weightDifference')?.setValue(difference, { emitEvent: false })
   }
 
   shouldShowBaggageFields(): boolean {
@@ -290,6 +311,10 @@ export class NewClaimComponent implements OnInit {
         language: formValue.language,
         pnrRecordLocator: formValue.pnrRecordLocator,
         reasonForLoss: formValue.reasonForLoss,
+        freeText: formValue.freeText,
+        baggageWeight: formValue.baggageWeight,
+        deliveredWeight: formValue.deliveredWeight,
+        weightDifference: formValue.weightDifference,
         hasInsurance: formValue.hasInsurance,
         keysAttached: formValue.keysAttached,
         lockCombinationCode: formValue.lockCombinationCode,

@@ -11,7 +11,7 @@
     <!-- Sección 1: Estaciones Involucradas -->
     <section class="form-section">
       <div class="section-header">
-        <h2>1. Estaciones Involucradas</h2>
+        <h2><span class="field-code">QD</span> 1. Estaciones Involucradas - Prioridad</h2>
         <span class="hint">(hasta 5)</span>
       </div>
       <div class="stations-inline">
@@ -30,7 +30,7 @@
     <!-- Sección 2: Estación Originadora -->
     <section class="form-section">
       <div class="section-header">
-        <h2>2. Estación Originadora</h2>
+        <h2><span class="field-code">FS</span> 2. Estación Originadora - Fallo</h2>
       </div>
       <div class="origin-info">
         <div class="form-group">
@@ -72,15 +72,15 @@
       </div>
       <div class="reference-container">
         <div class="form-group">
-          <label>Aeropuerto (3 letras)</label>
+          <label>Aeropuerto</label>
           <input type="text" formControlName="airport" class="form-input reference-input" placeholder="AAA" maxlength="3">
         </div>
         <div class="form-group">
-          <label>Aerolinea (2 letras)</label>
+          <label>Aerolinea</label>
           <input type="text" formControlName="airline" class="form-input reference-input" placeholder="BB" maxlength="2">
         </div>
         <div class="form-group">
-          <label>Referencia (5 dígitos)</label>
+          <label>Referencia</label>
           <input type="text" formControlName="reference" class="form-input reference-input" placeholder="00001" maxlength="5">
         </div>
       </div>
@@ -89,7 +89,7 @@
     <!-- Sección 5: Datos del Pasajero -->
     <section class="form-section">
       <div class="section-header">
-        <h2>5. Datos del Pasajero</h2>
+        <h2><span class="field-code">NM</span> 5. Datos del Pasajero</h2>
       </div>
       <div class="passenger-info">
         <div class="form-group">
@@ -100,8 +100,10 @@
           <label>Nombre</label>
           <input type="text" formControlName="firstName" class="form-input">
         </div>
+      </div>
+      <div class="passenger-info">
         <div class="form-group">
-          <label>Iniciales (máx 4)</label>
+          <label><span class="field-code-inline">IT</span> Iniciales (máx 4)</label>
           <input type="text" formControlName="initials" class="form-input" maxlength="4">
         </div>
       </div>
@@ -110,8 +112,7 @@
     <!-- Sección 6: Bag Tags -->
     <section class="form-section">
       <div class="section-header">
-        <h2>6. Números de Bag Tags</h2>
-        <span class="hint">(hasta 5)</span>
+        <h2><span class="field-code">TN</span> 6. Números de Bag Tags</h2>
       </div>
       <div class="bagtags-inline">
         <div *ngFor="let tag of getBagTags().controls; let idx = index" class="bagtag-field">
@@ -128,8 +129,7 @@
     <!-- Sección 7: Color / Tipo / Descripción de Maletas -->
     <section class="form-section">
       <div class="section-header">
-        <h2>7. Maletas - Color / Tipo / Descripción</h2>
-        <span class="hint">(hasta 5, 7 caracteres cada campo)</span>
+        <h2><span class="field-code">CT</span> 7. Maletas - Color / Tipo / Descripción</h2>
       </div>
         <div class="bagtags-inline">
             <div *ngFor="let tag of getBagTags().controls; let idx = index" class="bagtag-field">
@@ -137,7 +137,6 @@
                     type="text" 
                     [formControl]="tag"
                     class="form-input bagtag-input" 
-                    placeholder="Tag"
                     maxlength="8">
             </div>
         </div>
@@ -146,7 +145,7 @@
     <!-- Sección 8: Ruta de Rastreo -->
     <section class="form-section">
       <div class="section-header">
-        <h2>8. Ruta de Rastreo</h2>
+        <h2><span class="field-code">RT</span> 8. Ruta de Rastreo</h2>
         <span class="hint">(3 letras por tramo, separadas por diagonales)</span>
       </div>
       <div class="routes-container">
@@ -183,7 +182,7 @@
     <!-- Sección 9: Números de Vuelo -->
     <section class="form-section">
       <div class="section-header">
-        <h2>9. Números de Vuelo</h2>
+        <h2><span class="field-code">FD</span> 9. Números de Vuelo</h2>
         <span class="hint">(múltiples vuelos)</span>
       </div>
       <div class="flights-container">
@@ -208,7 +207,7 @@
     <!-- Sección 10: Marcas en la Maleta -->
     <section class="form-section">
       <div class="section-header">
-        <h2>10. Marcas en la Maleta</h2>
+        <h2><span class="field-code">BI</span> 10. Marcas en la Maleta - Identificación Exterior</h2>
         <span class="hint">(hasta 3)</span>
       </div>
       <div class="marks-container">
@@ -229,7 +228,7 @@
     <!-- Sección 11: Contenido -->
     <section class="form-section">
       <div class="section-header">
-        <h2>11. Contenido</h2>
+        <h2><span class="field-code">CC</span> 11. Contenido</h2>
         <span class="hint">(hasta 2 artículos)</span>
       </div>
       <div class="contents-container">
@@ -254,20 +253,20 @@
       </div>
       <div class="contact-info">
         <div class="form-group">
-          <label>Dirección Permanente</label>
+          <label><span class="field-code-inline">PA</span> Dirección Permanente</label>
           <textarea formControlName="permanentAddress" class="form-input"></textarea>
         </div>
         <div class="form-group">
-          <label>Dirección Temporal</label>
+          <label><span class="field-code-inline">TA</span> Dirección Temporal</label>
           <textarea formControlName="temporaryAddress" class="form-input"></textarea>
         </div>
         <div class="phone-row">
           <div class="form-group">
-            <label>Teléfono Permanente</label>
+            <label><span class="field-code-inline">PN</span> Teléfono Permanente</label>
             <input type="tel" formControlName="permanentPhone" class="form-input">
           </div>
           <div class="form-group">
-            <label>Teléfono Temporal</label>
+            <label><span class="field-code-inline">TP</span> Teléfono Temporal</label>
             <input type="tel" formControlName="temporaryPhone" class="form-input">
           </div>
         </div>
@@ -277,7 +276,7 @@
     <!-- Sección 13: Instrucciones de Entrega -->
     <section class="form-section">
       <div class="section-header">
-        <h2>13. Instrucciones de Entrega Local</h2>
+        <h2><span class="field-code">LD</span> 13. Instrucciones de Entrega Local</h2>
       </div>
       <div class="form-group">
         <textarea formControlName="deliveryInstructions" class="form-input" placeholder="Instrucciones especiales"></textarea>
@@ -291,28 +290,46 @@
       </div>
       <div class="additional-elements">
         <div class="form-group">
-          <label>Idioma</label>
+          <label><span class="field-code-inline">LA</span> Idioma</label>
           <input type="text" formControlName="language" class="form-input">
         </div>
         <div class="form-group">
-          <label>Número de Pasaporte</label>
+          <label><span class="field-code-inline">PP</span> Número de Pasaporte</label>
           <input type="text" formControlName="passportNumber" class="form-input">
         </div>
         <div class="form-group">
-          <label>Número de Boleto</label>
+          <label><span class="field-code-inline">TK</span> Número de Boleto</label>
           <input type="text" formControlName="ticketNumber" class="form-input">
         </div>
         <div class="form-group">
-          <label>PNR Record Locater</label>
+          <label><span class="field-code-inline">PR</span> PNR Record Locater</label>
           <input type="text" formControlName="pnrRecordLocator" class="form-input">
         </div>
         <div class="form-group">
-          <label>ID Viajero Frecuente</label>
+          <label><span class="field-code-inline">FL</span> ID Viajero Frecuente</label>
           <input type="text" formControlName="frequentTravelerID" class="form-input">
         </div>
         <div class="form-group">
-          <label>Razón de la Pérdida</label>
+          <label><span class="field-code-inline">RL</span> Razón de la Pérdida</label>
           <textarea formControlName="reasonForLoss" class="form-input"></textarea>
+        </div>
+        <div class="form-group">
+          <label><span class="field-code-inline">FF</span> Texto Libre</label>
+          <textarea formControlName="freeText" class="form-input" placeholder="Información adicional"></textarea>
+        </div>
+        <div class="weight-section">
+          <div class="form-group">
+            <label><span class="field-code-inline">BW</span> Peso del Equipaje (kg)</label>
+            <input type="number" formControlName="baggageWeight" class="form-input" step="0.1">
+          </div>
+          <div class="form-group">
+            <label><span class="field-code-inline">DW</span> Peso Entregado (kg)</label>
+            <input type="number" formControlName="deliveredWeight" class="form-input" step="0.1">
+          </div>
+          <div class="form-group">
+            <label><span class="field-code-inline">MW</span> Diferencia de Peso (kg)</label>
+            <input type="number" formControlName="weightDifference" class="form-input" step="0.1" readonly>
+          </div>
         </div>
         <div class="checkboxes-row">
           <div class="form-group checkbox">
@@ -353,25 +370,73 @@
 
     <!-- Sección 15: Información de Daño -->
     <section class="form-section" *ngIf="form.get('claimType')?.value === 'DAMAGED'">
-      <div class="section-header">
+    <div class="section-header">
         <h2>15. Información de Daño</h2>
-      </div>
-      <div class="damage-info">
+    </div>
+    <div class="damage-info">
         <div class="form-group">
-          <label>Tipo de Daño</label>
-          <select formControlName="damageType" class="form-input">
+        <label>Tipo de Daño</label>
+        <select formControlName="damageType" class="form-input">
             <option value="">Seleccionar</option>
-            <option *ngFor="let type of damageTypeOptions" [value]="type">{{type}}</option>
-          </select>
+            <option value="MINOR">Menor</option>
+            <option value="MAJOR">Mayor</option>
+            <option value="TOTAL">Total</option>
+        </select>
         </div>
         <div class="form-group">
-          <label>Condición</label>
-          <select formControlName="damageCondition" class="form-input">
+        <label>Condición</label>
+        <select formControlName="damageCondition" class="form-input">
             <option value="">Seleccionar</option>
-            <option *ngFor="let cond of damageConditionOptions" [value]="cond">{{cond}}</option>
-          </select>
+            <option value="GOOD">Buena</option>
+            <option value="REASONABLE">Razonable</option>
+            <option value="BAD">Mala</option>
+        </select>
         </div>
-      </div>
+        <div class="form-group damage-location">
+        <label>Daño (Ubicación)</label>
+        <div class="location-options">
+            <div class="form-group checkbox">
+            <input type="checkbox" formControlName="damageLock" id="damageLock">
+            <label for="damageLock">Combinación de cerradura</label>
+            </div>
+            <div class="form-group checkbox">
+            <input type="checkbox" formControlName="damageHandle" id="damageHandle">
+            <label for="damageHandle">Jalador de mano</label>
+            </div>
+            <div class="form-group checkbox">
+            <input type="checkbox" formControlName="damageStraps" id="damageStraps">
+            <label for="damageStraps">Hebillas de seguro</label>
+            </div>
+            <div class="form-group checkbox">
+            <input type="checkbox" formControlName="damageWheels" id="damageWheels">
+            <label for="damageWheels">Ruedas</label>
+            </div>
+            <div class="form-group checkbox">
+            <input type="checkbox" formControlName="damageSide" id="damageSide">
+            <label for="damageSide">Lado</label>
+            </div>
+            <div class="form-group checkbox">
+            <input type="checkbox" formControlName="damageEnd" id="damageEnd">
+            <label for="damageEnd">Extremo</label>
+            </div>
+            <div class="form-group checkbox">
+            <input type="checkbox" formControlName="damageTop" id="damageTop">
+            <label for="damageTop">Arriba</label>
+            </div>
+            <div class="form-group checkbox">
+            <input type="checkbox" formControlName="damageBottom" id="damageBottom">
+            <label for="damageBottom">Abajo</label>
+            </div>
+        </div>
+        </div>
+        <div class="form-group image-upload">
+        <label>Imagen Referencial del Daño</label>
+        <div class="upload-area">
+            <p>Haz clic para subir una imagen del daño</p>
+            <input type="file" accept="image/*" style="display: none;">
+        </div>
+        </div>
+    </div>
     </section>
 
     <!-- Sección 16: Firma del Pasajero -->
