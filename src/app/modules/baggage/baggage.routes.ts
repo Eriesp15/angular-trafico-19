@@ -21,7 +21,7 @@ export default [
         ],
       },
       {
-        path: "claim",
+        path: "claim/list",
         component: ListComponent,
       },
       {
