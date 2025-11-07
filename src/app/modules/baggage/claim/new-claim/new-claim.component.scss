@@ -1,0 +1,488 @@
+.new-claim-container {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.claim-header {
+  background: linear-gradient(135deg, #003366 0%, #004499 100%);
+  color: white;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 3rem;
+  box-shadow: 0 8px 24px rgba(0, 51, 102, 0.2);
+
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+
+    h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 1rem;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+  }
+}
+
+.claim-form {
+  margin: 0 auto;
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.form-section {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #f0f0f0;
+
+  &:last-of-type {
+    border-bottom: none;
+    margin-bottom: 2rem;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    color: #003366;
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .hint {
+    color: #999;
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  &.checkbox {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 0.75rem;
+      cursor: pointer;
+      accent-color: #003366;
+    }
+
+    label {
+      margin: 0;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  }
+}
+
+.form-input {
+  padding: 0.875rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: white;
+
+  &:focus {
+    outline: none;
+    border-color: #003366;
+    box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1);
+    background: #fafbfc;
+  }
+
+  &:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: #bbb;
+  }
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 90px;
+  font-family: inherit;
+}
+
+// Estaciones involucradas en línea
+.stations-inline,
+.bagtags-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  .station-field,
+  .bagtag-field {
+    flex: 0 1 auto;
+
+    .station-input,
+    .bagtag-input {
+      width: 140px;
+    }
+  }
+}
+
+// Estación originadora
+.origin-info {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+
+  .separator {
+    font-size: 1.5rem;
+    color: #003366;
+    font-weight: bold;
+    margin-bottom: 0.875rem;
+  }
+
+  .form-group {
+    flex: 0 0 auto;
+  }
+
+  .date-time-group {
+    display: flex;
+    gap: 1rem;
+
+    .date-input {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .time-input {
+      flex: 1;
+      min-width: 120px;
+    }
+  }
+}
+
+// Selector de tipo de reclamo
+.claim-type-selector {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+
+  .claim-type-option {
+    display: flex;
+    align-items: center;
+
+    input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 0.75rem;
+      cursor: pointer;
+      accent-color: #003366;
+    }
+
+    .claim-label {
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #f0f0f0;
+      }
+    }
+  }
+}
+
+// Referencia del reclamo
+.reference-container {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+
+  .form-group {
+    flex: 0 0 auto;
+  }
+
+  .reference-input {
+    width: 120px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+  }
+}
+
+// Datos del pasajero
+.passenger-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+// Maletas
+.baggages-grid {
+  display: grid;
+  gap: 1.5rem;
+
+  .baggage-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+
+    .baggage-input {
+      text-align: center;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+  }
+}
+
+// Ruta de rastreo
+.routes-container {
+  display: grid;
+  gap: 1rem;
+
+  .route-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .route-input {
+      width: 100px;
+      text-align: center;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .route-separator {
+      font-size: 1.5rem;
+      color: #003366;
+      font-weight: bold;
+    }
+  }
+}
+
+// Vuelos
+.flights-container {
+  display: grid;
+  gap: 1rem;
+
+  .flight-row {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 1rem;
+    align-items: center;
+
+    .flight-input {
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .flight-date-input {
+      flex: 1;
+    }
+  }
+}
+
+// Marcas y contenido
+.marks-container,
+.contents-container {
+  display: grid;
+  gap: 1rem;
+
+  .mark-row,
+  .content-row {
+    display: grid;
+  }
+}
+
+// Información de contacto
+.contact-info {
+  display: grid;
+  gap: 1.5rem;
+
+  .phone-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+// Elementos adicionales
+.additional-elements {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+
+  .checkboxes-row {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+}
+
+// Información de daño
+.damage-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+// Botones de acción
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f0f0f0;
+}
+
+.btn {
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-submit {
+  background: linear-gradient(135deg, #003366 0%, #004499 100%);
+  color: white;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 8px 20px rgba(0, 51, 102, 0.25);
+  }
+}
+
+.btn-cancel {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 2px solid #ddd;
+
+  &:hover {
+    background-color: #e8e8e8;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .new-claim-container {
+    padding: 1rem;
+  }
+
+  .claim-form {
+    padding: 1.5rem;
+  }
+
+  .claim-header {
+    padding: 2rem 1.5rem;
+
+    .header-content h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .stations-inline,
+  .bagtags-inline {
+    .station-field,
+    .bagtag-field {
+      flex: 1 1 calc(50% - 0.5rem);
+
+      .station-input,
+      .bagtag-input {
+        width: 100%;
+      }
+    }
+  }
+
+  .origin-info {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+
+    .separator {
+      display: none;
+    }
+
+    .date-time-group {
+      flex-direction: column;
+    }
+  }
+
+  .reference-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .claim-type-selector {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .claim-header {
+    padding: 1.5rem 1rem;
+
+    .header-content h1 {
+      font-size: 1.2rem;
+    }
+  }
+
+  .stations-inline,
+  .bagtags-inline {
+    .station-field,
+    .bagtag-field {
+      flex: 1 1 100%;
+    }
+  }
+}

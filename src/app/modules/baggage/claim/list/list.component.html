@@ -1,3 +1,148 @@
-<p>list works!</p>
-<button routerLink="new">Nuevo</button>
-<router-outlet />
+<div class="list-container">
+  <div class="list-header">
+    <div class="header-top">
+      <h1>Reclamos de Equipaje</h1>
+      <button class="btn btn-primary" routerLink="new">
+        Nuevo Reclamo
+      </button>
+    </div>
+
+    <!-- Búsqueda y Filtros -->
+    <div class="search-filter-section">
+      <form [formGroup]="searchForm" class="search-bar">
+        <input
+          type="text"
+          formControlName="query"
+          class="search-input"
+          placeholder="Buscar por referencia, nombre, pasajero o ID..."
+        />
+        <button type="button" class="btn-search" (click)="clearSearch()">
+          Limpiar
+        </button>
+      </form>
+
+      <div class="filter-buttons">
+        <button
+          [class.active]="selectedStatus === 'ALL'"
+          (click)="filterByStatus('ALL')"
+          class="filter-btn"
+        >
+          Todos
+        </button>
+        <button
+          [class.active]="selectedStatus === 'DRAFT'"
+          (click)="filterByStatus('DRAFT')"
+          class="filter-btn"
+        >
+          Borradores
+        </button>
+        <button
+          [class.active]="selectedStatus === 'REGISTERED'"
+          (click)="filterByStatus('REGISTERED')"
+          class="filter-btn"
+        >
+          Registrados
+        </button>
+        <button
+          [class.active]="selectedStatus === 'PROCESSING'"
+          (click)="filterByStatus('PROCESSING')"
+          class="filter-btn"
+        >
+          En Proceso
+        </button>
+        <button
+          [class.active]="selectedStatus === 'RESOLVED'"
+          (click)="filterByStatus('RESOLVED')"
+          class="filter-btn"
+        >
+          Resueltos
+        </button>
+        <button
+          [class.active]="selectedStatus === 'CLOSED'"
+          (click)="filterByStatus('CLOSED')"
+          class="filter-btn"
+        >
+          Cerrados
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Carga -->
+  <div *ngIf="loading" class="loading">
+    <p>Cargando reclamos...</p>
+  </div>
+
+  <!-- Lista de Reclamos -->
+  <div *ngIf="!loading" class="claims-section">
+    <div *ngIf="filteredClaims.length === 0" class="empty-state">
+      <p>No hay reclamos registrados</p>
+      <button class="btn btn-primary" routerLink="new">
+        Crear Nuevo Reclamo
+      </button>
+    </div>
+
+    <div *ngIf="filteredClaims.length > 0" class="claims-table-wrapper">
+      <table class="claims-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Referencia</th>
+            <th>Pasajero</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let claim of filteredClaims" class="claim-row">
+            <td class="cell-id">{{claim.id}}</td>
+            <td class="cell-reference">
+              {{claim.claimReference.airport}}-{{claim.claimReference.airline}}-{{claim.claimReference.reference}}
+            </td>
+            <td class="cell-passenger">
+              {{claim.passenger.lastName}}, {{claim.passenger.firstName}}
+            </td>
+            <td class="cell-type">
+              <span [class]="'badge badge-' + claim.claimType.toLowerCase()">
+                {{claim.claimType}}
+              </span>
+            </td>
+            <td class="cell-status">
+              <span [class]="'status-badge ' + getStatusClass(claim.status)">
+                {{claim.status}}
+              </span>
+            </td>
+            <td class="cell-date">
+              {{claim.createdAt | date:'dd/MM/yyyy HH:mm'}}
+            </td>
+            <td class="cell-actions">
+              <button
+                class="btn-action btn-view"
+                [routerLink]="['view', claim.id]"
+                title="Ver detalles"
+              >
+                Ver
+              </button>
+              <button
+                class="btn-action btn-delete"
+                (click)="deleteClaim(claim.id)"
+                title="Eliminar reclamo"
+              >
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="claims-info">
+      <p>Total de reclamos: <strong>{{filteredClaims.length}}</strong></p>
+    </div>
+  </div>
+
+  <!-- Router Outlet para Sub-rutas -->
+  <router-outlet />
+</div>

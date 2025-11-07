@@ -1,1 +1,394 @@
-<p>new-claim works!</p>
+<div class="new-claim-container">
+  <div class="claim-header">
+    <div class="header-content">
+      <h1>Nuevo Reclamo PIR</h1>
+      <p class="subtitle">Parte de Irregularidad Recibida - BOA</p>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="claim-form">
+    
+    <!-- Sección 1: Estaciones Involucradas -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>1. Estaciones Involucradas</h2>
+        <span class="hint">(hasta 5)</span>
+      </div>
+      <div class="stations-inline">
+        <div *ngFor="let station of getStations().controls; let idx = index" class="station-field">
+          <input 
+            type="text" 
+            [formControl]="station"
+            class="form-input station-input" 
+            placeholder="VVILLOB"
+            maxlength="7"
+            [attr.aria-label]="'Estación ' + (idx + 1)">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 2: Estación Originadora -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>2. Estación Originadora</h2>
+      </div>
+      <div class="origin-info">
+        <div class="form-group">
+          <label>Estación</label>
+          <input type="text" formControlName="originStation" class="form-input" placeholder="CBBLLOB" maxlength="7">
+        </div>
+        <span class="separator">></span>
+        <div class="form-group">
+          <label>Fecha / Hora</label>
+          <div class="date-time-group">
+            <input type="date" formControlName="originDate" class="form-input date-input">
+            <input type="time" formControlName="originTime" class="form-input time-input">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 3: Tipo de Reclamo -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>3. Tipo de Reclamo</h2>
+      </div>
+      <div class="claim-type-selector">
+        <div *ngFor="let type of claimTypeOptions" class="claim-type-option">
+          <input 
+            type="radio" 
+            [value]="type" 
+            formControlName="claimType"
+            [id]="'claim-' + type">
+          <label [for]="'claim-' + type" class="claim-label">{{type}}</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 4: Referencia del Reclamo -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>4. Referencia del Reclamo</h2>
+      </div>
+      <div class="reference-container">
+        <div class="form-group">
+          <label>Aeropuerto (3 letras)</label>
+          <input type="text" formControlName="airport" class="form-input reference-input" placeholder="AAA" maxlength="3">
+        </div>
+        <div class="form-group">
+          <label>Aerolinea (2 letras)</label>
+          <input type="text" formControlName="airline" class="form-input reference-input" placeholder="BB" maxlength="2">
+        </div>
+        <div class="form-group">
+          <label>Referencia (5 dígitos)</label>
+          <input type="text" formControlName="reference" class="form-input reference-input" placeholder="00001" maxlength="5">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 5: Datos del Pasajero -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>5. Datos del Pasajero</h2>
+      </div>
+      <div class="passenger-info">
+        <div class="form-group">
+          <label>Apellido</label>
+          <input type="text" formControlName="lastName" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" formControlName="firstName" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Iniciales (máx 4)</label>
+          <input type="text" formControlName="initials" class="form-input" maxlength="4">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 6: Bag Tags -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>6. Números de Bag Tags</h2>
+        <span class="hint">(hasta 5)</span>
+      </div>
+      <div class="bagtags-inline">
+        <div *ngFor="let tag of getBagTags().controls; let idx = index" class="bagtag-field">
+          <input 
+            type="text" 
+            [formControl]="tag"
+            class="form-input bagtag-input" 
+            placeholder="Tag"
+            maxlength="8">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 7: Color / Tipo / Descripción de Maletas -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>7. Maletas - Color / Tipo / Descripción</h2>
+        <span class="hint">(hasta 5, 7 caracteres cada campo)</span>
+      </div>
+        <div class="bagtags-inline">
+            <div *ngFor="let tag of getBagTags().controls; let idx = index" class="bagtag-field">
+                <input 
+                    type="text" 
+                    [formControl]="tag"
+                    class="form-input bagtag-input" 
+                    placeholder="Tag"
+                    maxlength="8">
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección 8: Ruta de Rastreo -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>8. Ruta de Rastreo</h2>
+        <span class="hint">(3 letras por tramo, separadas por diagonales)</span>
+      </div>
+      <div class="routes-container">
+        <div *ngFor="let route of getRoutes().controls; let idx = index" 
+             [formGroup]="route"
+             class="route-row">
+          <input 
+            type="text" 
+            formControlName="leg1"
+            class="form-input route-input" 
+            placeholder="ASU"
+            maxlength="3"
+            [attr.aria-label]="'Tramo 1 ruta ' + (idx + 1)">
+          <span class="route-separator">/</span>
+          <input 
+            type="text" 
+            formControlName="leg2"
+            class="form-input route-input" 
+            placeholder="VVI"
+            maxlength="3"
+            [attr.aria-label]="'Tramo 2 ruta ' + (idx + 1)">
+          <span class="route-separator">/</span>
+          <input 
+            type="text" 
+            formControlName="leg3"
+            class="form-input route-input" 
+            placeholder="CBB"
+            maxlength="3"
+            [attr.aria-label]="'Tramo 3 ruta ' + (idx + 1)">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 9: Números de Vuelo -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>9. Números de Vuelo</h2>
+        <span class="hint">(múltiples vuelos)</span>
+      </div>
+      <div class="flights-container">
+        <div *ngFor="let flight of getFlights().controls; let idx = index" 
+             [formGroup]="flight"
+             class="flight-row">
+          <input 
+            type="text" 
+            formControlName="flightNumber"
+            class="form-input flight-input" 
+            placeholder="BO123"
+            [attr.aria-label]="'Vuelo ' + (idx + 1)">
+          <input 
+            type="date" 
+            formControlName="date"
+            class="form-input flight-date-input"
+            [attr.aria-label]="'Fecha vuelo ' + (idx + 1)">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 10: Marcas en la Maleta -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>10. Marcas en la Maleta</h2>
+        <span class="hint">(hasta 3)</span>
+      </div>
+      <div class="marks-container">
+        <div *ngFor="let mark of getMarksOnBaggage().controls; let idx = index" 
+             [formGroup]="mark"
+             class="mark-row">
+          <input 
+            type="text" 
+            formControlName="mark"
+            class="form-input" 
+            placeholder="Marca o etiqueta"
+            maxlength="50"
+            [attr.aria-label]="'Marca ' + (idx + 1)">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 11: Contenido -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>11. Contenido</h2>
+        <span class="hint">(hasta 2 artículos)</span>
+      </div>
+      <div class="contents-container">
+        <div *ngFor="let content of getContents().controls; let idx = index" 
+             [formGroup]="content"
+             class="content-row">
+          <input 
+            type="text" 
+            formControlName="item"
+            class="form-input" 
+            placeholder="Artículo"
+            maxlength="50"
+            [attr.aria-label]="'Contenido ' + (idx + 1)">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 12: Información de Contacto -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>12. Información de Contacto</h2>
+      </div>
+      <div class="contact-info">
+        <div class="form-group">
+          <label>Dirección Permanente</label>
+          <textarea formControlName="permanentAddress" class="form-input"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Dirección Temporal</label>
+          <textarea formControlName="temporaryAddress" class="form-input"></textarea>
+        </div>
+        <div class="phone-row">
+          <div class="form-group">
+            <label>Teléfono Permanente</label>
+            <input type="tel" formControlName="permanentPhone" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Teléfono Temporal</label>
+            <input type="tel" formControlName="temporaryPhone" class="form-input">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 13: Instrucciones de Entrega -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>13. Instrucciones de Entrega Local</h2>
+      </div>
+      <div class="form-group">
+        <textarea formControlName="deliveryInstructions" class="form-input" placeholder="Instrucciones especiales"></textarea>
+      </div>
+    </section>
+
+    <!-- Sección 14: Elementos Adicionales -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>14. Elementos Adicionales</h2>
+      </div>
+      <div class="additional-elements">
+        <div class="form-group">
+          <label>Idioma</label>
+          <input type="text" formControlName="language" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Número de Pasaporte</label>
+          <input type="text" formControlName="passportNumber" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Número de Boleto</label>
+          <input type="text" formControlName="ticketNumber" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>PNR Record Locater</label>
+          <input type="text" formControlName="pnrRecordLocator" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>ID Viajero Frecuente</label>
+          <input type="text" formControlName="frequentTravelerID" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Razón de la Pérdida</label>
+          <textarea formControlName="reasonForLoss" class="form-input"></textarea>
+        </div>
+        <div class="checkboxes-row">
+          <div class="form-group checkbox">
+            <input type="checkbox" formControlName="hasInsurance" id="hasInsurance">
+            <label for="hasInsurance">Tiene Seguro</label>
+          </div>
+          <div class="form-group checkbox">
+            <input type="checkbox" formControlName="keysAttached" id="keysAttached">
+            <label for="keysAttached">Llaves Adjuntas</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Código de Combinación de Cerradura</label>
+          <input type="text" formControlName="lockCombinationCode" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Kit de Noche</label>
+          <select formControlName="nightKit" class="form-input">
+            <option value="">Seleccionar</option>
+            <option value="MALE">Masculino</option>
+            <option value="FEMALE">Femenino</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nombre de Agente</label>
+          <input type="text" formControlName="agentName" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Número BOA</label>
+          <input type="text" formControlName="boaNumber" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Adelanto en Efectivo Pagado</label>
+          <input type="number" formControlName="cashAdvanceGiven" class="form-input">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 15: Información de Daño -->
+    <section class="form-section" *ngIf="form.get('claimType')?.value === 'DAMAGED'">
+      <div class="section-header">
+        <h2>15. Información de Daño</h2>
+      </div>
+      <div class="damage-info">
+        <div class="form-group">
+          <label>Tipo de Daño</label>
+          <select formControlName="damageType" class="form-input">
+            <option value="">Seleccionar</option>
+            <option *ngFor="let type of damageTypeOptions" [value]="type">{{type}}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Condición</label>
+          <select formControlName="damageCondition" class="form-input">
+            <option value="">Seleccionar</option>
+            <option *ngFor="let cond of damageConditionOptions" [value]="cond">{{cond}}</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 16: Firma del Pasajero -->
+    <section class="form-section">
+      <div class="section-header">
+        <h2>16. Firma del Pasajero</h2>
+      </div>
+      <div class="form-group">
+        <label>Firma</label>
+        <input type="text" formControlName="passengerSignature" class="form-input" placeholder="Firma digital o nombre completo">
+      </div>
+    </section>
+
+    <!-- Botones de Acción -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-cancel" (click)="onCancel()">Cancelar</button>
+      <button type="submit" class="btn btn-submit" [disabled]="!form.valid">Guardar Reclamo</button>
+    </div>
+  </form>
+</div>

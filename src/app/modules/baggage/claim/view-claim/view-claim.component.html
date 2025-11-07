@@ -1,0 +1,321 @@
+<div class="view-claim-container">
+  <div class="claim-header">
+    <div class="header-top">
+      <h1>Ver Reclamo - PIR</h1>
+      <div class="header-actions">
+        <button class="btn btn-secondary" (click)="downloadPDF()">Descargar PDF</button>
+        <button class="btn btn-secondary" (click)="printClaim()">Imprimir</button>
+        <button class="btn btn-primary" (click)="editClaim()">Editar</button>
+        <button class="btn btn-danger" (click)="deleteClaim()">Eliminar</button>
+        <button class="btn btn-secondary" (click)="backToList()">Volver</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <p>Cargando reclamo...</p>
+  </div>
+
+  <div *ngIf="!loading && pir" class="claim-content">
+    
+    <!-- Sección 1: Estaciones Involucradas -->
+    <section class="view-section">
+      <h2>Estaciones Involucradas</h2>
+      <div class="stations-list">
+        <div *ngIf="pir.stations.length > 0" class="item-list">
+          <div *ngFor="let station of pir.stations" class="list-item">
+            {{station.code}}
+          </div>
+        </div>
+        <div *ngIf="pir.stations.length === 0" class="empty-message">
+          No hay estaciones registradas
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 2: Estación Originadora -->
+    <section class="view-section">
+      <h2>Estación Originadora</h2>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Estación:</label>
+          <span>{{pir.originStation.code}}</span>
+        </div>
+        <div class="info-item">
+          <label>Fecha:</label>
+          <span>{{pir.originDate | date:'dd/MM/yyyy'}}</span>
+        </div>
+        <div class="info-item">
+          <label>Hora:</label>
+          <span>{{pir.originTime}}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 3: Tipo de Reclamo -->
+    <section class="view-section">
+      <h2>Tipo de Reclamo</h2>
+      <div class="info-item">
+        <label>Tipo:</label>
+        <span class="badge" [ngClass]="'badge-' + pir.claimType.toLowerCase()">
+          {{pir.claimType}}
+        </span>
+      </div>
+    </section>
+
+    <!-- Sección 4: Referencia del Reclamo -->
+    <section class="view-section">
+      <h2>Referencia del Reclamo</h2>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Aeropuerto:</label>
+          <span>{{pir.claimReference.airport}}</span>
+        </div>
+        <div class="info-item">
+          <label>Aerolinea:</label>
+          <span>{{pir.claimReference.airline}}</span>
+        </div>
+        <div class="info-item">
+          <label>Referencia:</label>
+          <span>{{pir.claimReference.reference}}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 5: Datos del Pasajero -->
+    <section class="view-section">
+      <h2>Datos del Pasajero</h2>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Apellido:</label>
+          <span>{{pir.passenger.lastName}}</span>
+        </div>
+        <div class="info-item">
+          <label>Nombre:</label>
+          <span>{{pir.passenger.firstName}}</span>
+        </div>
+        <div class="info-item">
+          <label>Iniciales:</label>
+          <span>{{pir.passenger.initials}}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Pasaporte:</label>
+          <span>{{pir.passenger.passport}}</span>
+        </div>
+        <div class="info-item">
+          <label>Boleto:</label>
+          <span>{{pir.passenger.ticketNumber}}</span>
+        </div>
+        <div class="info-item" *ngIf="pir.passenger.frequentTravelerID">
+          <label>Viajero Frecuente:</label>
+          <span>{{pir.passenger.frequentTravelerID}}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 6: Bag Tags -->
+    <section class="view-section">
+      <h2>Números de Bag Tags</h2>
+      <div class="item-list">
+        <div *ngFor="let tag of pir.bagTags" class="list-item">
+          {{tag}}
+        </div>
+        <div *ngIf="pir.bagTags.length === 0" class="empty-message">
+          No hay bag tags registrados
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 7: Equipajes -->
+    <section class="view-section">
+      <h2>Equipajes</h2>
+      <div class="baggages-grid">
+        <div *ngFor="let baggage of pir.baggages; let idx = index" class="baggage-card">
+          <h3>Equipaje {{idx + 1}}</h3>
+          <div class="card-content">
+            <p><strong>Color:</strong> {{baggage.color}}</p>
+            <p><strong>Tipo:</strong> {{baggage.type}}</p>
+            <p><strong>Descripción:</strong> {{baggage.description}}</p>
+            <p><strong>Peso:</strong> {{baggage.weight}} kg</p>
+            <p *ngIf="baggage.deliveredWeight"><strong>Peso Entregado:</strong> {{baggage.deliveredWeight}} kg</p>
+            <div *ngIf="baggage.marks.length > 0" class="marks-section">
+              <strong>Marcas:</strong>
+              <ul>
+                <li *ngFor="let mark of baggage.marks">{{mark}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="pir.baggages.length === 0" class="empty-message">
+          No hay equipajes registrados
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 8: Ruta de Rastreo -->
+    <section class="view-section">
+      <h2>Ruta de Rastreo</h2>
+      <div class="route-container">
+        <span class="route-stops">{{pir.route3LetterStops}}</span>
+      </div>
+    </section>
+
+    <!-- Sección 9: Vuelo -->
+    <section class="view-section">
+      <h2>Información del Vuelo</h2>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Número de Vuelo:</label>
+          <span>{{pir.flightNumber}}</span>
+        </div>
+        <div class="info-item">
+          <label>Fecha del Vuelo:</label>
+          <span>{{pir.flightDate | date:'dd/MM/yyyy'}}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 10: Contacto del Pasajero -->
+    <section class="view-section">
+      <h2>Información de Contacto</h2>
+      <div class="info-item">
+        <label>Dirección Permanente:</label>
+        <span>{{pir.passenger.permanentAddress}}</span>
+      </div>
+      <div class="info-item" *ngIf="pir.passenger.temporaryAddress">
+        <label>Dirección Temporal:</label>
+        <span>{{pir.passenger.temporaryAddress}}</span>
+      </div>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Teléfono Permanente:</label>
+          <span>{{pir.passenger.permanentPhone}}</span>
+        </div>
+        <div class="info-item" *ngIf="pir.passenger.temporaryPhone">
+          <label>Teléfono Temporal:</label>
+          <span>{{pir.passenger.temporaryPhone}}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 11: Instrucciones de Entrega -->
+    <section class="view-section">
+      <h2>Instrucciones de Entrega</h2>
+      <div class="info-item">
+        <span>{{pir.deliveryInstructions || 'Sin instrucciones especiales'}}</span>
+      </div>
+    </section>
+
+    <!-- Sección 12: Elementos Adicionales -->
+    <section class="view-section">
+      <h2>Elementos Adicionales</h2>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Idioma:</label>
+          <span>{{pir.additionalElements.language}}</span>
+        </div>
+        <div class="info-item">
+          <label>PNR Record Locater:</label>
+          <span>{{pir.additionalElements.pnrRecordLocator}}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Razón de Pérdida:</label>
+          <span>{{pir.additionalElements.reasonForLoss}}</span>
+        </div>
+        <div class="info-item">
+          <label>Seguro:</label>
+          <span>{{pir.additionalElements.hasInsurance ? 'Sí' : 'No'}}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Llaves Adjuntas:</label>
+          <span>{{pir.additionalElements.keysAttached ? 'Sí' : 'No'}}</span>
+        </div>
+        <div class="info-item" *ngIf="pir.additionalElements.lockCombinationCode">
+          <label>Código de Cerradura:</label>
+          <span>{{pir.additionalElements.lockCombinationCode}}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-item" *ngIf="pir.additionalElements.nightKit">
+          <label>Kit de Noche:</label>
+          <span>{{pir.additionalElements.nightKit === 'MALE' ? 'Masculino' : 'Femenino'}}</span>
+        </div>
+        <div class="info-item">
+          <label>Adelanto en Efectivo:</label>
+          <span>Bs {{pir.additionalElements.cashAdvanceGiven}}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 13: Información de Agente -->
+    <section class="view-section">
+      <h2>Información de Agente</h2>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Nombre de Agente:</label>
+          <span>{{pir.additionalElements.agentName}}</span>
+        </div>
+        <div class="info-item">
+          <label>Número BOA:</label>
+          <span>{{pir.additionalElements.boaNumber}}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 14: Información de Daño -->
+    <section class="view-section" *ngIf="pir.damage">
+      <h2>Información de Daño</h2>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Tipo de Daño:</label>
+          <span>{{pir.damage.type}}</span>
+        </div>
+        <div class="info-item">
+          <label>Condición:</label>
+          <span>{{pir.damage.condition}}</span>
+        </div>
+      </div>
+      <div class="damage-locations" *ngIf="pir.damage.damageLocation">
+        <label>Ubicaciones de Daño:</label>
+        <div class="locations-list">
+          <span *ngFor="let location of pir.damage.damageLocation" class="location-badge">
+            {{location}}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección 15: Estado y Firma -->
+    <section class="view-section">
+      <h2>Estado y Firma</h2>
+      <div class="info-row">
+        <div class="info-item">
+          <label>Estado del Reclamo:</label>
+          <span class="status-badge" [ngClass]="'status-' + pir.status.toLowerCase()">
+            {{pir.status}}
+          </span>
+        </div>
+        <div class="info-item">
+          <label>Firma del Pasajero:</label>
+          <span>{{pir.passengerSignature}}</span>
+        </div>
+      </div>
+      <div class="info-item" *ngIf="pir.createdAt">
+        <label>Fecha de Creación:</label>
+        <span>{{pir.createdAt | date:'dd/MM/yyyy HH:mm'}}</span>
+      </div>
+    </section>
+
+  </div>
+
+  <div *ngIf="!loading && !pir" class="error-message">
+    <p>No se encontró el reclamo solicitado</p>
+    <button class="btn btn-primary" (click)="backToList()">Volver a Lista</button>
+  </div>
+</div>
