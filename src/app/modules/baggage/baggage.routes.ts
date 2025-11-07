@@ -8,8 +8,7 @@ import { ViewClaimComponent } from "./claim/view-claim/view-claim.component"
 export default [
   {
     path: "",
-    component: BaggageComponent,
-    children: [
+    component: BaggageComponent,},
       {
         path: "follow",
         component: FollowComponent,
@@ -31,7 +30,5 @@ export default [
       {
         path: "claim/view/:id",
         component: ViewClaimComponent,
-      },
-    ],
   },
 ] as Routes
