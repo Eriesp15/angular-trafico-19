@@ -2,7 +2,7 @@
   <div class="list-header">
     <div class="header-top">
       <h1>Reclamos de Equipaje</h1>
-      <button class="btn btn-primary" routerLink="new">
+      <button class="btn btn-primary" (click)="createNewClaim()">
         Nuevo Reclamo
       </button>
     </div>
@@ -151,7 +151,7 @@
   <div *ngIf="!loading" class="claims-section">
     <div *ngIf="filteredClaims.length === 0" class="empty-state">
       <p>No hay reclamos registrados</p>
-      <button class="btn btn-primary" routerLink="new">
+      <button class="btn btn-primary" (click)="createNewClaim()">
         Crear Nuevo Reclamo
       </button>
     </div>
@@ -160,7 +160,6 @@
       <table class="claims-table">
         <thead>
           <tr>
-            <!-- added all table columns -->
             <th>PIR</th>
             <th>Tipo</th>
             <th>Pasajero</th>
@@ -169,11 +168,14 @@
             <th>Fecha</th>
             <th>BagTag</th>
             <th>Estado</th>
-            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let claim of filteredClaims" class="claim-row">
+          <tr 
+            *ngFor="let claim of filteredClaims" 
+            class="claim-row"
+            (click)="navigateToClaim(claim.id)"
+          >
             <td class="cell-id">{{ claim.id }}</td>
             <td class="cell-type">
               <span [class]="'badge badge-' + claim.claimType.toLowerCase()">
@@ -193,22 +195,6 @@
               <span [class]="'status-badge ' + getStatusClass(claim.status)">
                 {{ claim.status }}
               </span>
-            </td>
-            <td class="cell-actions">
-              <button
-                class="btn-action btn-view"
-                [routerLink]="['view', claim.id]"
-                title="Ver detalles"
-              >
-                Ver
-              </button>
-              <button
-                class="btn-action btn-delete"
-                (click)="deleteClaim(claim.id)"
-                title="Eliminar reclamo"
-              >
-                Eliminar
-              </button>
             </td>
           </tr>
         </tbody>
