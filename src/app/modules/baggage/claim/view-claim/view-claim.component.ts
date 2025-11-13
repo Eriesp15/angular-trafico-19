@@ -1,6 +1,6 @@
-import { Component, type OnInit } from "@angular/core"
+import { Component,  OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { ActivatedRoute, Router, RouterModule } from "@angular/router"
+import {  ActivatedRoute,  Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
 
@@ -98,19 +98,19 @@ export class ViewClaimComponent implements OnInit {
   }
 
   verHojaSeguimiento(): void {
-    console.log("[v0] Ver hoja seguimiento")
+    this.router.navigate(["/baggage/follow"])
   }
 
   verFormularioContenido(): void {
-    console.log("[v0] Ver formulario contenido")
+    console.log("[v0] Ver formulario contenido - ruta no asignada aún")
   }
 
   realizarEntrega(): void {
-    console.log("[v0] Realizar entrega")
+    console.log("[v0] Realizar entrega - ruta no asignada aún")
   }
 
   indemnizar(): void {
-    console.log("[v0] Indemnizar")
+    this.router.navigate(["/baggage/claim/compensation", this.claimId])
   }
 
   cerrarReclamo(): void {

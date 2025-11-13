@@ -4,6 +4,7 @@ import { FollowComponent } from "./follow/follow.component"
 import { ListComponent } from "./claim/list/list.component"
 import { NewClaimComponent } from "./claim/new-claim/new-claim.component"
 import { ViewClaimComponent } from "./claim/view-claim/view-claim.component"
+import { CompensationComponent } from "./claim/compensation/compensation.component"
 
 export default [
   {
@@ -26,6 +27,10 @@ export default [
       {
         path: "claim/new",
         component: NewClaimComponent,
+      },
+      {
+        path: "claim/compensation/:id",
+        component: CompensationComponent,
       },
       {
         path: "claim/view/:id",
