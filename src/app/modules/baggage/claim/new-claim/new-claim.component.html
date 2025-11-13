@@ -30,24 +30,24 @@
         <h2 class="section-title">Línea 1: Estaciones Involucradas</h2>
         <div class="form-group">
           <label>QD - Prioridad de Estación > Dirección(es)</label>
-          <input
+          <div class="input-with-code">
+            <span class="code">QD</span>
+            <input
             type="text"
             [(ngModel)]="claimData.involvedStations"
             placeholder="Ingresa estaciones involucradas"
-          />
+            />
+          </div>
+
         </div>
       </div>
 
       <!-- Line 2: Originador/Date/Time -->
       <div class="section">
-        <h2 class="section-title">Línea 2: Originador, Fecha y Hora</h2>
         <div class="form-grid-3">
           <div class="form-group">
             <label>Originador</label>
-            <div class="input-with-code">
-              <span class="code">ORG</span>
-              <input type="text" [(ngModel)]="claimData.originStation" />
-            </div>
+            <input type="text" [(ngModel)]="claimData.originStation" />
           </div>
           <div class="form-group">
             <label>Fecha</label>
@@ -57,64 +57,79 @@
             <label>Hora</label>
             <input type="time" [(ngModel)]="claimData.originatorTime" />
           </div>
+          <div class="form-group">
+            <label>Tipo reclamo</label>
+            <div class="claim-type-buttons">
+              <button
+                type="button"
+                [class.active]="claimData.claimType === 'AHL'"
+                (click)="claimData.claimType = 'AHL'"
+              >
+                AHL
+              </button>
+              <button
+                type="button"
+                [class.active]="claimData.claimType === 'DAMAGED'"
+                (click)="claimData.claimType = 'DAMAGED'"
+              >
+                DAMAGED
+              </button>
+              <button
+                type="button"
+                [class.active]="claimData.claimType === 'PILFERED'"
+                (click)="claimData.claimType = 'PILFERED'"
+              >
+                PILFERED
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Line 3: Airport/Airline/Reference -->
       <div class="section">
-        <h2 class="section-title">Línea 3: Aeropuerto, Aerolínea y Referencia</h2>
         <div class="form-grid-3">
           <div class="form-group">
             <label>Aeropuerto</label>
-            <div class="input-with-code">
-              <span class="code">AP</span>
               <input type="text" [(ngModel)]="claimData.airport" />
-            </div>
           </div>
           <div class="form-group">
             <label>Aerolínea</label>
-            <div class="input-with-code">
-              <span class="code">AL</span>
               <input type="text" [(ngModel)]="claimData.airline" />
-            </div>
           </div>
           <div class="form-group">
             <label>Referencia</label>
-            <div class="input-with-code">
-              <span class="code">RF</span>
               <input type="text" [(ngModel)]="claimData.reference" />
-            </div>
           </div>
         </div>
       </div>
 
-      <!-- Line 4: Passenger Name -->
       <div class="section">
-        <h2 class="section-title">Línea 4: NM - Apellido y Nombre del Pasajero</h2>
+        <h2 class="section-title"> Apellido y Nombre del Pasajero en la maleta</h2>
         <div class="form-grid-3">
           <div class="form-group">
-            <label>Apellido Paterno</label>
+            <label>Apellido Paterno</label>            
+            <div class="input-with-code">
+              <span class="code">NM</span>
             <input type="text" [(ngModel)]="passengerData.paternalLastName" />
+            </div>
           </div>
           <div class="form-group">
             <label>Apellido Materno</label>
             <input type="text" [(ngModel)]="passengerData.maternalLastName" />
           </div>
           <div class="form-group">
-            <label>Nombre(s)</label>
-            <div class="input-with-code">
-              <span class="code">NM</span>
+            <label>Nombre(s) (máximo 3 nombres)</label>
+
               <input type="text" [(ngModel)]="passengerData.firstName" />
-            </div>
           </div>
         </div>
       </div>
 
       <!-- Line 5: Initials -->
       <div class="section">
-        <h2 class="section-title">Línea 5: IT - Iniciales en el Equipaje</h2>
         <div class="form-group">
-          <label>Iniciales</label>
+          <label>Iniciales en el equipaje del pasajero</label>
           <div class="input-with-code">
             <span class="code">IT</span>
             <input type="text" [(ngModel)]="passengerData.initials" />
@@ -124,19 +139,11 @@
 
       <!-- Line 6: Ticket/BagTag -->
       <div class="section">
-        <h2 class="section-title">Línea 6: TN - Número de Boleto / CT</h2>
         <div class="form-grid-2">
           <div class="form-group">
-            <label>Número de Boleto/Ticket</label>
+            <label>Número de ticket/Carrier Bag-Tag Number</label>
             <div class="input-with-code">
               <span class="code">TN</span>
-              <input type="text" [(ngModel)]="baggageData.ticketNumber" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>BagTag</label>
-            <div class="input-with-code">
-              <span class="code">CT</span>
               <input type="text" [(ngModel)]="baggageData.bagtag" />
             </div>
           </div>
@@ -145,9 +152,6 @@
 
       <!-- Line 7: Color/Type/Description/Route -->
       <div class="section">
-        <h2 class="section-title">
-          Línea 7: CT - Color, Tipo, Descripción / RT - Ruta para Rastreo
-        </h2>
         <div class="form-group">
           <label>Color/Tipo/Descripción</label>
           <div class="input-with-button">
@@ -171,7 +175,10 @@
             </div>
           </div>
         </div>
+      </div>
 
+      <!-- Line 8: Tracking Route -->
+      <div class="section">
         <div class="form-group">
           <label>Ruta y/o Lugar para Rastreo</label>
           <div class="input-with-code">
@@ -181,21 +188,8 @@
         </div>
       </div>
 
-      <!-- Line 8: Tracking Route -->
-      <div class="section">
-        <h2 class="section-title">Línea 8: RT - Ruta para Rastreo</h2>
-        <div class="form-group">
-          <label>Ruta de Rastreo Detallada</label>
-          <div class="input-with-code">
-            <span class="code">RT</span>
-            <textarea [(ngModel)]="baggageData.trackingPlace" rows="3"></textarea>
-          </div>
-        </div>
-      </div>
-
       <!-- Line 9: Flight/Date -->
       <div class="section">
-        <h2 class="section-title">Línea 9: FD - Número de Vuelo y Fecha</h2>
         <div class="form-grid-3">
           <div class="form-group">
             <label>Número de Vuelo</label>
@@ -217,7 +211,6 @@
 
       <!-- Line 10: Baggage Brand -->
       <div class="section">
-        <h2 class="section-title">Línea 10: BI - Marca de la Maleta</h2>
         <div class="form-group">
           <label>Marca/Identificación Exterior</label>
           <div class="input-with-code">
@@ -229,9 +222,8 @@
 
       <!-- Line 11: Content -->
       <div class="section">
-        <h2 class="section-title">Línea 11: CC - Contenido</h2>
         <div class="form-group">
-          <label>Descripción del Contenido</label>
+          <label>Descripción del Contenido (no mas de 4 articulos distintos)</label>
           <div class="input-with-code">
             <span class="code">CC</span>
             <textarea [(ngModel)]="baggageData.content" rows="3"></textarea>
@@ -241,7 +233,6 @@
 
       <!-- Line 12: Permanent Address -->
       <div class="section">
-        <h2 class="section-title">Línea 12: PA - Dirección Permanente</h2>
         <div class="form-group">
           <label>Dirección Permanente del Pasajero</label>
           <div class="input-with-code">
@@ -256,7 +247,6 @@
 
       <!-- Line 13: Temporary Address -->
       <div class="section">
-        <h2 class="section-title">Línea 13: TA - Dirección Temporal</h2>
         <div class="form-group">
           <label>Dirección Temporal del Pasajero</label>
           <div class="input-with-code">
@@ -271,10 +261,9 @@
 
       <!-- Line 14: Phone/Delivery Instructions -->
       <div class="section">
-        <h2 class="section-title">Línea 14: Teléfonos e Instrucciones de Entrega</h2>
         <div class="form-grid-3">
           <div class="form-group">
-            <label>Teléfono Permanente</label>
+            <label>Teléfono Permanente del Pasajero</label>
             <div class="input-with-code">
               <span class="code">PN</span>
               <input type="text" [(ngModel)]="passengerData.permanentPhone" />
@@ -302,9 +291,8 @@
 
       <!-- Line 15: Free Text -->
       <div class="section">
-        <h2 class="section-title">Línea 15: FF - Texto Libre</h2>
         <div class="form-group">
-          <label>Observaciones Adicionales</label>
+          <label>Texto libre</label>
           <div class="input-with-code">
             <span class="code">FF</span>
             <textarea rows="3"></textarea>
@@ -314,10 +302,10 @@
 
       <!-- Line 16: Additional Elements -->
       <div class="section">
-        <h2 class="section-title">Línea 16: Elementos Adicionales</h2>
+        <h2 class="section-title">Elementos Adicionales</h2>
         <div class="form-grid-3">
           <div class="form-group">
-            <label>Peso Facturado</label>
+            <label>Peso del Equipaje Facturado</label>
             <div class="input-with-code">
               <span class="code">BW</span>
               <input type="text" [(ngModel)]="baggageData.bagWeight" />
@@ -362,7 +350,6 @@
 
       <!-- Line 17: Ticket/PNR/Frequent Traveler -->
       <div class="section">
-        <h2 class="section-title">Línea 17: Boleto, PNR e Identificador de Viajero</h2>
         <div class="form-grid-3">
           <div class="form-group">
             <label>Número de Boleto</label>
@@ -390,7 +377,6 @@
 
       <!-- Line 18: Loss Reason / Failure Station -->
       <div class="section">
-        <h2 class="section-title">Línea 18: Razón de Pérdida y Estación de Fallo</h2>
         <div class="form-grid-2">
           <div class="form-group">
             <label>Razón de Pérdida</label>
@@ -411,7 +397,6 @@
 
       <!-- Line 19: Insurance/Keys/Kit -->
       <div class="section">
-        <h2 class="section-title">Línea 19: Seguro, Llaves y Kit</h2>
         <div class="form-grid-3">
           <div class="form-group">
             <label>Seguro</label>
@@ -440,7 +425,7 @@
 
       <!-- Line 20: Damage Type/Condition -->
       <div class="section">
-        <h2 class="section-title">Línea 20: Tipo y Condición del Daño</h2>
+        <h2 class="section-title">Información de daño</h2>
         <div class="form-grid-2">
           <div class="form-group">
             <label>Tipo de Daño</label>
@@ -465,7 +450,7 @@
 
       <!-- Line 21: Damage Description -->
       <div class="section">
-        <h2 class="section-title">Línea 21: Descripción del Daño</h2>
+        <h2 class="section-title">Descripción del Daño</h2>
         <button
           type="button"
           class="btn-indicate-damage"
