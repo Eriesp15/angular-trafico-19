@@ -32,10 +32,10 @@
     >
         @if (!isScreenSmall) {
             <!-- Logo -->
-            <div class="mx-2 flex items-center lg:mr-8">
+            <div class="mx-2 flex items-center lg:mr-8" (click)="navigateToHome()">
                 <div class="hidden lg:flex">
                     <img
-                        class="w-24 dark:hidden"
+                        class="w-24 dark:hidden cursor-pointer"
                         src="images/erp/boa_logo_blue.png"
                     />
                     <img

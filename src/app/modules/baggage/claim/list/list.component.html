@@ -1,0 +1,225 @@
+<div class="list-container">
+  <div class="list-header">
+    <div class="header-top">
+      <h1>Reclamos de Equipaje</h1>
+      <button class="btn btn-primary" routerLink="new">
+        Nuevo Reclamo
+      </button>
+    </div>
+
+    <!-- Búsqueda y Filtros -->
+    <div class="search-filter-section">
+      <form [formGroup]="searchForm" class="search-bar">
+        <input
+          type="text"
+          formControlName="query"
+          class="search-input"
+          placeholder="Buscar por PIR, pasajero, vuelo, ruta, BagTag o tipo..."
+        />
+        <button type="button" class="btn-search" (click)="clearSearch()">
+          Limpiar
+        </button>
+      </form>
+
+      <!-- added new filter sections -->
+      <div class="filter-group">
+        <div class="filter-column">
+          <label class="filter-label">Por Estado:</label>
+          <div class="filter-buttons">
+            <button
+              [class.active]="selectedStatus === 'ALL'"
+              (click)="filterByStatus('ALL')"
+              class="filter-btn"
+            >
+              Todos
+            </button>
+            <button
+              [class.active]="selectedStatus === 'DRAFT'"
+              (click)="filterByStatus('DRAFT')"
+              class="filter-btn"
+            >
+              Borradores
+            </button>
+            <button
+              [class.active]="selectedStatus === 'REGISTERED'"
+              (click)="filterByStatus('REGISTERED')"
+              class="filter-btn"
+            >
+              Registrados
+            </button>
+            <button
+              [class.active]="selectedStatus === 'PROCESSING'"
+              (click)="filterByStatus('PROCESSING')"
+              class="filter-btn"
+            >
+              En Proceso
+            </button>
+            <button
+              [class.active]="selectedStatus === 'RESOLVED'"
+              (click)="filterByStatus('RESOLVED')"
+              class="filter-btn"
+            >
+              Resueltos
+            </button>
+            <button
+              [class.active]="selectedStatus === 'CLOSED'"
+              (click)="filterByStatus('CLOSED')"
+              class="filter-btn"
+            >
+              Cerrados
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-column">
+          <label class="filter-label">Por Tipo:</label>
+          <div class="filter-buttons">
+            <button
+              [class.active]="selectedType === 'ALL'"
+              (click)="filterByType('ALL')"
+              class="filter-btn"
+            >
+              Todos
+            </button>
+            <button
+              [class.active]="selectedType === 'AHL'"
+              (click)="filterByType('AHL')"
+              class="filter-btn"
+            >
+              AHL
+            </button>
+            <button
+              [class.active]="selectedType === 'DAMAGED'"
+              (click)="filterByType('DAMAGED')"
+              class="filter-btn"
+            >
+              DAMAGED
+            </button>
+            <button
+              [class.active]="selectedType === 'PILFERED'"
+              (click)="filterByType('PILFERED')"
+              class="filter-btn"
+            >
+              PILFERED
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-column">
+          <label class="filter-label">Por Fecha:</label>
+          <div class="filter-buttons">
+            <button
+              [class.active]="filterOption === 'all'"
+              (click)="setFilterOption('all')"
+              class="filter-btn"
+            >
+              Todos
+            </button>
+            <button
+              [class.active]="filterOption === 'recent'"
+              (click)="setFilterOption('recent')"
+              class="filter-btn"
+            >
+              Recientes (7 días)
+            </button>
+            <button
+              [class.active]="filterOption === 'date'"
+              (click)="setFilterOption('date')"
+              class="filter-btn"
+            >
+              Fecha Específica
+            </button>
+          </div>
+          <input
+            *ngIf="filterOption === 'date'"
+            type="date"
+            [value]="selectedDate"
+            (change)="onDateChange($event.target.value)"
+            class="date-input"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Carga -->
+  <div *ngIf="loading" class="loading">
+    <p>Cargando reclamos...</p>
+  </div>
+
+  <!-- Lista de Reclamos -->
+  <div *ngIf="!loading" class="claims-section">
+    <div *ngIf="filteredClaims.length === 0" class="empty-state">
+      <p>No hay reclamos registrados</p>
+      <button class="btn btn-primary" routerLink="new">
+        Crear Nuevo Reclamo
+      </button>
+    </div>
+
+    <div *ngIf="filteredClaims.length > 0" class="claims-table-wrapper">
+      <table class="claims-table">
+        <thead>
+          <tr>
+            <!-- added all table columns -->
+            <th>PIR</th>
+            <th>Tipo</th>
+            <th>Pasajero</th>
+            <th>Vuelo</th>
+            <th>Ruta</th>
+            <th>Fecha</th>
+            <th>BagTag</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let claim of filteredClaims" class="claim-row">
+            <td class="cell-id">{{ claim.id }}</td>
+            <td class="cell-type">
+              <span [class]="'badge badge-' + claim.claimType.toLowerCase()">
+                {{ claim.claimType }}
+              </span>
+            </td>
+            <td class="cell-passenger">
+              {{ claim.passenger.lastName }}, {{ claim.passenger.firstName }}
+            </td>
+            <td class="cell-flight">{{ claim.flight }}</td>
+            <td class="cell-route">{{ claim.route }}</td>
+            <td class="cell-date">
+              {{ claim.createdAt | date:'dd/MM/yyyy' }}
+            </td>
+            <td class="cell-bagtag">{{ claim.bagTag }}</td>
+            <td class="cell-status">
+              <span [class]="'status-badge ' + getStatusClass(claim.status)">
+                {{ claim.status }}
+              </span>
+            </td>
+            <td class="cell-actions">
+              <button
+                class="btn-action btn-view"
+                [routerLink]="['view', claim.id]"
+                title="Ver detalles"
+              >
+                Ver
+              </button>
+              <button
+                class="btn-action btn-delete"
+                (click)="deleteClaim(claim.id)"
+                title="Eliminar reclamo"
+              >
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="claims-info">
+      <p>Total de reclamos: <strong>{{ filteredClaims.length }}</strong></p>
+    </div>
+  </div>
+
+  <!-- Router Outlet para Sub-rutas -->
+  <router-outlet />
+</div>

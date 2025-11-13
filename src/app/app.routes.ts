@@ -12,10 +12,14 @@ import { SeguimientoComponent } from 'app/modules/reclamo/seguimiento/seguimient
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
     // Redirect empty path to '/example'
-    { path: '', pathMatch: 'full', redirectTo: 'example' },
+    {path: '', pathMatch : 'full', redirectTo: 'baggage'},
 
     // Redirect signed-in user to the '/example'
-    { path: 'signed-in-redirect', pathMatch: 'full', redirectTo: 'example' },
+    //
+    // After the user signs in, the sign-in page will redirect the user to the 'signed-in-redirect'
+    // path. Below is another redirection for that path to redirect the user to the desired
+    // location. This is a small convenience to keep all main routes together here on this file.
+    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: 'baggage'},
 
     // Auth routes for guests
     {
@@ -66,6 +70,7 @@ export const appRoutes: Route[] = [
             { path: 'reclamo', loadChildren: () => import('app/modules/reclamo/reclamo.module').then(m => m.ReclamoModule) },
             { path: 'reclamo/:id/cerrado', component: CerradoComponent },  // Ruta de cerrado
 
+            {path: 'baggage', loadChildren: () => import('app/modules/baggage/baggage.routes')},
         ]
     }
 ];
