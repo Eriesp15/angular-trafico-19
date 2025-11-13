@@ -10,7 +10,10 @@
   <!-- Metrics Grid -->
   <div class="metrics-grid">
     <div *ngFor="let metric of metrics" class="metric-card" [style.border-top]="'4px solid ' + metric.color">
-      <div class="metric-icon">{{ metric.icon }}</div>
+      <div class="metric-icon">
+        <!-- using Material icon instead of emoji -->
+        <mat-icon>{{ metric.icon }}</mat-icon>
+      </div>
       <div class="metric-content">
         <h3 class="metric-title">{{ metric.title }}</h3>
         <p class="metric-value">
@@ -25,15 +28,18 @@
     <h2>Acciones Rápidas</h2>
     <div class="actions-grid">
       <button routerLink="claim/new-claim" class="action-btn action-new">
-        <span class="action-icon">➕</span>
+        <!-- using Material icon instead of emoji -->
+        <mat-icon class="action-icon">add_circle_outline</mat-icon>
         <span>Nuevo Reclamo</span>
       </button>
       <button routerLink="claim/list" class="action-btn action-list">
-        <span class="action-icon">📋</span>
+        <!-- using Material icon instead of emoji -->
+        <mat-icon class="action-icon">list_alt</mat-icon>
         <span>Ver Reclamos</span>
       </button>
       <button class="action-btn action-report">
-        <span class="action-icon">📊</span>
+        <!-- using Material icon instead of emoji -->
+        <mat-icon class="action-icon">bar_chart</mat-icon>
         <span>Reportes</span>
       </button>
     </div>

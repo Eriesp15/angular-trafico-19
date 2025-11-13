@@ -1,6 +1,7 @@
-import { Component,  OnInit } from "@angular/core"
+import { Component, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { RouterLink, RouterOutlet } from "@angular/router"
+import { MatIconModule } from "@angular/material/icon"
 
 interface MetricCard {
   title: string
@@ -16,37 +17,38 @@ interface RecentClaim {
   estado: "En proceso" | "Cerrado" | "Pendiente"
   fecha: string
 }
-@Component({
-  selector: 'app-baggage',
-  imports: [CommonModule, RouterOutlet, RouterLink],
-  templateUrl: './baggage.component.html',
-  styleUrls: ['./baggage.component.scss'],
-})
 
-export class BaggageComponent implements OnInit { 
+@Component({
+  selector: "app-baggage",
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, RouterLink, MatIconModule],
+  templateUrl: "./baggage.component.html",
+  styleUrl: "./baggage.component.scss",
+})
+export class BaggageComponent implements OnInit {
   metrics: MetricCard[] = [
     {
       title: "Total de Reclamos",
       value: 127,
-      icon: "📋",
+      icon: "receipt_long",
       color: "#003366",
     },
     {
       title: "En Proceso",
       value: 23,
-      icon: "⏳",
+      icon: "schedule",
       color: "#0066cc",
     },
     {
       title: "Resueltos",
       value: 89,
-      icon: "✓",
+      icon: "check_circle",
       color: "#00a651",
     },
     {
       title: "Indemnización Total",
       value: 15750,
-      icon: "💰",
+      icon: "payment",
       color: "#ff9800",
     },
   ]
@@ -109,4 +111,3 @@ export class BaggageComponent implements OnInit {
     }
   }
 }
-

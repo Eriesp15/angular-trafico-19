@@ -87,24 +87,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #003366;
     font-size: 28px;
-
-    &.paid {
-      background-color: #10b981;
-    }
-
-    &.luggage {
-      background-color: #f59e0b;
-    }
-
-    &.shipping {
-      background-color: #3b82f6;
-    }
-
-    &.extras {
-      background-color: #8b5cf6;
-    }
 
     mat-icon {
       font-size: 28px;
