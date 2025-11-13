@@ -54,21 +54,61 @@
             </div>
 
             <!-- Entrega en -->
-            <div class="row">
-                <span class="label">Entrega en:</span>
-                <div class="value">
-                    <mat-radio-group class="radio-line" [(ngModel)]="form.entregaEn">
-                        <mat-radio-button [value]="'aeropuerto'">Entrega en aeropuerto</mat-radio-button>
-                        <mat-radio-button [value]="'domicilio'">Entrega en domicilio</mat-radio-button>
-                    </mat-radio-group>
+            <div class="entrega-section">
+                <h3>Detalles de entrega</h3>
+
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="entrega" [(ngModel)]="entregaModo" value="aeropuerto" />
+                        Entrega en aeropuerto
+                    </label>
+                    <label>
+                        <input type="radio" name="entrega" [(ngModel)]="entregaModo" value="domicilio" />
+                        Entrega en domicilio
+                    </label>
+                </div>
+
+                <div class="direccion-group" *ngIf="entregaModo === 'domicilio'">
+                    <label>Dirección de entrega:</label>
+                    <input
+                        type="text"
+                        class="direccion-input"
+                        [(ngModel)]="direccion"
+                        placeholder="Ej. Calle Lanza N°123, zona norte..."
+                    />
+                </div>
+
+                <div class="botones-entrega">
+                    <button class="btn btn-confirmar" (click)="abrirModalMensaje()">Confirmar entrega</button>
+
+                    <label class="btn btn-subir">
+                        Subir comprobante firmado
+                        <input type="file" accept="image/*,.pdf" (change)="subirComprobante($event)" hidden />
+                    </label>
+                </div>
+
+                <div *ngIf="archivoSubido" class="archivo-info">
+                    <p>✅ Archivo cargado: <b>{{ archivoSubido.name }}</b></p>
                 </div>
             </div>
 
-            <!-- Dirección -->
-            <div class="row">
-                <label class="label" for="dir">Direccion de entrega:</label>
-                <input id="dir" class="input" type="text" [(ngModel)]="form.direccion" placeholder="Calle, nro, zona..." />
+            <!-- MODAL DE CONFIRMACIÓN -->
+            <div class="modal-backdrop" *ngIf="modalAbierto">
+                <div class="modal">
+                    <h3>Mensaje a enviar</h3>
+                    <textarea [(ngModel)]="mensajeWhatsApp" rows="6"></textarea>
+
+                    <div class="row">
+                        <button class="btn btn-light" (click)="cerrarModal()">Cancelar</button>
+                        <button class="btn btn-amarillo" (click)="copiarMensaje()">Copiar</button>
+                        <button class="btn btn-confirmar" (click)="abrirWhatsApp()">Enviar por WhatsApp</button>
+                    </div>
+
+                    <p *ngIf="copiado" class="copiado">✅ Mensaje copiado al portapapeles</p>
+                </div>
             </div>
+
+
         </div>
 
         <div class="note">
@@ -105,4 +145,5 @@
     <button class="print-fab no-print" mat-fab (click)="print()">
         <mat-icon>print</mat-icon>
     </button>
+
 </div>

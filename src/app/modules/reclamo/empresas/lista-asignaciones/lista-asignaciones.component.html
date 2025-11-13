@@ -1,42 +1,41 @@
-<h1 class="link">Reparacion</h1>
-<p class="header-seccion">Lista de Equipajes en Reparación</p>
+<div class="detalle-container">
+    <div class="header">
+        <button class="btn btn-light" (click)="volver.emit()">← Volver</button>
+        <div>
+            <h2 class="title">{{ empresa.nombre }}</h2>
+            <p class="sub">Asignaciones de la empresa</p>
+        </div>
+    </div>
 
-<div class="pill">Empresa: <b>{{empresa?.nombre}}</b></div>
-
-<div class="card" style="margin-top:.8rem; padding:0">
-    <table style="width:100%; border-collapse:collapse">
-        <thead style="background:#E5F0FB; color:#111827">
+    <table>
+        <thead>
         <tr>
-            <th style="text-align:left; padding:.7rem">Tipo reclamo</th>
-            <th style="text-align:left; padding:.7rem">PIR</th>
-            <th style="text-align:left; padding:.7rem">Pasajero</th>
-            <th style="text-align:left; padding:.7rem">Fecha Asignación</th>
-            <th style="text-align:left; padding:.7rem">Fecha de Entrega</th>
-            <th style="text-align:left; padding:.7rem">Estado</th>
-            <th style="text-align:left; padding:.7rem">Acciones</th>
+            <th>#</th>
+            <th>PIR</th>
+            <th>Fecha asignación</th>
+            <th>Fecha entrega</th>
+            <th>Estado</th>
+            <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let r of filas()"
-            [style.color]="r.estado==='Pendiente' ? '#DC2626' : '#111827'">
-            <td style="padding:.7rem">{{r.tipoReclamo}}</td>
-            <td style="padding:.7rem"><a class="link">{{r.pir}}</a></td>
-            <td style="padding:.7rem">{{r.pasajero}}</td>
-            <td style="padding:.7rem">{{r.fechaAsignacion}}</td>
-            <td style="padding:.7rem">{{r.fechaEntrega || '-'}}</td>
-            <td style="padding:.7rem"><b>{{r.estado}}</b></td>
-            <td style="padding:.7rem">
-                <button class="btn" (click)="cambiarEstado(r.id, r.estado, r.pir)">Cambiar estado</button>
-                <button class="btn" (click)="eliminar(r.id, r.pir)">🗑️</button>
+        <tr *ngFor="let a of asignaciones; let i = index" [hidden]="a.empresaId !== empresa.id">
+            <td>{{ i + 1 }}</td>
+            <td>{{ a.pir }}</td>
+            <td>{{ a.fechaAsignacion }}</td>
+            <td>{{ a.fechaEntrega || '—' }}</td>
+            <td>
+          <span
+              class="badge"
+              [class.badge-ok]="a.estado === EstadoAsignacion.Entregado"
+          >{{ a.estado }}</span
+          >
+            </td>
+            <td>
+                <button class="btn btn-light" (click)="cambiarEstado(a)">Cambiar estado</button>
+                <button class="btn btn-borrar" (click)="eliminar(a)">🗑️</button>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
-
-<app-modal-confirmacion
-    [abierto]="confirmarAbierto"
-    [mensaje]="confirmarMsg"
-    (confirmar)="confirmar()"
-    (cancelar)="cerrarConfirmacion()">
-</app-modal-confirmacion>

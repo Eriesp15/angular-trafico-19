@@ -1,35 +1,47 @@
-<div class="empresas-page">
-    <div class="container">
-        <div class="header">
-            <div class="header-left">
-                <h1 class="titulo">Empresas</h1>
-                <p class="subtitulo">Gestión de empresas</p>
-            </div>
-
-            <button class="btn btn-primario header-add" (click)="agregarTipo()">
-                <span class="header-add-text">Agregar Tipo de Empresa</span>
-                <span class="plus-circle">＋</span>
-            </button>
+<div class="empresas-container">
+    <div class="header">
+        <h1 class="title">Empresas</h1>
+        <div class="acciones">
+            <button class="btn btn-amarillo" (click)="abrirModalAgregar()">Agregar empresa</button>
         </div>
-
-        <ng-container *ngFor="let t of tipos">
-            <div class="tipo-strip">
-                <span>Tipo de Empresa:&nbsp;<b class="tipo-nombre">{{ t.nombre }}</b></span>
-                <button class="btn btn-amarillo btn-round" (click)="agregarEmpresa(t.id)">＋</button>
-            </div>
-
-            <div class="cards-grid">
-                <app-card-empresa
-                    *ngFor="let e of empresasPorTipo(t.id)"
-                    [empresa]="e"
-                    (verLista)="verLista($event)"
-                    (asignar)="alert('Abrir modal Asignar para ' + $event.nombre)"
-                    (editar)="alert('Abrir modal Editar empresa '+$event.nombre)"
-                    (toggleConfirmado)="confirmarToggle($event)">
-                </app-card-empresa>
-            </div>
-        </ng-container>
     </div>
 
-    <button class="float-add btn btn-amarillo" (click)="agregarEmpresa('')">＋</button>
+    <!-- ===== LISTA ===== -->
+    <ng-container *ngIf="vista() === 'lista'">
+        <div class="cards">
+            <div class="card" *ngFor="let e of empresas()">
+                <div class="card-head">
+                    <div>
+                        <h3 class="card-title">{{ e.nombre }}</h3>
+                        <p class="tipo">{{ e.tipo }}</p>
+                    </div>
+
+                    <label class="switch" [class.on]="e.activo" (click)="cambiarEstado(e)">
+                        <input type="checkbox" [checked]="e.activo" readonly />
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="card-body">
+                    <div><b>Teléfono:</b> {{ e.telefono }}</div>
+                    <div><b>Email:</b> {{ e.email }}</div>
+                    <div><b>Dirección:</b> {{ e.direccion }}</div>
+                </div>
+
+                <div class="card-actions">
+                    <button class="btn btn-light" (click)="verDetalle(e)">Ver asignaciones</button>
+                    <button class="btn btn-amarillo" [disabled]="!e.activo">Asignar</button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- ===== DETALLE ===== -->
+    <ng-container *ngIf="vista() === 'detalle' && empresaSel()">
+        <app-lista-asignaciones
+            [empresa]="empresaSel()!"
+            [asignaciones]="asignaciones()"
+            (volver)="volver()"
+        ></app-lista-asignaciones>
+    </ng-container>
 </div>

@@ -1,15 +1,66 @@
-@use '../modales/modales.scss' as *;
+.detalle-container {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
-:root { --celeste:#B9E0FA; --borde:#E5E7EB; --azul:#022F70; --tabla-bg:#FEFDFB; }
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
 
-:host { display:block; padding:1rem 1.5rem; background:#F3F6FB; }
+.title {
+    margin: 0;
+    color: #022f70;
+}
 
-h1 { color: var(--azul); font-weight:800; margin:0; }
-.header-seccion{ color:#111827; }
+.sub {
+    margin: 0;
+    color: #6b7280;
+}
 
-.card { border:1px solid var(--borde); border-radius:1rem; background:var(--tabla-bg); box-shadow:0 4px 10px rgba(0,0,0,.06); }
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-table { width:100%; border-collapse:collapse; }
-thead { background:#E5F0FB; }
-th, td { padding:.75rem; border-bottom: 1px solid var(--borde); }
-.link { color: var(--azul); font-weight:700; text-decoration: underline; }
+th,
+td {
+    border: 1px solid #e5e7eb;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+th {
+    background: #f3f6fb;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    background: #f3f4f6;
+}
+
+.badge-ok {
+    background: #dcfce7;
+}
+
+.btn {
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    margin: 0 0.2rem;
+    cursor: pointer;
+}
+
+.btn-light {
+    background: #b9e0fa66;
+}
+
+.btn-borrar {
+    background: #fee2e2;
+}

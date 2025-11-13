@@ -110,7 +110,103 @@
     box-shadow: 0 8px 24px rgba(0,0,0,.2);
     z-index: 1000;
 }
+.entrega-section {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+    margin-top: 1.5rem;
+}
 
+.radio-group {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+    label { cursor: pointer; }
+}
+
+.direccion-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    label { font-weight: 600; color: #111827; margin-bottom: .3rem; }
+    .direccion-input {
+        padding: .5rem .8rem;
+        border: 1px solid #d1d5db;
+        border-radius: .5rem;
+        width: 100%;
+    }
+}
+
+.botones-entrega {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: .6rem 1rem;
+    border-radius: .6rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-confirmar {
+    background: #022F70;
+    color: #fff;
+}
+.btn-confirmar:hover { background: #002D8F; }
+
+.btn-subir {
+    background: #FFB60D;
+    color: #1f2937;
+}
+.btn-subir:hover { background: #f7c43b; }
+
+.archivo-info {
+    margin-top: .8rem;
+    background: #F3F6FB;
+    padding: .6rem .8rem;
+    border-radius: .5rem;
+    font-size: .9rem;
+}
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+.modal {
+    background: #FEFDFB;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    width: min(500px, 90vw);
+    box-shadow: 0 10px 20px rgba(0,0,0,.15);
+}
+.modal textarea {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: .5rem;
+    padding: .5rem;
+    resize: none;
+    margin-top: .5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: .95rem;
+}
+.copiado {
+    font-size: .9rem;
+    color: #22c55e;
+    margin-top: .5rem;
+    text-align: right;
+}
+.btn-amarillo {
+    background: #FFB60D;
+    color: #1f2937;
+    font-weight: 700;
+}
 /* Ocultar en pantalla los elementos marcados */
 .no-print { display: inline-flex; }
 

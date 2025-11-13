@@ -1,54 +1,90 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { ListaAsignacionesComponent } from './lista-asignaciones/lista-asignaciones.component';
 
-import { Tipo, Empresa } from './modelos/empresas.model';
-import { CardEmpresaComponent } from './ui/card-empresa/card-empresa.component';
+export enum EstadoAsignacion { Pendiente = 'Pendiente', Entregado = 'Entregado' }
+
+export interface Empresa {
+    id: string;
+    tipo: string;
+    nombre: string;
+    telefono: string;
+    email: string;
+    direccion: string;
+    activo: boolean;
+}
+
+export interface Asignacion {
+    id: string;
+    empresaId: string;
+    pir: string;
+    fechaAsignacion: string;
+    fechaEntrega: string | null;
+    estado: EstadoAsignacion;
+}
 
 @Component({
     selector: 'app-empresas',
     standalone: true,
-    imports: [CommonModule, CardEmpresaComponent],
+    imports: [CommonModule, FormsModule, ListaAsignacionesComponent],
     templateUrl: './empresas.component.html',
     styleUrls: ['./empresas.component.scss'],
 })
 export class EmpresasComponent {
+    EstadoAsignacion = EstadoAsignacion;
+    vista = signal<'lista' | 'detalle'>('lista');
+    empresaSel = signal<Empresa | null>(null);
 
-    constructor(private router: Router) {}
+    // Mock data
+    empresas = signal<Empresa[]>([
+        {
+            id: '1',
+            tipo: 'Transporte',
+            nombre: 'LogiTrans',
+            telefono: '78900011',
+            email: 'contacto@logitrans.com',
+            direccion: 'Av. Ayacucho 123',
+            activo: true,
+        },
+        {
+            id: '2',
+            tipo: 'Reparación',
+            nombre: 'ReparaYa',
+            telefono: '65875552',
+            email: 'soporte@reparaya.com',
+            direccion: 'C. Lanza 456',
+            activo: true,
+        },
+    ]);
 
-    // --- Datos locales (mock) ---
-    tipos: Tipo[] = [
-        { id: 't1', nombre: 'Transporte', activo: true },
-        { id: 't2', nombre: 'Reparación', activo: true },
-    ];
+    asignaciones = signal<Asignacion[]>([
+        {
+            id: 'a1',
+            empresaId: '2',
+            pir: 'CBBO1315449',
+            fechaAsignacion: '2025-06-10',
+            fechaEntrega: null,
+            estado: EstadoAsignacion.Pendiente,
+        },
+    ]);
 
-    empresas: Empresa[] = [
-        { id: 'e1', tipoId: 't1', nombre: 'TransBolivia', telefono: '70123456', email: 'info@transbolivia.com', razonSocial: 'Transportadora Bolivia', direccion: 'Av. los Angeles N 965', activo: true },
-        { id: 'e2', tipoId: 't1', nombre: 'TransCochabamba', telefono: '63878787', email: 'info@transcochabamba.com', razonSocial: 'Transportadora Cochabamba', direccion: 'Av. Blanco Galindo N 965', activo: false },
-        { id: 'e3', tipoId: 't2', nombre: 'ReparaYa', telefono: '65875552', email: 'info@reparaya.com', razonSocial: 'Reparación', direccion: 'Calle Camaro N 657', activo: true },
-    ];
-
-    // --- Helpers de vista ---
-    empresasPorTipo(tipoId: string): Empresa[] {
-        return this.empresas.filter(e => e.tipoId === tipoId);
+    verDetalle(e: Empresa) {
+        this.empresaSel.set(e);
+        this.vista.set('detalle');
     }
 
-    verLista(e: Empresa) {
-        this.router.navigate(['/reclamo/empresas', e.id, 'asignaciones']);
+    volver() {
+        this.vista.set('lista');
+        this.empresaSel.set(null);
     }
 
-    // Acciones de botones superiores (ahora solo demo)
-    agregarTipo() {
-        alert('Abrir modal: Agregar Tipo de Empresa');
-    }
-    agregarEmpresa(tipoId: string) {
-        alert(`Abrir modal: Nueva empresa para tipo ${tipoId}`);
+    cambiarEstado(e: Empresa) {
+        e.activo = !e.activo;
+        this.empresas.set([...this.empresas()]);
     }
 
-    // Cambiar estado (confirmado) desde la card
-    confirmarToggle(empresa: Empresa) {
-        const nuevo = !empresa.activo;
-        empresa.activo = nuevo;
-        // aquí luego llamas a tu API si lo necesitas
+    abrirModalAgregar() {
+        alert('Aquí iría tu modal de agregar empresa');
     }
 }
