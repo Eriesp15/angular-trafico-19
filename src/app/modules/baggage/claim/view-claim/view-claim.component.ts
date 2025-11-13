@@ -106,7 +106,7 @@ export class ViewClaimComponent implements OnInit {
   }
 
   realizarEntrega(): void {
-    console.log("[v0] Realizar entrega")
+    this.router.navigate([`/baggage/claim/make-delivery/${this.claimId}`])
   }
 
   indemnizar(): void {

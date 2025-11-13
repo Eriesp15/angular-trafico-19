@@ -1,0 +1,154 @@
+<div class="make-delivery-container">
+  <!-- Main Form Section -->
+  <div class="delivery-form-section" *ngIf="!showConfirmation">
+    <div class="form-header">
+      <h1>Realizar Entrega</h1>
+      <p class="subtitle">Configure los detalles de entrega del equipaje</p>
+    </div>
+
+    <form [formGroup]="deliveryForm" class="delivery-form">
+      <!-- Delivery Type Selection -->
+      <div class="form-section">
+        <h2 class="section-title">Tipo de Entrega</h2>
+
+        <div class="radio-group">
+          <div class="radio-option" *ngFor="let type of deliveryTypes">
+            <input
+              type="radio"
+              [id]="type.value"
+              [value]="type.value"
+              formControlName="tipo"
+              class="radio-input"
+            />
+            <label [for]="type.value" class="radio-label">
+              <span class="radio-custom"></span>
+              <span class="radio-text">{{ type.label }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conditional Fields Based on Delivery Type -->
+      <div class="form-section" *ngIf="selectedDeliveryType === 'envio'">
+        <h2 class="section-title">Detalles de Envío</h2>
+
+        <div class="form-group">
+          <label for="ubicacion" class="form-label">Ubicación de Envío</label>
+          <input
+            id="ubicacion"
+            type="text"
+            class="form-input"
+            formControlName="ubicacion"
+            placeholder="Ingrese la ubicación de envío"
+            [class.error]="isFieldRequired('ubicacion')"
+          />
+          <span class="error-message" *ngIf="isFieldRequired('ubicacion')">
+            La ubicación es requerida para envíos
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="empresa" class="form-label">Empresa de Envío</label>
+          <select
+            id="empresa"
+            class="form-select"
+            formControlName="empresa"
+            [class.error]="isFieldRequired('empresa')"
+          >
+            <option value="" disabled selected>Seleccione una empresa</option>
+            <option *ngFor="let company of shippingCompanies" [value]="company">
+              {{ company }}
+            </option>
+          </select>
+          <span class="error-message" *ngIf="isFieldRequired('empresa')">
+            Debe seleccionar una empresa de envío
+          </span>
+        </div>
+      </div>
+
+      <div class="form-section" *ngIf="selectedDeliveryType === 'aeropuerto'">
+        <h2 class="section-title">Detalles de Entrega en Aeropuerto</h2>
+
+        <div class="form-group">
+          <label for="departamento" class="form-label">Departamento</label>
+          <select
+            id="departamento"
+            class="form-select"
+            formControlName="departamento"
+            [class.error]="isFieldRequired('departamento')"
+          >
+            <option value="" disabled selected>Seleccione un departamento</option>
+            <option *ngFor="let dept of departments" [value]="dept">
+              {{ dept }}
+            </option>
+          </select>
+          <span class="error-message" *ngIf="isFieldRequired('departamento')">
+            Debe seleccionar un departamento
+          </span>
+        </div>
+      </div>
+
+      <div class="form-section" *ngIf="selectedDeliveryType === 'recojo'">
+        <div class="info-box">
+          <mat-icon>info</mat-icon>
+          <p>
+            El equipaje estará disponible para recojo en el Aeropuerto de Cochabamba.
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-cancel" (click)="cancelar()">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-accept" (click)="aceptar()" [disabled]="deliveryForm.invalid">
+          <mat-icon>check</mat-icon>
+          Aceptar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Confirmation Section -->
+  <div class="confirmation-section" *ngIf="showConfirmation && confirmationData">
+    <div class="confirmation-header">
+      <h1>Confirmar Entrega</h1>
+      <p class="subtitle">Revise los datos antes de confirmar</p>
+    </div>
+
+    <div class="confirmation-box">
+      <div class="confirmation-item">
+        <span class="label">Tipo de Entrega:</span>
+        <span class="value">{{ confirmationData.tipo }}</span>
+      </div>
+
+      <div class="confirmation-item" *ngIf="confirmationData.ubicacion">
+        <span class="label">Ubicación:</span>
+        <span class="value">{{ confirmationData.ubicacion }}</span>
+      </div>
+
+      <div class="confirmation-item" *ngIf="confirmationData.empresa">
+        <span class="label">Empresa de Envío:</span>
+        <span class="value">{{ confirmationData.empresa }}</span>
+      </div>
+
+      <div class="confirmation-item" *ngIf="confirmationData.departamento">
+        <span class="label">Departamento:</span>
+        <span class="value">{{ confirmationData.departamento }}</span>
+      </div>
+    </div>
+
+    <div class="confirmation-actions">
+      <button type="button" class="btn btn-cancel" (click)="volver()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver
+      </button>
+      <button type="button" class="btn btn-confirm" (click)="confirmarEntrega()">
+        <mat-icon>done_all</mat-icon>
+        Confirmar Entrega
+      </button>
+    </div>
+  </div>
+</div>

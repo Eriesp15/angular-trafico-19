@@ -4,6 +4,7 @@ import { FollowComponent } from "./follow/follow.component"
 import { ListComponent } from "./claim/list/list.component"
 import { NewClaimComponent } from "./claim/new-claim/new-claim.component"
 import { ViewClaimComponent } from "./claim/view-claim/view-claim.component"
+import { MakeDeliveryComponent } from "./claim/make-delivery/make-delivery.component"
 
 export default [
   {
@@ -30,5 +31,9 @@ export default [
       {
         path: "claim/view/:id",
         component: ViewClaimComponent,
-  },
+      },
+      {
+        path: "claim/make-delivery/:id",
+        component: MakeDeliveryComponent,
+      },
 ] as Routes
