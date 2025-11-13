@@ -42,6 +42,13 @@ export const defaultNavigation: ErpNavigationItem[] = [
                     type : 'basic',
                     icon : 'heroicons_outline:eye',
                     link : '/baggage/claim/view/:id'
+                    },
+                    {
+                    id   : 'follow',
+                    title: 'Cerrar reclamo',
+                    type : 'basic',
+                    icon : 'heroicons_outline:eye',
+                    link : '/baggage/claim/view/:id'
                     }
                 ]
             },
@@ -50,6 +57,22 @@ export const defaultNavigation: ErpNavigationItem[] = [
                 title: 'Indemnizaciones',
                 type : 'basic',
                 icon : 'heroicons_outline:banknotes',
+                link : '/baggage/compensation',
+            },
+            
+            {
+                id   : 'claim',
+                title: 'Seguimiento',
+                type : 'basic',
+                icon : 'heroicons_outline:banknotes',
+                link : '/baggage/compensation',
+            },
+            
+            {
+                id   : 'claim',
+                title: 'Empresas',
+                type : 'basic',
+                icon : 'heroicons_outline:building-office',
                 link : '/baggage/compensation',
             }
         ]
