@@ -1,6 +1,6 @@
-import { Component, type OnInit, type OnDestroy } from "@angular/core"
+import { Component,  OnInit,  OnDestroy } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { RouterLink, RouterOutlet } from "@angular/router"
+import {  Router, RouterLink, RouterOutlet } from "@angular/router"
 import {  FormBuilder,  FormGroup, ReactiveFormsModule } from "@angular/forms"
 import { Subject } from "rxjs"
 import { takeUntil } from "rxjs/operators"
@@ -70,18 +70,6 @@ export class ListComponent implements OnInit, OnDestroy {
       bagTag: "BA789458",
       tipo: "PILFERED",
     },
-    {
-      id: "PIR006323",
-      claimReference: { airport: "CBB", airline: "OB", reference: "001236" },
-      passenger: { firstName: "Samuel", lastName: "Sanchez" },
-      claimType: "AHL",
-      status: "PROCESSING",
-      createdAt: new Date("2020-08-10"),
-      flight: "OB546",
-      route: "CBB VVI MAD",
-      bagTag: "BA789458",
-      tipo: "PILFERED",
-    },
   ]
   filteredClaims: PIR[] = []
   loading = true
@@ -92,7 +80,10 @@ export class ListComponent implements OnInit, OnDestroy {
   selectedDate = ""
   private destroy$ = new Subject<void>()
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+  ) {
     this.searchForm = this.fb.group({
       query: [""],
     })
@@ -211,5 +202,16 @@ export class ListComponent implements OnInit, OnDestroy {
     this.filterOption = "all"
     this.selectedDate = ""
     this.applyFilters()
+  }
+
+  navigateToClaim(id: string | undefined): void {
+    if (id) {
+      this.router.navigate(["/baggage/claim/view", id])
+    }
+  }
+
+  // Added method to navigate to new claim
+  createNewClaim(): void {
+    this.router.navigate(["/baggage/claim/new"])
   }
 }
