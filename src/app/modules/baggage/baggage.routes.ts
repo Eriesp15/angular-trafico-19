@@ -6,6 +6,7 @@ import { NewClaimComponent } from "./claim/new-claim/new-claim.component"
 import { ViewClaimComponent } from "./claim/view-claim/view-claim.component"
 import { MakeDeliveryComponent } from "./claim/make-delivery/make-delivery.component"
 import { CompensationComponent } from "./claim/compensation/compensation.component"
+import { ExpensesComponent } from "./claim/expenses/expenses.component"
 
 export default [
   {
@@ -36,6 +37,10 @@ export default [
       {
         path: "claim/view/:id",
         component: ViewClaimComponent,
+      },
+      {
+        path: "claim/expenses/:id",
+        component: ExpensesComponent,
       },
       {
         path: "claim/make-delivery/:id",

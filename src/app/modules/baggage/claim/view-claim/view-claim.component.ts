@@ -117,7 +117,7 @@ export class ViewClaimComponent implements OnInit {
     console.log("[v0] Cerrar reclamo")
   }
 
-  verGastos(): void {
-    console.log("[v0] Ver gastos")
+   verGastos(): void {
+    this.router.navigate(["/baggage/claim/expenses", this.claimId])
   }
 }
