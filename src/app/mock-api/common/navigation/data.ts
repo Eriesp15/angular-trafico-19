@@ -29,39 +29,25 @@ export const defaultNavigation: ErpNavigationItem[] = [
                     icon : 'heroicons_outline:list-bullet',
                     link : '/baggage/claim/list'
                     },
-                   
-                    {
-                    id   : 'follow',
-                    title: 'Visualizar reclamo',
-                    type : 'basic',
-                    icon : 'heroicons_outline:eye',
-                    link : '/baggage/claim/view/:id'
-                    },
-                    {
-                    id   : 'follow',
-                    title: 'Cerrar reclamo',
-                    type : 'basic',
-                    icon : 'heroicons_outline:x-mark',
-                    link : '/baggage/claim/view/:id'
-                    }
+
                 ]
             },
             
-            {
-                id   : 'follow',
-                title: 'Seguimiento',
-                type : 'basic',
-                icon : 'heroicons_outline:document-magnifying-glass',
-                link : '/baggage/follow'
-            },
+            // {
+            //     id   : 'follow',
+            //     title: 'Seguimiento',
+            //     type : 'basic',
+            //     icon : 'heroicons_outline:document-magnifying-glass',
+            //     link : '/baggage/follow'
+            // },
             
-            {
-                id   : 'claim',
-                title: 'Indemnizaciones',
-                type : 'basic',
-                icon : 'heroicons_outline:banknotes',
-                link : '/baggage/compensation',
-            },
+            // {
+            //     id   : 'claim',
+            //     title: 'Indemnizaciones',
+            //     type : 'basic',
+            //     icon : 'heroicons_outline:banknotes',
+            //     link : '/baggage/compensation',
+            // },
             
             {
                 id   : 'claim',
