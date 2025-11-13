@@ -9,8 +9,14 @@
         </div>
         <!-- Claim type badge in top right corner -->
         <div class="claim-badge">
-          <div class="badge-type">{{ reclamoData.reclamo.tipo }}</div>
-          <div class="badge-days">{{ diasTranscurridos }} días</div>
+          <div class="badge-wrapper">
+            <span class="badge-label">Tipo de reclamo</span>
+            <div class="badge-type">{{ reclamoData.reclamo.tipo }}</div>
+          </div>
+          <div class="badge-wrapper">
+            <span class="badge-label">Antigüedad</span>
+            <div class="badge-days">{{ diasTranscurridos }} días</div>
+          </div>
         </div>
       </div>
     </div>
