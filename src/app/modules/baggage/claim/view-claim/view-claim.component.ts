@@ -1,4 +1,4 @@
-import { Component, type OnInit } from "@angular/core"
+import { Component,  OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import {  ActivatedRoute,  Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
@@ -13,6 +13,7 @@ import { MatIconModule } from "@angular/material/icon"
 })
 export class ViewClaimComponent implements OnInit {
   claimId = ""
+  diasTranscurridos = 0
 
   reclamoData = {
     pasajero: {
@@ -72,6 +73,16 @@ export class ViewClaimComponent implements OnInit {
 
   ngOnInit(): void {
     this.claimId = this.route.snapshot.params["id"]
+    this.calcularDiasTranscurridos()
+  }
+
+  calcularDiasTranscurridos(): void {
+    const fechaReclamo = new Date();
+    fechaReclamo.setDate(fechaReclamo.getDate() - 22);
+
+    const hoy = new Date()
+    const diferencia = hoy.getTime() - fechaReclamo.getTime()
+    this.diasTranscurridos = Math.floor(diferencia / (1000 * 60 * 60 * 24))
   }
 
   imprimirPIR(): void {
@@ -84,5 +95,29 @@ export class ViewClaimComponent implements OnInit {
 
   cerrar(): void {
     this.router.navigate(["/baggage"])
+  }
+
+  verHojaSeguimiento(): void {
+    this.router.navigate(["/baggage/follow"])
+  }
+
+  verFormularioContenido(): void {
+    console.log("[v0] Ver formulario contenido - ruta no asignada aún")
+  }
+
+  realizarEntrega(): void {
+    this.router.navigate([`/baggage/claim/make-delivery/${this.claimId}`])
+  }
+
+  indemnizar(): void {
+    this.router.navigate(["/baggage/claim/compensation", this.claimId])
+  }
+
+  cerrarReclamo(): void {
+    console.log("[v0] Cerrar reclamo")
+  }
+
+   verGastos(): void {
+    this.router.navigate(["/baggage/claim/expenses", this.claimId])
   }
 }

@@ -18,6 +18,12 @@
   padding-bottom: 16px;
   border-bottom: 2px solid #e5e7eb;
 
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
   h1 {
     margin: 0 0 8px 0;
     font-size: 28px;
@@ -29,6 +35,98 @@
     margin: 0;
     font-size: 14px;
     color: #6b7280;
+  }
+}
+
+.claim-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+
+  .badge-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+
+    .badge-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .badge-type {
+    background-color: #003366;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    min-width: 80px;
+  }
+
+  .badge-days {
+    background-color: #e8f0f9;
+    color: #003366;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 80px;
+  }
+}
+
+.action-buttons-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+
+  .action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 12px;
+    background-color: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #003366;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      color: #003366;
+    }
+
+    &:hover {
+      background-color: #003366;
+      color: white;
+      border-color: #003366;
+
+      mat-icon {
+        color: white;
+      }
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
   }
 }
 
@@ -212,45 +310,6 @@
     height: 2px;
     background-color: #d1d5db;
     z-index: 1;
-  }
-}
-
-.claim-type {
-  margin-bottom: 24px;
-  padding: 20px;
-  background-color: #f9fafb;
-  border-radius: 8px;
-
-  label {
-    display: block;
-    margin-bottom: 12px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #374151;
-  }
-}
-
-.claim-type-options {
-  display: flex;
-  gap: 12px;
-}
-
-.claim-type-btn {
-  flex: 1;
-  padding: 12px 24px;
-  border: 2px solid #d1d5db;
-  background: white;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #6b7280;
-  cursor: not-allowed;
-  transition: all 0.2s;
-
-  &.active {
-    background-color: #003366;
-    border-color: #003366;
-    color: white;
   }
 }
 
