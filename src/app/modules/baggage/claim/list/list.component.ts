@@ -1,6 +1,6 @@
 import { Component, type OnInit, type OnDestroy } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { Router, RouterLink, RouterOutlet } from "@angular/router"
+import { Router, RouterOutlet } from "@angular/router"
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms"
 import { Subject } from "rxjs"
 import { takeUntil } from "rxjs/operators"
@@ -29,7 +29,7 @@ interface PIR {
 @Component({
   selector: "app-list",
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, ReactiveFormsModule, MatPaginatorModule],
+  imports: [RouterOutlet, CommonModule, ReactiveFormsModule, MatPaginatorModule],
   templateUrl: "./list.component.html",
   styleUrl: "./list.component.scss",
 })
