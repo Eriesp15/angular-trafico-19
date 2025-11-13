@@ -1,37 +1,52 @@
 <div class="visualizar-pir">
   <div class="pir-container">
-    <!-- Header -->
+    <!-- Header with Claim Type and Days Badge -->
     <div class="pir-header">
-      <h1>Visualización PIR</h1>
-      <p class="subtitle">Detalles del reclamo de irregularidad</p>
+      <div class="header-top">
+        <div>
+          <h1>Visualización PIR</h1>
+          <p class="subtitle">Detalles del reclamo de irregularidad</p>
+        </div>
+        <!-- Claim type badge in top right corner -->
+        <div class="claim-badge">
+          <div class="badge-wrapper">
+            <span class="badge-label">Tipo de reclamo</span>
+            <div class="badge-type">{{ reclamoData.reclamo.tipo }}</div>
+          </div>
+          <div class="badge-wrapper">
+            <span class="badge-label">Antigüedad</span>
+            <div class="badge-days">{{ diasTranscurridos }} días</div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Tipo de Reclamo -->
-    <div class="claim-type">
-      <label>Tipo de Reclamo</label>
-      <div class="claim-type-options">
-        <button
-          class="claim-type-btn"
-          [class.active]="reclamoData.reclamo.tipo === 'AHL'"
-          disabled
-        >
-          AHL
-        </button>
-        <button
-          class="claim-type-btn"
-          [class.active]="reclamoData.reclamo.tipo === 'DAMAGED'"
-          disabled
-        >
-          DAMAGED
-        </button>
-        <button
-          class="claim-type-btn"
-          [class.active]="reclamoData.reclamo.tipo === 'PILFERED'"
-          disabled
-        >
-          PILFERED
-        </button>
-      </div>
+    <!-- Action buttons section replaces old claim type buttons -->
+    <div class="action-buttons-section">
+      <button class="action-btn" (click)="verHojaSeguimiento()">
+        <mat-icon>description</mat-icon>
+        Ver hoja seguimiento
+      </button>
+      <button class="action-btn" (click)="verFormularioContenido()">
+        <mat-icon>assignment</mat-icon>
+        Ver formulario contenido
+      </button>
+      <button class="action-btn" (click)="realizarEntrega()">
+        <mat-icon>local_shipping</mat-icon>
+        Realizar entrega
+      </button>
+      <button class="action-btn" (click)="indemnizar()">
+        <mat-icon>paid</mat-icon>
+        Indemnizar
+      </button>
+      <button class="action-btn" (click)="cerrarReclamo()">
+        <mat-icon>check_circle</mat-icon>
+        Cerrar reclamo
+      </button>
+      <button class="action-btn" (click)="verGastos()">
+        <mat-icon>receipt</mat-icon>
+        Ver gastos
+      </button>
     </div>
 
     <!-- Datos del Pasajero -->

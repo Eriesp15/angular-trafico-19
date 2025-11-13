@@ -9,28 +9,14 @@ export const defaultNavigation: ErpNavigationItem[] = [
         icon : 'heroicons_outline:shopping-bag',
         children:[
             {
-                id   : 'follow',
-                title: 'Seguimiento',
-                type : 'basic',
-                icon : 'heroicons_outline:document-magnifying-glass',
-                link : '/baggage/follow'
-            },
-            {
                 id   : 'claim',
                 title: 'Reclamos',
                 type : 'collapsable',
                 icon : 'heroicons_outline:document',
                 link : '/baggage/claim/list',
                 children:[
-                    {
-                    id   : 'follow',
-                    title: 'Listado de reclamos',
-                    type : 'basic',
-                    icon : 'heroicons_outline:list-bullet',
-                    link : '/baggage/claim/list'
-                    },
-                    {
-                    id   : 'follow',
+                     {
+                    id   : 'claim',
                     title: 'Realizar reclamo',
                     type : 'basic',
                     icon : 'heroicons_outline:newspaper',
@@ -38,35 +24,30 @@ export const defaultNavigation: ErpNavigationItem[] = [
                     },
                     {
                     id   : 'follow',
-                    title: 'Visualizar reclamo',
+                    title: 'Listado de reclamos',
                     type : 'basic',
-                    icon : 'heroicons_outline:eye',
-                    link : '/baggage/claim/view/:id'
+                    icon : 'heroicons_outline:list-bullet',
+                    link : '/baggage/claim/list'
                     },
-                    {
-                    id   : 'follow',
-                    title: 'Cerrar reclamo',
-                    type : 'basic',
-                    icon : 'heroicons_outline:eye',
-                    link : '/baggage/claim/view/:id'
-                    }
+
                 ]
             },
-            {
-                id   : 'claim',
-                title: 'Indemnizaciones',
-                type : 'basic',
-                icon : 'heroicons_outline:banknotes',
-                link : '/baggage/compensation',
-            },
             
-            {
-                id   : 'claim',
-                title: 'Seguimiento',
-                type : 'basic',
-                icon : 'heroicons_outline:banknotes',
-                link : '/baggage/compensation',
-            },
+            // {
+            //     id   : 'follow',
+            //     title: 'Seguimiento',
+            //     type : 'basic',
+            //     icon : 'heroicons_outline:document-magnifying-glass',
+            //     link : '/baggage/follow'
+            // },
+            
+            // {
+            //     id   : 'claim',
+            //     title: 'Indemnizaciones',
+            //     type : 'basic',
+            //     icon : 'heroicons_outline:banknotes',
+            //     link : '/baggage/compensation',
+            // },
             
             {
                 id   : 'claim',
