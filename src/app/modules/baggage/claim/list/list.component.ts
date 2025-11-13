@@ -1,9 +1,10 @@
-import { Component,  OnInit,  OnDestroy } from "@angular/core"
+import { Component, type OnInit, type OnDestroy } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import {  Router, RouterLink, RouterOutlet } from "@angular/router"
-import {  FormBuilder,  FormGroup, ReactiveFormsModule } from "@angular/forms"
+import { Router, RouterLink, RouterOutlet } from "@angular/router"
+import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms"
 import { Subject } from "rxjs"
 import { takeUntil } from "rxjs/operators"
+import { MatPaginatorModule, PageEvent } from "@angular/material/paginator"
 
 interface PIR {
   id?: string
@@ -28,7 +29,7 @@ interface PIR {
 @Component({
   selector: "app-list",
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, ReactiveFormsModule],
+  imports: [RouterOutlet, RouterLink, CommonModule, ReactiveFormsModule, MatPaginatorModule],
   templateUrl: "./list.component.html",
   styleUrl: "./list.component.scss",
 })
@@ -70,6 +71,18 @@ export class ListComponent implements OnInit, OnDestroy {
       bagTag: "BA789458",
       tipo: "PILFERED",
     },
+    {
+      id: "PIR001236",
+      claimReference: { airport: "CBB", airline: "OB", reference: "001236" },
+      passenger: { firstName: "Samuel", lastName: "Garcia" },
+      claimType: "AHL",
+      status: "PROCESSING",
+      createdAt: new Date("2024-01-13"),
+      flight: "OB546",
+      route: "CBB VVI MAD",
+      bagTag: "BA789458",
+      tipo: "PILFERED",
+    },
   ]
   filteredClaims: PIR[] = []
   loading = true
@@ -79,6 +92,11 @@ export class ListComponent implements OnInit, OnDestroy {
   filterOption: "all" | "recent" | "date" = "all"
   selectedDate = ""
   private destroy$ = new Subject<void>()
+
+  pageSize = 10
+  pageSizeOptions = [5, 10, 25, 50]
+  pageIndex = 0
+  paginatedClaims: PIR[] = []
 
   constructor(
     private fb: FormBuilder,
@@ -114,6 +132,33 @@ export class ListComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.applyFilters()
       })
+  }
+
+  // Método para filtrar por estado
+  filterByStatus(status: PIR["status"] | "ALL"): void {
+    this.selectedStatus = status
+    this.applyFilters()
+  }
+
+  // Método para filtrar por tipo
+  filterByType(type: "ALL" | "AHL" | "DAMAGED" | "PILFERED"): void {
+    this.selectedType = type
+    this.applyFilters()
+  }
+
+  // Método para establecer la opción de filtro de fecha
+  setFilterOption(option: "all" | "recent" | "date"): void {
+    this.filterOption = option
+    if (option !== "date") {
+      this.selectedDate = ""
+    }
+    this.applyFilters()
+  }
+
+  // Método para manejar el cambio de fecha
+  onDateChange(date: string): void {
+    this.selectedDate = date
+    this.applyFilters()
   }
 
   private applyFilters(): void {
@@ -159,29 +204,20 @@ export class ListComponent implements OnInit, OnDestroy {
     }
 
     this.filteredClaims = result
+    this.pageIndex = 0
+    this.updatePaginatedClaims()
   }
 
-  filterByStatus(status: PIR["status"] | "ALL"): void {
-    this.selectedStatus = status
-    this.applyFilters()
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex
+    this.pageSize = event.pageSize
+    this.updatePaginatedClaims()
   }
 
-  filterByType(type: "ALL" | "AHL" | "DAMAGED" | "PILFERED"): void {
-    this.selectedType = type
-    this.applyFilters()
-  }
-
-  setFilterOption(option: "all" | "recent" | "date"): void {
-    this.filterOption = option
-    if (option !== "date") {
-      this.selectedDate = ""
-    }
-    this.applyFilters()
-  }
-
-  onDateChange(date: string): void {
-    this.selectedDate = date
-    this.applyFilters()
+  private updatePaginatedClaims(): void {
+    const start = this.pageIndex * this.pageSize
+    const end = start + this.pageSize
+    this.paginatedClaims = this.filteredClaims.slice(start, end)
   }
 
   deleteClaim(id: string | undefined): void {
@@ -210,7 +246,6 @@ export class ListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Added method to navigate to new claim
   createNewClaim(): void {
     this.router.navigate(["/baggage/claim/new"])
   }

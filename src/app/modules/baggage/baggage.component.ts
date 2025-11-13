@@ -75,6 +75,13 @@ export class BaggageComponent implements OnInit {
       estado: "Pendiente",
       fecha: "2024-01-13",
     },
+    {
+      pir: "PIR001236",
+      pasajero: "Carlos López",
+      bagTag: "BA789458",
+      estado: "Pendiente",
+      fecha: "2024-01-13",
+    },
   ]
 
   ngOnInit(): void {

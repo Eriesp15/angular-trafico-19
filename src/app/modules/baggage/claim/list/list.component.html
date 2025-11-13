@@ -172,7 +172,7 @@
         </thead>
         <tbody>
           <tr 
-            *ngFor="let claim of filteredClaims" 
+            *ngFor="let claim of paginatedClaims" 
             class="claim-row"
             (click)="navigateToClaim(claim.id)"
           >
@@ -199,11 +199,17 @@
           </tr>
         </tbody>
       </table>
+      <!-- Added paginator below table -->
+      <mat-paginator
+        [length]="filteredClaims.length"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [pageIndex]="pageIndex"
+        (page)="onPageChange($event)"
+        aria-label="Select page"
+      ></mat-paginator>
     </div>
 
-    <div class="claims-info">
-      <p>Total de reclamos: <strong>{{ filteredClaims.length }}</strong></p>
-    </div>
   </div>
 
   <!-- Router Outlet para Sub-rutas -->
