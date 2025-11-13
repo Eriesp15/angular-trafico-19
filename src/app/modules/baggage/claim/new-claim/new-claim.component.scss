@@ -217,6 +217,15 @@
     }
   }
 
+  .btn-indicate-damage.secondary {
+    background-color: #6b7280;
+    margin-left: 0.5rem;
+
+    &:hover {
+      background-color: #4b5563;
+    }
+  }
+
   .form-actions {
     display: flex;
     justify-content: flex-end;
@@ -250,6 +259,87 @@
 
       &:hover {
         background-color: #4b5563;
+      }
+    }
+  }
+
+  .format-selector {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+
+    .format-tab {
+      background: none;
+      border: none;
+      padding: 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #003366;
+      }
+
+      &.active {
+        color: #003366;
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background-color: #003366;
+        }
+      }
+    }
+  }
+
+  .pir-classic {
+    .section {
+      margin-bottom: 2rem;
+
+      .section-title {
+        background-color: #e0e7f1;
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #003366;
+        margin: 0 0 1.5rem 0;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+
+      @media (max-width: 480px) {
+        grid-template-columns: 1fr;
       }
     }
   }
