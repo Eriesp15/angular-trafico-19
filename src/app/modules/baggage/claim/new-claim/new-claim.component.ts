@@ -48,7 +48,7 @@ export class NewClaimComponent {
   }
 
   claimData = {
-    involvedStations: "",
+    involvedStations: [""], // Now array for multiple stations
     originStation: "",
     originatorDate: "",
     originatorTime: "",
@@ -59,17 +59,16 @@ export class NewClaimComponent {
   }
 
   baggageData = {
-    ticketNumber: "",
-    bagtag: "",
-    route: "",
-    trackingPlace: "",
-    flightNumber: "",
+    bagtags: [""], // Array for multiple bag tags
+    routes: [""], // Array for multiple routes
+    flightNumbers: [""], // Array for multiple flights
     flightDate: "",
     flightDay: "",
     flightMonth: "",
+    colors: [], // Array for multiple baggage items with color info
     colorType: "",
-    brand: "",
-    content: "",
+    brands: [""], // Array for multiple brands
+    contents: [""], // Array for multiple content items
     bagWeight: "",
     deliveredWeight: "",
     weightDifference: "",
@@ -81,10 +80,11 @@ export class NewClaimComponent {
   additionalData = {
     hasInsurance: false,
     needsKey: false,
-    kitType: "", // "M" for male, "F" for female
+    kitType: "",
     language: "",
-    damageType: "", // "MINOR", "MAJOR", "TOTAL"
-    damageCondition: "", // "GOOD", "REASONABLE", "BAD"
+    damageType: "",
+    damageCondition: "",
+    damageDescription: "", // For storing selected damage parts
   }
 
   showBaggageModal = false
@@ -216,5 +216,61 @@ export class NewClaimComponent {
 
   cancel() {
     this.router.navigate(["/baggage"])
+  }
+
+  addInvolvedStation() {
+    this.claimData.involvedStations.push("")
+  }
+
+  removeInvolvedStation(index: number) {
+    this.claimData.involvedStations.splice(index, 1)
+  }
+
+  addBagtag() {
+    this.baggageData.bagtags.push("")
+  }
+
+  removeBagtag(index: number) {
+    this.baggageData.bagtags.splice(index, 1)
+  }
+
+  addRoute() {
+    this.baggageData.routes.push("")
+  }
+
+  removeRoute(index: number) {
+    this.baggageData.routes.splice(index, 1)
+  }
+
+  addFlightNumber() {
+    this.baggageData.flightNumbers.push("")
+  }
+
+  removeFlightNumber(index: number) {
+    this.baggageData.flightNumbers.splice(index, 1)
+  }
+
+  addColor(brandIndex: number) {
+    this.baggageData.colors.push({ brand: brandIndex, color: "", description: "" })
+  }
+
+  removeColor(index: number) {
+    this.baggageData.colors.splice(index, 1)
+  }
+
+  addBrand() {
+    this.baggageData.brands.push("")
+  }
+
+  removeBrand(index: number) {
+    this.baggageData.brands.splice(index, 1)
+  }
+
+  addContent() {
+    this.baggageData.contents.push("")
+  }
+
+  removeContent(index: number) {
+    this.baggageData.contents.splice(index, 1)
   }
 }
