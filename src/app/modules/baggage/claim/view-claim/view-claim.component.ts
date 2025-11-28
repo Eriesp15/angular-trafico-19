@@ -110,7 +110,7 @@ export class ViewClaimComponent implements OnInit {
   }
 
   indemnizar(): void {
-    this.router.navigate(["/baggage/claim/compensation", this.claimId])
+    this.router.navigate(["/baggage/claim/add-expense", this.claimId])
   }
 
   cerrarReclamo(): void {

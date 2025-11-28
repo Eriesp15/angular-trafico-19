@@ -5,7 +5,7 @@ import { ListComponent } from "./claim/list/list.component"
 import { NewClaimComponent } from "./claim/new-claim/new-claim.component"
 import { ViewClaimComponent } from "./claim/view-claim/view-claim.component"
 import { MakeDeliveryComponent } from "./claim/make-delivery/make-delivery.component"
-import { CompensationComponent } from "./claim/compensation/compensation.component"
+import { AddExpenseComponent } from "./claim/add-expense/add-expense.component"
 import { ExpensesComponent } from "./claim/expenses/expenses.component"
 
 export default [
@@ -31,8 +31,8 @@ export default [
         component: NewClaimComponent,
       },
       {
-        path: "claim/compensation/:id",
-        component: CompensationComponent,
+        path: "claim/add-expense/:id",
+        component: AddExpenseComponent,
       },
       {
         path: "claim/view/:id",
