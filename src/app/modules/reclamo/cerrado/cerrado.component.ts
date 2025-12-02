@@ -3,100 +3,89 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatRadioModule } from '@angular/material/radio';
 
-type EntregaLugar = 'aeropuerto' | 'domicilio' | null;
+type EntregaModo = 'aeropuerto' | 'domicilio' | null;
 
 @Component({
     selector: 'app-cerrado',
     standalone: true,
-    imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, MatRadioModule],
+    imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule],
     templateUrl: './cerrado.component.html',
     styleUrls: ['./cerrado.component.scss'],
 })
 export class CerradoComponent {
-    // 🧾 Datos simulados del reclamo
+
+    cerrado = false; // 🔥 <--- NUEVO: controla vista editable/no editable
+
+    // Datos simulados
     seguimiento = {
         tipoExpediente: 'DPR',
         numeroPir: 'CBBO1315449',
         fechaReclamo: '2025-06-28',
         nombres: 'Juan Andres Lopez Herbas',
+        direccionOriginal: 'Av. Aroma #532 Zona Central'
     };
 
-    // 🔹 Variables principales
-    entregaModo: EntregaLugar = null;
-    direccion: string = '';
-    archivoSubido: File | null = null;
-
-    // 📋 Formulario general (firma, aclaración, observaciones)
+    // Formulario
     form = {
         fechaEntrega: new Date().toISOString().slice(0, 10),
         cantidadEquipajes: null as number | null,
+        entregaModo: null as EntregaModo,
+        direccion: '',
         ci: '',
         aclaracion: '',
         observaciones: '',
+        notaCierre: ''
     };
 
-    // 📞 WhatsApp del área de reclamos (modifícalo según BoA)
-    telefonoReclamos = '71234567';
+    archivosSubidos: File[] = [];
 
-    // 💬 Modal y mensaje de WhatsApp
-    modalAbierto = false;
-    mensajeWhatsApp = '';
-    copiado = false;
+    modalCierreAbierto = false;
 
-    // 🟢 Abrir modal con mensaje prellenado
-    abrirModalMensaje() {
-        if (!this.entregaModo) {
-            alert('Seleccione el modo de entrega');
+    ngOnInit() {
+        this.form.direccion = this.seguimiento.direccionOriginal;
+    }
+
+    seleccionarArchivos(event: Event) {
+        if (this.cerrado) return; // bloqueo
+        const input = event.target as HTMLInputElement;
+        if (input.files) {
+            this.archivosSubidos = [
+                ...this.archivosSubidos,
+                ...Array.from(input.files)
+            ];
+        }
+    }
+
+    abrirModalCierre() {
+        if (this.archivosSubidos.length === 0) {
+            alert('Debe subir al menos un documento antes de cerrar.');
             return;
         }
-
-        if (this.entregaModo === 'domicilio' && !this.direccion.trim()) {
-            alert('Ingrese la dirección de entrega');
-            return;
-        }
-
-        this.mensajeWhatsApp =
-            `✈️ *Confirmación de entrega de equipaje*\n\n` +
-            `Reclamo: ${this.seguimiento.numeroPir}\n` +
-            `Pasajero: ${this.seguimiento.nombres}\n` +
-            (this.entregaModo === 'domicilio'
-                ? `Entrega a domicilio: ${this.direccion}`
-                : `Entrega en aeropuerto.`) +
-            `\n\nPor favor confirmar la recepción.`;
-
-        this.modalAbierto = true;
+        this.modalCierreAbierto = true;
     }
 
     cerrarModal() {
-        this.modalAbierto = false;
-        this.copiado = false;
+        this.modalCierreAbierto = false;
     }
 
-    copiarMensaje() {
-        navigator.clipboard.writeText(this.mensajeWhatsApp);
-        this.copiado = true;
-        setTimeout(() => (this.copiado = false), 2000);
+    confirmarCierre() {
+        this.form.notaCierre =
+            'Se firmó el recibo de cierre del reclamo del equipaje.';
+
+        this.cerrado = true; // 🔥 BLOQUEA LA VISTA
+
+        this.modalCierreAbierto = false;
+
+        alert('El cierre del reclamo ha sido registrado.');
     }
 
-    abrirWhatsApp() {
-        const telefono = this.telefonoReclamos.replace(/\D/g, '');
-        const enlace = `https://wa.me/591${telefono}?text=${encodeURIComponent(this.mensajeWhatsApp)}`;
-        window.open(enlace, '_blank');
-        this.modalAbierto = false;
+    abrirArchivo(file: File) {
+        const url = URL.createObjectURL(file);
+        window.open(url, '_blank');
     }
 
-    subirComprobante(event: Event) {
-        const input = event.target as HTMLInputElement;
-        if (input.files && input.files.length > 0) {
-            this.archivoSubido = input.files[0];
-            console.log('Archivo cargado:', this.archivoSubido.name);
-        }
-    }
-
-    // 🖨️ Método para imprimir la hoja
-    print(): void {
+    print() {
         window.print();
     }
 }

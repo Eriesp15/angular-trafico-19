@@ -7,6 +7,9 @@ import { ViewClaimComponent } from "./claim/view-claim/view-claim.component"
 import { MakeDeliveryComponent } from "./claim/make-delivery/make-delivery.component"
 import { CompensationComponent } from "./claim/compensation/compensation.component"
 import { ExpensesComponent } from "./claim/expenses/expenses.component"
+import { SupplierComponent } from './supplier/supplier.component';
+import { ListSupplierComponent } from './supplier/list-supplier/list-supplier.component';
+import { ClosingReceiptComponent } from "./closing-receipt/closing-receipt.component";
 
 export default [
   {
@@ -45,5 +48,17 @@ export default [
       {
         path: "claim/make-delivery/:id",
         component: MakeDeliveryComponent,
+      },
+      {
+        path: "claim/supplier",
+        component: SupplierComponent, // Ruta para registrar proveedores
+      },
+      {
+        path: "claim/supplier/list",
+        component: ListSupplierComponent, // Ruta para ver lista de proveedores
+      },
+      {
+        path: "claim/closing-receipt/:id",
+        component: ClosingReceiptComponent,
       },
 ] as Routes

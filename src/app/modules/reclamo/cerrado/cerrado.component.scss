@@ -68,7 +68,7 @@
 
 /* Nota */
 .note {
-    color: #5a6c80;
+    color: #121111;
     margin: 10px 12px 6px 12px;
 }
 
@@ -99,7 +99,7 @@
 
 .two-cols { grid-template-columns: 1fr 1fr; }
 .sig-cell { display: grid; grid-template-columns: 160px 1fr; }
-.sig-box { border-left: 1px solid #e6edf6; }
+.sig-box { border-left: 1px solid #e6edf6; background: white}
 
 /* FAB imprimir */
 .print-fab {

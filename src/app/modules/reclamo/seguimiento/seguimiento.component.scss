@@ -16,7 +16,6 @@
 
 /* etiqueta general para ocultar en impresión */
 .no-print{ display:inline-flex; }
-
 /* ===========================
    IMPRESIÓN
    =========================== */
@@ -40,20 +39,30 @@
     /* === PRIMERA TABLA (Seguimientos) — 4 columnas y INFO más ancha === */
     .table-card:first-of-type .table-header{
         display:grid !important;
-        grid-template-columns: 90px 65px 110px minmax(0,1fr) !important; /* Fecha | Hora | Encargado | Información */
+        grid-template-columns: 80px 60px 100px 1fr !important; /* Fecha | Hora | Encargado | Información (ahora MUY ancha) */
+        column-gap: 6px !important;
     }
     .table-card:first-of-type .table-body .row{
         display:grid !important;
-        grid-template-columns: 90px 65px 110px minmax(0,1fr) !important;
+        grid-template-columns: 80px 60px 100px 1fr !important; /* la última columna ocupa todo lo restante */
         padding: 4px 8px !important;
         margin: 0 !important;
         padding-right: 0 !important;
         position: static !important;
+        column-gap: 6px !important;
     }
-    /* Asegura que el área de Información use el 100% del ancho y sea más alta */
+
+    /* Asegura que el área de Información use el 100% del ancho */
+    .table-card:first-of-type .table-body .row > div:nth-child(4),
+    .table-card:first-of-type .table-header > div:nth-child(4){
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
     .table-card:first-of-type .table-body .row > div:nth-child(4) .cell-textarea,
     .table-card:first-of-type .table-body .row > div:nth-child(4) textarea{
         width: 100% !important;
+        max-width: 100% !important;
         box-sizing: border-box;
         min-height: 90px !important;
         height: auto !important;
@@ -61,6 +70,7 @@
         overflow: visible !important;
         white-space: normal !important;
     }
+
     /* “• Guardado” debajo del texto (sin crear nueva columna) */
     .table-card:first-of-type .table-body .row.locked-row > div:nth-child(4)::after{
         content: "  •  Guardado";
@@ -84,6 +94,7 @@
         padding-right: 0 !important;
         position: static !important;
     }
+
     /* “• Guardado” a la DERECHA (en la última celda de cada fila) */
     .table-card:nth-of-type(2) .table-body .row.locked-row > div:last-child{
         text-align: right !important;
@@ -99,8 +110,11 @@
 
     /* Inputs nítidos en papel */
     input, textarea{
-        border:1px solid #a5b4c8!important; background:white!important; box-shadow:none!important;
-        padding:4px 6px!important; font-size:12px!important;
+        border:1px solid #a5b4c8!important;
+        background:white!important;
+        box-shadow:none!important;
+        padding:4px 6px!important;
+        font-size:12px!important;
     }
 
     /* Oculta cualquier chip/estado flotante para evitar solapes */
@@ -157,7 +171,11 @@
     outline:none;font:inherit;background:#f9fbfe;
 }
 .cell-input:focus, .cell-textarea:focus{ border-color:#6ea1df;background:#fff; }
-.cell-textarea{ min-height:64px;resize:vertical;white-space:pre-wrap;word-break:break-word; }
+.cell-textarea{ min-height:64px;
+    max-width: 650px;
+    resize:vertical;
+    white-space:pre-wrap;
+    word-break:break-word; }
 
 .table-actions{ display:flex;justify-content:flex-end;padding:10px 12px 14px 12px; }
 .icon-trash{ position:absolute;right:8px;top:8px;color:#cc3344; }
@@ -184,7 +202,7 @@
 .canal-toggle mat-button-toggle.mat-button-toggle-checked{ background:#dfeaf7;border-color:#0b4a8e; }
 .canal-toggle mat-icon{ font-size:18px;line-height:18px; }
 
-/* Botón confirmar más pequeño */
+/* Botón confirmar  */
 .confirm-btn{
     border-color:#0b4a8e!important;color:#0b4a8e!important;height:32px;padding:0 10px;font-size:12px;
     line-height:32px;min-width:0;

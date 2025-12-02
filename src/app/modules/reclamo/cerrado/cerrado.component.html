@@ -1,9 +1,10 @@
 <div class="cerrado-container p-6">
-    <!-- Título + acción -->
+
+    <!-- ENCABEZADO -->
     <div class="title-row">
         <div>
-            <h1 class="title">Cerrado</h1>
-            <p class="sub">Recibo de entrega</p>
+            <h1 class="title">Recibo de Cierre</h1>
+            <p class="sub">Confirmación del cierre del reclamo</p>
         </div>
 
         <div class="header-actions no-print">
@@ -14,102 +15,77 @@
         </div>
     </div>
 
-    <!-- Detalles de seguimiento -->
+    <!-- DATOS PRINCIPALES -->
     <div class="panel">
-        <div class="panel-header">Detalles de seguimiento</div>
+        <div class="panel-header">Datos del reclamo</div>
         <div class="panel-body">
             <div class="row">
-                <span class="label">Tipo de expediente:</span>
-                <span class="value">{{ seguimiento.tipoExpediente }}</span>
-            </div>
-            <div class="row">
-                <span class="label">Numero de Pir:</span>
+                <span class="label">Número PIR:</span>
                 <span class="value">{{ seguimiento.numeroPir }}</span>
             </div>
             <div class="row">
-                <span class="label">Fecha de reclamo:</span>
-                <span class="value">{{ seguimiento.fechaReclamo }}</span>
+                <span class="label">Pasajero:</span>
+                <span class="value">{{ seguimiento.nombres }}</span>
             </div>
             <div class="row">
-                <span class="label">Nombres y apellidos:</span>
-                <span class="value">{{ seguimiento.nombres }}</span>
+                <span class="label">Fecha reclamo:</span>
+                <span class="value">{{ seguimiento.fechaReclamo }}</span>
             </div>
         </div>
     </div>
 
-    <!-- Detalles de entrega -->
+    <!-- ENTREGA -->
     <div class="panel mt-6">
         <div class="panel-header">Detalles de entrega</div>
         <div class="panel-body">
-            <!-- Fecha -->
+
             <div class="row">
-                <label class="label" for="fent">Fecha de entrega:</label>
-                <input id="fent" class="input" type="date" [(ngModel)]="form.fechaEntrega" />
+                <label class="label">Fecha entrega:</label>
+                <input type="date" class="input" [(ngModel)]="form.fechaEntrega">
             </div>
 
-            <!-- Cantidad -->
             <div class="row">
-                <label class="label" for="cant">Cantidad de equipajes entregados:</label>
-                <input id="cant" class="input short" type="number" min="0" [(ngModel)]="form.cantidadEquipajes" />
+                <label class="label">Cantidad entregada:</label>
+                <input type="number" class="input short" [(ngModel)]="form.cantidadEquipajes">
             </div>
 
-            <!-- Entrega en -->
-            <div class="entrega-section">
-                <h3>Detalles de entrega</h3>
-
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" name="entrega" [(ngModel)]="entregaModo" value="aeropuerto" />
-                        Entrega en aeropuerto
-                    </label>
-                    <label>
-                        <input type="radio" name="entrega" [(ngModel)]="entregaModo" value="domicilio" />
-                        Entrega en domicilio
-                    </label>
-                </div>
-
-                <div class="direccion-group" *ngIf="entregaModo === 'domicilio'">
-                    <label>Dirección de entrega:</label>
-                    <input
-                        type="text"
-                        class="direccion-input"
-                        [(ngModel)]="direccion"
-                        placeholder="Ej. Calle Lanza N°123, zona norte..."
-                    />
-                </div>
-
-                <div class="botones-entrega">
-                    <button class="btn btn-confirmar" (click)="abrirModalMensaje()">Confirmar entrega</button>
-
-                    <label class="btn btn-subir">
-                        Subir comprobante firmado
-                        <input type="file" accept="image/*,.pdf" (change)="subirComprobante($event)" hidden />
-                    </label>
-                </div>
-
-                <div *ngIf="archivoSubido" class="archivo-info">
-                    <p>✅ Archivo cargado: <b>{{ archivoSubido.name }}</b></p>
-                </div>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="entrega" value="aeropuerto" [(ngModel)]="form.entregaModo">
+                    Entrega en aeropuerto
+                </label>
+                <label>
+                    <input type="radio" name="entrega" value="domicilio" [(ngModel)]="form.entregaModo">
+                    Entrega a domicilio
+                </label>
             </div>
 
-            <!-- MODAL DE CONFIRMACIÓN -->
-            <div class="modal-backdrop" *ngIf="modalAbierto">
-                <div class="modal">
-                    <h3>Mensaje a enviar</h3>
-                    <textarea [(ngModel)]="mensajeWhatsApp" rows="6"></textarea>
-
-                    <div class="row">
-                        <button class="btn btn-light" (click)="cerrarModal()">Cancelar</button>
-                        <button class="btn btn-amarillo" (click)="copiarMensaje()">Copiar</button>
-                        <button class="btn btn-confirmar" (click)="abrirWhatsApp()">Enviar por WhatsApp</button>
-                    </div>
-
-                    <p *ngIf="copiado" class="copiado">✅ Mensaje copiado al portapapeles</p>
-                </div>
+            <div *ngIf="form.entregaModo === 'domicilio'" class="direccion-group">
+                <label>Dirección de entrega:</label>
+                <input type="text" class="direccion-input" [(ngModel)]="form.direccion">
             </div>
 
+            <div class="botones-entrega">
 
+                <!-- SUBIDA DE ARCHIVOS -->
+                <label class="btn btn-subir">
+                    Subir documentos (PDF o imágenes)
+                    <input type="file" accept="image/*,.pdf" multiple hidden (change)="seleccionarArchivos($event)">
+                </label>
+
+                <button class="btn btn-confirmar" (click)="abrirModalCierre()">
+                    Confirmar cierre
+                </button>
+            </div>
+
+            <div *ngIf="archivosSubidos.length > 0" class="archivo-info">
+                <p><b>Documentos cargados:</b></p>
+                <ul>
+                    <li *ngFor="let f of archivosSubidos">📄 {{ f.name }}</li>
+                </ul>
+            </div>
         </div>
+    </div>
 
         <div class="note">
             Si usted llegó a un acuerdo con la empresa o si no desea continuar con el presente reclamo,
@@ -146,4 +122,3 @@
         <mat-icon>print</mat-icon>
     </button>
 
-</div>
