@@ -1,0 +1,314 @@
+/* ======================================================
+      CONTENEDOR PRINCIPAL
+====================================================== */
+.supplier-container {
+    padding: 1.5rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #022f70;
+}
+
+/* ======================================================
+      BOTONES
+====================================================== */
+.btn {
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-light {
+    background: #eef5ff;
+}
+
+.btn-yellow {
+    background: #ffb60d;
+}
+
+.btn-blue {
+    background: #4267b2;
+    color: white;
+}
+
+/* ======================================================
+      BOTÓN DE TRES PUNTITOS
+====================================================== */
+.btn-dots {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    padding: 4px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* ======================================================
+      DROPDOWN DE TIPOS Y EMPRESAS
+====================================================== */
+.dropdown {
+    position: absolute;
+    right: 0;
+    top: 28px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #d8e0ef;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    z-index: 20;
+    width: 140px;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.dropdown .item {
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dropdown .item:hover {
+    background: #f2f6ff;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ======================================================
+      AGRUPADOR POR TIPO
+====================================================== */
+.grupo {
+    margin-top: 1.5rem;
+    position: relative;
+}
+
+.grupo-header {
+    background: #cfe0f5;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+/* ======================================================
+      CARDS
+====================================================== */
+.cards {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1rem;
+}
+
+.card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+/* Encabezado con tres puntitos */
+.card-head-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #022f70;
+}
+
+/* ======================================================
+      ESTADO / SWITCH
+====================================================== */
+
+.estado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: .4rem;
+}
+
+.estado .activo {
+    color: #16a34a;
+    font-weight: bold;
+}
+
+.estado .inactivo {
+    color: #b91c1c;
+    font-weight: bold;
+}
+
+.switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: #ccc;
+    border-radius: 999px;
+    transition: 0.3s;
+}
+
+.slider::before {
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+input:checked + .slider {
+    background: #16a34a;
+}
+
+input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+/* ======================================================
+      BODY DE LA CARD
+====================================================== */
+.card-body {
+    margin-top: 10px;
+    line-height: 1.4rem;
+}
+
+/* ======================================================
+      ACCIONES DE LA CARD
+====================================================== */
+.card-actions {
+    display: flex;
+    margin-top: 1rem;
+    gap: 0.5rem;
+}
+
+/* ======================================================
+      MODALES
+====================================================== */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: min(420px, 90%);
+    background: #ffffff;
+    padding: 1.7rem 1.4rem;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+    z-index: 1100;
+    animation: modalShow .25s ease-out;
+}
+
+@keyframes modalShow {
+    from { opacity: 0; transform: translate(-50%, -47%); }
+    to   { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.modal-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #022f70;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1.4rem;
+}
+
+.modal-label {
+    font-weight: 600;
+    margin-top: 0.7rem;
+    color: #233b57;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.65rem;
+}
+
+/* ======================================================
+      PIR (sugerencias y chips)
+====================================================== */
+.input {
+    width: 100%;
+    border: 1px solid #cdd6e6;
+    padding: 0.5rem;
+    border-radius: 6px;
+    margin-bottom: .5rem;
+}
+
+.pir-suggestions {
+    background: #f3f6fb;
+    border: 1px solid #dbe3f3;
+    border-radius: 6px;
+    margin-bottom: .5rem;
+}
+
+.pir-item {
+    padding: 0.4rem;
+    cursor: pointer;
+}
+
+.pir-item:hover {
+    background: #e3edff;
+}
+
+.pir-chips {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.chip {
+    background: #d6e8ff;
+    padding: 0.3rem 0.6rem;
+    border-radius: 999px;
+}
+
+.close {
+    margin-left: 6px;
+    cursor: pointer;
+}

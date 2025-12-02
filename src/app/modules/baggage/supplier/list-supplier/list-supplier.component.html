@@ -1,0 +1,91 @@
+<div class="detalle-container">
+    <!-- HEADER con botón VOLVER -->
+    <div class="volver-bar">
+        <button class="btn btn-light volver-btn" (click)="volver.emit()">← Volver</button>
+    </div>
+    <div class="header">
+
+        <div class="titulo-empresa">
+            <h2>{{ empresa.nombre }}</h2>
+            <p class="tipo">{{ empresa.tipo }}</p>
+        </div>
+    </div>
+
+    <h3 class="subtitulo">Asignaciones registradas</h3>
+
+    <table>
+        <thead>
+        <tr>
+            <th>PIR</th>
+            <th>Fecha asignación</th>
+            <th>Fecha entrega</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let a of asignacionesEmpresa">
+            <!-- PIR (NO EDITABLE) -->
+            <td>{{ a.pir }}</td>
+
+            <!-- FECHA ASIGNACIÓN -->
+            <td>
+                <ng-container *ngIf="!editando[a.id]; else fechaAEdit">
+                    {{ a.fechaAsignacion }}
+                </ng-container>
+
+                <ng-template #fechaAEdit>
+                    <input
+                        class="input"
+                        type="date"
+                        [(ngModel)]="a.fechaAsignacion"
+                    />
+                </ng-template>
+            </td>
+
+            <!-- FECHA ENTREGA -->
+            <td>
+                <ng-container *ngIf="!editando[a.id]; else fechaEEdit">
+                    {{ a.fechaEntrega || '—' }}
+                </ng-container>
+
+                <ng-template #fechaEEdit>
+                    <input
+                        class="input"
+                        type="date"
+                        [(ngModel)]="a.fechaEntrega"
+                    />
+                </ng-template>
+            </td>
+
+            <!-- ESTADO (clickable para cambiar) -->
+            <td>
+          <span
+              class="badge clickable"
+              [class.badge-ok]="a.estado === EstadoAsignacion.Entregado"
+              (click)="cambiarEstadoDirecto(a)"
+          >
+            {{ a.estado }}
+          </span>
+            </td>
+            <!-- ACCIONES -->
+            <td class="acciones">
+                <ng-container *ngIf="!editando[a.id]">
+                    <button class="btn btn-light" (click)="editarFila(a)">Editar</button>
+                    <button class="btn btn-borrar" (click)="eliminar(a)">🗑️</button>
+                </ng-container>
+
+                <ng-container *ngIf="editando[a.id]">
+                    <button class="btn btn-guardar" (click)="guardarFila(a)">
+                        Guardar
+                    </button>
+                    <button class="btn btn-cancelar" (click)="cancelarEdicion(a)">
+                        Cancelar
+                    </button>
+                </ng-container>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
