@@ -2,84 +2,147 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+// Angular Material
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 import { Empresa, Asignacion, EstadoAsignacion } from '../supplier.component';
 
 @Component({
     selector: 'app-list-supplier',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatButtonModule,
+        MatIconModule
+    ],
     templateUrl: './list-supplier.component.html',
     styleUrls: ['./list-supplier.component.scss'],
 })
 export class ListSupplierComponent {
+
     @Input() empresa!: Empresa;
     @Input() asignaciones: Asignacion[] = [];
+
     @Output() volver = new EventEmitter<void>();
 
     EstadoAsignacion = EstadoAsignacion;
 
-    // fila -> está en modo edición o no
+    // control de edición por fila
     editando: { [id: string]: boolean } = {};
-    // backup para poder restaurar valores al cancelar
+
+    // respaldo para cancelar
     backup: { [id: string]: Asignacion } = {};
 
-    // Asignaciones solo de esta empresa
+    // ============================
+    //   FILTRAR SOLO DEL EMPRESA
+    // ============================
     get asignacionesEmpresa(): Asignacion[] {
         if (!this.empresa) return [];
-        return this.asignaciones.filter((a) => a.empresaId === this.empresa.id);
+        return this.asignaciones.filter(a => a.empresaId === this.empresa.id);
     }
 
-    // ========================
-    //   Cambiar estado directo
-    // ========================
+    // ============================
+    //  CAMBIAR ESTADO HACIENDO CLICK
+    // ============================
     cambiarEstadoDirecto(a: Asignacion) {
-        a.estado =
-            a.estado === EstadoAsignacion.Pendiente
-                ? EstadoAsignacion.Entregado
-                : EstadoAsignacion.Pendiente;
+        a.estado = a.estado === EstadoAsignacion.Pendiente
+            ? EstadoAsignacion.Entregado
+            : EstadoAsignacion.Pendiente;
     }
 
-    // ========================
-    //   Entrar en modo edición
-    // ========================
+    // ============================
+    //  ENTRAR EN MODO EDICIÓN
+    // ============================
     editarFila(a: Asignacion) {
         this.editando[a.id] = true;
 
-        // Guardamos una copia independiente de los valores actuales
-        this.backup[a.id] = {
-            ...a,
-            fechaEntrega: a.fechaEntrega ? a.fechaEntrega : null,
-        };
+        // guardar copia exacta para restablecer
+        this.backup[a.id] = { ...a };
     }
 
-    // ========================
-    //   Cancelar edición
-    // ========================
+    // ============================
+    //  CANCELAR EDICIÓN
+    // ============================
     cancelarEdicion(a: Asignacion) {
         const b = this.backup[a.id];
         if (b) {
             a.fechaAsignacion = b.fechaAsignacion;
             a.fechaEntrega = b.fechaEntrega;
+            a.estado = b.estado;
         }
+
         this.editando[a.id] = false;
     }
 
-    // ========================
-    //   Guardar edición
-    // ========================
+    // ============================
+    //  GUARDAR EDICIÓN
+    // ============================
     guardarFila(a: Asignacion) {
-        // Los cambios ya están en `a` vía ngModel, solo salimos del modo edición
         this.editando[a.id] = false;
-        // Ya no necesitamos el backup
         delete this.backup[a.id];
     }
 
-    // ========================
-    //   Eliminar asignación
-    // ========================
+    // ============================
+    //  ELIMINAR REGISTRO
+    // ============================
     eliminar(a: Asignacion) {
-        if (confirm(`¿Eliminar asignación ${a.pir}?`)) {
-            this.asignaciones = this.asignaciones.filter((x) => x.id !== a.id);
-        }
+        if (!confirm(`¿Eliminar asignación ${a.pir}?`)) return;
+
+        this.asignaciones = this.asignaciones.filter(x => x.id !== a.id);
     }
+
+    // ============================
+    //  IMPRIMIR
+    // ============================
+    imprimir() {
+        window.print();
+    }
+
+    // ============================
+    //  DESCARGAR PDF (simple)
+    // ============================
+    descargarPDF() {
+        const contenido = document.querySelector('.detalle-container')?.innerHTML;
+
+        const ventana = window.open('', '_blank', 'width=800,height=600');
+
+        ventana!.document.write(`
+        <html>
+        <head>
+            <title>Asignaciones - ${this.empresa.nombre}</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+
+                th, td {
+                    border: 1px solid black;
+                    padding: 6px;
+                    text-align: center;
+                }
+
+                h2 {
+                    margin-bottom: 15px;
+                }
+            </style>
+        </head>
+        <body>
+            <h2>Asignaciones — ${this.empresa.nombre}</h2>
+            ${contenido}
+        </body>
+        </html>
+    `);
+
+        ventana!.document.close();
+        ventana!.print();
+    }
+
 }
