@@ -3,8 +3,6 @@ import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
-import { CerradoComponent } from 'app/modules/reclamo/cerrado/cerrado.component';
-import { SeguimientoComponent } from 'app/modules/reclamo/seguimiento/seguimiento.component';
 
 
 // @formatter:off
@@ -64,10 +62,6 @@ export const appRoutes: Route[] = [
         },
         children: [
             { path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes') },
-            { path: 'reclamo/:id/hoja', component: SeguimientoComponent },
-            { path: 'reclamo', loadChildren: () => import('app/modules/reclamo/reclamo.module').then(m => m.ReclamoModule) },
-            { path: 'reclamo/:id/cerrado', component: CerradoComponent },  // Ruta de cerrado
-
             {path: 'baggage', loadChildren: () => import('app/modules/baggage/baggage.routes')},
         ]
     }

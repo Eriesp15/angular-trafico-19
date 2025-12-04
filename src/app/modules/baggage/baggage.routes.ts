@@ -16,7 +16,7 @@ export default [
     path: "",
     component: BaggageComponent,},
       {
-        path: "follow",
+        path: "claim/follow",
         component: FollowComponent,
         children: [
           {
