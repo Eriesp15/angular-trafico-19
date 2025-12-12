@@ -21,6 +21,12 @@ interface DamageLocation {
   selected: boolean
 }
 
+interface FlightInfo {
+  flightNumber: string
+  day: string
+  month: string
+}
+
 @Component({
   selector: "app-new-claim",
   standalone: true,
@@ -61,11 +67,8 @@ export class NewClaimComponent {
   baggageData = {
     bagtags: [""], // Array for multiple bag tags
     routes: [""], // Array for multiple routes
-    flightNumbers: [""], // Array for multiple flights
-    flightDate: "",
-    flightDay: "",
-    flightMonth: "",
-    colors: [], // Array for multiple baggage items with color info
+    flightInfo: [{ flightNumber: "", day: "", month: "" }] as FlightInfo[],
+    colors: [{ color: "", description: "" }], // Array for multiple baggage items with color info
     colorType: "",
     brands: [""], // Array for multiple brands
     contents: [""], // Array for multiple content items
@@ -164,7 +167,8 @@ export class NewClaimComponent {
 
   selectBaggageType(type: BaggageType) {
     this.selectedBaggageType = type
-    this.baggageData.colorType = `${type.code} - ${type.name}`
+    // Add selected baggage type to the colors array
+    this.baggageData.colors[this.baggageData.colors.length - 1].color = `${type.code} - ${type.name}`
     this.closeBaggageModal()
   }
 
@@ -242,16 +246,16 @@ export class NewClaimComponent {
     this.baggageData.routes.splice(index, 1)
   }
 
-  addFlightNumber() {
-    this.baggageData.flightNumbers.push("")
+  addFlightInfo() {
+    this.baggageData.flightInfo.push({ flightNumber: "", day: "", month: "" })
   }
 
-  removeFlightNumber(index: number) {
-    this.baggageData.flightNumbers.splice(index, 1)
+  removeFlightInfo(index: number) {
+    this.baggageData.flightInfo.splice(index, 1)
   }
 
-  addColor(brandIndex: number) {
-    this.baggageData.colors.push({ brand: brandIndex, color: "", description: "" })
+  addColor() {
+    this.baggageData.colors.push({ color: "", description: "" })
   }
 
   removeColor(index: number) {
