@@ -121,4 +121,11 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
             navigation.toggle();
         }
     }
+
+    /**
+     * Navigate to home/baggage page
+     */
+    navigateToHome(): void {
+        this._router.navigate(['/baggage']);
+    }
 }

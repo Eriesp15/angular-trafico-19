@@ -1,0 +1,98 @@
+<div class="detalle-container">
+
+    <!-- ============================
+            BARRA SUPERIOR
+    ============================= -->
+
+    <div class="top-actions">
+        <button mat-button class="volver-btn" (click)="volver.emit()">
+            ← Volver
+        </button>
+        <button mat-raised-button color="primary" (click)="imprimir()">
+            <mat-icon>print</mat-icon>
+            Imprimir
+        </button>
+
+        <button mat-raised-button color="accent" (click)="descargarPDF()">
+            <mat-icon>picture_as_pdf</mat-icon>
+            PDF
+        </button>
+
+    </div>
+
+    <!-- TITULO PRINCIPAL -->
+    <div class="header">
+        <h2 class="titulo-empresa">{{ empresa.nombre }}</h2>
+        <p class="tipo">{{ empresa.tipo }}</p>
+    </div>
+
+    <h3 class="subtitulo">Asignaciones registradas</h3>
+
+    <table>
+        <thead>
+        <tr>
+            <th>PIR</th>
+            <th>Fecha asignación</th>
+            <th>Fecha entrega</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr *ngFor="let a of asignacionesEmpresa">
+
+            <!-- PIR -->
+            <td>{{ a.pir }}</td>
+
+            <!-- FECHA ASIGNACIÓN -->
+            <td>
+                <ng-container *ngIf="!editando[a.id]; else editFA">
+                    {{ a.fechaAsignacion ? (a.fechaAsignacion | date:'dd/MM/yyyy') : '—' }}
+                </ng-container>
+
+                <ng-template #editFA>
+                    <input class="input" type="date" [(ngModel)]="a.fechaAsignacion" />
+                </ng-template>
+            </td>
+
+            <!-- FECHA ENTREGA -->
+            <td>
+                <ng-container *ngIf="!editando[a.id]; else editFE">
+                    {{ a.fechaEntrega ? (a.fechaEntrega | date:'dd/MM/yyyy') : '—' }}
+                </ng-container>
+
+                <ng-template #editFE>
+                    <input class="input" type="date" [(ngModel)]="a.fechaEntrega" />
+                </ng-template>
+            </td>
+
+            <!-- ESTADO CLICKABLE -->
+            <td>
+          <span class="badge clickable"
+                [class.badge-ok]="a.estado === EstadoAsignacion.Entregado"
+                (click)="cambiarEstadoDirecto(a)">
+            {{ a.estado }}
+          </span>
+            </td>
+
+            <!-- ACCIONES -->
+            <td class="acciones">
+                <ng-container *ngIf="!editando[a.id]">
+                    <button class="btn btn-light" (click)="editarFila(a)">Editar</button>
+                    <button class="btn btn-borrar" (click)="eliminar(a)">🗑️</button>
+                </ng-container>
+
+                <ng-container *ngIf="editando[a.id]">
+                    <button class="btn btn-guardar" (click)="guardarFila(a)">Guardar</button>
+                    <button class="btn btn-cancelar" (click)="cancelarEdicion(a)">Cancelar</button>
+                </ng-container>
+            </td>
+
+        </tr>
+
+        </tbody>
+    </table>
+
+</div>

@@ -1,0 +1,232 @@
+<div class="supplier-container">
+
+    <!-- ============================================
+                HEADER PRINCIPAL
+    ============================================= -->
+    <div class="header" *ngIf="vista === 'lista'">
+        <h1 class="title">Empresas / Proveedores</h1>
+        <button class="btn btn-yellow" (click)="modalTipo = true">+ Agregar Tipo de Empresa</button>
+    </div>
+
+    <!-- ============================================
+                MODAL — CREAR TIPO DE EMPRESA
+============================================= -->
+
+    <div class="modal-backdrop" *ngIf="modalTipo" (click)="modalTipo = false"></div>
+
+    <div class="modal" *ngIf="modalTipo">
+        <h2 class="modal-title">Nuevo Tipo de Empresa</h2>
+
+        <form class="modal-form">
+            <label>Nombre del tipo</label>
+            <input
+                type="text"
+                [(ngModel)]="nuevoTipo"
+                name="nuevoTipo"
+                placeholder="Ej: Transporte, Reparación, Limpieza..."
+            />
+        </form>
+
+        <div class="modal-actions">
+            <button class="btn btn-light" (click)="modalTipo = false">Cancelar</button>
+            <button class="btn btn-yellow" (click)="agregarTipo()">Guardar</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+                VISTA 1 — LISTA AGRUPADA POR TIPO
+    ============================================= -->
+    <ng-container *ngIf="vista === 'lista'">
+
+        <div *ngFor="let tipo of tiposEmpresa" class="grupo">
+
+            <div class="grupo-header" (click)="detenerPropagacion($event)">
+
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span>Tipo de Empresa:</span>
+                    <b>{{ tipo }}</b>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button class="btn btn-yellow small"
+                            (click)="abrirCrearEmpresa(tipo); detenerPropagacion($event)">
+                        + Empresa
+                    </button>
+
+                    <!-- 3 puntitos del tipo -->
+                    <button class="btn-dots"
+                            (click)="toggleMenuTipo(tipo); detenerPropagacion($event)">
+                        ⋮
+                    </button>
+
+                    <!-- dropdown -->
+                    <div class="dropdown"
+                         *ngIf="menuTipoAbierto === tipo"
+                         (click)="detenerPropagacion($event)">
+                        <div class="item" (click)="editarTipo(tipo)">Editar</div>
+                        <div class="item" (click)="eliminarTipo(tipo)">Eliminar</div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="cards">
+
+                <!-- Empresa dentro del grupo -->
+                <div class="card" *ngFor="let e of getEmpresasPorTipo(tipo)">
+
+                    <div class="card-head-row" (click)="detenerPropagacion($event)">
+
+                        <h3 class="card-title">{{ e.nombre }}</h3>
+
+                        <!-- 3 puntitos de la empresa -->
+                        <button class="btn-dots"
+                                (click)="toggleMenuEmpresa(e); detenerPropagacion($event)">
+                            ⋮
+                        </button>
+
+                        <!-- dropdown -->
+                        <div class="dropdown"
+                             *ngIf="menuEmpresaAbierto === e"
+                             (click)="detenerPropagacion($event)">
+                            <div class="item" (click)="editarEmpresa(e)">Editar</div>
+                            <div class="item" (click)="verDetalle(e)">Ver lista</div>
+                        </div>
+
+                    </div>
+
+                    <div class="estado">
+        <span [class.activo]="e.activo" [class.inactivo]="!e.activo">
+            {{ e.activo ? 'Activo' : 'Inactivo' }}
+        </span>
+
+                        <label class="switch">
+                            <input type="checkbox" [checked]="e.activo" (change)="cambiarEstado(e)" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="card-body">
+                        <p><b>Teléfono:</b> {{ e.telefono }}</p>
+                        <p><b>Email:</b> {{ e.email }}</p>
+                        <p><b>Razón social:</b> {{ e.razon }}</p>
+                        <p><b>Dirección:</b> {{ e.direccion }}</p>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn btn-light" (click)="verDetalle(e)">Ver Lista</button>
+
+                        <button class="btn btn-blue"
+                                [disabled]="!e.activo"
+                                (click)="abrirAsignar(e)">
+                            Asignar
+                        </button>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </ng-container>
+
+
+
+    <!-- ============================================
+                VISTA 2 — DETALLE EN PANTALLA COMPLETA
+    ============================================= -->
+    <ng-container *ngIf="vista === 'detalle' && empresaSel">
+        <app-list-supplier
+            [empresa]="empresaSel"
+            [asignaciones]="asignaciones"
+            (volver)="volver()">
+        </app-list-supplier>
+    </ng-container>
+
+
+
+    <!-- ============================================
+                MODAL — CREAR EMPRESA
+    ============================================= -->
+
+    <div class="modal-backdrop" *ngIf="modalCrear" (click)="modalCrear = false"></div>
+
+    <div class="modal" *ngIf="modalCrear">
+        <h2 class="modal-title">Registrar nueva empresa</h2>
+
+        <form class="modal-form">
+            <label>Tipo</label>
+            <input type="text" [value]="formEmpresa.tipo" name="tipo" disabled />
+
+            <label>Nombre</label>
+            <input type="text" [(ngModel)]="formEmpresa.nombre" name="nombre" />
+
+            <label>Teléfono</label>
+            <input type="text" [(ngModel)]="formEmpresa.telefono" name="telefono" />
+
+            <label>Email</label>
+            <input type="email" [(ngModel)]="formEmpresa.email" name="email" />
+
+            <label>Dirección</label>
+            <input type="text" [(ngModel)]="formEmpresa.direccion" name="direccion" />
+        </form>
+
+        <div class="modal-actions">
+            <button class="btn btn-light" (click)="modalCrear = false">Cancelar</button>
+            <button class="btn btn-yellow" (click)="guardarEmpresa()">Guardar</button>
+        </div>
+    </div>
+
+
+
+    <!-- ============================================
+                MODAL — ASIGNAR PIR
+    ============================================= -->
+
+    <div class="modal-backdrop" *ngIf="modalAsignar" (click)="cerrarAsignar()"></div>
+
+    <div class="modal" *ngIf="modalAsignar">
+        <h2 class="modal-title">Asignar PIR → {{ empresaAsignar?.nombre }}</h2>
+
+        <label class="modal-label">Fecha de entrega</label>
+        <input
+            class="input"
+            type="date"
+            [(ngModel)]="fechaEntrega"
+        />
+
+        <label class="modal-label">Buscar PIR</label>
+        <input
+            class="input"
+            type="text"
+            [(ngModel)]="pirBuscar"
+            placeholder="Escribe para buscar..." />
+
+        <!-- SUGERENCIAS -->
+        <div class="pir-suggestions" *ngIf="pirFiltrado.length > 0">
+            <div
+                class="pir-item"
+                *ngFor="let p of pirFiltrado"
+                (click)="addPIR(p)">
+                {{ p }}
+            </div>
+        </div>
+
+        <!-- PIR seleccionados -->
+        <div class="pir-chips">
+            <div class="chip" *ngFor="let p of pirSeleccionados">
+                {{ p }}
+                <span class="close" (click)="removePIR(p)">×</span>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-light" (click)="cerrarAsignar()">Cancelar</button>
+            <button class="btn btn-yellow" (click)="guardarAsignaciones()">Guardar</button>
+        </div>
+    </div>
+
+</div>

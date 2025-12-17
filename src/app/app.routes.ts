@@ -4,11 +4,11 @@ import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 
+
 // @formatter:off
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
-
     // Redirect empty path to '/example'
     {path: '', pathMatch : 'full', redirectTo: 'baggage'},
 
@@ -29,10 +29,10 @@ export const appRoutes: Route[] = [
             layout: 'empty'
         },
         children: [
-            {path: 'confirmation-required', loadChildren: () => import('app/modules/auth/confirmation-required/confirmation-required.routes')},
-            {path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes')},
-            {path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.routes')},
-            {path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes')},
+            { path: 'confirmation-required', loadChildren: () => import('app/modules/auth/confirmation-required/confirmation-required.routes') },
+            { path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes') },
+            { path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.routes') },
+            { path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes') },
         ]
     },
 
@@ -46,8 +46,8 @@ export const appRoutes: Route[] = [
             layout: 'empty'
         },
         children: [
-            {path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.routes')},
-            {path: 'unlock-session', loadChildren: () => import('app/modules/auth/unlock-session/unlock-session.routes')}
+            { path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.routes') },
+            { path: 'unlock-session', loadChildren: () => import('app/modules/auth/unlock-session/unlock-session.routes') }
         ]
     },
 
@@ -58,10 +58,10 @@ export const appRoutes: Route[] = [
         canActivateChild: [AuthGuard],
         component: LayoutComponent,
         resolve: {
-            initialData: initialDataResolver
+            initialData: initialDataResolver,
         },
         children: [
-            {path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes')},
+            { path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes') },
             {path: 'baggage', loadChildren: () => import('app/modules/baggage/baggage.routes')},
         ]
     }

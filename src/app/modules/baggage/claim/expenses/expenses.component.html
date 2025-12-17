@@ -1,0 +1,145 @@
+<div class="expenses-container">
+  <div class="expenses-wrapper">
+    <!-- Header -->
+    <div class="expenses-header">
+      <div>
+        <h1>Resumen de Gastos</h1>
+        <p class="subtitle">Desglose de gastos asociados al reclamo</p>
+      </div>
+      <button class="btn-back" (click)="volver()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver
+      </button>
+    </div>
+
+    <!-- Gastos por concepto -->
+    <div class="expenses-grid">
+      <!-- Indemnización -->
+      <div class="expense-card" *ngIf="totalIndemnizacion > 0">
+        <div class="card-header">
+          <div class="card-icon paid">
+            <mat-icon>paid</mat-icon>
+          </div>
+          <div class="card-title-section">
+            <h3 class="card-title">Indemnización</h3>
+            <p class="card-subtitle">Compensación por daño</p>
+          </div>
+        </div>
+        <div class="card-items">
+          <div class="item" *ngFor="let gasto of gastos | slice:0:1">
+            <span class="item-desc">{{ gasto.descripcion }}</span>
+            <span class="item-amount">${{ gasto.monto.toFixed(2) }}</span>
+          </div>
+        </div>
+        <div class="card-total">
+          <span>Total Indemnización:</span>
+          <span class="amount">${{ totalIndemnizacion.toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <!-- Compra de Maleta -->
+      <div class="expense-card" *ngIf="totalCompramMaleta > 0">
+        <div class="card-header">
+          <div class="card-icon luggage">
+            <mat-icon>luggage</mat-icon>
+          </div>
+          <div class="card-title-section">
+            <h3 class="card-title">Compra de Maleta</h3>
+            <p class="card-subtitle">Reemplazo de equipaje</p>
+          </div>
+        </div>
+        <div class="card-items">
+          <div class="item" *ngFor="let gasto of gastos | slice:1:2">
+            <span class="item-desc">{{ gasto.descripcion }}</span>
+            <span class="item-amount">${{ gasto.monto.toFixed(2) }}</span>
+          </div>
+        </div>
+        <div class="card-total">
+          <span>Total Compra:</span>
+          <span class="amount">${{ totalCompramMaleta.toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <!-- Gastos en Envío -->
+      <div class="expense-card" *ngIf="totalGastosEnvio > 0">
+        <div class="card-header">
+          <div class="card-icon shipping">
+            <mat-icon>local_shipping</mat-icon>
+          </div>
+          <div class="card-title-section">
+            <h3 class="card-title">Gastos de Transporte</h3>
+            <p class="card-subtitle">Costos de transporte</p>
+          </div>
+        </div>
+        <div class="card-items">
+          <div class="item" *ngFor="let gasto of gastos | slice:2:3">
+            <span class="item-desc">{{ gasto.descripcion }}</span>
+            <span class="item-amount">${{ gasto.monto.toFixed(2) }}</span>
+          </div>
+        </div>
+        <div class="card-total">
+          <span>Total Envío:</span>
+          <span class="amount">${{ totalGastosEnvio.toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <!-- Gastos Extras -->
+      <div class="expense-card" *ngIf="totalGastosExtras > 0">
+        <div class="card-header">
+          <div class="card-icon extras">
+            <mat-icon>receipt</mat-icon>
+          </div>
+          <div class="card-title-section">
+            <h3 class="card-title">Gastos de Primera Necesidad</h3>
+            <p class="card-subtitle">Otros gastos asociados</p>
+          </div>
+        </div>
+        <div class="card-items">
+          <div class="item" *ngFor="let gasto of gastos | slice:4:6">
+            <span class="item-desc">{{ gasto.descripcion }}</span>
+            <span class="item-amount">${{ gasto.monto.toFixed(2) }}</span>
+          </div>
+        </div>
+        <div class="card-total">
+          <span>Total Extras:</span>
+          <span class="amount">${{ totalGastosExtras.toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen Total -->
+    <div class="total-summary">
+      <h3 class="summary-title">Resumen Total de Gastos</h3>
+      <div class="summary-breakdown">
+        <div class="summary-row" *ngIf="totalIndemnizacion > 0">
+          <span>Indemnización:</span>
+          <span>${{ totalIndemnizacion.toFixed(2) }}</span>
+        </div>
+        <div class="summary-row" *ngIf="totalCompramMaleta > 0">
+          <span>Compra de Maleta:</span>
+          <span>${{ totalCompramMaleta.toFixed(2) }}</span>
+        </div>
+        <div class="summary-row" *ngIf="totalGastosEnvio > 0">
+          <span>Gastos en Envío:</span>
+          <span>${{ totalGastosEnvio.toFixed(2) }}</span>
+        </div>
+        <div class="summary-row" *ngIf="totalGastosExtras > 0">
+          <span>Gastos Extras:</span>
+          <span>${{ totalGastosExtras.toFixed(2) }}</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total General:</span>
+          <span>${{ totalGastos.toFixed(2) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="actions">
+      <button class="btn btn-outline" (click)="volver()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al Reclamo
+      </button>
+    </div>
+  </div>
+</div>
