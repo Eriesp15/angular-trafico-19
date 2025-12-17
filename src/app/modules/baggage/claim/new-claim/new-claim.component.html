@@ -17,7 +17,7 @@
         [class.active]="pirFormat === 'modern'"
         (click)="switchFormat('modern')"
       >
-        PIR Moderno
+        PIR Prototipo
       </button>
     </div>
   </div>
@@ -27,18 +27,41 @@
     <div *ngIf="pirFormat === 'classic'" class="pir-classic">
       <!-- Line 1: Estaciones involucradas -->
       <div class="section">
-        <h2 class="section-title">Línea 1: Estaciones Involucradas</h2>
+        <h2 class="section-title">Estaciones Involucradas</h2>
         <div class="form-group">
-          <label>QD - Prioridad de Estación > Dirección(es)</label>
-          <div class="input-with-code">
+          <label>Prioridad de Estación > Dirección(es)</label>
+          <!-- Nueva estructura con código fuera y botón a la izquierda -->
+          <div class="multi-field-wrapper">
             <span class="code">QD</span>
-            <input
-            type="text"
-            [(ngModel)]="claimData.involvedStations"
-            placeholder="Ingresa estaciones involucradas"
-            />
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addInvolvedStation()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let station of claimData.involvedStations; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="claimData.involvedStations[i]"
+                    placeholder="Ej: VVILLOB"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeInvolvedStation(i)"
+                    *ngIf="claimData.involvedStations.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-
         </div>
       </div>
 
@@ -139,94 +162,249 @@
 
       <!-- Line 6: Ticket/BagTag -->
       <div class="section">
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label>Número de ticket/Carrier Bag-Tag Number</label>
-            <div class="input-with-code">
-              <span class="code">TN</span>
-              <input type="text" [(ngModel)]="baggageData.bagtag" />
+        <div class="form-group">
+          <label>Número de ticket/Carrier Bag-Tag Number</label>
+          <!-- Nueva estructura con código fuera y botón a la izquierda -->
+          <div class="multi-field-wrapper">
+            <span class="code">TN</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addBagtag()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let bagtag of baggageData.bagtags; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="baggageData.bagtags[i]"
+                    placeholder="Número de maleta"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeBagtag(i)"
+                    *ngIf="baggageData.bagtags.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Line 7: Color/Type/Description/Route -->
+      <!-- Line 7: Color/Type/Description - Dynamic -->
       <div class="section">
         <div class="form-group">
-          <label>Color/Tipo/Descripción</label>
-          <div class="input-with-button">
-            <button type="button" class="btn-add" (click)="openBaggageModal()">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </button>
-            <div class="input-with-code">
-              <span class="code">CT</span>
-              <input type="text" [(ngModel)]="baggageData.colorType" readonly />
+          <label>Color/Tipo/Descripción por Maleta</label>
+          <!-- Nueva estructura con código fuera y botón a la izquierda -->
+          <div class="multi-field-wrapper">
+            <span class="code">CT</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addColor()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let color of baggageData.colors; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="baggageData.colors[i].color"
+                    placeholder="Color/tipo/descripción"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeColor(i)"
+                    *ngIf="baggageData.colors.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Line 8: Tracking Route -->
+      <!-- Line 8: Tracking Route - Dynamic -->
       <div class="section">
         <div class="form-group">
           <label>Ruta y/o Lugar para Rastreo</label>
-          <div class="input-with-code">
+          <!-- Nueva estructura con código fuera y botón a la izquierda -->
+          <div class="multi-field-wrapper">
             <span class="code">RT</span>
-            <input type="text" [(ngModel)]="baggageData.route" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Line 9: Flight/Date -->
-      <div class="section">
-        <div class="form-grid-3">
-          <div class="form-group">
-            <label>Número de Vuelo</label>
-            <div class="input-with-code">
-              <span class="code">FD</span>
-              <input type="text" [(ngModel)]="baggageData.flightNumber" />
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addRoute()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let route of baggageData.routes; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="baggageData.routes[i]"
+                    placeholder="Ruta de rastreo"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeRoute(i)"
+                    *ngIf="baggageData.routes.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="form-group">
-            <label>Día</label>
-            <input type="text" [(ngModel)]="baggageData.flightDay" />
-          </div>
-          <div class="form-group">
-            <label>Mes</label>
-            <input type="text" [(ngModel)]="baggageData.flightMonth" />
+        </div>
+      </div>
+
+      <!-- Line 9: Flight/Date - Dynamic -->
+      <!-- Estructura mejorada para vuelos con día y mes independientes -->
+      <div class="section">
+        <div class="form-group">
+          <label>Información de Vuelos</label>
+          <div class="multi-field-wrapper">
+            <span class="code">FD</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addFlightInfo()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item flight-item" *ngFor="let flight of baggageData.flightInfo; let i = index">
+                  <div class="flight-fields">
+                    <input
+                      type="text"
+                      [(ngModel)]="baggageData.flightInfo[i].flightNumber"
+                      placeholder="Número de vuelo"
+                      class="flight-number"
+                    />
+                    <input
+                      type="text"
+                      [(ngModel)]="baggageData.flightInfo[i].day"
+                      placeholder="Día"
+                      class="flight-day"
+                    />
+                    <input
+                      type="text"
+                      [(ngModel)]="baggageData.flightInfo[i].month"
+                      placeholder="Mes"
+                      class="flight-month"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeFlightInfo(i)"
+                    *ngIf="baggageData.flightInfo.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Line 10: Baggage Brand -->
+      <!-- Line 10: Baggage Brand - Dynamic -->
       <div class="section">
         <div class="form-group">
           <label>Marca/Identificación Exterior</label>
-          <div class="input-with-code">
+          <!-- Nueva estructura con código fuera y botón a la izquierda -->
+          <div class="multi-field-wrapper">
             <span class="code">BI</span>
-            <input type="text" [(ngModel)]="baggageData.brand" />
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addBrand()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let brand of baggageData.brands; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="baggageData.brands[i]"
+                    placeholder="Marca de maleta"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeBrand(i)"
+                    *ngIf="baggageData.brands.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Line 11: Content -->
+      <!-- Line 11: Content - Dynamic -->
       <div class="section">
         <div class="form-group">
-          <label>Descripción del Contenido (no mas de 4 articulos distintos)</label>
-          <div class="input-with-code">
+          <label>Descripción del Contenido (no más de 4 artículos distintos)</label>
+          <!-- Nueva estructura con código fuera y botón a la izquierda -->
+          <div class="multi-field-wrapper">
             <span class="code">CC</span>
-            <textarea [(ngModel)]="baggageData.content" rows="3"></textarea>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addContent()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let content of baggageData.contents; let i = index">
+                  <textarea
+                    [(ngModel)]="baggageData.contents[i]"
+                    rows="2"
+                    placeholder="Contenido de maleta"
+                  ></textarea>
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeContent(i)"
+                    *ngIf="baggageData.contents.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -235,11 +413,13 @@
       <div class="section">
         <div class="form-group">
           <label>Dirección Permanente del Pasajero</label>
+          <!-- Añadido clase textarea-large para hacerlo más ancho y visible -->
           <div class="input-with-code">
             <span class="code">PA</span>
             <textarea
               [(ngModel)]="passengerData.permanentAddress"
-              rows="2"
+              rows="3"
+              class="textarea-large"
             ></textarea>
           </div>
         </div>
@@ -249,11 +429,13 @@
       <div class="section">
         <div class="form-group">
           <label>Dirección Temporal del Pasajero</label>
+          <!-- Añadido clase textarea-large para hacerlo más ancho y visible -->
           <div class="input-with-code">
             <span class="code">TA</span>
             <textarea
               [(ngModel)]="passengerData.temporaryAddress"
-              rows="2"
+              rows="3"
+              class="textarea-large"
             ></textarea>
           </div>
         </div>
@@ -279,11 +461,13 @@
         </div>
         <div class="form-group">
           <label>Instrucciones de Entrega</label>
+          <!-- Añadido clase textarea-large para hacerlo más ancho y visible -->
           <div class="input-with-code">
             <span class="code">LD</span>
             <textarea
               [(ngModel)]="passengerData.deliveryInstructions"
               rows="3"
+              class="textarea-large"
             ></textarea>
           </div>
         </div>
@@ -293,9 +477,10 @@
       <div class="section">
         <div class="form-group">
           <label>Texto libre</label>
+          <!-- Añadido clase textarea-large para hacerlo más ancho y visible -->
           <div class="input-with-code">
             <span class="code">FF</span>
-            <textarea rows="3"></textarea>
+            <textarea rows="3" class="textarea-large"></textarea>
           </div>
         </div>
       </div>
@@ -329,13 +514,14 @@
         <div class="form-grid-2">
           <div class="form-group">
             <label>Idioma</label>
+            <!-- Cambiado select a input de texto libre -->
             <div class="input-with-code">
               <span class="code">LA</span>
-              <select [(ngModel)]="additionalData.language">
-                <option value="">Seleccionar</option>
-                <option value="ES">Español</option>
-                <option value="EN">Inglés</option>
-              </select>
+              <input
+                type="text"
+                [(ngModel)]="additionalData.language"
+                placeholder="Ingrese idioma"
+              />
             </div>
           </div>
           <div class="form-group">
@@ -359,34 +545,50 @@
             </div>
           </div>
           <div class="form-group">
-            <label>PNR (Localizador)</label>
+            <label>Localizador PNR</label>
             <div class="input-with-code">
-              <span class="code">PR</span>
+              <span class="code">RL</span>
               <input type="text" [(ngModel)]="baggageData.pnrLocator" />
             </div>
           </div>
           <div class="form-group">
-            <label>Identificador Viajero Frecuente</label>
+            <label>Identificación Viajero Frecuente</label>
             <div class="input-with-code">
-              <span class="code">FL</span>
+              <span class="code">FR</span>
               <input type="text" [(ngModel)]="passengerData.frequentTravelerId" />
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Line 18: Loss Reason / Failure Station -->
+      <!-- Line 18: Email -->
+      <div class="section">
+        <div class="form-group">
+          <label>Correo Electrónico del Pasajero</label>
+          <div class="input-with-code">
+            <span class="code">EM</span>
+            <input type="email" [(ngModel)]="passengerData.email" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Line 19: Loss Reason -->
       <div class="section">
         <div class="form-grid-2">
           <div class="form-group">
             <label>Razón de Pérdida</label>
+            <!-- Cambiado select a input de texto libre -->
             <div class="input-with-code">
-              <span class="code">RL</span>
-              <input type="text" [(ngModel)]="baggageData.lossReason" />
+              <span class="code">LR</span>
+              <input
+                type="text"
+                [(ngModel)]="baggageData.lossReason"
+                placeholder="Ingrese razón de pérdida"
+              />
             </div>
           </div>
           <div class="form-group">
-            <label>Estación de Fallo</label>
+            <label>Estación de Falla</label>
             <div class="input-with-code">
               <span class="code">FS</span>
               <input type="text" [(ngModel)]="baggageData.failureStation" />
@@ -395,7 +597,63 @@
         </div>
       </div>
 
-      <!-- Line 19: Insurance/Keys/Kit -->
+      <!-- Damage Section -->
+      <div class="section" *ngIf="claimData.claimType === 'DAMAGED'">
+        <h2 class="section-title">Descripción del Daño</h2>
+
+        <div class="damage-description-static">
+          <h3>Partes Dañadas</h3>
+          <div class="damage-parts-display">
+            <div class="damage-part-card" *ngFor="let part of damageParts">
+              <input
+                type="checkbox"
+                [id]="'part-' + part.code"
+                [(ngModel)]="part.selected"
+              />
+              <label [for]="'part-' + part.code">
+                <span class="part-code">{{ part.code }}</span>
+                <span class="part-name">{{ part.name }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.5rem;">
+          <label>Ubicación del Daño</label>
+          <button
+            type="button"
+            class="btn-indicate-damage"
+            (click)="openDamageLocationModal()"
+          >
+            Indicar Ubicación del Daño
+          </button>
+          <div *ngIf="selectedDamageLocations.length > 0" style="margin-top: 1rem;">
+            <strong>Ubicaciones seleccionadas:</strong> {{ selectedDamageLocations.join(', ') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Tipo de Daño</label>
+          <select [(ngModel)]="additionalData.damageType">
+            <option value="">Seleccionar tipo</option>
+            <option value="TORN">Rasgado</option>
+            <option value="BROKEN">Roto</option>
+            <option value="SCRATCHED">Rayado</option>
+            <option value="DENTED">Abollado</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Condición del Daño</label>
+          <select [(ngModel)]="additionalData.damageCondition">
+            <option value="">Seleccionar condición</option>
+            <option value="MINOR">Menor</option>
+            <option value="MODERATE">Moderado</option>
+            <option value="SEVERE">Severo</option>
+          </select>
+        </div>
+      </div>
+ <!-- Line 19: Insurance/Keys/Kit -->
       <div class="section">
         <div class="form-grid-3">
           <div class="form-group">
@@ -423,7 +681,7 @@
         </div>
       </div>
 
-      <!-- Line 20: Damage Type/Condition -->
+      <!-- Line 20-21: Damage Info - STATIC DISPLAY WITHOUT CLICK -->
       <div class="section">
         <h2 class="section-title">Información de daño</h2>
         <div class="form-grid-2">
@@ -446,27 +704,41 @@
             </select>
           </div>
         </div>
-      </div>
 
-      <!-- Line 21: Damage Description -->
-      <div class="section">
-        <h2 class="section-title">Descripción del Daño</h2>
-        <button
-          type="button"
-          class="btn-indicate-damage"
-          (click)="openDamageModal()"
-        >
-          Indicar Daño
-        </button>
-        <button
-          type="button"
-          class="btn-indicate-damage secondary"
-          (click)="openDamageLocationModal()"
-        >
-          Ubicación del Daño
-        </button>
-      </div>
+        <!-- Static damage parts display without click modal -->
+        <div class="damage-description-static">
+          <h3>Partes Afectadas</h3>
+          <div class="damage-parts-display">
+            <div class="damage-part-card" *ngFor="let part of damageParts">
+              <input
+                type="checkbox"
+                [(ngModel)]="part.selected"
+                [id]="'damage-' + part.code"
+              />
+              <label [for]="'damage-' + part.code">
+                <span class="part-code">{{ part.code }}</span>
+                <span class="part-name">{{ part.name }}</span>
+              </label>
+            </div>
+          </div>
 
+          <h3 style="margin-top: 2rem;">Ubicación del Daño</h3>
+          <div class="damage-parts-display">
+            <div class="damage-part-card" *ngFor="let location of damageLocations">
+              <input
+                type="checkbox"
+                [(ngModel)]="location.selected"
+                [id]="'location-' + location.code"
+              />
+              <label [for]="'location-' + location.code">
+                <span class="part-code">{{ location.code }}</span>
+                <span class="part-name">{{ location.name }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <!-- Form Actions -->
       <div class="form-actions">
         <button type="button" class="btn-cancel" (click)="cancel()">
@@ -478,9 +750,8 @@
       </div>
     </div>
 
-    <!-- PIR MODERN FORMAT (original structure, reorganized) -->
+    <!-- PIR MODERN FORMAT -->
     <div *ngIf="pirFormat === 'modern'" class="pir-modern">
-      <!-- Rest of the modern format remains similar to original but reorganized -->
       <!-- Datos del Reclamo -->
       <div class="section">
         <h2 class="section-title">Datos del Reclamo</h2>
@@ -527,24 +798,36 @@
 
         <div class="form-group">
           <label>Estaciones involucradas</label>
-          <div class="search-input">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-            <input
-              type="text"
-              [(ngModel)]="claimData.involvedStations"
-              placeholder="Buscar/seleccionar estación"
-            />
+          <div class="multi-field-wrapper">
+            <span class="code">QD</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addInvolvedStation()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let station of claimData.involvedStations; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="claimData.involvedStations[i]"
+                    placeholder="Buscar/seleccionar estación"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeInvolvedStation(i)"
+                    *ngIf="claimData.involvedStations.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -575,14 +858,14 @@
             <label>Dirección permanente del Pasajero</label>
             <div class="input-with-code">
               <span class="code">PA</span>
-              <textarea [(ngModel)]="passengerData.permanentAddress" rows="2"></textarea>
+              <textarea [(ngModel)]="passengerData.permanentAddress" rows="2" class="textarea-large"></textarea>
             </div>
           </div>
           <div class="form-group">
             <label>Dirección temporal del Pasajero</label>
             <div class="input-with-code">
               <span class="code">TA</span>
-              <textarea [(ngModel)]="passengerData.temporaryAddress" rows="2"></textarea>
+              <textarea [(ngModel)]="passengerData.temporaryAddress" rows="2" class="textarea-large"></textarea>
             </div>
           </div>
         </div>
@@ -639,108 +922,234 @@
       <!-- Datos del Equipaje -->
       <div class="section">
         <h2 class="section-title">Datos del Equipaje</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Aerolíneas - Nro. de ticket</label>
-            <div class="input-with-code">
-              <span class="code">TN</span>
-              <input type="text" [(ngModel)]="baggageData.ticketNumber" />
+        
+        <!-- Fixed bagtags with new multi-field structure -->
+        <div class="form-group">
+          <label>Aerolíneas - Nro. de ticket</label>
+          <div class="multi-field-wrapper">
+            <span class="code">TN</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addBagtag()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let bagtag of baggageData.bagtags; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="baggageData.bagtags[i]"
+                    placeholder="Número de ticket"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeBagtag(i)"
+                    *ngIf="baggageData.bagtags.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- Fixed routes with new multi-field structure -->
         <div class="form-group">
           <label>Ruta y/o lugar para hacer rastreo</label>
-          <div class="route-input">
-            <div class="input-with-code">
-              <span class="code">RT</span>
-              <input type="text" [(ngModel)]="baggageData.route" />
-            </div>
-            <button type="button" class="btn-edit">editar</button>
-          </div>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Nro. de vuelo - Fecha/mes</label>
-            <div class="flight-input">
-              <div class="input-with-code">
-                <span class="code">FD</span>
-                <input type="text" [(ngModel)]="baggageData.flightNumber" />
+          <div class="multi-field-wrapper">
+            <span class="code">RT</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addRoute()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let route of baggageData.routes; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="baggageData.routes[i]"
+                    placeholder="Ruta de rastreo"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeRoute(i)"
+                    *ngIf="baggageData.routes.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
               </div>
-              <input type="text" [(ngModel)]="baggageData.flightDate" />
             </div>
           </div>
         </div>
 
+        <!-- Fixed flight info with proper day and month fields -->
+        <div class="form-group">
+          <label>Nro. de vuelo - Fecha/mes</label>
+          <div class="multi-field-wrapper">
+            <span class="code">FD</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addFlightInfo()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item flight-item" *ngFor="let flight of baggageData.flightInfo; let i = index">
+                  <div class="flight-fields">
+                    <input
+                      type="text"
+                      [(ngModel)]="baggageData.flightInfo[i].flightNumber"
+                      placeholder="Número de vuelo"
+                      class="flight-number"
+                    />
+                    <input
+                      type="text"
+                      [(ngModel)]="baggageData.flightInfo[i].day"
+                      placeholder="Día"
+                      class="flight-day"
+                    />
+                    <input
+                      type="text"
+                      [(ngModel)]="baggageData.flightInfo[i].month"
+                      placeholder="Mes"
+                      class="flight-month"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeFlightInfo(i)"
+                    *ngIf="baggageData.flightInfo.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fixed color type with modal button and new structure -->
         <div class="form-group">
           <label>Color tipo descripción</label>
-          <div class="input-with-button">
-            <button type="button" class="btn-add" (click)="openBaggageModal()">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </button>
-            <div class="input-with-code">
-              <span class="code">CT</span>
-              <input type="text" [(ngModel)]="baggageData.colorType" readonly />
+          <div class="multi-field-wrapper">
+            <span class="code">CT</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="openBaggageModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let color of baggageData.colors; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="baggageData.colors[i].color"
+                    placeholder="Color/tipo/descripción"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeColor(i)"
+                    *ngIf="baggageData.colors.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- Fixed brand with new multi-field structure -->
         <div class="form-group">
           <label>Marca de la maleta</label>
-          <div class="input-with-button">
-            <button type="button" class="btn-add">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </button>
-            <div class="input-with-code">
-              <span class="code">BI</span>
-              <input type="text" [(ngModel)]="baggageData.brand" />
+          <div class="multi-field-wrapper">
+            <span class="code">BI</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addBrand()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let brand of baggageData.brands; let i = index">
+                  <input
+                    type="text"
+                    [(ngModel)]="baggageData.brands[i]"
+                    placeholder="Marca de maleta"
+                  />
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeBrand(i)"
+                    *ngIf="baggageData.brands.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- Fixed content with new multi-field structure -->
         <div class="form-group">
           <label>Contenido</label>
-          <div class="input-with-button">
-            <button type="button" class="btn-add">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-            </button>
-            <div class="input-with-code">
-              <span class="code">CC</span>
-              <input type="text" [(ngModel)]="baggageData.content" />
+          <div class="multi-field-wrapper">
+            <span class="code">CC</span>
+            <div class="multi-field-list">
+              <button type="button" class="btn-add-field" (click)="addContent()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+              <div class="multi-field-items">
+                <div class="multi-field-item" *ngFor="let content of baggageData.contents; let i = index">
+                  <textarea
+                    [(ngModel)]="baggageData.contents[i]"
+                    rows="2"
+                    placeholder="Contenido de maleta"
+                  ></textarea>
+                  <button
+                    type="button"
+                    class="btn-remove"
+                    (click)="removeContent(i)"
+                    *ngIf="baggageData.contents.length > 1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -797,6 +1206,37 @@
           Guardar Reclamo
         </button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Damage Location Modal -->
+<div class="modal-overlay" *ngIf="showDamageLocationModal" (click)="closeDamageLocationModal()">
+  <div class="modal-content modal-damage" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Seleccionar Ubicación del Daño</h3>
+      <button class="btn-close" (click)="closeDamageLocationModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="damage-parts">
+        <div
+          class="damage-part"
+          *ngFor="let location of damageLocations"
+          [class.selected]="location.selected"
+          (click)="toggleDamageLocation(location)"
+        >
+          <span class="part-code">{{ location.code }}</span>
+          <span class="part-name">{{ location.name }}</span>
+        </div>
+      </div>
+      <button class="btn-save-damage" (click)="closeDamageLocationModal()">
+        Guardar Ubicaciones
+      </button>
     </div>
   </div>
 </div>
