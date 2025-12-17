@@ -58,7 +58,7 @@ export default [
         component: ListSupplierComponent, // Ruta para ver lista de proveedores
       },
       {
-        path: "claim/closing-receipt/:id",
-        component: ClosingReceiptComponent,
+          path: 'claim/closing-receipt/:pir',
+          component: ClosingReceiptComponent,
       },
 ] as Routes

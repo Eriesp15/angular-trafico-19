@@ -1,4 +1,4 @@
-<div class="cerrado-container p-6">
+<div class="cerrado-container p-6" *ngIf="seguimiento">
 
     <!-- ENCABEZADO -->
     <div class="title-row">
@@ -29,7 +29,7 @@
             </div>
             <div class="row">
                 <span class="label">Fecha reclamo:</span>
-                <span class="value">{{ seguimiento.fechaReclamo }}</span>
+                <span class="value">{{ seguimiento.fechaReclamo | date }}</span>
             </div>
         </div>
     </div>
@@ -41,39 +41,54 @@
 
             <div class="row">
                 <label class="label">Fecha entrega:</label>
-                <input type="date" class="input" [(ngModel)]="form.fechaEntrega">
+                <input type="date" class="input"
+                       [(ngModel)]="form.fechaEntrega"
+                       [disabled]="cerrado">
             </div>
 
             <div class="row">
                 <label class="label">Cantidad entregada:</label>
-                <input type="number" class="input short" [(ngModel)]="form.cantidadEquipajes">
+                <input type="number" class="input short"
+                       [(ngModel)]="form.cantidadEquipajes"
+                       [disabled]="cerrado">
             </div>
 
             <div class="radio-group">
                 <label>
-                    <input type="radio" name="entrega" value="aeropuerto" [(ngModel)]="form.entregaModo">
+                    <input type="radio" name="entrega"
+                           value="aeropuerto"
+                           [(ngModel)]="form.entregaModo"
+                           [disabled]="cerrado">
                     Entrega en aeropuerto
                 </label>
                 <label>
-                    <input type="radio" name="entrega" value="domicilio" [(ngModel)]="form.entregaModo">
+                    <input type="radio" name="entrega"
+                           value="domicilio"
+                           [(ngModel)]="form.entregaModo"
+                           [disabled]="cerrado">
                     Entrega a domicilio
                 </label>
             </div>
 
             <div *ngIf="form.entregaModo === 'domicilio'" class="direccion-group">
                 <label>Dirección de entrega:</label>
-                <input type="text" class="direccion-input" [(ngModel)]="form.direccion">
+                <input type="text" class="direccion-input"
+                       [(ngModel)]="form.direccion"
+                       [disabled]="cerrado">
             </div>
 
-            <div class="botones-entrega">
+            <div class="botones-entrega no-print">
 
                 <!-- SUBIDA DE ARCHIVOS -->
-                <label class="btn btn-subir">
+                <label class="btn btn-subir" *ngIf="!cerrado">
                     Subir documentos (PDF o imágenes)
-                    <input type="file" accept="image/*,.pdf" multiple hidden (change)="seleccionarArchivos($event)">
+                    <input type="file" accept="image/*,.pdf" multiple hidden
+                           (change)="seleccionarArchivos($event)">
                 </label>
 
-                <button class="btn btn-confirmar" (click)="abrirModalCierre()">
+                <button class="btn btn-confirmar"
+                        *ngIf="!cerrado"
+                        (click)="abrirModalCierre()">
                     Confirmar cierre
                 </button>
             </div>
@@ -101,18 +116,24 @@
             </div>
             <div class="sig-cell">
                 <div class="sig-label">C.I.:</div>
-                <input class="sig-input" [(ngModel)]="form.ci" />
+                <input class="sig-input"
+                       [(ngModel)]="form.ci"
+                       [disabled]="cerrado" />
             </div>
         </div>
 
         <div class="sig-row">
-            <div class="sig-label">Aclaracion de firma:</div>
-            <input class="sig-input" [(ngModel)]="form.aclaracion" />
+            <div class="sig-label">Aclaración de firma:</div>
+            <input class="sig-input"
+                   [(ngModel)]="form.aclaracion"
+                   [disabled]="cerrado" />
         </div>
 
         <div class="sig-row">
             <div class="sig-label">Observaciones:</div>
-            <textarea class="sig-textarea" [(ngModel)]="form.observaciones"></textarea>
+            <textarea class="sig-textarea"
+                      [(ngModel)]="form.observaciones"
+                      [disabled]="cerrado"></textarea>
         </div>
     </div>
 </div>
@@ -121,4 +142,3 @@
 <button class="print-fab no-print" mat-fab (click)="print()">
     <mat-icon>print</mat-icon>
 </button>
-

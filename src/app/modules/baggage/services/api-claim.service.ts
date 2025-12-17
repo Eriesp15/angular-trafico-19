@@ -10,9 +10,14 @@ export class ApiClaimService {
 
     constructor(private http: HttpClient) {}
 
-    getClaim(id: number): Observable<any> {
-        return this.http.get(`${this.api}/claims/${id}`);
+    getClaimByPir(pir: string): Observable<any> {
+        return this.http.get(`${this.api}/claims/view/${pir}`);
     }
+
+    getClaimsList(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.api}/claims/list`);
+    }
+
 
     getTimeline(id: number): Observable<any> {
         return this.http.get(`${this.api}/claims/${id}/timeline`);
@@ -28,7 +33,7 @@ export class ApiClaimService {
         return this.http.post(`${this.api}/claim-log`, body);
     }
 
-    closeClaim(id: number, body: any): Observable<any> {
-        return this.http.post(`${this.api}/claims/${id}/close`, body);
+    closeClaim(pir: string, body: any) {
+        return this.http.post(`${this.api}/claims/${pir}/close`, body);
     }
 }
