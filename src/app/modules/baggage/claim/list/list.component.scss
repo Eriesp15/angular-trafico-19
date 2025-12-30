@@ -213,10 +213,10 @@
 .claims-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
+  background-color: var(--bg-card);
 
   thead {
-    background-color: #f9f9f9;
+    background-color: var(--bg-card);
     border-bottom: 2px solid #e0e0e0;
   }
 
@@ -224,7 +224,7 @@
     padding: 1rem;
     text-align: left;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -235,13 +235,13 @@
     transition: background-color 0.2s ease;
 
     &:hover {
-      background-color: #f9f9f9;
+      background-color: var(--bg-page);
     }
   }
 
   td {
     padding: 1rem;
-    color: #666;
+    color: var(--text-primary);
     font-size: 0.95rem;
   }
 }
