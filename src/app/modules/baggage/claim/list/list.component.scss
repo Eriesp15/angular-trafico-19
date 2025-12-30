@@ -2,16 +2,15 @@
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
-  background-color: #f5f5f5;
   min-height: 100vh;
 }
 
 .list-header {
-  background-color: white;
+  background-color: var(--bg-card);
   padding: 2rem;
   border-radius: 8px;
   margin-bottom: 2rem;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px var(--shadow-card);
 }
 
 .header-top {
@@ -19,11 +18,11 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  gap: 1rem;
+  gap: 1rem;  
 
   h1 {
     margin: 0;
-    color: #003366;
+    color: var(--header-primary);
     font-size: 1.8rem;
     font-weight: 600;
   }
@@ -72,7 +71,7 @@
 .search-input {
   flex: 1;
   padding: 0.75rem 1rem;
-  border: 1px solid #ddd;
+  border: var(--border-color) 1.5px solid;
   border-radius: 4px;
   font-size: 1rem;
   font-family: inherit;
@@ -80,7 +79,7 @@
 
   &:focus {
     outline: none;
-    border-color: #003366;
+    border-color: var(--border-focus);
     box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
   }
 
@@ -109,9 +108,9 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
   padding: 1.5rem;
-  background-color: #f5f7fa;
+  background-color: var(--bg-card);
   border-radius: 6px;
-  border-left: 4px solid #003366;
+  border-left: 4px solid var(--header-primary);
 }
 
 .filter-column {
@@ -122,7 +121,7 @@
 
 .filter-label {
   font-weight: 700;
-  color: #003366;
+  color: var(--header-primary);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.8px;

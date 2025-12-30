@@ -5,3 +5,38 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:root {
+ /* Fondos */
+  --bg-page: #f5f6f8;
+  --bg-card: #ffffff;
+
+    /* Textos */
+  --header-primary: #022F70;
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-muted: #777777; 
+  --text-primary: #111111;
+  
+    /* Bordes y sombras */
+  --border-color: #e0e0e0;
+  --border-focus: #0c2660;
+  --shadow-card: rgba(0, 0, 0, 0.08);
+}
+
+body.dark {
+      /* Fondos */
+  --bg-page: #121212;
+  --bg-card: #182442;
+  
+    /* Textos */
+  --header-primary: #e1e1e1;
+  --text-primary: #f1f1f1;
+  --text-secondary: #cfcfcf;
+  --text-muted: #9a9a9a;
+
+  /* Bordes y sombras */
+  --border-color: #5e5d5d;
+  --border-focus: #2f4678;
+  --shadow-card: rgba(0, 0, 0, 0.6);
+}

@@ -58,7 +58,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  private readonly apiUrl = "http://localhost:3700/api/v1/claims/list"; // Ajusta según tu backend
+  private readonly apiUrl = "http://localhost:3700/api/v1/claims/list";
 
   constructor(
     private fb: FormBuilder,
