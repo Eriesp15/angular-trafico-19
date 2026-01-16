@@ -4,23 +4,34 @@
     <div class="expense-header">
       <h1>Añadir Gasto</h1>
       <p class="subtitle">Reclamo #{{ claimId }}</p>
-      <!-- Mostrar tipo de reclamo con su color -->
-      <div class="claim-type-badge" [style.background-color]="getTipoReclamoInfo().color">
-        {{ getTipoReclamoInfo().nombre }}
+      <div class="header-badges">
+        <div class="claim-type-badge" [style.background-color]="getTipoReclamoInfo().color">
+          {{ getTipoReclamoInfo().nombre }}
+        </div>
+        <div class="days-badge" [class.warning]="diasTranscurridos >= 21">
+          {{ diasTranscurridos }} días transcurridos
+        </div>
       </div>
     </div>
 
-    <!-- Mensaje informativo sobre gastos permitidos -->
+    <!-- Banner informativo con días -->
     <div class="info-banner" *ngIf="!gastoSeleccionado && !mostrarConfirmacion">
       <mat-icon>info</mat-icon>
-      <span>Los gastos disponibles se filtran según el tipo de reclamo <strong>{{ getTipoReclamoInfo().nombre }}</strong></span>
+      <div class="info-content">
+        <span>Gastos disponibles para <strong>{{ getTipoReclamoInfo().nombre }}</strong></span>
+        <span class="info-detail" *ngIf="claimConfig.diasParaIndemnizacion > 0 && diasTranscurridos < claimConfig.diasParaIndemnizacion">
+          La indemnización estará disponible en {{ claimConfig.diasParaIndemnizacion - diasTranscurridos }} días
+        </span>
+        <span class="info-detail success" *ngIf="claimConfig.diasParaIndemnizacion > 0 && diasTranscurridos >= claimConfig.diasParaIndemnizacion">
+          Indemnización habilitada (más de 21 días)
+        </span>
+      </div>
     </div>
 
     <!-- Selección de tipo de gasto -->
     <div class="tipo-gasto-section" *ngIf="!gastoSeleccionado && !mostrarConfirmacion">
       <h2>Seleccione el tipo de gasto</h2>
       
-      <!-- Mostrar mensaje si no hay gastos disponibles -->
       <div class="empty-state" *ngIf="tiposGasto.length === 0">
         <mat-icon>block</mat-icon>
         <p>No hay gastos disponibles para este tipo de reclamo</p>
@@ -32,6 +43,7 @@
           *ngFor="let tipo of tiposGasto"
           [class.disabled]="!tipo.habilitado"
           [class.selected]="gastoSeleccionado?.id === tipo.id"
+          [class.indemnizacion]="tipo.id.startsWith('indemnizacion')"
           (click)="seleccionarTipoGasto(tipo)"
         >
           <div class="tipo-icon">
@@ -41,8 +53,18 @@
             <h3>{{ tipo.nombre }}</h3>
             <p>{{ tipo.descripcion }}</p>
           </div>
+          <!-- Badge para gastos bloqueados por días -->
           <div class="tipo-status" *ngIf="!tipo.habilitado">
-            <span class="disabled-badge">No disponible</span>
+            <span class="disabled-badge">
+              <mat-icon>schedule</mat-icon>
+              Requiere 21+ días
+            </span>
+          </div>
+          <div class="tipo-status" *ngIf="tipo.habilitado && tipo.requiereDias">
+            <span class="enabled-badge">
+              <mat-icon>check_circle</mat-icon>
+              Habilitado
+            </span>
           </div>
         </div>
       </div>
@@ -67,14 +89,16 @@
         </div>
       </div>
 
-      <!-- Formulario para Indemnización (cálculo por peso) -->
-      <div class="form-section" *ngIf="gastoSeleccionado.id === 'indemnizacion'">
+      <!-- Formulario para Indemnización (ambos tipos) -->
+      <div class="form-section" *ngIf="esIndemnizacion()">
         <p class="form-description">{{ gastoSeleccionado.descripcion }}</p>
         
-        <!-- Mostrar información según tipo de reclamo -->
-        <div class="calculation-info" *ngIf="tipoReclamo === 'PILFERED'">
+        <div class="calculation-info">
           <mat-icon>info</mat-icon>
-          <span>Según el manual MSA de BOA, la indemnización por contenido faltante es de <strong>15 USD por kilogramo</strong></span>
+          <span>
+            Según el Manual MSA de BOA, la indemnización es de <strong>15 USD por kilogramo</strong> 
+            de diferencia de peso.
+          </span>
         </div>
         
         <div class="form-group">
@@ -85,6 +109,7 @@
             placeholder="Peso original del equipaje"
             (input)="calcularIndemnizacion()"
           />
+          <span class="field-hint">Peso que figura en el BagTag o registro de check-in</span>
         </div>
 
         <div class="form-group">
@@ -95,30 +120,29 @@
             placeholder="Peso actual del equipaje"
             (input)="calcularIndemnizacion()"
           />
-        </div>
-
-        <div class="form-group">
-          <label>Precio por Kilo (USD)</label>
-          <input 
-            type="number" 
-            [(ngModel)]="precioPorKilo" 
-            placeholder="15 USD según manual BOA"
-            (input)="calcularIndemnizacion()"
-          />
+          <span class="field-hint">Peso verificado al momento del reclamo</span>
         </div>
 
         <div class="calculation-summary">
           <h3>Resumen del Cálculo</h3>
           <div class="summary-row">
+            <span class="summary-label">Peso Original:</span>
+            <span class="summary-value">{{ pesoRecibido || 0 }} kg</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Peso Actual:</span>
+            <span class="summary-value">{{ pesoEntregado || 0 }} kg</span>
+          </div>
+          <div class="summary-row highlight">
             <span class="summary-label">Diferencia de peso:</span>
             <span class="summary-value">{{ diferenciaPeso.toFixed(2) }} kg</span>
           </div>
           <div class="summary-row">
             <span class="summary-label">Precio por kilo:</span>
-            <span class="summary-value">${{ precioPorKilo || 0 }} USD</span>
+            <span class="summary-value">${{ precioPorKilo }} USD</span>
           </div>
           <div class="total-row">
-            <span class="total-label">Total a indemnizar</span>
+            <span class="total-label">Total a Indemnizar</span>
             <span class="total-amount">${{ totalIndemnizar.toFixed(2) }} USD</span>
           </div>
         </div>
@@ -147,8 +171,8 @@
         </div>
       </div>
 
-      <!-- Formulario para gastos predefinidos -->
-      <div class="form-section" *ngIf="gastoSeleccionado.id !== 'indemnizacion' && gastoSeleccionado.id !== 'otro'">
+      <!-- Formulario para gastos predefinidos (no indemnización) -->
+      <div class="form-section" *ngIf="!esIndemnizacion() && gastoSeleccionado.id !== 'otro'">
         <p class="form-description">{{ gastoSeleccionado.descripcion }}</p>
         
         <div class="form-group">
@@ -196,7 +220,7 @@
           <span class="detalle-label">Descripción:</span>
           <span class="detalle-value">{{ descripcionGasto }}</span>
         </div>
-        <div class="detalle-row" *ngIf="gastoSeleccionado?.id === 'indemnizacion'">
+        <div class="detalle-row" *ngIf="esIndemnizacion()">
           <span class="detalle-label">Diferencia de peso:</span>
           <span class="detalle-value">{{ diferenciaPeso.toFixed(2) }} kg</span>
         </div>

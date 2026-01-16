@@ -3,96 +3,107 @@
   <div class="delivery-form-section" *ngIf="!showConfirmation">
     <div class="form-header">
       <h1>Realizar Entrega</h1>
-      <p class="subtitle">Configure los detalles de entrega del equipaje</p>
+      <p class="subtitle">Reclamo #{{ claimId }}</p>
     </div>
 
     <form [formGroup]="deliveryForm" class="delivery-form">
-      <!-- Delivery Type Selection -->
+      <!-- Tipo de Entrega: Solo 2 opciones -->
       <div class="form-section">
         <h2 class="section-title">Tipo de Entrega</h2>
 
-        <div class="radio-group">
-          <div class="radio-option" *ngFor="let type of deliveryTypes">
-            <input
-              type="radio"
-              [id]="type.value"
-              [value]="type.value"
-              formControlName="tipo"
-              class="radio-input"
-            />
-            <label [for]="type.value" class="radio-label">
-              <span class="radio-custom"></span>
-              <span class="radio-text">{{ type.label }}</span>
-            </label>
+        <div class="delivery-type-cards">
+          <div 
+            *ngFor="let type of deliveryTypes"
+            class="delivery-type-card"
+            [class.selected]="selectedDeliveryType === type.value"
+            (click)="deliveryForm.get('tipo')?.setValue(type.value)"
+          >
+            <mat-icon>{{ type.icon }}</mat-icon>
+            <span>{{ type.label }}</span>
           </div>
         </div>
       </div>
 
-      <!-- Conditional Fields Based on Delivery Type -->
-      <div class="form-section" *ngIf="selectedDeliveryType === 'envio'">
-        <h2 class="section-title">Detalles de Envío</h2>
+      <!-- Campos para Envío a Domicilio -->
+      <div class="form-section" *ngIf="selectedDeliveryType === 'domicilio'">
+        <h2 class="section-title">Datos de Envío a Domicilio</h2>
 
         <div class="form-group">
-          <label for="ubicacion" class="form-label">Ubicación de Envío</label>
+          <label for="direccion" class="form-label">Dirección Completa *</label>
+          <textarea
+            id="direccion"
+            class="form-textarea"
+            formControlName="direccion"
+            placeholder="Ingrese la dirección completa de entrega"
+            rows="3"
+            [class.error]="isFieldRequired('direccion')"
+          ></textarea>
+          <span class="error-message" *ngIf="isFieldRequired('direccion')">
+            La dirección es requerida
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="telefono" class="form-label">Teléfono de Contacto *</label>
           <input
-            id="ubicacion"
+            id="telefono"
+            type="tel"
+            class="form-input"
+            formControlName="telefono"
+            placeholder="Ej: 77712345"
+            [class.error]="isFieldRequired('telefono')"
+          />
+          <span class="error-message" *ngIf="isFieldRequired('telefono')">
+            El teléfono es requerido
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="referencia" class="form-label">Referencia (Opcional)</label>
+          <input
+            id="referencia"
             type="text"
             class="form-input"
-            formControlName="ubicacion"
-            placeholder="Ingrese la ubicación de envío"
-            [class.error]="isFieldRequired('ubicacion')"
+            formControlName="referencia"
+            placeholder="Cerca de..., frente a..."
           />
-          <span class="error-message" *ngIf="isFieldRequired('ubicacion')">
-            La ubicación es requerida para envíos
-          </span>
         </div>
 
-        <div class="form-group">
-          <label for="empresa" class="form-label">Empresa de Envío</label>
-          <select
-            id="empresa"
-            class="form-select"
-            formControlName="empresa"
-            [class.error]="isFieldRequired('empresa')"
-          >
-            <option value="" disabled selected>Seleccione una empresa</option>
-            <option *ngFor="let company of shippingCompanies" [value]="company">
-              {{ company }}
-            </option>
-          </select>
-          <span class="error-message" *ngIf="isFieldRequired('empresa')">
-            Debe seleccionar una empresa de envío
-          </span>
+        <div class="info-box warning">
+          <mat-icon>local_shipping</mat-icon>
+          <p>
+            El envío a domicilio genera costos de transporte que serán registrados como gasto del reclamo.
+          </p>
         </div>
       </div>
 
+      <!-- Campos para Entrega en Aeropuerto -->
       <div class="form-section" *ngIf="selectedDeliveryType === 'aeropuerto'">
-        <h2 class="section-title">Detalles de Entrega en Aeropuerto</h2>
+        <h2 class="section-title">Seleccionar Aeropuerto</h2>
 
-        <div class="form-group">
-          <label for="departamento" class="form-label">Departamento</label>
-          <select
-            id="departamento"
-            class="form-select"
-            formControlName="departamento"
-            [class.error]="isFieldRequired('departamento')"
+        <div class="aeropuerto-grid">
+          <div 
+            *ngFor="let aeropuerto of aeropuertos"
+            class="aeropuerto-card"
+            [class.selected]="deliveryForm.get('aeropuerto')?.value === aeropuerto.codigo"
+            (click)="deliveryForm.get('aeropuerto')?.setValue(aeropuerto.codigo)"
           >
-            <option value="" disabled selected>Seleccione un departamento</option>
-            <option *ngFor="let dept of departments" [value]="dept">
-              {{ dept }}
-            </option>
-          </select>
-          <span class="error-message" *ngIf="isFieldRequired('departamento')">
-            Debe seleccionar un departamento
-          </span>
+            <div class="aeropuerto-codigo">{{ aeropuerto.codigo }}</div>
+            <div class="aeropuerto-info">
+              <span class="aeropuerto-ciudad">{{ aeropuerto.ciudad }}</span>
+              <span class="aeropuerto-nombre">{{ aeropuerto.nombre }}</span>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="form-section" *ngIf="selectedDeliveryType === 'recojo'">
+        <span class="error-message" *ngIf="isFieldRequired('aeropuerto')">
+          Debe seleccionar un aeropuerto
+        </span>
+
         <div class="info-box">
           <mat-icon>info</mat-icon>
           <p>
-            El equipaje estará disponible para recojo en el Aeropuerto de Cochabamba.
+            El pasajero deberá presentar su documento de identidad y el comprobante de reclamo para recoger su equipaje.
           </p>
         </div>
       </div>
@@ -105,7 +116,7 @@
         </button>
         <button type="button" class="btn btn-accept" (click)="aceptar()" [disabled]="deliveryForm.invalid">
           <mat-icon>check</mat-icon>
-          Aceptar
+          Continuar
         </button>
       </div>
     </form>
@@ -121,23 +132,32 @@
     <div class="confirmation-box">
       <div class="confirmation-item">
         <span class="label">Tipo de Entrega:</span>
-        <span class="value">{{ confirmationData.tipo }}</span>
+        <span class="value highlight">{{ confirmationData.tipo }}</span>
       </div>
 
-      <div class="confirmation-item" *ngIf="confirmationData.ubicacion">
-        <span class="label">Ubicación:</span>
-        <span class="value">{{ confirmationData.ubicacion }}</span>
-      </div>
+      <!-- Datos de domicilio -->
+      <ng-container *ngIf="confirmationData.direccion">
+        <div class="confirmation-item">
+          <span class="label">Dirección:</span>
+          <span class="value">{{ confirmationData.direccion }}</span>
+        </div>
+        <div class="confirmation-item">
+          <span class="label">Teléfono:</span>
+          <span class="value">{{ confirmationData.telefono }}</span>
+        </div>
+        <div class="confirmation-item" *ngIf="confirmationData.referencia">
+          <span class="label">Referencia:</span>
+          <span class="value">{{ confirmationData.referencia }}</span>
+        </div>
+      </ng-container>
 
-      <div class="confirmation-item" *ngIf="confirmationData.empresa">
-        <span class="label">Empresa de Envío:</span>
-        <span class="value">{{ confirmationData.empresa }}</span>
-      </div>
-
-      <div class="confirmation-item" *ngIf="confirmationData.departamento">
-        <span class="label">Departamento:</span>
-        <span class="value">{{ confirmationData.departamento }}</span>
-      </div>
+      <!-- Datos de aeropuerto -->
+      <ng-container *ngIf="confirmationData.aeropuerto">
+        <div class="confirmation-item">
+          <span class="label">Aeropuerto:</span>
+          <span class="value">{{ confirmationData.aeropuerto }} - {{ confirmationData.nombreAeropuerto }}</span>
+        </div>
+      </ng-container>
     </div>
 
     <div class="confirmation-actions">

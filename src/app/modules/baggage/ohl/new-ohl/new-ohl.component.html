@@ -1,0 +1,242 @@
+<div class="new-ohl-container">
+  <div class="ohl-card">
+    <!-- Header -->
+    <div class="ohl-header">
+      <div class="header-icon">
+        <mat-icon>luggage</mat-icon>
+      </div>
+      <div class="header-text">
+        <h1>Registrar Equipaje Sobrante (OHL)</h1>
+        <p class="subtitle">Equipaje encontrado sin reclamar - Será enviado a Central Cochabamba</p>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="ohlForm" *ngIf="!showConfirmation">
+      <!-- Sección: Datos del Equipaje -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <mat-icon>inventory_2</mat-icon>
+          Datos del Equipaje
+        </h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>BagTag *</label>
+            <input 
+              type="text" 
+              formControlName="bagTag"
+              placeholder="Ej: OB123456"
+              [class.error]="isFieldInvalid('bagTag')"
+            />
+            <span class="error-msg" *ngIf="isFieldInvalid('bagTag')">BagTag requerido</span>
+          </div>
+
+          <div class="form-group">
+            <label>Tipo de Equipaje *</label>
+            <select formControlName="tipoEquipaje">
+              <option *ngFor="let tipo of tiposEquipaje" [value]="tipo.value">
+                {{ tipo.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Marca</label>
+            <input 
+              type="text" 
+              formControlName="marca"
+              placeholder="Ej: Samsonite, American Tourister"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Color *</label>
+            <select formControlName="color" [class.error]="isFieldInvalid('color')">
+              <option value="" disabled>Seleccione un color</option>
+              <option *ngFor="let color of colores" [value]="color">{{ color }}</option>
+            </select>
+            <span class="error-msg" *ngIf="isFieldInvalid('color')">Color requerido</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Peso (kg) *</label>
+            <input 
+              type="number" 
+              formControlName="peso"
+              placeholder="Peso en kilogramos"
+              [class.error]="isFieldInvalid('peso')"
+            />
+            <span class="error-msg" *ngIf="isFieldInvalid('peso')">Peso requerido</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Ubicación -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <mat-icon>location_on</mat-icon>
+          Ubicación Encontrado
+        </h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Aeropuerto donde se encontró *</label>
+            <select formControlName="aeropuertoOrigen" [class.error]="isFieldInvalid('aeropuertoOrigen')">
+              <option value="" disabled>Seleccione aeropuerto</option>
+              <option *ngFor="let aeropuerto of aeropuertos" [value]="aeropuerto.codigo">
+                {{ aeropuerto.codigo }} - {{ aeropuerto.ciudad }}
+              </option>
+            </select>
+            <span class="error-msg" *ngIf="isFieldInvalid('aeropuertoOrigen')">Aeropuerto requerido</span>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha Encontrado *</label>
+            <input 
+              type="date" 
+              formControlName="fechaEncontrado"
+              [class.error]="isFieldInvalid('fechaEncontrado')"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Lugar específico donde se encontró *</label>
+          <input 
+            type="text" 
+            formControlName="lugarEncontrado"
+            placeholder="Ej: Banda de equipajes, Sala de espera, Interior de avión..."
+            [class.error]="isFieldInvalid('lugarEncontrado')"
+          />
+          <span class="error-msg" *ngIf="isFieldInvalid('lugarEncontrado')">Lugar requerido</span>
+        </div>
+      </div>
+
+      <!-- Sección: Información de Vuelo (opcional) -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <mat-icon>flight</mat-icon>
+          Información de Vuelo (si se conoce)
+        </h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Vuelo de Origen</label>
+            <input 
+              type="text" 
+              formControlName="vueloOrigen"
+              placeholder="Ej: OB701"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Ruta</label>
+            <input 
+              type="text" 
+              formControlName="rutaOrigen"
+              placeholder="Ej: VVI-LPB"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Descripción -->
+      <div class="form-section">
+        <h2 class="section-title">
+          <mat-icon>description</mat-icon>
+          Descripción Adicional
+        </h2>
+
+        <div class="form-group">
+          <label>Marcas Distintivas</label>
+          <input 
+            type="text" 
+            formControlName="marcasDistintivas"
+            placeholder="Stickers, etiquetas, daños visibles, etc."
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Descripción General</label>
+          <textarea 
+            formControlName="descripcion"
+            placeholder="Descripción detallada del equipaje..."
+            rows="3"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Info de destino -->
+      <div class="info-destino">
+        <mat-icon>info</mat-icon>
+        <div>
+          <strong>Destino:</strong> Este equipaje será enviado a la <strong>Central de Cochabamba (CBB)</strong> 
+          para su almacenamiento y búsqueda del propietario.
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-cancel" (click)="cancelar()">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="continuar()">
+          <mat-icon>arrow_forward</mat-icon>
+          Continuar
+        </button>
+      </div>
+    </form>
+
+    <!-- Confirmación -->
+    <div class="confirmation-section" *ngIf="showConfirmation">
+      <div class="confirmation-header">
+        <mat-icon>check_circle</mat-icon>
+        <h2>Confirmar Registro de OHL</h2>
+      </div>
+
+      <div class="confirmation-details">
+        <div class="detail-row">
+          <span class="label">BagTag:</span>
+          <span class="value">{{ ohlForm.get('bagTag')?.value }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Tipo:</span>
+          <span class="value">{{ ohlForm.get('tipoEquipaje')?.value }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Color:</span>
+          <span class="value">{{ ohlForm.get('color')?.value }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Peso:</span>
+          <span class="value">{{ ohlForm.get('peso')?.value }} kg</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Aeropuerto Origen:</span>
+          <span class="value">{{ getAeropuertoNombre(ohlForm.get('aeropuertoOrigen')?.value) }}</span>
+        </div>
+        <div class="detail-row highlight">
+          <span class="label">Destino:</span>
+          <span class="value">{{ aeropuertoCentral?.nombre }} (Central)</span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-cancel" (click)="volver()">
+          <mat-icon>arrow_back</mat-icon>
+          Volver
+        </button>
+        <button type="button" class="btn btn-confirm" (click)="confirmar()">
+          <mat-icon>check</mat-icon>
+          Confirmar Registro
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

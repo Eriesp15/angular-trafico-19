@@ -13,6 +13,7 @@ import { ClosingReceiptComponent } from "./closing-receipt/closing-receipt.compo
 import { ContentComponent } from "./claim/content/content.component"
 import { StationContactComponent } from "./station-contact/station-contact.component"
 import { ReportsComponent } from "./reports/reports.component"
+import { NewOhlComponent } from "./ohl/new-ohl/new-ohl.component"
 
 export default [
   {
@@ -76,5 +77,9 @@ export default [
   {
     path: "reports",
     component: ReportsComponent,
+  },
+  {
+    path: "ohl/new",
+    component: NewOhlComponent,
   },
 ] as Routes
