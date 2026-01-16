@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class ClaimService {
 
   private apiUrl = 'http://localhost:3700/api/v1/claims'; 
-
+ private apiUrl2 = 'http://localhost:3700/api/v1/pir'; 
   constructor(private http: HttpClient) {}
 
   getClaims(status?: string): Observable<any> {
@@ -22,6 +22,6 @@ export class ClaimService {
   }
 
   createClaim(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+    return this.http.post(`${this.apiUrl2}/create`, data);
   }
 }
