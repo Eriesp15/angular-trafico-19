@@ -19,6 +19,7 @@ export class NewClaimComponent implements OnInit {
       route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
       bagtags: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
       bagDescriptions: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      traceRoute: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
       airport: ['', Validators.required],
       airportText: ['', Validators.required],
       airline: ['', Validators.required],
@@ -34,6 +35,7 @@ export class NewClaimComponent implements OnInit {
     this.agregarRuta();
     this.agregarBagtag();
     this.agregarBagDescription();
+    this.agregarRutaARastrear();
   }
 
   get route(): FormArray {
@@ -48,9 +50,13 @@ export class NewClaimComponent implements OnInit {
     return this.pIR.get('bagDescriptions') as FormArray;
   }
 
+  get traceRoute(): FormArray {
+    return this.pIR.get('traceRoute') as FormArray;
+  }
+
   crearRuta(): FormGroup {
     return this.fb.group({
-      origen: ['', Validators.required],
+      stop: ['', Validators.required],
     });
   }
 
@@ -63,6 +69,24 @@ export class NewClaimComponent implements OnInit {
   eliminarRuta(index: number): void {
     if (this.route.length > 2) {
       this.route.removeAt(index);
+    }
+  }
+
+  crearRutaARastrear(): FormGroup {
+    return this.fb.group({
+      traceRouteStop: ['', Validators.required],
+    });
+  }
+
+  agregarRutaARastrear(): void {
+    if (this.traceRoute.length < 5) {
+      this.traceRoute.push(this.crearRutaARastrear());
+    }
+  }
+
+  eliminarRutaARastrear(index: number): void {
+    if (this.traceRoute.length > 2) {
+      this.traceRoute.removeAt(index);
     }
   }
 

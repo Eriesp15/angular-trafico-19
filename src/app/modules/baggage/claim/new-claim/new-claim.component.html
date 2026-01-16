@@ -1,14 +1,13 @@
 <form class="realizar-reclamo-container" [formGroup]="pIR" (ngSubmit)="onSubmit()">
-  <h2>Rutas de Vuelo</h2>
+
 
   <div class="form-group" formArrayName="route">
-    <div *ngFor="let ruta of route.controls; let i = index" class="ruta-item">
+      <h2>Rutas de Vuelo</h2>
+    <div *ngFor="let stop of route.controls; let i = index" class="ruta-item">
       <div [formGroupName]="i">
-        <h3>Ruta {{ i + 1 }}</h3>
         
         <div class="form-field">
-          <label>Origen:</label>
-          <input type="text" formControlName="origen" placeholder="Ciudad de origen">
+          <input type="text" formControlName="stop" placeholder="Ruta {{ i + 1 }}">
         </div>
         
         <button type="button" 
@@ -96,13 +95,7 @@
       + Agregar Bagtag
     </button>
   </div>
-  <div class="section">
-    <button type="submit" 
-            class="btn-submit"
-            [disabled]="pIR.invalid">
-      Enviar
-    </button>
-  </div>
+
   <div class="section">
     <h2>Color/tipo/descripcion</h2>
     
@@ -135,6 +128,32 @@
       + Agregar descripcion de maleta
     </button>
   </div>
+
+  <div class="form-group" formArrayName="traceRoute">
+      <h2>Ruta a rastrear</h2>
+    <div *ngFor="let stop of traceRoute.controls; let i = index" class="ruta-item">
+      <div [formGroupName]="i">
+        
+        <div class="form-field">
+          <input type="text" formControlName="traceRouteStop" placeholder="Ruta {{ i + 1 }}">
+        </div>
+        
+        <button type="button" 
+                class="btn-remove"
+                (click)="eliminarRutaARastrear(i)"
+                [disabled]="traceRoute.length <= 1">
+          ✕ Eliminar
+        </button>
+        <button type="button" 
+            class="btn-add"
+            (click)="agregarRutaARastrear()" 
+            [disabled]="traceRoute.length >= 5">
+          + Agregar Ruta a Rastrear
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="section">
     <button type="submit" 
             class="btn-submit"
