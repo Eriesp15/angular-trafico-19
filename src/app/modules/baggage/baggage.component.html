@@ -11,7 +11,6 @@
   <div class="metrics-grid">
     <div *ngFor="let metric of metrics" class="metric-card" [style.border-top]="'4px solid ' + metric.color">
       <div class="metric-icon">
-        <!-- using Material icon instead of emoji -->
         <mat-icon>{{ metric.icon }}</mat-icon>
       </div>
       <div class="metric-content">
@@ -28,17 +27,14 @@
     <h2>Acciones Rápidas</h2>
     <div class="actions-grid">
       <button routerLink="claim/new" class="action-btn action-new">
-        <!-- using Material icon instead of emoji -->
         <mat-icon class="action-icon">add_circle_outline</mat-icon>
         <span>Nuevo Reclamo</span>
       </button>
       <button routerLink="claim/list" class="action-btn action-list">
-        <!-- using Material icon instead of emoji -->
         <mat-icon class="action-icon">list_alt</mat-icon>
         <span>Ver Reclamos</span>
       </button>
       <button class="action-btn action-report">
-        <!-- using Material icon instead of emoji -->
         <mat-icon class="action-icon">bar_chart</mat-icon>
         <span>Reportes</span>
       </button>
@@ -52,35 +48,53 @@
       <a routerLink="claim/list" class="view-all">Ver todos →</a>
     </div>
 
-    <div class="table-wrapper">
+    <!-- Estado de carga -->
+    <div *ngIf="loading" class="loading-state">
+      <p>Cargando reclamos recientes...</p>
+    </div>
+
+    <!-- Tabla dinámica con datos del backend -->
+    <div *ngIf="!loading" class="table-wrapper">
       <table class="recent-table">
         <thead>
           <tr>
             <th>PIR</th>
+            <th>Tipo</th>
             <th>Pasajero</th>
-            <th>BagTag</th>
+            <th>Vuelo</th>
+            <th>Ruta</th>
             <th>Fecha</th>
+            <th>BagTag</th>
             <th>Estado</th>
-            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let claim of recentClaims" class="table-row">
+          <!-- Removed actions column and made entire row clickable -->
+          <tr *ngFor="let claim of recentClaims" class="table-row clickable-row" (click)="navigateToClaim(claim.pir!)">
             <td class="cell-pir">{{ claim.pir }}</td>
+            <td class="cell-type">
+              <span [class]="'badge ' + getTypeBadgeClass(claim.tipo)">
+                {{ claim.tipo }}
+              </span>
+            </td>
             <td class="cell-passenger">{{ claim.pasajero }}</td>
-            <td class="cell-bagtag">{{ claim.bagTag }}</td>
+            <td class="cell-flight">{{ claim.vuelo }}</td>
+            <td class="cell-route">{{ claim.ruta }}</td>
             <td class="cell-date">{{ claim.fecha }}</td>
+            <td class="cell-bagtag">{{ claim.bagTag }}</td>
             <td class="cell-status">
               <span [class]="'status-badge ' + getStatusBadgeClass(claim.estado)">
                 {{ claim.estado }}
               </span>
             </td>
-            <td class="cell-action">
-              <a [routerLink]="['claim/view', claim.pir]" class="link-view">Ver</a>
-            </td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Estado vacío cuando no hay reclamos -->
+    <div *ngIf="!loading && recentClaims.length === 0" class="empty-state">
+      <p>No hay reclamos registrados</p>
     </div>
   </div>
 
