@@ -193,7 +193,7 @@
             <td class="cell-bagtag">{{ claim.bagTag }}</td>
             <td class="cell-status">
               <span [class]="'status-badge ' + getStatusClass(claim.status)">
-                {{ claim.status }}
+                {{ getStatusLabel(claim.status) }}
               </span>
             </td>
           </tr>

@@ -217,6 +217,21 @@ export class ListComponent implements OnInit, OnDestroy {
     return `status-${status.toLowerCase()}`;
   }
 
+  statusLabels: Record<string, string> = {
+    PENDING: 'Pendiente',
+    IN_PROCESS: 'En proceso',
+    PURCHASED: 'Comprado',
+    REPAIRED: 'Reparado',
+    LOST: 'Perdido',
+    FOUND: 'Encontrado',
+    COMPENSATED: 'Indemnizado',
+    CLOSED: 'Cerrado'
+  };
+
+  getStatusLabel(status: string): string {
+    return this.statusLabels[status] ?? status;
+  }
+
   clearSearch(): void {
     this.searchForm.reset();
     this.selectedStatus = "ALL";
