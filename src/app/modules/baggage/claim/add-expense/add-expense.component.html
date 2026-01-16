@@ -4,13 +4,29 @@
     <div class="expense-header">
       <h1>Añadir Gasto</h1>
       <p class="subtitle">Reclamo #{{ claimId }}</p>
+      <!-- Mostrar tipo de reclamo con su color -->
+      <div class="claim-type-badge" [style.background-color]="getTipoReclamoInfo().color">
+        {{ getTipoReclamoInfo().nombre }}
+      </div>
+    </div>
+
+    <!-- Mensaje informativo sobre gastos permitidos -->
+    <div class="info-banner" *ngIf="!gastoSeleccionado && !mostrarConfirmacion">
+      <mat-icon>info</mat-icon>
+      <span>Los gastos disponibles se filtran según el tipo de reclamo <strong>{{ getTipoReclamoInfo().nombre }}</strong></span>
     </div>
 
     <!-- Selección de tipo de gasto -->
     <div class="tipo-gasto-section" *ngIf="!gastoSeleccionado && !mostrarConfirmacion">
       <h2>Seleccione el tipo de gasto</h2>
       
-      <div class="tipos-gasto-grid">
+      <!-- Mostrar mensaje si no hay gastos disponibles -->
+      <div class="empty-state" *ngIf="tiposGasto.length === 0">
+        <mat-icon>block</mat-icon>
+        <p>No hay gastos disponibles para este tipo de reclamo</p>
+      </div>
+      
+      <div class="tipos-gasto-grid" *ngIf="tiposGasto.length > 0">
         <div 
           class="tipo-gasto-card" 
           *ngFor="let tipo of tiposGasto"
@@ -53,34 +69,40 @@
 
       <!-- Formulario para Indemnización (cálculo por peso) -->
       <div class="form-section" *ngIf="gastoSeleccionado.id === 'indemnizacion'">
-        <p class="form-description">Calcular la indemnización por diferencia de peso</p>
+        <p class="form-description">{{ gastoSeleccionado.descripcion }}</p>
+        
+        <!-- Mostrar información según tipo de reclamo -->
+        <div class="calculation-info" *ngIf="tipoReclamo === 'PILFERED'">
+          <mat-icon>info</mat-icon>
+          <span>Según el manual MSA de BOA, la indemnización por contenido faltante es de <strong>15 USD por kilogramo</strong></span>
+        </div>
         
         <div class="form-group">
-          <label>Peso Recibido (kg)</label>
+          <label>Peso Registrado en Check-in (kg)</label>
           <input 
             type="number" 
             [(ngModel)]="pesoRecibido" 
-            placeholder="Ingrese el peso recibido"
+            placeholder="Peso original del equipaje"
             (input)="calcularIndemnizacion()"
           />
         </div>
 
         <div class="form-group">
-          <label>Peso Entregado (kg)</label>
+          <label>Peso Actual/Entregado (kg)</label>
           <input 
             type="number" 
             [(ngModel)]="pesoEntregado" 
-            placeholder="Ingrese el peso entregado"
+            placeholder="Peso actual del equipaje"
             (input)="calcularIndemnizacion()"
           />
         </div>
 
         <div class="form-group">
-          <label>Precio por Kilo ($)</label>
+          <label>Precio por Kilo (USD)</label>
           <input 
             type="number" 
             [(ngModel)]="precioPorKilo" 
-            placeholder="Ingrese el precio por kilo"
+            placeholder="15 USD según manual BOA"
             (input)="calcularIndemnizacion()"
           />
         </div>
@@ -93,11 +115,11 @@
           </div>
           <div class="summary-row">
             <span class="summary-label">Precio por kilo:</span>
-            <span class="summary-value">${{ precioPorKilo || 0 }}</span>
+            <span class="summary-value">${{ precioPorKilo || 0 }} USD</span>
           </div>
           <div class="total-row">
             <span class="total-label">Total a indemnizar</span>
-            <span class="total-amount">${{ totalIndemnizar.toFixed(2) }}</span>
+            <span class="total-amount">${{ totalIndemnizar.toFixed(2) }} USD</span>
           </div>
         </div>
       </div>
@@ -116,7 +138,7 @@
         </div>
 
         <div class="form-group">
-          <label>Monto ($)</label>
+          <label>Monto (USD)</label>
           <input 
             type="number" 
             [(ngModel)]="montoGasto" 
@@ -130,7 +152,7 @@
         <p class="form-description">{{ gastoSeleccionado.descripcion }}</p>
         
         <div class="form-group">
-          <label>Monto ($)</label>
+          <label>Monto (USD)</label>
           <input 
             type="number" 
             [(ngModel)]="montoGasto" 
@@ -163,6 +185,10 @@
 
       <div class="confirmacion-detalle">
         <div class="detalle-row">
+          <span class="detalle-label">Tipo de reclamo:</span>
+          <span class="detalle-value">{{ getTipoReclamoInfo().nombre }}</span>
+        </div>
+        <div class="detalle-row">
           <span class="detalle-label">Tipo de gasto:</span>
           <span class="detalle-value">{{ gastoSeleccionado?.nombre }}</span>
         </div>
@@ -176,7 +202,7 @@
         </div>
         <div class="detalle-row total">
           <span class="detalle-label">Monto total:</span>
-          <span class="detalle-value">${{ obtenerMontoTotal().toFixed(2) }}</span>
+          <span class="detalle-value">${{ obtenerMontoTotal().toFixed(2) }} USD</span>
         </div>
       </div>
 

@@ -11,6 +11,8 @@ import { SupplierComponent } from "./supplier/supplier.component"
 import { ListSupplierComponent } from "./supplier/list-supplier/list-supplier.component"
 import { ClosingReceiptComponent } from "./closing-receipt/closing-receipt.component"
 import { ContentComponent } from "./claim/content/content.component"
+import { StationContactComponent } from "./station-contact/station-contact.component"
+import { ReportsComponent } from "./reports/reports.component"
 
 export default [
   {
@@ -56,6 +58,10 @@ export default [
     component: MakeDeliveryComponent,
   },
   {
+    path: "claim/station-contact/:id",
+    component: StationContactComponent,
+  },
+  {
     path: "claim/supplier",
     component: SupplierComponent,
   },
@@ -66,5 +72,9 @@ export default [
   {
     path: "claim/closing-receipt/:pir",
     component: ClosingReceiptComponent,
+  },
+  {
+    path: "reports",
+    component: ReportsComponent,
   },
 ] as Routes

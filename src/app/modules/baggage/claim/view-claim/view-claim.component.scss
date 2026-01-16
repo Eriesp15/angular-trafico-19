@@ -79,6 +79,68 @@
     font-weight: 600;
     text-align: center;
     min-width: 80px;
+
+    &.alert-danger {
+      background-color: #ffebee;
+      color: #d32f2f;
+      border: 2px solid #d32f2f;
+    }
+
+    &.alert-warning {
+      background-color: #fff3e0;
+      color: #f57c00;
+      border: 2px solid #f57c00;
+    }
+
+    &.alert-info {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border: 2px solid #1976d2;
+    }
+  }
+}
+
+.alerts-section {
+  margin-bottom: 24px;
+
+  .alert-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 20px;
+    background-color: #fff8e1;
+    border-radius: 8px;
+    border-left: 4px solid #ff9800;
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    mat-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .alert-content {
+      flex: 1;
+
+      .alert-type {
+        display: block;
+        font-weight: 700;
+        font-size: 13px;
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+
+      .alert-message {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.4;
+      }
+    }
   }
 }
 

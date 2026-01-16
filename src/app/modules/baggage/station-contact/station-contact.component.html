@@ -1,0 +1,158 @@
+<div class="station-contact-container">
+  <div class="contact-card">
+    <!-- Header -->
+    <div class="contact-header">
+      <div class="header-content">
+        <h1>Contacto entre Estaciones</h1>
+        <p class="subtitle">Reclamo #{{ pirNumber }}</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" (click)="print()">
+          <mat-icon>print</mat-icon>
+          Imprimir
+        </button>
+        <button class="btn btn-back" (click)="volver()">
+          <mat-icon>arrow_back</mat-icon>
+          Volver
+        </button>
+      </div>
+    </div>
+
+    <!-- Información -->
+    <div class="info-section">
+      <div class="info-card">
+        <mat-icon>info</mat-icon>
+        <p>Registre aquí todas las comunicaciones realizadas con otras estaciones BOA para la búsqueda o seguimiento del equipaje.</p>
+      </div>
+    </div>
+
+    <!-- Botón nuevo contacto -->
+    <div class="action-section" *ngIf="!mostrarFormulario">
+      <button class="btn btn-primary" (click)="abrirFormulario()">
+        <mat-icon>add</mat-icon>
+        Registrar Nuevo Contacto
+      </button>
+    </div>
+
+    <!-- Formulario nuevo contacto -->
+    <div class="form-section" *ngIf="mostrarFormulario">
+      <h2>Nuevo Contacto</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Estación Origen</label>
+          <select [(ngModel)]="nuevoContacto.estacionOrigen">
+            <option *ngFor="let est of estaciones" [value]="est.codigo">
+              {{ est.codigo }} - {{ est.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Estación Destino *</label>
+          <select [(ngModel)]="nuevoContacto.estacionDestino">
+            <option value="">Seleccione una estación</option>
+            <option *ngFor="let est of estaciones" [value]="est.codigo">
+              {{ est.codigo }} - {{ est.nombre }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Medio de Contacto *</label>
+        <div class="medio-options">
+          <label class="medio-option" *ngFor="let medio of mediosContacto"
+                 [class.selected]="nuevoContacto.medio === medio.id">
+            <input type="radio" name="medio" [value]="medio.id" [(ngModel)]="nuevoContacto.medio">
+            <mat-icon>{{ medio.icon }}</mat-icon>
+            <span>{{ medio.nombre }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Funcionario que contacta *</label>
+        <input type="text" [(ngModel)]="nuevoContacto.funcionario" placeholder="Nombre del funcionario">
+      </div>
+
+      <div class="form-group">
+        <label>Asunto *</label>
+        <input type="text" [(ngModel)]="nuevoContacto.asunto" placeholder="Asunto del mensaje">
+      </div>
+
+      <div class="form-group">
+        <label>Mensaje *</label>
+        <textarea [(ngModel)]="nuevoContacto.mensaje" rows="4" 
+                  placeholder="Detalle del mensaje enviado a la otra estación"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-cancel" (click)="cancelarFormulario()">
+          Cancelar
+        </button>
+        <button class="btn btn-primary" [disabled]="!formularioValido()" (click)="enviarContacto()">
+          <mat-icon>send</mat-icon>
+          Registrar Contacto
+        </button>
+      </div>
+    </div>
+
+    <!-- Historial de contactos -->
+    <div class="history-section">
+      <h2>Historial de Contactos</h2>
+
+      <div class="empty-state" *ngIf="contactos.length === 0">
+        <mat-icon>sync_disabled</mat-icon>
+        <p>No hay contactos registrados con otras estaciones</p>
+      </div>
+
+      <div class="contact-list" *ngIf="contactos.length > 0">
+        <div class="contact-item" *ngFor="let contacto of contactos">
+          <div class="contact-header-row">
+            <div class="contact-route">
+              <span class="station">{{ contacto.estacionOrigen }}</span>
+              <mat-icon>arrow_forward</mat-icon>
+              <span class="station">{{ contacto.estacionDestino }}</span>
+            </div>
+            <div class="contact-meta">
+              <span class="contact-date">{{ contacto.fecha }} {{ contacto.hora }}</span>
+              <mat-chip [ngClass]="getEstadoClass(contacto.estado)">
+                {{ contacto.estado | titlecase }}
+              </mat-chip>
+            </div>
+          </div>
+
+          <div class="contact-details">
+            <div class="contact-medio">
+              <mat-icon>{{ getMedioIcon(contacto.medio) }}</mat-icon>
+              <span>{{ getMedioNombre(contacto.medio) }}</span>
+            </div>
+            <div class="contact-funcionario">
+              <mat-icon>person</mat-icon>
+              <span>{{ contacto.funcionario }}</span>
+            </div>
+          </div>
+
+          <div class="contact-content">
+            <div class="content-label">Asunto:</div>
+            <div class="content-text">{{ contacto.asunto }}</div>
+          </div>
+
+          <div class="contact-content">
+            <div class="content-label">Mensaje:</div>
+            <div class="content-text message">{{ contacto.mensaje }}</div>
+          </div>
+
+          <div class="contact-content response" *ngIf="contacto.respuesta">
+            <div class="content-label">
+              <mat-icon>reply</mat-icon>
+              Respuesta:
+            </div>
+            <div class="content-text">{{ contacto.respuesta }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

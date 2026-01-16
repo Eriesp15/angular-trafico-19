@@ -4,6 +4,7 @@ import {  ActivatedRoute,  Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
 import  { HttpClient } from "@angular/common/http"
+import {  ClaimType, getClaimTypeConfig,  ClaimTypeConfig } from "../../models/claim-type-config.model"
 
 @Component({
   selector: "app-view-claim",
@@ -15,6 +16,9 @@ import  { HttpClient } from "@angular/common/http"
 export class ViewClaimComponent implements OnInit {
   claimId = ""
   diasTranscurridos = 0
+
+  claimConfig: ClaimTypeConfig | null = null
+  alertasDias: { tipo: string; mensaje: string; color: string }[] = []
 
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view"
@@ -52,12 +56,12 @@ export class ViewClaimComponent implements OnInit {
         const pasajero = {
           nombre: firstName,
           apellidoPaterno: lastName,
-          apellidoMaterno: "—", // No viene en el backend
+          apellidoMaterno: "—",
           direccionPermanente: data.permanentAddress ?? "—",
           direccionTemporal: data.temporaryAddress ?? "—",
           telefonoPermanente: data.permanentPhone ?? "—",
           telefonoTemporal: data.temporaryPhone ?? "—",
-          email: "—", // No viene en el backend
+          email: "—",
           numeroBoleto: data.ticketNumber ?? "—",
           iniciales: data.initials ?? "—",
           passportNumber: data.passportNumber ?? "—",
@@ -69,33 +73,36 @@ export class ViewClaimComponent implements OnInit {
         // Mapeo de reclamo
         // ------------------------------
         const reclamo = {
-          tipo: data.claimType ?? "—",
+          tipo: data.claimType ?? "AHL",
           fecha: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : "—",
-          hora: "—", // No viene en el backend
+          hora: "—",
           estacion: data.airport ?? "—",
           estacionesInvolucradas: data.ruta ?? "—",
           lossReason: data.lossReason ?? "—",
           hasInsurance: data.hasInsurance ?? false,
         }
 
+        this.claimConfig = getClaimTypeConfig(reclamo.tipo as ClaimType)
+        this.calcularAlertasDias()
+
         // ------------------------------
         // Mapeo de vuelo
         // ------------------------------
         const vuelo = {
           numero: data.flightNumbers?.[0]?.flightNo ?? "—",
-          fecha: "—", // No viene en el backend
-          horaSalida: "—", // No viene en el backend
+          fecha: "—",
+          horaSalida: "—",
           aerolinea: data.airline ?? "—",
         }
 
         // ------------------------------
-        // Mapeo de ruta del vuelo con origen/conexion/destino
+        // Mapeo de ruta del vuelo
         // ------------------------------
         const routeStops = data.route?.routeStops ?? []
         const ruta = routeStops.map((rs: any, index: number) => ({
           codigo: rs?.stop?.code || "—",
           tipo: index === 0 ? "origen" : index === routeStops.length - 1 ? "destino" : "conexion",
-          horario: "—", // Si hay info de horarios, se puede agregar
+          horario: "—",
         }))
 
         // ------------------------------
@@ -106,7 +113,7 @@ export class ViewClaimComponent implements OnInit {
           ruta: data.ruta ?? "—",
           numeroVuelo: data.flightNumbers?.[0]?.flightNo ?? "—",
           fechaVuelo: "—",
-          colorTipo: "—", // No hay info
+          colorTipo: "—",
           marca: data.baggageMarks?.[0] ?? "—",
           contenido: data.contents?.join(", ") ?? "—",
           descripcion: data.bagDescriptions?.[0] ?? "—",
@@ -154,6 +161,52 @@ export class ViewClaimComponent implements OnInit {
     this.diasTranscurridos = Math.floor(diferencia / (1000 * 60 * 60 * 24))
   }
 
+  calcularAlertasDias(): void {
+    if (!this.claimConfig) return
+
+    this.alertasDias = []
+    const config = this.claimConfig
+
+    if (config.tipo === "AHL") {
+      if (this.diasTranscurridos >= 21) {
+        this.alertasDias.push({
+          tipo: "INDEMNIZAR",
+          mensaje: "Han pasado más de 21 días. Proceder con indemnización.",
+          color: "#d32f2f",
+        })
+      } else if (this.diasTranscurridos >= 3) {
+        this.alertasDias.push({
+          tipo: "CONTENIDO",
+          mensaje: "Han pasado más de 3 días. Solicitar formulario de contenido para búsqueda internacional.",
+          color: "#f57c00",
+        })
+      } else if (this.diasTranscurridos >= 1) {
+        this.alertasDias.push({
+          tipo: "BUSQUEDA_INTERNACIONAL",
+          mensaje: "Ha pasado más de 1 día. Iniciar búsqueda internacional con WorldTracer.",
+          color: "#1976d2",
+        })
+      }
+    }
+  }
+
+  isActionAllowed(action: string): boolean {
+    if (!this.claimConfig) return true
+
+    const actionMap: Record<string, keyof ClaimTypeConfig["accionesPermitidas"]> = {
+      formularioContenido: "formularioContenido",
+      realizarEntrega: "realizarEntrega",
+      cerrarReclamo: "cerrarReclamo",
+    }
+
+    const key = actionMap[action]
+    return key ? this.claimConfig.accionesPermitidas[key] : true
+  }
+
+  getTipoReclamo(): ClaimType {
+    return (this.reclamoData?.reclamo?.tipo as ClaimType) || "AHL"
+  }
+
   imprimirPIR(): void {
     window.print()
   }
@@ -179,7 +232,9 @@ export class ViewClaimComponent implements OnInit {
   }
 
   indemnizar(): void {
-    this.router.navigate(["/baggage/claim/add-expense", this.claimId])
+    this.router.navigate(["/baggage/claim/add-expense", this.claimId], {
+      queryParams: { tipo: this.getTipoReclamo() },
+    })
   }
 
   cerrarReclamo(): void {
@@ -192,5 +247,9 @@ export class ViewClaimComponent implements OnInit {
 
   follow(): void {
     this.router.navigate(["/baggage/claim/follow", this.claimId])
+  }
+
+  contactoEstaciones(): void {
+    this.router.navigate(["/baggage/claim/station-contact", this.claimId])
   }
 }
