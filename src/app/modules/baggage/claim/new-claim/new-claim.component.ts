@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ClaimService } from '../../../../services/claim.service';
 
 @Component({
   selector: 'app-new-claim',
@@ -12,14 +13,19 @@ import { CommonModule } from '@angular/common';
 export class NewClaimComponent implements OnInit {
   pIR: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private claimService: ClaimService
+  ) {}
 
   ngOnInit() {
     this.pIR = this.fb.group({
       route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
       bagtags: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
-      bagDescriptions: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
-      traceRoute: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
+      bagDescription: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      traceRoute: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      flightNumber: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      bagIdentification: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
       airport: ['', Validators.required],
       airportText: ['', Validators.required],
       airline: ['', Validators.required],
@@ -36,6 +42,8 @@ export class NewClaimComponent implements OnInit {
     this.agregarBagtag();
     this.agregarBagDescription();
     this.agregarRutaARastrear();
+    this.agregarVuelo();
+    this.agregarIdentificacion();
   }
 
   get route(): FormArray {
@@ -46,12 +54,20 @@ export class NewClaimComponent implements OnInit {
     return this.pIR.get('bagtags') as FormArray;
   }
 
-  get bagDescriptions(): FormArray {
-    return this.pIR.get('bagDescriptions') as FormArray;
+  get bagDescription(): FormArray {
+    return this.pIR.get('bagDescription') as FormArray;
   }
 
   get traceRoute(): FormArray {
     return this.pIR.get('traceRoute') as FormArray;
+  }
+
+  get flightNumber(): FormArray {
+    return this.pIR.get('flightNumber') as FormArray;
+  }
+
+  get bagIdentification(): FormArray {
+    return this.pIR.get('bagIdentification') as FormArray;
   }
 
   crearRuta(): FormGroup {
@@ -85,7 +101,7 @@ export class NewClaimComponent implements OnInit {
   }
 
   eliminarRutaARastrear(index: number): void {
-    if (this.traceRoute.length > 2) {
+    if (this.traceRoute.length > 1) {
       this.traceRoute.removeAt(index);
     }
   }
@@ -113,17 +129,71 @@ export class NewClaimComponent implements OnInit {
   }
 
   agregarBagDescription(): void {
-    this.bagDescriptions.push(this.crearBagDescription());
+    this.bagDescription.push(this.crearBagDescription());
   }
 
   eliminarBagDescription(index: number): void {
-    this.bagDescriptions.removeAt(index);
+    this.bagDescription.removeAt(index);
+  }
+
+  crearVuelo(): FormGroup {
+    return this.fb.group({
+      flightNo: ['', Validators.required],
+      flightDate: ['', Validators.required],
+    });
+  }
+
+  agregarVuelo(): void {
+    if (this.flightNumber.length < 5) {
+      this.flightNumber.push(this.crearVuelo());
+    }
+  }
+
+  eliminarVuelo(index: number): void {
+    if (this.flightNumber.length > 1) {
+      this.flightNumber.removeAt(index);
+    }
+  }
+
+  crearIdentificacion(): FormGroup {
+    return this.fb.group({
+      mark: ['', Validators.required]
+    });
+  }
+
+  agregarIdentificacion(): void {
+    if (this.bagIdentification.length < 5) {
+      this.bagIdentification.push(this.crearIdentificacion());
+    }
+  }
+
+  eliminarIdentificacion(index: number): void {
+    if (this.bagIdentification.length > 1) {
+      this.bagIdentification.removeAt(index);
+    }
   }
 
   onSubmit(): void {
     if (this.pIR.valid) {
-      console.log('Rutas:', this.pIR.value);
-      // Aquí procesas el formulario
+      const datos = this.pIR.value;
+      
+      this.claimService.createClaim(datos).subscribe({
+        next: (response) => {
+          console.log('Éxito:', response);
+          alert('Claim creado exitosamente');
+          this.pIR.reset();  // Limpia el formulario
+          // O redirige: this.router.navigate(['/claims']);
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          alert('Error al crear el claim');
+        },
+        complete: () => {
+          console.log('Petición completada');
+        }
+      });
+    } else {
+      alert('Por favor completa todos los campos requeridos');
     }
   }
 }

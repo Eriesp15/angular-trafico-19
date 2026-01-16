@@ -16,14 +16,14 @@
                 [disabled]="route.length <= 2">
           ✕ Eliminar
         </button>
-        <button type="button" 
-            class="btn-add"
-            (click)="agregarRuta()" 
-            [disabled]="route.length >= 5">
-          + Agregar Ruta
-        </button>
       </div>
     </div>
+    <button type="button" 
+        class="btn-add"
+        (click)="agregarRuta()" 
+        [disabled]="route.length >= 5">
+      + Agregar Ruta
+    </button>
   </div>
   
   <div class="form-field">
@@ -82,10 +82,6 @@
           </button>
         </div>
       </div>
-      
-      <div *ngIf="bagtags.length === 0" class="sin-bagtags">
-        No hay bagtags agregados
-      </div>
     </div>
     
     <button type="button" 
@@ -98,9 +94,9 @@
 
   <div class="section">
     <h2>Color/tipo/descripcion</h2>
-    
-    <div class="form-group" formArrayName="bagDescriptions">
-      <div *ngFor="let bagDescription of bagDescriptions.controls; let i = index" class="bagtag-item">
+
+    <div class="form-group" formArrayName="bagDescription">
+      <div *ngFor="let description of bagDescription.controls; let i = index" class="bagtag-item">
         <div [formGroupName]="i">
           <input type="text" 
                 formControlName="description" 
@@ -110,21 +106,17 @@
           <button type="button" 
                   class="btn-remove"
                   (click)="eliminarBagDescription(i)"
-                  [disabled]="bagDescriptions.length <= 1">
+                  [disabled]="bagDescription.length <= 1">
             ✕ Eliminar
           </button>
         </div>
-      </div>
-      
-      <div *ngIf="bagDescriptions.length === 0" class="sin-bagtags">
-        No hay descripciones de maletas agregadas
       </div>
     </div>
     
     <button type="button" 
             class="btn-add"
             (click)="agregarBagDescription()"
-            [disabled]="bagDescriptions.length >= 5">
+            [disabled]="bagDescription.length >= 5">
       + Agregar descripcion de maleta
     </button>
   </div>
@@ -144,15 +136,76 @@
                 [disabled]="traceRoute.length <= 1">
           ✕ Eliminar
         </button>
-        <button type="button" 
-            class="btn-add"
-            (click)="agregarRutaARastrear()" 
-            [disabled]="traceRoute.length >= 5">
-          + Agregar Ruta a Rastrear
-        </button>
+
       </div>
     </div>
+    <button type="button" 
+        class="btn-add"
+        (click)="agregarRutaARastrear()" 
+        [disabled]="traceRoute.length >= 5">
+      + Agregar Ruta a Rastrear
+    </button>
   </div>
+
+  <div class="form-group" formArrayName="flightNumber">
+      <h2>Numero de vuelo</h2>
+    <div *ngFor="let flight of flightNumber.controls; let i = index" class="ruta-item">
+      <div [formGroupName]="i">
+        
+        <div class="form-field">
+          <input type="text" formControlName="flightNo" placeholder="Numero de vuelo {{ i + 1 }}">
+        </div>
+
+        <div class="form-field">
+          <input
+            type="datetime-local"
+            formControlName="flightDate"
+            placeholder="Fecha y hora de vuelo {{ i + 1 }}">
+        </div>
+        
+        <button type="button" 
+                class="btn-remove"
+                (click)="eliminarVuelo(i)"
+                [disabled]="flightNumber.length <= 1">
+          ✕ Eliminar
+        </button>
+      </div>
+
+    </div>
+    <button type="button" 
+        class="btn-add"
+        (click)="agregarVuelo()" 
+        [disabled]="flightNumber.length >= 5">
+      + Agregar Vuelo
+    </button>
+  </div>
+
+    <div class="form-group" formArrayName="bagIdentification">
+      <h2>Marca en la maleta</h2>
+    <div *ngFor="let identification of bagIdentification.controls; let i = index" class="ruta-item">
+      <div [formGroupName]="i">
+        
+        <div class="form-field">
+          <input type="text" formControlName="mark" placeholder="Marca {{ i + 1 }}">
+        </div>
+        
+        <button type="button" 
+                class="btn-remove"
+                (click)="eliminarIdentificacion(i)"
+                [disabled]="bagIdentification.length <= 1">
+          ✕ Eliminar
+        </button>
+      </div>
+
+    </div>
+    <button type="button" 
+        class="btn-add"
+        (click)="agregarIdentificacion()" 
+        [disabled]="bagIdentification.length >= 5">
+      + Agregar Identificación
+    </button>
+  </div>
+  
 
   <div class="section">
     <button type="submit" 
