@@ -49,11 +49,11 @@
 }
 
 .btn-primary {
-  background-color: #003366;
-  color: white;
+  background-color: var(--btn-primary);
+  color: var(--btn-text);
 
   &:hover {
-    background-color: #002244;
+    background-color: var(--btn-primary-hover);
   }
 }
 
@@ -288,7 +288,7 @@
     display: inline-block;
     padding: 0.4rem 0.8rem;
     border-radius: 4px;
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 600;
     text-align: center;
 
