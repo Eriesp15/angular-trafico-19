@@ -30,6 +30,7 @@ export class NewClaimComponent implements OnInit {
       airportText: ['', Validators.required],
       airline: ['', Validators.required],
       reference: ['', Validators.required],
+      claimType: ['', Validators.required],
 
       passengerName: ['', Validators.required],
       passengerLastName: ['', Validators.required],
@@ -45,6 +46,12 @@ export class NewClaimComponent implements OnInit {
     this.agregarVuelo();
     this.agregarIdentificacion();
   }
+
+  claimType = [
+    { valor: 'AHL', etiqueta: 'AHL' },
+    { valor: 'DAMAGED', etiqueta: 'Damaged' },
+    { valor: 'PILFERED', etiqueta: 'Pilfered' }
+  ];
 
   get route(): FormArray {
     return this.pIR.get('route') as FormArray;

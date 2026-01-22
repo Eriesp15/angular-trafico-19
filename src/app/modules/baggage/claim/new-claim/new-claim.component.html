@@ -31,7 +31,36 @@
     <input type="text" formControlName="airport" placeholder="Aeropuerto">
   </div>
 
-  <!-- falta claimtype-->
+  <div class="form-group">
+    <h3>Tipo de Reclamo *</h3>
+    
+    <div class="tipo-reclamo-grid">
+      <label class="tipo-card" 
+            [class.selected]="pIR.get('claimType')?.value === 'AHL'">
+        <input type="radio" 
+              formControlName="claimType" 
+              value="AHL">
+        <span class="tipo-label">AHL</span>
+      </label>
+      
+      <label class="tipo-card" 
+            [class.selected]="pIR.get('claimType')?.value === 'DAMAGED'">
+        <input type="radio" 
+              formControlName="claimType" 
+              value="DAMAGED">
+        <span class="tipo-label">DAMAGED</span>
+      </label>
+      
+      <label class="tipo-card" 
+            [class.selected]="pIR.get('claimType')?.value === 'PILFERED'">
+        <input type="radio" 
+              formControlName="claimType" 
+              value="PILFERED">
+        <span class="tipo-label">PILFERED</span>
+      </label>
+    </div>
+  </div>
+
   <div class="section">
     <div class="form-field">
       <label>Aeropuerto</label>
