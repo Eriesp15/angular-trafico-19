@@ -209,8 +209,8 @@
     </button>
   </div>
 
-    <div class="form-group" formArrayName="bagIdentification">
-      <h2>Marca en la maleta</h2>
+  <div class="form-group" formArrayName="bagIdentification">
+    <h2>Marca en la maleta</h2>
     <div *ngFor="let identification of bagIdentification.controls; let i = index" class="ruta-item">
       <div [formGroupName]="i">
         
@@ -232,6 +232,32 @@
         (click)="agregarIdentificacion()" 
         [disabled]="bagIdentification.length >= 5">
       + Agregar Identificación
+    </button>
+  </div>
+
+  <div class="form-group" formArrayName="contents">
+    <h2>Contenido</h2>
+    <div *ngFor="let content of contents.controls; let i = index" class="ruta-item">
+      <div [formGroupName]="i">
+        
+        <div class="form-field">
+          <input type="text" formControlName="mark" placeholder="Contenido {{ i + 1 }}">
+        </div>
+        
+        <button type="button" 
+                class="btn-remove"
+                (click)="eliminarContenido(i)"
+                [disabled]="contents.length <= 1">
+          ✕ Eliminar
+        </button>
+      </div>
+
+    </div>
+    <button type="button" 
+        class="btn-add"
+        (click)="agregarContenido()" 
+        [disabled]="contents.length >= 5">
+      + Agregar Contenido
     </button>
   </div>
   

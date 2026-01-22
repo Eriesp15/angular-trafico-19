@@ -26,6 +26,7 @@ export class NewClaimComponent implements OnInit {
       traceRoute: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
       flightNumber: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
       bagIdentification: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      contents: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
       airport: ['', Validators.required],
       airportText: ['', Validators.required],
       airline: ['', Validators.required],
@@ -43,8 +44,10 @@ export class NewClaimComponent implements OnInit {
     this.agregarBagtag();
     this.agregarBagDescription();
     this.agregarRutaARastrear();
+    this.agregarRutaARastrear();
     this.agregarVuelo();
     this.agregarIdentificacion();
+    this.agregarContenido();
   }
 
   claimType = [
@@ -75,6 +78,10 @@ export class NewClaimComponent implements OnInit {
 
   get bagIdentification(): FormArray {
     return this.pIR.get('bagIdentification') as FormArray;
+  }
+
+  get contents(): FormArray {
+    return this.pIR.get('contents') as FormArray;
   }
 
   crearRuta(): FormGroup {
@@ -177,6 +184,24 @@ export class NewClaimComponent implements OnInit {
   eliminarIdentificacion(index: number): void {
     if (this.bagIdentification.length > 1) {
       this.bagIdentification.removeAt(index);
+    }
+  }
+
+  crearContenido(): FormGroup {
+    return this.fb.group({
+      content: ['', Validators.required]
+    });
+  }
+
+  agregarContenido(): void {
+    if (this.contents.length < 5) {
+      this.contents.push(this.crearContenido());
+    }
+  }
+
+  eliminarContenido(index: number): void {
+    if (this.contents.length > 1) {
+      this.contents.removeAt(index);
     }
   }
 
