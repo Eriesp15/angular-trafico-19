@@ -1,4 +1,4 @@
-import { Component, Inject, Injectable } from '@angular/core';
+import { Component, Inject, Injectable, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -11,6 +11,12 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
 
+import { ActivatedRoute } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+
+import { FollowService, FollowEntryDto, ClaimViewDto } from 'app/modules/baggage/services/follow.service';
+import { ApiClaimService } from '../services/api-claim.service';
+
 type Canal = 'whatsapp' | 'email' | 'nota';
 
 type SeguimientoRow = {
@@ -18,11 +24,10 @@ type SeguimientoRow = {
     hora: string;    // HH:mm
     encargado: string;
     info: string;
-
     canal?: Canal;
-    locked?: boolean;        // tras confirmar
-    sentAt?: string;         // ISO hora envío/guardado
-    to?: string;             // destino (tel o email si aplica)
+    locked?: boolean;
+    sentAt?: string;
+    to?: string;
 };
 
 type LlamadaRow = {
@@ -31,39 +36,30 @@ type LlamadaRow = {
     celularCorreo: string;
     aQuien: string;
     observaciones: string;
-
     locked?: boolean;
-    obsTouched?: boolean;   // si el usuario ya tocó Observaciones, dejamos de autollenar
-    sentAt?: string;        // timestamp cuando se confirma/guarda
+    obsTouched?: boolean;
+    sentAt?: string;
     autoObs?: string;
 };
 
 @Injectable({ providedIn: 'root' })
 export class OutboxService {
     async sendWhatsApp(number: string, message: string): Promise<void> {
-        // Integra con backend (n8n/Node) para envío automático.
-        // Ejemplo: POST /api/outbox/whatsapp
         const res = await fetch('/api/outbox/whatsapp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ to: number, message })
         });
-        if (!res.ok) {
-            throw new Error('No se pudo enviar WhatsApp');
-        }
+        if (!res.ok) throw new Error('No se pudo enviar WhatsApp');
     }
 
     async sendEmail(email: string, subject: string, body: string): Promise<void> {
-        // Integra con tu backend (SMTP/SendGrid) para envío automático.
-        // Ejemplo: POST /api/outbox/email
         const res = await fetch('/api/outbox/email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ to: email, subject, body })
         });
-        if (!res.ok) {
-            throw new Error('No se pudo enviar Email');
-        }
+        if (!res.ok) throw new Error('No se pudo enviar Email');
     }
 }
 
@@ -72,32 +68,32 @@ export class OutboxService {
     standalone: true,
     imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatDividerModule],
     template: `
-    <h2 mat-dialog-title style="display:flex;align-items:center;gap:8px">
-      <mat-icon>{{ data.canal === 'whatsapp' ? 'sms' : (data.canal === 'email' ? 'mail' : 'event_note') }}</mat-icon>
-      {{ data.canal === 'nota' ? 'Confirmar guardado de nota' : 'Confirmar envío' }}
-    </h2>
+        <h2 mat-dialog-title style="display:flex;align-items:center;gap:8px">
+            <mat-icon>{{ data.canal === 'whatsapp' ? 'sms' : (data.canal === 'email' ? 'mail' : 'event_note') }}</mat-icon>
+            {{ data.canal === 'nota' ? 'Confirmar guardado de nota' : 'Confirmar envío' }}
+        </h2>
 
-    <div mat-dialog-content>
-      <div *ngIf="data.canal !== 'nota'" style="margin-bottom:8px">
-        <div><strong>Destino:</strong> {{ data.to }}</div>
-        <div><strong>Canal:</strong> {{ data.canal | uppercase }}</div>
-      </div>
+        <div mat-dialog-content>
+            <div *ngIf="data.canal !== 'nota'" style="margin-bottom:8px">
+                <div><strong>Destino:</strong> {{ data.to }}</div>
+                <div><strong>Canal:</strong> {{ data.canal | uppercase }}</div>
+            </div>
 
-      <mat-divider></mat-divider>
+            <mat-divider></mat-divider>
 
-      <div style="margin-top:12px">
-        <div style="font-weight:600;margin-bottom:6px;">Mensaje a enviar/guardar:</div>
-        <pre style="white-space:pre-wrap;margin:0">{{ data.message }}</pre>
-      </div>
-    </div>
+            <div style="margin-top:12px">
+                <div style="font-weight:600;margin-bottom:6px;">Mensaje a enviar/guardar:</div>
+                <pre style="white-space:pre-wrap;margin:0">{{ data.message }}</pre>
+            </div>
+        </div>
 
-    <div mat-dialog-actions style="justify-content:flex-end">
-      <button mat-button (click)="close(false)">Cancelar</button>
-      <button mat-flat-button color="primary" (click)="close(true)">
-        {{ data.canal === 'nota' ? 'Guardar' : 'Enviar' }}
-      </button>
-    </div>
-  `
+        <div mat-dialog-actions style="justify-content:flex-end">
+            <button mat-button (click)="close(false)">Cancelar</button>
+            <button mat-flat-button color="primary" (click)="close(true)">
+                {{ data.canal === 'nota' ? 'Guardar' : 'Enviar' }}
+            </button>
+        </div>
+    `
 })
 export class ConfirmSendDialogComponent {
     constructor(
@@ -113,7 +109,6 @@ export class ConfirmSendDialogComponent {
     imports: [
         CommonModule,
         FormsModule,
-
         MatIconModule,
         MatButtonModule,
         MatDividerModule,
@@ -126,63 +121,141 @@ export class ConfirmSendDialogComponent {
     templateUrl: './follow.component.html',
     styleUrl: './follow.component.scss',
 })
-export class FollowComponent {
+export class FollowComponent implements OnInit {
+    loading = false;
+
+    expediente = {
+        expediente: '',
+        tipo: '',
+        nombres: '',
+        celular: '',
+        correo: '',
+    };
+
+    seguimientos: SeguimientoRow[] = [];
+    llamadas: LlamadaRow[] = [];
+
     constructor(
+        private route: ActivatedRoute,
+        private followService: FollowService,
         private dialog: MatDialog,
         private outbox: OutboxService,
         private snack: MatSnackBar
     ) {}
 
-    expediente = {
-        expediente: '71818',
-        tipo: 'DPR',
-        nombres: 'Juan Andres Lopez Herbas',
-        celular: '63878701',
-        correo: 'juanLopez@gmail.com',
-    };
+    async ngOnInit(): Promise<void> {
+        const pir = this.route.snapshot.paramMap.get('pir') ?? '';
+        if (!pir) {
+            this.snack.open('Falta el PIR en la URL.', 'Cerrar', { duration: 3000 });
+            return;
+        }
+        await this.loadFromBackend(pir);
+    }
 
-    // Demo inicial
-    seguimientos: SeguimientoRow[] = [
-        {
-            fecha: '15-01-2024',
-            hora: '14:15',
-            encargado: 'Velasco',
-            info: 'Se indica que debe traer maleta dañada, una vez la deje la reposición demora de 10 a 15 días hábiles.',
-            canal: undefined,
-            locked: false
-        },
-        {
-            fecha: '16-01-2024',
-            hora: '15:26',
-            encargado: 'Montaño',
-            info: 'Se ingresó formulario de contenido de equipaje',
-            canal: undefined,
-            locked: false
-        },
-    ];
+    private async loadFromBackend(pir: string): Promise<void> {
+        this.loading = true;
 
-    llamadas: LlamadaRow[] = [
-        {
-            fecha: '15-01-2024',
-            hora: '14:15',
-            celularCorreo: '65252145',
-            aQuien: 'Juan Pablo Laime',
-            observaciones: '',
-        },
-        {
-            fecha: '16-01-2024',
-            hora: '15:26',
-            celularCorreo: '65252145',
-            aQuien: 'Maria',
-            observaciones: '',
-        },
-    ];
+        try {
+            const response: ClaimViewDto = await firstValueFrom(this.followService.getClaimViewByPir(pir));
+
+            // expediente
+            this.expediente = {
+                expediente: response.pirNumber,
+                tipo: response.claimType,
+                nombres: response.pasajero ?? `${response.passengerLastName} ${response.passengerName}`,
+                celular: (response.temporaryPhone || response.permanentPhone || '') as string,
+                correo: '', // si el backend luego manda email, lo conectas
+            };
+
+            // entries (robusto porque en tu JSON aparece repetido en follow y claim.follow)
+            const entries =
+                response.follow?.entries ??
+                response.claim?.follow?.entries ??
+                [];
+
+            const sorted = [...entries].sort(
+                (a, b) => new Date(a.eventAt).getTime() - new Date(b.eventAt).getTime()
+            );
+
+            this.seguimientos = sorted
+                .filter(e => e.channel !== 'CALL')
+                .map(e => this.toSeguimientoRow(e));
+
+            this.llamadas = sorted
+                .filter(e => e.channel === 'CALL')
+                .map(e => this.toLlamadaRow(e));
+
+            // si viene vacío, deja 1 fila para que el usuario agregue
+            if (this.seguimientos.length === 0) {
+                this.seguimientos = [{ fecha: this.todayDDMMYYYY(), hora: this.nowHM(), encargado: '', info: '', locked: false }];
+            }
+            if (this.llamadas.length === 0) {
+                this.llamadas = [{ fecha: this.todayDDMMYYYY(), hora: this.nowHM(), celularCorreo: '', aQuien: '', observaciones: '', locked: false }];
+            }
+        } catch (err) {
+            console.error(err);
+            this.snack.open('No se pudo cargar el seguimiento. Verifica el PIR o el backend.', 'Cerrar', { duration: 3500 });
+        } finally {
+            this.loading = false;
+        }
+    }
+
+    // ------------------ MAPPERS ------------------
+
+    private toSeguimientoRow(e: FollowEntryDto): SeguimientoRow {
+        const { fecha, hora } = this.isoToFechaHora(e.eventAt);
+
+        return {
+            fecha,
+            hora,
+            encargado: e.performedByName ?? '',
+            info: e.message ?? '',
+            canal: this.backendChannelToCanal(e.channel),
+            locked: e.status !== 'PENDING', // SAVED/SENT => bloqueado
+            sentAt: e.createdAt,
+            to: e.contact ?? undefined,
+        };
+    }
+
+    private toLlamadaRow(e: FollowEntryDto): LlamadaRow {
+        const { fecha, hora } = this.isoToFechaHora(e.eventAt);
+
+        return {
+            fecha,
+            hora,
+            celularCorreo: e.contact ?? '',
+            aQuien: '', // si luego agregas contactName en backend, lo llenas aquí
+            observaciones: e.message ?? '',
+            locked: e.status !== 'PENDING',
+            sentAt: e.createdAt,
+            obsTouched: true,
+            autoObs: '',
+        };
+    }
+
+    private backendChannelToCanal(ch: 'NOTE' | 'WHATSAPP' | 'EMAIL' | 'CALL'): Canal | undefined {
+        if (ch === 'WHATSAPP') return 'whatsapp';
+        if (ch === 'EMAIL') return 'email';
+        if (ch === 'NOTE') return 'nota';
+        return undefined; // CALL va a "llamadas"
+    }
+
+    private isoToFechaHora(iso: string): { fecha: string; hora: string } {
+        const d = new Date(iso);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mi = String(d.getMinutes()).padStart(2, '0');
+        return { fecha: `${dd}-${mm}-${yyyy}`, hora: `${hh}:${mi}` };
+    }
+
+    // ------------------ TU UI (lo que ya tenías) ------------------
 
     print(): void {
         window.print();
     }
 
-    // ---------- helpers de fecha/hora ----------
     private clamp(n: number, min: number, max: number): number {
         if (Number.isNaN(n)) return min;
         return Math.min(Math.max(n, min), max);
@@ -212,7 +285,6 @@ export class FollowComponent {
         return `${h}:${mi}`;
     }
 
-    // ---------- agregar / eliminar ----------
     addSeguimientoRow(): void {
         this.seguimientos = [
             ...this.seguimientos,
@@ -226,14 +298,13 @@ export class FollowComponent {
             hora: this.nowHM(),
             celularCorreo: '',
             aQuien: '',
-            observaciones: this.generateObs(''), // <- "Se registró una llamada."
+            observaciones: this.generateObs(''),
             locked: false,
             obsTouched: false,
             autoObs: this.generateObs('')
         };
         this.llamadas = [...this.llamadas, base];
     }
-
 
     removeSeguimientoRow(i: number): void {
         this.seguimientos = this.seguimientos.filter((_, idx) => idx !== i);
@@ -247,10 +318,9 @@ export class FollowComponent {
         return i;
     }
 
-    // ---------- enmascarado + validación de FECHA (DD-MM-YYYY, año <= 2025) ----------
     onDateInput(e: Event, obj: any, field: 'fecha'): void {
         const input = e.target as HTMLInputElement;
-        const digits = input.value.replace(/\D+/g, '').slice(0, 8); // DDM MYYYY
+        const digits = input.value.replace(/\D+/g, '').slice(0, 8);
         let dRaw = digits.slice(0, 2);
         let mRaw = digits.slice(2, 4);
         let yRaw = digits.slice(4, 8);
@@ -276,10 +346,9 @@ export class FollowComponent {
         input.value = out;
     }
 
-    // ---------- enmascarado + validación de HORA (HH:mm, 00..23 / 00..59) ----------
     onTimeInput(e: Event, obj: any, field: 'hora'): void {
         const input = e.target as HTMLInputElement;
-        const digits = input.value.replace(/\D+/g, '').slice(0, 4); // HHMM
+        const digits = input.value.replace(/\D+/g, '').slice(0, 4);
         let hRaw = digits.slice(0, 2);
         let mRaw = digits.slice(2, 4);
 
@@ -293,10 +362,8 @@ export class FollowComponent {
         input.value = out;
     }
 
-    // ---------- Canal + prellenado ----------
     onCanalChange(s: SeguimientoRow): void {
-        if (!s) return;
-        if (!s.canal) return;
+        if (!s?.canal) return;
 
         const nombre = this.expediente.nombres;
         const exp = `${this.expediente.tipo}-${this.expediente.expediente}`;
@@ -307,7 +374,6 @@ export class FollowComponent {
                 `"Señor/a ${nombre}, le hablamos por el reclamo de su maleta (Exp. ${exp}). ` +
                 `Se le informa que . Que tenga un buen día."`;
         } else {
-            // nota en oficina
             s.info =
                 `Atención en oficina: Se brindó información al pasajero ${nombre} ` +
                 `respecto a su reclamo (Exp. ${exp}). Detalle:  .`;
@@ -317,12 +383,12 @@ export class FollowComponent {
     canConfirm(s: SeguimientoRow): boolean {
         if (!s || s.locked) return false;
         if (!s.canal) return false;
+
         const msg = this.extractQuotedOrAll(s.info).trim();
         if (!msg) return false;
 
         if (s.canal === 'whatsapp') return !!this.expediente.celular;
         if (s.canal === 'email') return !!this.expediente.correo;
-        // nota
         return true;
     }
 
@@ -337,7 +403,6 @@ export class FollowComponent {
         if (s.canal === 'whatsapp') return this.expediente.celular;
         if (s.canal === 'email') return this.expediente.correo;
         return undefined;
-        // Para “nota”, no hay destino.
     }
 
     private extractQuotedOrAll(text: string): string {
@@ -358,7 +423,7 @@ export class FollowComponent {
             data: { canal: s.canal, to, message }
         });
 
-        const ok = await dlg.afterClosed().toPromise();
+        const ok = await firstValueFrom(dlg.afterClosed());
         if (!ok) return;
 
         try {
@@ -370,10 +435,9 @@ export class FollowComponent {
                 const subject = `Seguimiento de reclamo de equipaje ${this.expediente.tipo}-${this.expediente.expediente}`;
                 await this.outbox.sendEmail(to, subject, message);
             } else {
-                // nota: solo guardado local (o podrías persistir con tu backend)
+                // nota: por ahora solo local (si luego haces POST al backend, lo conectamos)
             }
 
-            // Bloquear la fila (inmutable)
             s.locked = true;
             s.sentAt = new Date().toISOString();
             s.to = to;
@@ -385,29 +449,23 @@ export class FollowComponent {
             );
         } catch (err: any) {
             console.error(err);
-            this.snack.open(
-                err?.message || 'No se pudo completar la acción. Revise la conexión/servicio.',
-                'Cerrar',
-                { duration: 3500 }
-            );
+            this.snack.open(err?.message || 'No se pudo completar la acción.', 'Cerrar', { duration: 3500 });
         }
     }
+
     onAQuienInput(c: LlamadaRow): void {
         if (!c) return;
 
         const auto = this.generateObs(c.aQuien);
-
-        // Si el usuario NO editó Observaciones o lo que hay coincide con el último auto,
-        // actualizamos; si ya editó algo distinto, NO lo pisamos.
         const current = (c.observaciones || '').trim();
         const lastAuto = (c.autoObs || '').trim();
 
         if (!c.obsTouched || current === lastAuto || current === '') {
             c.observaciones = auto;
         }
-
-        c.autoObs = auto; // actualizamos el “baseline” auto
+        c.autoObs = auto;
     }
+
     onObservacionesInput(c: LlamadaRow): void {
         if (!c) return;
         c.obsTouched = true;
@@ -415,8 +473,7 @@ export class FollowComponent {
 
     canConfirmLlamada(c: LlamadaRow): boolean {
         if (!c || c.locked) return false;
-        // Reglas mínimas: que haya algo de contexto (aQuien u Observaciones)
-        return !!( (c.aQuien && c.aQuien.trim()) || (c.observaciones && c.observaciones.trim()) );
+        return !!((c.aQuien && c.aQuien.trim()) || (c.observaciones && c.observaciones.trim()));
     }
 
     async confirmLlamada(i: number): Promise<void> {
@@ -430,20 +487,19 @@ export class FollowComponent {
 
         const dlg = this.dialog.open(ConfirmSendDialogComponent, {
             width: '560px',
-            data: { canal: 'nota', message: mensaje } // reutilizamos el mismo diálogo como "nota"
+            data: { canal: 'nota', message: mensaje }
         });
 
-        const ok = await dlg.afterClosed().toPromise();
+        const ok = await firstValueFrom(dlg.afterClosed());
         if (!ok) return;
 
         c.locked = true;
         c.sentAt = new Date().toISOString();
-
         this.snack.open('Registro de llamada guardado y bloqueado.', 'OK', { duration: 2500 });
     }
+
     private generateObs(aQuien: string): string {
         const nombre = (aQuien || '').trim();
         return nombre ? `Se hizo una llamada al ${nombre}.` : 'Se registró una llamada.';
     }
-
 }
