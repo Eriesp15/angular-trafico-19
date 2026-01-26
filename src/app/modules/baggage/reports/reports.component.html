@@ -1,0 +1,164 @@
+<div class="reports-container">
+  <div class="reports-card">
+    <!-- Header -->
+    <div class="reports-header">
+      <div class="header-content">
+        <h1>Reportes de Equipaje</h1>
+        <p class="subtitle">Estadísticas y métricas de reclamos</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" (click)="print()">
+          <mat-icon>print</mat-icon>
+          Imprimir
+        </button>
+        <button class="btn btn-outline" (click)="exportarExcel()">
+          <mat-icon>table_chart</mat-icon>
+          Excel
+        </button>
+        <button class="btn btn-outline" (click)="exportarPDF()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+      <h2>Filtros</h2>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label>Fecha Inicio</label>
+          <input type="date" [(ngModel)]="fechaInicio">
+        </div>
+        <div class="filter-group">
+          <label>Fecha Fin</label>
+          <input type="date" [(ngModel)]="fechaFin">
+        </div>
+        <div class="filter-group">
+          <label>Tipo de Reclamo</label>
+          <select [(ngModel)]="tipoReclamo">
+            <option *ngFor="let tipo of tiposReclamo" [value]="tipo.codigo">
+              {{ tipo.nombre }}
+            </option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Estación</label>
+          <select [(ngModel)]="estacion">
+            <option *ngFor="let est of estaciones" [value]="est.codigo">
+              {{ est.nombre }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button class="btn btn-secondary" (click)="limpiarFiltros()">
+          Limpiar
+        </button>
+        <button class="btn btn-primary" (click)="aplicarFiltros()">
+          <mat-icon>search</mat-icon>
+          Aplicar Filtros
+        </button>
+      </div>
+    </div>
+
+    <!-- Métricas Principales -->
+    <div class="metrics-section">
+      <div class="metric-card total">
+        <div class="metric-icon">
+          <mat-icon>receipt_long</mat-icon>
+        </div>
+        <div class="metric-content">
+          <span class="metric-label">Total Reclamos</span>
+          <span class="metric-value">{{ reportData.totalReclamos }}</span>
+        </div>
+      </div>
+      <div class="metric-card time">
+        <div class="metric-icon">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="metric-content">
+          <span class="metric-label">Tiempo Promedio Resolución</span>
+          <span class="metric-value">{{ reportData.tiempoPromedioResolucion }} días</span>
+        </div>
+      </div>
+      <div class="metric-card money">
+        <div class="metric-icon">
+          <mat-icon>paid</mat-icon>
+        </div>
+        <div class="metric-content">
+          <span class="metric-label">Indemnización Total</span>
+          <span class="metric-value">${{ reportData.indemnizacionTotal | number }}</span>
+        </div>
+      </div>
+      <div class="metric-card expenses">
+        <div class="metric-icon">
+          <mat-icon>shopping_bag</mat-icon>
+        </div>
+        <div class="metric-content">
+          <span class="metric-label">Gastos Primera Necesidad</span>
+          <span class="metric-value">${{ reportData.gastosPrimeraNecesidad | number }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="charts-section">
+      <!-- Por Tipo -->
+      <div class="chart-card">
+        <h3>Reclamos por Tipo</h3>
+        <div class="donut-chart">
+          <div class="donut-legend">
+            <div class="legend-item" *ngFor="let item of reportData.reclamosPorTipo">
+              <span class="legend-color" [style.background-color]="item.color"></span>
+              <span class="legend-label">{{ item.tipo }}</span>
+              <span class="legend-value">{{ item.cantidad }} ({{ item.porcentaje }}%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Por Estado -->
+      <div class="chart-card">
+        <h3>Reclamos por Estado</h3>
+        <div class="donut-chart">
+          <div class="donut-legend">
+            <div class="legend-item" *ngFor="let item of reportData.reclamosPorEstado">
+              <span class="legend-color" [style.background-color]="item.color"></span>
+              <span class="legend-label">{{ item.estado }}</span>
+              <span class="legend-value">{{ item.cantidad }} ({{ item.porcentaje }}%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Por Estación -->
+      <div class="chart-card wide">
+        <h3>Reclamos por Estación</h3>
+        <div class="bar-chart horizontal">
+          <div class="bar-item" *ngFor="let item of reportData.reclamosPorEstacion">
+            <span class="bar-label">{{ item.estacion }}</span>
+            <div class="bar-container">
+              <div class="bar" [style.width.%]="getBarWidth(item.cantidad)"></div>
+            </div>
+            <span class="bar-value">{{ item.cantidad }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Por Mes -->
+      <div class="chart-card wide">
+        <h3>Reclamos por Mes</h3>
+        <div class="bar-chart vertical">
+          <div class="bar-item" *ngFor="let item of reportData.reclamosPorMes">
+            <div class="bar-container">
+              <div class="bar" [style.height.%]="getBarHeight(item.cantidad)"></div>
+            </div>
+            <span class="bar-label">{{ item.mes }}</span>
+            <span class="bar-value">{{ item.cantidad }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

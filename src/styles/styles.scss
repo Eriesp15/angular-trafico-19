@@ -10,7 +10,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
  /* Fondos */
   --bg-page: #f5f6f8;
   --bg-card: #ffffff;
-
+  --btn-primary: #003366;
+  --btn-text: #ffffff;
+  
+  --btn-primary-hover: #0a2050;
     /* Textos */
   --header-primary: #022F70;
   --text-primary: #111111;
@@ -28,6 +31,9 @@ body.dark {
       /* Fondos */
   --bg-page: #0f172a;
   --bg-card: #182442;
+    --btn-primary: #002c89;
+     --btn-text: #ffffff;
+       --btn-primary-hover: #284ea4;
   
     /* Textos */
   --header-primary: #e1e1e1;

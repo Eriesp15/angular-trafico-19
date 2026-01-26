@@ -1,280 +1,231 @@
-import { Component } from "@angular/core"
-import { CommonModule } from "@angular/common"
-import { RouterModule, Router } from "@angular/router"
-import { FormsModule } from "@angular/forms"
-
-interface BaggageType {
-  code: string
-  name: string
-  image: string
-}
-
-interface DamagePart {
-  code: string
-  name: string
-  selected: boolean
-}
-
-interface DamageLocation {
-  code: string
-  name: string
-  selected: boolean
-}
-
-interface FlightInfo {
-  flightNumber: string
-  day: string
-  month: string
-}
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ClaimService } from '../../../../services/claim.service';
 
 @Component({
-  selector: "app-new-claim",
+  selector: 'app-new-claim',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: "./new-claim.component.html",
-  styleUrls: ["./new-claim.component.scss"],
+  imports: [CommonModule, ReactiveFormsModule], 
+  templateUrl: './new-claim.component.html',
+  styleUrls: ['./new-claim.component.scss']
 })
-export class NewClaimComponent {
-  pirFormat: "classic" | "modern" = "classic"
+export class NewClaimComponent implements OnInit {
+  pIR: FormGroup;
 
-  passengerData = {
-    firstName: "",
-    paternalLastName: "",
-    maternalLastName: "",
-    permanentAddress: "",
-    temporaryAddress: "",
-    permanentPhone: "",
-    temporaryPhone: "",
-    email: "",
-    ticketNumber: "",
-    initials: "",
-    passportNumber: "",
-    frequentTravelerId: "",
-    deliveryInstructions: "",
+  constructor(
+    private fb: FormBuilder,
+    private claimService: ClaimService
+  ) {}
+
+  ngOnInit() {
+    this.pIR = this.fb.group({
+      route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
+      bagtags: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      bagDescription: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      traceRoute: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      flightNumber: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      bagIdentification: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      contents: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      airport: ['', Validators.required],
+      airportText: ['', Validators.required],
+      airline: ['', Validators.required],
+      reference: ['', Validators.required],
+      claimType: ['', Validators.required],
+
+      passengerName: ['', Validators.required],
+      passengerLastName: ['', Validators.required],
+      initials: ['', Validators.required],
+    });
+    
+    // Inicializar con 2 rutas por defecto
+    this.agregarRuta();
+    this.agregarRuta();
+    this.agregarBagtag();
+    this.agregarBagDescription();
+    this.agregarRutaARastrear();
+    this.agregarRutaARastrear();
+    this.agregarVuelo();
+    this.agregarIdentificacion();
+    this.agregarContenido();
   }
 
-  claimData = {
-    involvedStations: [""], // Now array for multiple stations
-    originStation: "",
-    originatorDate: "",
-    originatorTime: "",
-    airport: "",
-    airline: "",
-    reference: "",
-    claimType: "AHL",
+  claimType = [
+    { valor: 'AHL', etiqueta: 'AHL' },
+    { valor: 'DAMAGED', etiqueta: 'Damaged' },
+    { valor: 'PILFERED', etiqueta: 'Pilfered' }
+  ];
+
+  get route(): FormArray {
+    return this.pIR.get('route') as FormArray;
   }
 
-  baggageData = {
-    bagtags: [""], // Array for multiple bag tags
-    routes: [""], // Array for multiple routes
-    flightInfo: [{ flightNumber: "", day: "", month: "" }] as FlightInfo[],
-    colors: [{ color: "", description: "" }], // Array for multiple baggage items with color info
-    colorType: "",
-    brands: [""], // Array for multiple brands
-    contents: [""], // Array for multiple content items
-    bagWeight: "",
-    deliveredWeight: "",
-    weightDifference: "",
-    pnrLocator: "",
-    lossReason: "",
-    failureStation: "",
+  get bagtags(): FormArray {
+    return this.pIR.get('bagtags') as FormArray;
   }
 
-  additionalData = {
-    hasInsurance: false,
-    needsKey: false,
-    kitType: "",
-    language: "",
-    damageType: "",
-    damageCondition: "",
-    damageDescription: "", // For storing selected damage parts
+  get bagDescription(): FormArray {
+    return this.pIR.get('bagDescription') as FormArray;
   }
 
-  showBaggageModal = false
-  showDamageModal = false
-  showDamageLocationModal = false
-
-  baggageTypes: BaggageType[] = [
-    {
-      code: "50",
-      name: "Bag",
-      image: "/images/7b2a7e28d9-40db-43a3-95f9-762c03156175-7d.png",
-    },
-    {
-      code: "51",
-      name: "Courier Bag / Diplomatic Pouch",
-      image: "/images/7b2a7e28d9-40db-43a3-95f9-762c03156175-7d.png",
-    },
-    {
-      code: "52",
-      name: "Trunk-Sampler",
-      image: "/images/7b2a7e28d9-40db-43a3-95f9-762c03156175-7d.png",
-    },
-    {
-      code: "53",
-      name: "Add-Charge",
-      image: "/images/7b2a7e28d9-40db-43a3-95f9-762c03156175-7d.png",
-    },
-    {
-      code: "54",
-      name: "Tube - without sporting",
-      image: "/images/7b2a7e28d9-40db-43a3-95f9-762c03156175-7d.png",
-    },
-  ]
-
-  damageParts: DamagePart[] = [
-    {
-      code: "C",
-      name: "Combinación de cerradura / Combination locks",
-      selected: false,
-    },
-    {
-      code: "H",
-      name: "Jalador de mano / Retractable handles",
-      selected: false,
-    },
-    {
-      code: "S",
-      name: "Hebillas de seguro / Straps to close/secure",
-      selected: false,
-    },
-    { code: "W", name: "Ruedas / Wheels rollers", selected: false },
-  ]
-
-  damageLocations: DamageLocation[] = [
-    { code: "L", name: "Lado / Side", selected: false },
-    { code: "E", name: "Extremo / End", selected: false },
-    { code: "A", name: "Arriba / Top", selected: false },
-    { code: "B", name: "Abajo / Bottom", selected: false },
-  ]
-
-  selectedBaggageType: BaggageType | null = null
-  selectedDamageLocations: string[] = []
-
-  constructor(private router: Router) {}
-
-  switchFormat(format: "classic" | "modern") {
-    this.pirFormat = format
+  get traceRoute(): FormArray {
+    return this.pIR.get('traceRoute') as FormArray;
   }
 
-  openBaggageModal() {
-    this.showBaggageModal = true
+  get flightNumber(): FormArray {
+    return this.pIR.get('flightNumber') as FormArray;
   }
 
-  closeBaggageModal() {
-    this.showBaggageModal = false
+  get bagIdentification(): FormArray {
+    return this.pIR.get('bagIdentification') as FormArray;
   }
 
-  selectBaggageType(type: BaggageType) {
-    this.selectedBaggageType = type
-    // Add selected baggage type to the colors array
-    this.baggageData.colors[this.baggageData.colors.length - 1].color = `${type.code} - ${type.name}`
-    this.closeBaggageModal()
+  get contents(): FormArray {
+    return this.pIR.get('contents') as FormArray;
   }
 
-  openDamageModal() {
-    this.showDamageModal = true
+  crearRuta(): FormGroup {
+    return this.fb.group({
+      stop: ['', Validators.required],
+    });
   }
 
-  closeDamageModal() {
-    this.showDamageModal = false
-  }
-
-  openDamageLocationModal() {
-    this.showDamageLocationModal = true
-  }
-
-  closeDamageLocationModal() {
-    this.showDamageLocationModal = false
-  }
-
-  toggleDamagePart(part: DamagePart) {
-    part.selected = !part.selected
-  }
-
-  toggleDamageLocation(location: DamageLocation) {
-    location.selected = !location.selected
-    if (location.selected) {
-      this.selectedDamageLocations.push(location.code)
-    } else {
-      this.selectedDamageLocations = this.selectedDamageLocations.filter((l) => l !== location.code)
+  agregarRuta(): void {
+    if (this.route.length < 5) {
+      this.route.push(this.crearRuta());
     }
   }
 
-  saveDamage() {
-    this.closeDamageModal()
+  eliminarRuta(index: number): void {
+    if (this.route.length > 2) {
+      this.route.removeAt(index);
+    }
   }
 
-  submitClaim() {
-    console.log("[v0] Submitting claim with format:", this.pirFormat)
-    console.log("[v0] Submitting claim:", {
-      passenger: this.passengerData,
-      claim: this.claimData,
-      baggage: this.baggageData,
-      additional: this.additionalData,
-      damage: this.damageParts.filter((p) => p.selected),
-      damageLocations: this.selectedDamageLocations,
-    })
-    alert("Reclamo guardado exitosamente")
+  crearRutaARastrear(): FormGroup {
+    return this.fb.group({
+      traceRouteStop: ['', Validators.required],
+    });
   }
 
-  cancel() {
-    this.router.navigate(["/baggage"])
+  agregarRutaARastrear(): void {
+    if (this.traceRoute.length < 5) {
+      this.traceRoute.push(this.crearRutaARastrear());
+    }
   }
 
-  addInvolvedStation() {
-    this.claimData.involvedStations.push("")
+  eliminarRutaARastrear(index: number): void {
+    if (this.traceRoute.length > 1) {
+      this.traceRoute.removeAt(index);
+    }
   }
 
-  removeInvolvedStation(index: number) {
-    this.claimData.involvedStations.splice(index, 1)
+  // Métodos para bagtags
+  crearBagtag(): FormGroup {
+    return this.fb.group({
+      number: ['', [Validators.required]]
+    });
   }
 
-  addBagtag() {
-    this.baggageData.bagtags.push("")
+  agregarBagtag(): void {
+    this.bagtags.push(this.crearBagtag());
   }
 
-  removeBagtag(index: number) {
-    this.baggageData.bagtags.splice(index, 1)
+  eliminarBagtag(index: number): void {
+    this.bagtags.removeAt(index);
   }
 
-  addRoute() {
-    this.baggageData.routes.push("")
+  // Métodos para descripciones de maletas
+  crearBagDescription(): FormGroup {
+    return this.fb.group({
+      description: ['', [Validators.required]]
+    });
   }
 
-  removeRoute(index: number) {
-    this.baggageData.routes.splice(index, 1)
+  agregarBagDescription(): void {
+    this.bagDescription.push(this.crearBagDescription());
   }
 
-  addFlightInfo() {
-    this.baggageData.flightInfo.push({ flightNumber: "", day: "", month: "" })
+  eliminarBagDescription(index: number): void {
+    this.bagDescription.removeAt(index);
   }
 
-  removeFlightInfo(index: number) {
-    this.baggageData.flightInfo.splice(index, 1)
+  crearVuelo(): FormGroup {
+    return this.fb.group({
+      flightNo: ['', Validators.required],
+      flightDate: ['', Validators.required],
+    });
   }
 
-  addColor() {
-    this.baggageData.colors.push({ color: "", description: "" })
+  agregarVuelo(): void {
+    if (this.flightNumber.length < 5) {
+      this.flightNumber.push(this.crearVuelo());
+    }
   }
 
-  removeColor(index: number) {
-    this.baggageData.colors.splice(index, 1)
+  eliminarVuelo(index: number): void {
+    if (this.flightNumber.length > 1) {
+      this.flightNumber.removeAt(index);
+    }
   }
 
-  addBrand() {
-    this.baggageData.brands.push("")
+  crearIdentificacion(): FormGroup {
+    return this.fb.group({
+      mark: ['', Validators.required]
+    });
   }
 
-  removeBrand(index: number) {
-    this.baggageData.brands.splice(index, 1)
+  agregarIdentificacion(): void {
+    if (this.bagIdentification.length < 5) {
+      this.bagIdentification.push(this.crearIdentificacion());
+    }
   }
 
-  addContent() {
-    this.baggageData.contents.push("")
+  eliminarIdentificacion(index: number): void {
+    if (this.bagIdentification.length > 1) {
+      this.bagIdentification.removeAt(index);
+    }
   }
 
-  removeContent(index: number) {
-    this.baggageData.contents.splice(index, 1)
+  crearContenido(): FormGroup {
+    return this.fb.group({
+      content: ['', Validators.required]
+    });
+  }
+
+  agregarContenido(): void {
+    if (this.contents.length < 5) {
+      this.contents.push(this.crearContenido());
+    }
+  }
+
+  eliminarContenido(index: number): void {
+    if (this.contents.length > 1) {
+      this.contents.removeAt(index);
+    }
+  }
+
+  onSubmit(): void {
+    if (this.pIR.valid) {
+      const datos = this.pIR.value;
+      
+      this.claimService.createClaim(datos).subscribe({
+        next: (response) => {
+          console.log('Éxito:', response);
+          alert('Claim creado exitosamente');
+          this.pIR.reset();  // Limpia el formulario
+          // O redirige: this.router.navigate(['/claims']);
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          alert('Error al crear el claim');
+        },
+        complete: () => {
+          console.log('Petición completada');
+        }
+      });
+    } else {
+      alert('Por favor completa todos los campos requeridos');
+    }
   }
 }

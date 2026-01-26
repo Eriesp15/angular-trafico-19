@@ -1,0 +1,664 @@
+<div class="content-form-container">
+  <div class="content-form">
+    <!-- Header -->
+    <div class="form-header">
+      <div class="header-left">
+        <!-- <button class="back-btn" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+        </button> -->
+        <div class="header-info">
+          <h1>Formulario de Descripción de Contenido</h1>
+          <p class="subtitle">Inventario detallado del equipaje - PIR {{ claimId }}</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <!-- Botón de Editar visible solo en modo vista -->
+        <button *ngIf="isViewMode && hasExistingData" class="btn btn-edit" (click)="enableEditMode()">
+          <mat-icon>edit</mat-icon>
+          Editar Formulario
+        </button>
+        <button *ngIf="isViewMode && !hasExistingData" class="btn btn-primary" (click)="enableEditMode()">
+          <mat-icon>add</mat-icon>
+          Completar Formulario
+        </button>
+        <div class="header-badges">
+          <div class="badge-item">
+            <span class="badge-label">Tipo Reclamo</span>
+            <span class="badge-value type">{{ claimType || 'AHL' }}</span>
+          </div>
+          <div class="badge-item">
+            <span class="badge-label">Fecha</span>
+            <span class="badge-value">{{ claimDate || 'N/A' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Cargando información del formulario...</p>
+    </div>
+
+    <!-- ==================== MODO VISTA (Solo Lectura) ==================== -->
+    <div *ngIf="!isLoading && isViewMode" class="view-mode">
+      
+      <!-- Sin datos existentes -->
+      <div *ngIf="!hasExistingData" class="empty-state">
+        <mat-icon>description</mat-icon>
+        <h3>Formulario de Contenido No Completado</h3>
+        <p>El pasajero aún no ha llenado el formulario de descripción de contenido del equipaje.</p>
+        <button class="btn btn-primary" (click)="enableEditMode()">
+          <mat-icon>edit</mat-icon>
+          Completar Formulario Ahora
+        </button>
+      </div>
+
+      <!-- Con datos existentes - Vista estática -->
+      <div *ngIf="hasExistingData && contentData">
+        
+        <!-- Sección: Información del Reclamo -->
+        <div class="section info-section">
+          <h2 class="section-title">
+            <mat-icon>info</mat-icon>
+            Información del Reclamo
+          </h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Número PIR</span>
+              <span class="info-value">{{ pirNumber || claimId }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Pasajero</span>
+              <span class="info-value">{{ passengerLastName }} / {{ passengerName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Ruta</span>
+              <span class="info-value">{{ route || 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Peso Registrado</span>
+              <span class="info-value">{{ baggageWeight || '—' }} kg</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Descripción del Equipaje (Vista) -->
+        <div class="section">
+          <h2 class="section-title">
+            <mat-icon>luggage</mat-icon>
+            Descripción del Equipaje
+          </h2>
+          <div class="view-grid">
+            <div class="view-item">
+              <span class="view-label">Tipo de Equipaje</span>
+              <span class="view-value">{{ getBaggageTypeLabel(contentData.baggageType) }}</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Color Principal</span>
+              <span class="view-value">{{ getBaggageColorLabel(contentData.baggageColor) }}</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Marca</span>
+              <span class="view-value">{{ contentData.baggageBrand || '—' }}</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Tamaño</span>
+              <span class="view-value">{{ getBaggageSizeLabel(contentData.baggageSize) }}</span>
+            </div>
+            <div class="view-item full-width">
+              <span class="view-label">Descripción Adicional</span>
+              <span class="view-value">{{ contentData.baggageDescription || '—' }}</span>
+            </div>
+          </div>
+
+          <!-- Control de Peso (Vista) -->
+          <div class="weight-display">
+            <h3>Control de Peso (BW / DW)</h3>
+            <div class="weight-boxes">
+              <div class="weight-box">
+                <span class="weight-label">Peso Facturado (BW)</span>
+                <span class="weight-value">{{ baggageWeight || '—' }} kg</span>
+              </div>
+              <div class="weight-box">
+                <span class="weight-label">Peso Entregado (DW)</span>
+                <span class="weight-value">{{ contentData.deliveredWeight || '—' }} kg</span>
+              </div>
+              <div class="weight-box difference" [class.has-difference]="contentData.weightDifference && +contentData.weightDifference > 0">
+                <span class="weight-label">Diferencia</span>
+                <span class="weight-value">{{ contentData.weightDifference || '0' }} kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Contenido del Equipaje (Vista) -->
+        <div class="section">
+          <h2 class="section-title">
+            <mat-icon>inventory_2</mat-icon>
+            Contenido del Equipaje
+          </h2>
+          
+          <div class="content-table" *ngIf="contentData.contentItems && contentData.contentItems.length > 0">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Categoría</th>
+                  <th>Descripción</th>
+                  <th>Cantidad</th>
+                  <th>Color</th>
+                  <th>Marca</th>
+                  <th>Valor Aprox.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of contentData.contentItems; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ getCategoryLabel(item.category) }}</td>
+                  <td>{{ item.description || '—' }}</td>
+                  <td class="center">{{ item.quantity }}</td>
+                  <td>{{ item.color || '—' }}</td>
+                  <td>{{ item.brand || '—' }}</td>
+                  <td class="right">{{ item.approximateValue ? '$' + item.approximateValue : '—' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="!contentData.contentItems || contentData.contentItems.length === 0" class="no-data">
+            <mat-icon>inbox</mat-icon>
+            <span>No se registró contenido</span>
+          </div>
+        </div>
+
+        <!-- Sección: Artículos de Valor (Vista) -->
+        <div class="section warning-section">
+          <h2 class="section-title">
+            <mat-icon>diamond</mat-icon>
+            Artículos de Valor (Referencial)
+          </h2>
+
+          <div class="warning-box">
+            <mat-icon>warning</mat-icon>
+            <p>
+              <strong>IMPORTANTE:</strong> Boliviana de Aviación NO se responsabiliza por artículos de valor 
+              contenidos en el equipaje facturado. Esta información es solo referencial.
+            </p>
+          </div>
+
+          <div class="valued-table" *ngIf="contentData.valuedItems && contentData.valuedItems.length > 0">
+            <table>
+              <thead>
+                <tr>
+                  <th>Artículo</th>
+                  <th>Marca</th>
+                  <th>Modelo</th>
+                  <th>Nro. Serie</th>
+                  <th>Valor Compra</th>
+                  <th>Factura</th>
+                  <th>Observaciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of contentData.valuedItems">
+                  <td>{{ item.itemName || '—' }}</td>
+                  <td>{{ item.brand || '—' }}</td>
+                  <td>{{ item.model || '—' }}</td>
+                  <td>{{ item.serialNumber || '—' }}</td>
+                  <td class="right">{{ item.purchaseValue ? '$' + item.purchaseValue : '—' }}</td>
+                  <td class="center">
+                    <mat-icon *ngIf="item.hasReceipt" class="icon-yes">check_circle</mat-icon>
+                    <mat-icon *ngIf="!item.hasReceipt" class="icon-no">cancel</mat-icon>
+                  </td>
+                  <td>{{ item.notes || '—' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="!contentData.valuedItems || contentData.valuedItems.length === 0" class="no-data">
+            <mat-icon>diamond</mat-icon>
+            <span>No se registraron artículos de valor</span>
+          </div>
+        </div>
+
+        <!-- Sección: Información Adicional (Vista) -->
+        <div class="section">
+          <h2 class="section-title">
+            <mat-icon>search</mat-icon>
+            Información Adicional para Búsqueda
+          </h2>
+          <div class="view-grid">
+            <div class="view-item full-width">
+              <span class="view-label">Marcas Distintivas Externas</span>
+              <span class="view-value">{{ contentData.distinctiveMarks || '—' }}</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Tipo de Candado/Cierre</span>
+              <span class="view-value">{{ getLockTypeLabel(contentData.lockType) }}</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Tiene las Llaves</span>
+              <span class="view-value">{{ contentData.hasKeys ? 'Sí' : 'No' }}</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Combinación</span>
+              <span class="view-value">{{ contentData.lockCombination || '—' }}</span>
+            </div>
+            <div class="view-item full-width">
+              <span class="view-label">Notas Adicionales</span>
+              <span class="view-value">{{ contentData.additionalNotes || '—' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Declaración y Firma (Vista) -->
+        <div class="section signature-section">
+          <h2 class="section-title">
+            <mat-icon>draw</mat-icon>
+            Declaración y Firma del Pasajero
+          </h2>
+          <div class="signature-display">
+            <div class="declaration-status">
+              <mat-icon *ngIf="contentData.passengerDeclaration" class="icon-yes">verified</mat-icon>
+              <mat-icon *ngIf="!contentData.passengerDeclaration" class="icon-no">cancel</mat-icon>
+              <span>Declaración {{ contentData.passengerDeclaration ? 'Aceptada' : 'No Aceptada' }}</span>
+            </div>
+            <div class="signature-box">
+              <span class="signature-label">Firma del Pasajero</span>
+              <span class="signature-value">{{ contentData.passengerSignature || '—' }}</span>
+            </div>
+            <div class="signature-date">
+              <span class="view-label">Fecha de Firma</span>
+              <span class="view-value">{{ contentData.signatureDate | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fecha de Registro -->
+        <div class="metadata-footer">
+          <span>Formulario registrado: {{ contentData.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span *ngIf="contentData.updatedAt">| Última modificación: {{ contentData.updatedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+
+        <!-- Acciones Vista -->
+        <div class="form-actions">
+          <div class="actions-left">
+            <button class="btn btn-outline" (click)="goBack()">
+              <mat-icon>arrow_back</mat-icon>
+              Volver al PIR
+            </button>
+          </div>
+          <div class="actions-right">
+            <button class="btn btn-secondary" (click)="printForm()">
+              <mat-icon>print</mat-icon>
+              Imprimir
+            </button>
+            <button class="btn btn-edit" (click)="enableEditMode()">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MODO EDICIÓN ==================== -->
+    <form *ngIf="!isLoading && !isViewMode" [formGroup]="contentForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Sección: Información del Reclamo (Solo lectura) -->
+      <div class="section info-section">
+        <h2 class="section-title">
+          <mat-icon>info</mat-icon>
+          Información del Reclamo
+        </h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Número PIR</span>
+            <span class="info-value">{{ pirNumber || claimId }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Pasajero</span>
+            <span class="info-value">{{ passengerLastName }} / {{ passengerName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Ruta</span>
+            <span class="info-value">{{ route || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Peso Registrado</span>
+            <span class="info-value">{{ baggageWeight || '—' }} kg</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Descripción del Equipaje -->
+      <div class="section">
+        <h2 class="section-title">
+          <mat-icon>luggage</mat-icon>
+          Descripción del Equipaje
+        </h2>
+        <p class="section-subtitle">Complete la descripción física del equipaje reclamado</p>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="baggageType">Tipo de Equipaje *</label>
+            <select id="baggageType" formControlName="baggageType">
+              <option value="">Seleccione...</option>
+              <option value="01">01 - Maleta Dura (Hard Case)</option>
+              <option value="02">02 - Maleta Semi-Dura</option>
+              <option value="03">03 - Maleta Suave (Soft Case)</option>
+              <option value="04">04 - Bolso de Viaje</option>
+              <option value="05">05 - Mochila</option>
+              <option value="06">06 - Caja/Cartón</option>
+              <option value="22">22 - Bolso Deportivo</option>
+              <option value="25">25 - Maletín/Portafolio</option>
+              <option value="27">27 - Maleta Expandible</option>
+              <option value="99">99 - Otro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="baggageColor">Color Principal *</label>
+            <select id="baggageColor" formControlName="baggageColor">
+              <option value="">Seleccione...</option>
+              <option value="BK">BK - Negro</option>
+              <option value="BU">BU - Azul</option>
+              <option value="GY">GY - Gris</option>
+              <option value="RD">RD - Rojo</option>
+              <option value="GN">GN - Verde</option>
+              <option value="BN">BN - Marrón/Café</option>
+              <option value="WT">WT - Blanco</option>
+              <option value="YW">YW - Amarillo</option>
+              <option value="OR">OR - Naranja</option>
+              <option value="PK">PK - Rosa</option>
+              <option value="PR">PR - Púrpura</option>
+              <option value="MC">MC - Multicolor</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="baggageBrand">Marca</label>
+            <input type="text" id="baggageBrand" formControlName="baggageBrand" placeholder="Ej: Samsonite, American Tourister">
+          </div>
+
+          <div class="form-group">
+            <label for="baggageSize">Tamaño</label>
+            <select id="baggageSize" formControlName="baggageSize">
+              <option value="">Seleccione...</option>
+              <option value="S">Pequeño (Cabin Size)</option>
+              <option value="M">Mediano (23-25")</option>
+              <option value="L">Grande (26-29")</option>
+              <option value="XL">Extra Grande (30"+)</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="baggageDescription">Descripción Adicional *</label>
+            <textarea id="baggageDescription" formControlName="baggageDescription" rows="2"
+              placeholder="Describa características distintivas: stickers, cintas, rayones, marcas visibles, etc."></textarea>
+          </div>
+        </div>
+
+        <!-- Control de Peso -->
+        <div class="weight-control">
+          <h3>Control de Peso (BW / DW)</h3>
+          <div class="weight-grid">
+            <div class="weight-item">
+              <label>Peso Facturado (BW)</label>
+              <div class="input-with-unit">
+                <input type="number" formControlName="registeredWeight" readonly>
+                <span class="unit">kg</span>
+              </div>
+            </div>
+            <div class="weight-item">
+              <label>Peso Entregado (DW)</label>
+              <div class="input-with-unit">
+                <input type="number" formControlName="deliveredWeight" (change)="calculateWeightDifference()">
+                <span class="unit">kg</span>
+              </div>
+            </div>
+            <div class="weight-item difference">
+              <label>Diferencia</label>
+              <div class="input-with-unit">
+                <input type="text" formControlName="weightDifference" readonly>
+                <span class="unit">kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Contenido del Equipaje -->
+      <div class="section">
+        <h2 class="section-title">
+          <mat-icon>inventory_2</mat-icon>
+          Contenido del Equipaje
+        </h2>
+        <p class="section-subtitle">
+          Registre el contenido por categorías (mínimo 3, máximo 12 categorías).
+        </p>
+
+        <div class="content-items" formArrayName="contentItems">
+          <div class="content-item-card" *ngFor="let item of contentItems.controls; let i = index" [formGroupName]="i">
+            <div class="item-header">
+              <span class="item-number">Artículo {{ i + 1 }}</span>
+              <button type="button" class="remove-btn" (click)="removeContentItem(i)" *ngIf="contentItems.length > 3">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <div class="item-form-grid">
+              <div class="form-group category-select">
+                <label>Categoría *</label>
+                <select formControlName="category">
+                  <option value="">Seleccione categoría...</option>
+                  <option *ngFor="let cat of categories" [value]="cat.code">{{ cat.label }}</option>
+                </select>
+                <span class="category-hint" *ngIf="item.get('category')?.value">
+                  {{ getCategoryExamples(item.get('category')?.value) }}
+                </span>
+              </div>
+              <div class="form-group">
+                <label>Cantidad *</label>
+                <input type="number" formControlName="quantity" min="1" placeholder="1">
+              </div>
+              <div class="form-group full-width">
+                <label>Descripción *</label>
+                <input type="text" formControlName="description" placeholder="Describa los artículos específicos">
+              </div>
+              <div class="form-group">
+                <label>Color</label>
+                <input type="text" formControlName="color" placeholder="Color(es)">
+              </div>
+              <div class="form-group">
+                <label>Marca</label>
+                <input type="text" formControlName="brand" placeholder="Marca/Fabricante">
+              </div>
+              <div class="form-group">
+                <label>Valor Aprox. (USD)</label>
+                <input type="number" formControlName="approximateValue" placeholder="0.00">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="add-item-btn" (click)="addContentItem()" *ngIf="contentItems.length < 12">
+          <mat-icon>add_circle</mat-icon>
+          Agregar Categoría de Contenido ({{ contentItems.length }}/12)
+        </button>
+      </div>
+
+      <!-- Sección: Artículos de Valor (Referencial) -->
+      <div class="section warning-section">
+        <h2 class="section-title">
+          <mat-icon>diamond</mat-icon>
+          Artículos de Valor (Referencial)
+        </h2>
+
+        <div class="warning-box">
+          <mat-icon>warning</mat-icon>
+          <p>
+            <strong>IMPORTANTE:</strong> Boliviana de Aviación NO se responsabiliza por artículos de valor, 
+            electrónicos, joyas, dinero, documentos negociables, medicamentos y artículos frágiles contenidos 
+            en el equipaje facturado. Esta información es solo referencial para efectos de búsqueda.
+          </p>
+        </div>
+
+        <div class="valued-items" formArrayName="valuedItems">
+          <div class="valued-item-card" *ngFor="let item of valuedItems.controls; let i = index" [formGroupName]="i">
+            <div class="item-header">
+              <span class="item-number">Artículo Valor {{ i + 1 }} (Ref.)</span>
+              <button type="button" class="remove-btn" (click)="removeValuedItem(i)" *ngIf="valuedItems.length > 0">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <div class="item-form-grid">
+              <div class="form-group">
+                <label>Nombre del Artículo</label>
+                <input type="text" formControlName="itemName" placeholder="Ej: Laptop, Cámara">
+              </div>
+              <div class="form-group">
+                <label>Marca</label>
+                <input type="text" formControlName="brand" placeholder="Marca">
+              </div>
+              <div class="form-group">
+                <label>Modelo</label>
+                <input type="text" formControlName="model" placeholder="Modelo">
+              </div>
+              <div class="form-group">
+                <label>Nro. Serie (Si aplica)</label>
+                <input type="text" formControlName="serialNumber" placeholder="Serial Number">
+              </div>
+              <div class="form-group">
+                <label>Fecha Compra Aprox.</label>
+                <input type="date" formControlName="purchaseDate">
+              </div>
+              <div class="form-group">
+                <label>Valor Compra (USD)</label>
+                <input type="number" formControlName="purchaseValue" placeholder="0.00">
+              </div>
+              <div class="form-group checkbox-group inline">
+                <label>
+                  <input type="checkbox" formControlName="hasReceipt">
+                  Tiene factura/recibo
+                </label>
+              </div>
+              <div class="form-group full-width">
+                <label>Observaciones</label>
+                <input type="text" formControlName="notes" placeholder="Notas adicionales sobre el artículo">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="add-item-btn secondary" (click)="addValuedItem()">
+          <mat-icon>add_circle</mat-icon>
+          Agregar Artículo de Valor (Referencial)
+        </button>
+      </div>
+
+      <!-- Sección: Información Adicional -->
+      <div class="section">
+        <h2 class="section-title">
+          <mat-icon>search</mat-icon>
+          Información Adicional para Búsqueda
+        </h2>
+        <p class="section-subtitle">Datos que facilitan la identificación y localización del equipaje</p>
+
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="distinctiveMarks">Marcas Distintivas Externas</label>
+            <textarea id="distinctiveMarks" formControlName="distinctiveMarks" rows="2"
+              placeholder="Stickers, cintas de colores, etiquetas de identificación, daños previos visibles, etc."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="lockType">Tipo de Candado/Cierre</label>
+            <select id="lockType" formControlName="lockType">
+              <option value="">Seleccione...</option>
+              <option value="NONE">Sin candado</option>
+              <option value="KEY">Candado con llave</option>
+              <option value="COMBINATION">Candado de combinación</option>
+              <option value="TSA">Candado TSA</option>
+              <option value="INTEGRATED">Cerradura integrada</option>
+              <option value="ZIPPER">Solo cierre/cremallera</option>
+            </select>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label>
+              <input type="checkbox" formControlName="hasKeys">
+              El pasajero tiene las llaves
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label for="lockCombination">Combinación (Si aplica)</label>
+            <input type="text" id="lockCombination" formControlName="lockCombination" 
+              placeholder="Ej: 123 o 1234" maxlength="10">
+          </div>
+
+          <div class="form-group full-width">
+            <label for="additionalNotes">Notas Adicionales</label>
+            <textarea id="additionalNotes" formControlName="additionalNotes" rows="3"
+              placeholder="Cualquier información adicional que pueda ayudar en la búsqueda del equipaje..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Declaración y Firma -->
+      <div class="section signature-section">
+        <h2 class="section-title">
+          <mat-icon>draw</mat-icon>
+          Declaración y Firma del Pasajero
+        </h2>
+
+        <div class="declaration-box">
+          <div class="checkbox-declaration">
+            <input type="checkbox" id="passengerDeclaration" formControlName="passengerDeclaration">
+            <label for="passengerDeclaration">
+              Declaro que la información proporcionada en este formulario es verídica y corresponde 
+              al contenido real de mi equipaje al momento de la facturación. Entiendo que Boliviana de Aviación 
+              no se responsabiliza por artículos de valor, electrónicos, joyas, dinero, documentos negociables, 
+              medicamentos y artículos frágiles contenidos en el equipaje facturado, conforme a las políticas 
+              establecidas en el contrato de transporte y el Manual de Servicios Aeroportuarios (MSA Parte C).
+            </label>
+          </div>
+        </div>
+
+        <div class="signature-grid">
+          <div class="form-group">
+            <label for="passengerSignature">Firma del Pasajero (Nombre Completo) *</label>
+            <input type="text" id="passengerSignature" formControlName="passengerSignature" 
+              class="signature-input" placeholder="Escriba su nombre completo como firma">
+          </div>
+          <div class="form-group">
+            <label for="signatureDate">Fecha *</label>
+            <input type="date" id="signatureDate" formControlName="signatureDate">
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones del Formulario -->
+      <div class="form-actions">
+        <div class="actions-left">
+          <button type="button" class="btn btn-outline" (click)="cancelEdit()">
+            <mat-icon>close</mat-icon>
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="printForm()">
+            <mat-icon>print</mat-icon>
+            Imprimir
+          </button>
+        </div>
+        <div class="actions-right">
+          <button type="submit" class="btn btn-primary" [disabled]="isSaving || contentForm.invalid">
+            <mat-icon>save</mat-icon>
+            {{ isSaving ? 'Guardando...' : 'Guardar Formulario' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

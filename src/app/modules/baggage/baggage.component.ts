@@ -1,21 +1,40 @@
-import { Component, type OnInit } from "@angular/core"
+import { Component,  OnInit,  OnDestroy } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { RouterLink, RouterOutlet } from "@angular/router"
+import {  Router, RouterLink, RouterOutlet } from "@angular/router"
 import { MatIconModule } from "@angular/material/icon"
+import  { HttpClient } from "@angular/common/http"
+import { Subject } from "rxjs"
+import { takeUntil } from "rxjs/operators"
 
 interface MetricCard {
   title: string
-  value: number
+  value: number | string
   icon: string
   color: string
+  type?: "number" | "currency" | "days"
+}
+
+interface AlertCard {
+  tipo: string
+  mensaje: string
+  cantidad: number
+  color: string
+  icon: string
+  diasMin: number
+  diasMax?: number
 }
 
 interface RecentClaim {
+  id?: string
   pir: string
   pasajero: string
+  tipo: "AHL" | "DAMAGED" | "PILFERED"
   bagTag: string
-  estado: "En proceso" | "Cerrado" | "Pendiente"
+  estado: "DRAFT" | "REGISTERED" | "PROCESSING" | "RESOLVED" | "CLOSED" | "PENDING"
   fecha: string
+  vuelo: string
+  ruta: string
+  diasTranscurridos?: number
 }
 
 @Component({
@@ -25,81 +44,259 @@ interface RecentClaim {
   templateUrl: "./baggage.component.html",
   styleUrl: "./baggage.component.scss",
 })
-export class BaggageComponent implements OnInit {
+export class BaggageComponent implements OnInit, OnDestroy {
   metrics: MetricCard[] = [
     {
-      title: "Total de Reclamos",
-      value: 127,
-      icon: "receipt_long",
+      title: "Reclamos Activos",
+      value: 0,
+      icon: "pending_actions",
       color: "#003366",
+      type: "number",
     },
     {
-      title: "En Proceso",
-      value: 23,
-      icon: "schedule",
-      color: "#0066cc",
+      title: "Requieren Atención",
+      value: 0,
+      icon: "warning",
+      color: "#f57c00",
+      type: "number",
     },
     {
-      title: "Resueltos",
-      value: 89,
+      title: "Cerrados este Mes",
+      value: 0,
       icon: "check_circle",
       color: "#00a651",
+      type: "number",
     },
     {
-      title: "Indemnización Total",
-      value: 15750,
-      icon: "payment",
-      color: "#ff9800",
+      title: "Tiempo Promedio (días)",
+      value: 0,
+      icon: "schedule",
+      color: "#1976d2",
+      type: "days",
     },
   ]
 
-  recentClaims: RecentClaim[] = [
-    {
-      pir: "PIR001234",
-      pasajero: "Juan Pérez",
-      bagTag: "BA789456",
-      estado: "En proceso",
-      fecha: "2024-01-15",
-    },
-    {
-      pir: "PIR001235",
-      pasajero: "María García",
-      bagTag: "BA789457",
-      estado: "Cerrado",
-      fecha: "2024-01-14",
-    },
-    {
-      pir: "PIR001236",
-      pasajero: "Carlos López",
-      bagTag: "BA789458",
-      estado: "Pendiente",
-      fecha: "2024-01-13",
-    },
-    {
-      pir: "PIR001236",
-      pasajero: "Carlos López",
-      bagTag: "BA789458",
-      estado: "Pendiente",
-      fecha: "2024-01-13",
-    },
-  ]
+  alertas: AlertCard[] = []
+
+  recentClaims: RecentClaim[] = []
+  loading = true
+  private destroy$ = new Subject<void>()
+  private readonly apiUrl = "http://localhost:3700/api/v1/claims/list"
+
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData()
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next()
+    this.destroy$.complete()
+  }
+
   private loadDashboardData(): void {
     console.log("[v0] Loading baggage dashboard data")
+    this.loading = true
+
+    this.http
+      .get<any[]>(this.apiUrl)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          console.log("[v0] Datos del backend recibidos:", data)
+
+          // Mapear datos del backend a la interfaz RecentClaim
+          const mappedClaims: RecentClaim[] = data.map((item) => {
+            const nameParts = item.Pasajero.split(" ")
+            const lastName = nameParts.shift() || ""
+            const firstName = nameParts.join(" ") || ""
+
+            const fechaReclamo = new Date(item.Fecha)
+            const hoy = new Date()
+            const diasTranscurridos = Math.floor((hoy.getTime() - fechaReclamo.getTime()) / (1000 * 60 * 60 * 24))
+
+            return {
+              id: item.PIR,
+              pir: item.PIR,
+              pasajero: `${lastName}, ${firstName}`,
+              tipo: item.Tipo,
+              bagTag: item.BagTag ?? "",
+              estado: item.Estado,
+              fecha: new Date(item.Fecha).toLocaleDateString("es-BO", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              }),
+              vuelo: item.Vuelo ?? "",
+              ruta: item.Ruta,
+              diasTranscurridos,
+            }
+          })
+
+          this.calcularMetricas(mappedClaims)
+
+          this.calcularAlertas(mappedClaims)
+
+          // Ordenar por fecha más reciente y obtener los últimos 5
+          this.recentClaims = mappedClaims
+            .sort((a, b) => {
+              const dateA = new Date(a.fecha.split("/").reverse().join("-"))
+              const dateB = new Date(b.fecha.split("/").reverse().join("-"))
+              return dateB.getTime() - dateA.getTime()
+            })
+            .slice(0, 5)
+
+          console.log("[v0] Reclamos recientes procesados:", this.recentClaims)
+          this.loading = false
+        },
+        error: (err) => {
+          console.error("[v0] Error cargando reclamos", err)
+          this.loading = false
+        },
+      })
+  }
+
+  private calcularMetricas(claims: RecentClaim[]): void {
+    const activos = claims.filter((c) => c.estado !== "CLOSED" && c.estado !== "RESOLVED").length
+
+    const requierenAtencion = claims.filter(
+      (c) => c.estado !== "CLOSED" && c.estado !== "RESOLVED" && (c.diasTranscurridos || 0) >= 3,
+    ).length
+
+    const hoy = new Date()
+    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1)
+    const cerradosEsteMes = claims.filter((c) => {
+      const fechaClaim = new Date(c.fecha.split("/").reverse().join("-"))
+      return (c.estado === "CLOSED" || c.estado === "RESOLVED") && fechaClaim >= inicioMes
+    }).length
+
+    const tiempoPromedio =
+      claims.length > 0 ? Math.round(claims.reduce((acc, c) => acc + (c.diasTranscurridos || 0), 0) / claims.length) : 0
+
+    this.metrics = [
+      {
+        title: "Reclamos Activos",
+        value: activos,
+        icon: "pending_actions",
+        color: "#003366",
+        type: "number",
+      },
+      {
+        title: "Requieren Atención",
+        value: requierenAtencion,
+        icon: "warning",
+        color: "#f57c00",
+        type: "number",
+      },
+      {
+        title: "Cerrados este Mes",
+        value: cerradosEsteMes,
+        icon: "check_circle",
+        color: "#00a651",
+        type: "number",
+      },
+      {
+        title: "Tiempo Promedio",
+        value: `${tiempoPromedio} días`,
+        icon: "schedule",
+        color: "#1976d2",
+        type: "days",
+      },
+    ]
+  }
+
+  private calcularAlertas(claims: RecentClaim[]): void {
+    const activeClaims = claims.filter((c) => c.estado !== "CLOSED" && c.estado !== "RESOLVED")
+
+    // Solo AHL tienen alertas por tiempo
+    const ahlClaims = activeClaims.filter((c) => c.tipo === "AHL")
+
+    const masde21 = ahlClaims.filter((c) => (c.diasTranscurridos || 0) >= 21).length
+    const entre3y21 = ahlClaims.filter((c) => {
+      const dias = c.diasTranscurridos || 0
+      return dias >= 3 && dias < 21
+    }).length
+    const entre1y3 = ahlClaims.filter((c) => {
+      const dias = c.diasTranscurridos || 0
+      return dias >= 1 && dias < 3
+    }).length
+
+    this.alertas = []
+
+    if (masde21 > 0) {
+      this.alertas.push({
+        tipo: "INDEMNIZAR",
+        mensaje: "Reclamos que superan 21 días - Proceder con indemnización",
+        cantidad: masde21,
+        color: "#d32f2f",
+        icon: "paid",
+        diasMin: 21,
+      })
+    }
+
+    if (entre3y21 > 0) {
+      this.alertas.push({
+        tipo: "CONTENIDO",
+        mensaje: "Reclamos entre 3-21 días - Solicitar formulario de contenido",
+        cantidad: entre3y21,
+        color: "#f57c00",
+        icon: "assignment",
+        diasMin: 3,
+        diasMax: 21,
+      })
+    }
+
+    if (entre1y3 > 0) {
+      this.alertas.push({
+        tipo: "BÚSQUEDA",
+        mensaje: "Reclamos entre 1-3 días - Iniciar búsqueda internacional",
+        cantidad: entre1y3,
+        color: "#1976d2",
+        icon: "search",
+        diasMin: 1,
+        diasMax: 3,
+      })
+    }
+  }
+
+  navigateToClaim(claimId: string): void {
+    this.router.navigate(["/baggage/claim/view", claimId])
+  }
+
+  navigateToReports(): void {
+    this.router.navigate(["/baggage/reports"])
   }
 
   getStatusBadgeClass(estado: string): string {
     switch (estado) {
-      case "Pendiente":
+      case "DRAFT":
+        return "badge-draft"
+      case "REGISTERED":
+        return "badge-registered"
+      case "PROCESSING":
+        return "badge-processing"
+      case "RESOLVED":
+        return "badge-resolved"
+      case "CLOSED":
+        return "badge-closed"
+      case "PENDING":
         return "badge-warning"
-      case "En proceso":
-        return "badge-info"
-      case "Cerrado":
-        return "badge-success"
+      default:
+        return "badge-default"
+    }
+  }
+
+  getTypeBadgeClass(tipo: string): string {
+    switch (tipo) {
+      case "AHL":
+        return "badge-ahl"
+      case "DAMAGED":
+        return "badge-damaged"
+      case "PILFERED":
+        return "badge-pilfered"
       default:
         return "badge-default"
     }
@@ -107,14 +304,22 @@ export class BaggageComponent implements OnInit {
 
   getStatusColor(estado: string): string {
     switch (estado) {
-      case "Pendiente":
+      case "PENDING":
         return "#ff9800"
-      case "En proceso":
+      case "PROCESSING":
         return "#0066cc"
-      case "Cerrado":
+      case "CLOSED":
         return "#00a651"
       default:
         return "#666"
     }
+  }
+
+  getDaysClass(dias: number | undefined): string {
+    if (!dias) return ""
+    if (dias >= 21) return "days-danger"
+    if (dias >= 3) return "days-warning"
+    if (dias >= 1) return "days-info"
+    return ""
   }
 }
