@@ -199,7 +199,7 @@
         <tbody>
           <tr 
             *ngFor="let claim of paginatedClaims" 
-            class="claim-row"
+            class="claim-row clickable-row"
             (click)="navigateToClaim(claim.id)"
           >
             <td class="cell-id">{{ claim.id }}</td>
