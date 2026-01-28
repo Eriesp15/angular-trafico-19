@@ -16,7 +16,8 @@ import { firstValueFrom } from 'rxjs';
 
 import { FollowService, FollowEntryDto, ClaimViewDto } from 'app/modules/baggage/services/follow.service';
 import { ApiClaimService } from '../services/api-claim.service';
-
+import { UserService } from 'app/core/user/user.service';
+import { User } from 'app/core/user/user.types';
 type Canal = 'whatsapp' | 'email' | 'nota';
 
 type SeguimientoRow = {
@@ -40,6 +41,10 @@ type LlamadaRow = {
     obsTouched?: boolean;
     sentAt?: string;
     autoObs?: string;
+};
+type AppUser = {
+    name?: string;
+    email?: string;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -136,21 +141,37 @@ export class FollowComponent implements OnInit {
     llamadas: LlamadaRow[] = [];
 
     constructor(
+        private userService: UserService,
         private route: ActivatedRoute,
         private followService: FollowService,
         private dialog: MatDialog,
         private outbox: OutboxService,
         private snack: MatSnackBar
-    ) {}
+    ){}
+
+    currentUserName = '';
 
     async ngOnInit(): Promise<void> {
+
+        // Escuchar usuario autenticado
+        this.userService.user$.subscribe((user: User) => {
+            this.currentUserName =
+                user?.name ||
+                user?.email ||
+                '';
+        });
+
+        // PIR
         const pir = this.route.snapshot.paramMap.get('pir') ?? '';
         if (!pir) {
             this.snack.open('Falta el PIR en la URL.', 'Cerrar', { duration: 3000 });
             return;
         }
+
         await this.loadFromBackend(pir);
     }
+
+
 
     private async loadFromBackend(pir: string): Promise<void> {
         this.loading = true;
@@ -167,7 +188,6 @@ export class FollowComponent implements OnInit {
                 correo: '', // si el backend luego manda email, lo conectas
             };
 
-            // entries (robusto porque en tu JSON aparece repetido en follow y claim.follow)
             const entries =
                 response.follow?.entries ??
                 response.claim?.follow?.entries ??
@@ -179,7 +199,14 @@ export class FollowComponent implements OnInit {
 
             this.seguimientos = sorted
                 .filter(e => e.channel !== 'CALL')
-                .map(e => this.toSeguimientoRow(e));
+                .map(e => {
+                    const row = this.toSeguimientoRow(e);
+                    if (!row.encargado) {
+                        row.encargado = this.currentUserName;
+                    }
+                    return row;
+                });
+
 
             this.llamadas = sorted
                 .filter(e => e.channel === 'CALL')
@@ -288,9 +315,17 @@ export class FollowComponent implements OnInit {
     addSeguimientoRow(): void {
         this.seguimientos = [
             ...this.seguimientos,
-            { fecha: this.todayDDMMYYYY(), hora: this.nowHM(), encargado: '', info: '', locked: false },
+            {
+                fecha: this.todayDDMMYYYY(),
+                hora: this.nowHM(),
+                encargado: this.currentUserName,
+                info: '',
+                locked: false,
+                canal: 'nota',
+            },
         ];
     }
+
 
     addLlamadaRow(): void {
         const base: LlamadaRow = {
@@ -502,4 +537,11 @@ export class FollowComponent implements OnInit {
         const nombre = (aQuien || '').trim();
         return nombre ? `Se hizo una llamada al ${nombre}.` : 'Se registró una llamada.';
     }
+    autoGrow(ev: Event): void {
+        const el = ev.target as HTMLTextAreaElement;
+        if (!el) return;
+        el.style.height = 'auto';
+        el.style.height = `${el.scrollHeight}px`;
+    }
+
 }
