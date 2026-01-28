@@ -266,7 +266,7 @@ export class NewClaimComponent implements OnInit {
 
   crearContenido(): FormGroup {
     return this.fb.group({
-      content: ['', Validators.required]
+      description: ['', Validators.required]
     });
   }
 
