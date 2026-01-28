@@ -105,7 +105,7 @@ export class NewClaimComponent implements OnInit {
 
   claimType = [
     { valor: 'AHL', etiqueta: 'AHL' },
-    { valor: 'DAMAGED', etiqueta: 'Damaged' },
+    { valor: 'DPR', etiqueta: 'Damaged' },
     { valor: 'PILFERED', etiqueta: 'Pilfered' }
   ];
 
