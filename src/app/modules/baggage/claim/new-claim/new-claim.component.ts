@@ -329,10 +329,11 @@ export class NewClaimComponent implements OnInit {
       this.claimService.createClaim(datos).subscribe({
         next: (response) => {
           console.log('Éxito:', response);
+          const pirNumber = response.pirNumber;
           alert('Claim creado exitosamente');
           // this.pIR.reset();  // Limpia el formulario, si se quisiera hacer varios
           // redirige a lista de reclamos
-          this.router.navigate(['/baggage/claim/list']);
+          this.router.navigate(['/baggage/claim/view', pirNumber]);
         },
         error: (error) => {
           console.error('Error:', error);
