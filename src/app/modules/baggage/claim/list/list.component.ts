@@ -235,13 +235,18 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   statusLabels: Record<string, string> = {
-    ABIERTO: "Abierto",
-    CERRADO: "Cerrado",
-    ANULADO: "Anulado",
-  }
+    PENDING: 'Pendiente',
+    IN_PROCESS: 'En proceso',
+    PURCHASED: 'Comprado',
+    REPAIRED: 'Reparado',
+    LOST: 'Perdido',
+    FOUND: 'Encontrado',
+    COMPENSATED: 'Indemnizado',
+    CLOSED: 'Cerrado'
+  };
 
   getStatusLabel(status: string): string {
-    return this.statusLabels[status] ?? status
+    return this.statusLabels[status] ?? status;
   }
 
   tipoLabels: Record<string, string> = {
