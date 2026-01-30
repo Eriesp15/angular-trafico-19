@@ -1,19 +1,22 @@
 import { Component, type OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { FormsModule, ReactiveFormsModule, FormBuilder, type FormGroup, Validators } from "@angular/forms"
-import { ActivatedRoute, Router, RouterModule } from "@angular/router"
+import { FormsModule, ReactiveFormsModule,  FormBuilder,  FormGroup, Validators } from "@angular/forms"
+import {  ActivatedRoute,  Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
 import { MatSelectModule } from "@angular/material/select"
 import { MatFormFieldModule } from "@angular/material/form-field"
 import { MatInputModule } from "@angular/material/input"
 import { MatRadioModule } from "@angular/material/radio"
+import { AEROPUERTOS_BOA } from "../../models/claim-type-config.model"
 
 interface ConfirmationData {
   tipo: string
-  ubicacion?: string
-  empresa?: string
-  departamento?: string
+  direccion?: string
+  telefono?: string
+  referencia?: string
+  aeropuerto?: string
+  nombreAeropuerto?: string
 }
 
 @Component({
@@ -37,19 +40,16 @@ interface ConfirmationData {
 export class MakeDeliveryComponent implements OnInit {
   claimId = ""
   deliveryForm!: FormGroup
-  selectedDeliveryType = "recojo"
+  selectedDeliveryType = "aeropuerto"
   showConfirmation = false
   confirmationData: ConfirmationData | null = null
 
   deliveryTypes = [
-    { value: "envio", label: "Envío" },
-    { value: "aeropuerto", label: "Mandar a Aeropuerto" },
-    { value: "recojo", label: "Recojo en el Aeropuerto" },
+    { value: "domicilio", label: "Envío a Domicilio", icon: "home" },
+    { value: "aeropuerto", label: "Entrega en Aeropuerto", icon: "flight" },
   ]
 
-  departments = ["La Paz", "Cochabamba", "Santa Cruz", "Tarija", "Potosí", "Sucre", "Oruro", "Beni", "Pando"]
-
-  shippingCompanies = ["Aeropuerto taxis", "El Jardin Radiomovil", "TotalExpress", "Taller Moto"]
+  aeropuertos = AEROPUERTOS_BOA
 
   constructor(
     private route: ActivatedRoute,
@@ -64,10 +64,13 @@ export class MakeDeliveryComponent implements OnInit {
 
   initializeForm(): void {
     this.deliveryForm = this.fb.group({
-      tipo: ["recojo", Validators.required],
-      ubicacion: [""],
-      empresa: [""],
-      departamento: [""],
+      tipo: ["aeropuerto", Validators.required],
+      // Campos para envío a domicilio
+      direccion: [""],
+      telefono: [""],
+      referencia: [""],
+      // Campo para entrega en aeropuerto
+      aeropuerto: [""],
     })
 
     this.deliveryForm.get("tipo")?.valueChanges.subscribe((value) => {
@@ -77,32 +80,28 @@ export class MakeDeliveryComponent implements OnInit {
   }
 
   updateFormValidators(): void {
-    const ubicacionControl = this.deliveryForm.get("ubicacion")
-    const empresaControl = this.deliveryForm.get("empresa")
-    const departamentoControl = this.deliveryForm.get("departamento")
+    const direccionControl = this.deliveryForm.get("direccion")
+    const telefonoControl = this.deliveryForm.get("telefono")
+    const aeropuertoControl = this.deliveryForm.get("aeropuerto")
 
-    // Clear validators
-    ubicacionControl?.clearAsyncValidators()
-    empresaControl?.clearAsyncValidators()
-    departamentoControl?.clearAsyncValidators()
+    // Limpiar validadores
+    direccionControl?.clearValidators()
+    telefonoControl?.clearValidators()
+    aeropuertoControl?.clearValidators()
 
-    if (this.selectedDeliveryType === "envio") {
-      ubicacionControl?.setValidators([Validators.required])
-      empresaControl?.setValidators([Validators.required])
-      departamentoControl?.clearValidators()
+    if (this.selectedDeliveryType === "domicilio") {
+      direccionControl?.setValidators([Validators.required])
+      telefonoControl?.setValidators([Validators.required])
+      aeropuertoControl?.clearValidators()
     } else if (this.selectedDeliveryType === "aeropuerto") {
-      ubicacionControl?.clearValidators()
-      empresaControl?.clearValidators()
-      departamentoControl?.setValidators([Validators.required])
-    } else if (this.selectedDeliveryType === "recojo") {
-      ubicacionControl?.clearValidators()
-      empresaControl?.clearValidators()
-      departamentoControl?.clearValidators()
+      direccionControl?.clearValidators()
+      telefonoControl?.clearValidators()
+      aeropuertoControl?.setValidators([Validators.required])
     }
 
-    ubicacionControl?.updateValueAndValidity()
-    empresaControl?.updateValueAndValidity()
-    departamentoControl?.updateValueAndValidity()
+    direccionControl?.updateValueAndValidity()
+    telefonoControl?.updateValueAndValidity()
+    aeropuertoControl?.updateValueAndValidity()
   }
 
   aceptar(): void {
@@ -111,11 +110,21 @@ export class MakeDeliveryComponent implements OnInit {
     }
 
     const formValue = this.deliveryForm.value
-    this.confirmationData = {
-      tipo: this.getDeliveryTypeLabel(formValue.tipo),
-      ubicacion: formValue.ubicacion || undefined,
-      empresa: formValue.empresa || undefined,
-      departamento: formValue.departamento || undefined,
+
+    if (formValue.tipo === "domicilio") {
+      this.confirmationData = {
+        tipo: "Envío a Domicilio",
+        direccion: formValue.direccion,
+        telefono: formValue.telefono,
+        referencia: formValue.referencia || undefined,
+      }
+    } else {
+      const aeropuertoSeleccionado = this.aeropuertos.find((a) => a.codigo === formValue.aeropuerto)
+      this.confirmationData = {
+        tipo: "Entrega en Aeropuerto",
+        aeropuerto: formValue.aeropuerto,
+        nombreAeropuerto: aeropuertoSeleccionado?.nombre,
+      }
     }
 
     this.showConfirmation = true

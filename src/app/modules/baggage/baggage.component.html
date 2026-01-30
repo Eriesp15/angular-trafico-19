@@ -3,21 +3,38 @@
   <div class="dashboard-header">
     <div class="header-content">
       <h1>Dashboard de Equipaje</h1>
-      <p class="header-subtitle">Gestión de reclamos y equipaje</p>
+      <p class="header-subtitle">Gestión de reclamos y equipaje - Boliviana de Aviación</p>
     </div>
   </div>
 
   <!-- Metrics Grid -->
   <div class="metrics-grid">
     <div *ngFor="let metric of metrics" class="metric-card" [style.border-top]="'4px solid ' + metric.color">
-      <div class="metric-icon">
+      <div class="metric-icon" [style.background-color]="metric.color">
         <mat-icon>{{ metric.icon }}</mat-icon>
       </div>
       <div class="metric-content">
         <h3 class="metric-title">{{ metric.title }}</h3>
-        <p class="metric-value">
-          {{ metric.title.includes("Indemnización") ? ('$' + metric.value) : metric.value }}
-        </p>
+        <p class="metric-value">{{ metric.value }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alertas por días transcurridos -->
+  <div class="alerts-section" *ngIf="alertas.length > 0">
+    <h2>Alertas de Seguimiento</h2>
+    <div class="alerts-grid">
+      <div class="alert-card" *ngFor="let alerta of alertas" [style.border-left-color]="alerta.color">
+        <div class="alert-icon" [style.background-color]="alerta.color">
+          <mat-icon>{{ alerta.icon }}</mat-icon>
+        </div>
+        <div class="alert-content">
+          <div class="alert-header">
+            <span class="alert-tipo">{{ alerta.tipo }}</span>
+            <span class="alert-cantidad" [style.background-color]="alerta.color">{{ alerta.cantidad }}</span>
+          </div>
+          <p class="alert-mensaje">{{ alerta.mensaje }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -34,7 +51,8 @@
         <mat-icon class="action-icon">list_alt</mat-icon>
         <span>Ver Reclamos</span>
       </button>
-      <button class="action-btn action-report">
+      <!-- Botón de reportes funcional -->
+      <button (click)="navigateToReports()" class="action-btn action-report">
         <mat-icon class="action-icon">bar_chart</mat-icon>
         <span>Reportes</span>
       </button>
@@ -64,12 +82,13 @@
             <th>Vuelo</th>
             <th>Ruta</th>
             <th>Fecha</th>
+            <!-- Nueva columna de días -->
+            <th>Días</th>
             <th>BagTag</th>
             <th>Estado</th>
           </tr>
         </thead>
         <tbody>
-          <!-- Removed actions column and made entire row clickable -->
           <tr *ngFor="let claim of recentClaims" class="table-row clickable-row" (click)="navigateToClaim(claim.pir!)">
             <td class="cell-pir">{{ claim.pir }}</td>
             <td class="cell-type">
@@ -81,6 +100,10 @@
             <td class="cell-flight">{{ claim.vuelo }}</td>
             <td class="cell-route">{{ claim.ruta }}</td>
             <td class="cell-date">{{ claim.fecha }}</td>
+            <!-- Mostrar días con color según urgencia -->
+            <td class="cell-days" [ngClass]="getDaysClass(claim.diasTranscurridos)">
+              {{ claim.diasTranscurridos }}
+            </td>
             <td class="cell-bagtag">{{ claim.bagTag }}</td>
             <td class="cell-status">
               <span [class]="'status-badge ' + getStatusBadgeClass(claim.estado)">
