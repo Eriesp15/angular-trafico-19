@@ -33,30 +33,14 @@
 
   <div class="form-group">
     <h3>Tipo de Reclamo *</h3>
-    
     <div class="tipo-reclamo-grid">
-      <label class="tipo-card" 
-            [class.selected]="pIR.get('claimType')?.value === 'AHL'">
+      <label *ngFor="let tipo of claimType" 
+            class="tipo-card" 
+            [class.selected]="pIR.get('claimType')?.value === tipo.valor">
         <input type="radio" 
               formControlName="claimType" 
-              value="AHL">
-        <span class="tipo-label">AHL</span>
-      </label>
-      
-      <label class="tipo-card" 
-            [class.selected]="pIR.get('claimType')?.value === 'DAMAGED'">
-        <input type="radio" 
-              formControlName="claimType" 
-              value="DAMAGED">
-        <span class="tipo-label">DAMAGED</span>
-      </label>
-      
-      <label class="tipo-card" 
-            [class.selected]="pIR.get('claimType')?.value === 'PILFERED'">
-        <input type="radio" 
-              formControlName="claimType" 
-              value="PILFERED">
-        <span class="tipo-label">PILFERED</span>
+              [value]="tipo.valor">
+        <span class="tipo-label">{{ tipo.etiqueta }}</span>
       </label>
     </div>
   </div>
@@ -75,6 +59,7 @@
       <input type="text" formControlName="reference" placeholder="Referencia">
     </div>
   </div>
+  
   <div class="section">
     <div class="form-field">
       <label>Apellidos del pasajero</label>
@@ -237,11 +222,11 @@
 
   <div class="form-group" formArrayName="contents">
     <h2>Contenido</h2>
-    <div *ngFor="let content of contents.controls; let i = index" class="ruta-item">
+    <div *ngFor="let description of contents.controls; let i = index" class="ruta-item">
       <div [formGroupName]="i">
         
         <div class="form-field">
-          <input type="text" formControlName="mark" placeholder="Contenido {{ i + 1 }}">
+          <input type="text" formControlName="description" placeholder="Contenido {{ i + 1 }}">
         </div>
         
         <button type="button" 
@@ -260,7 +245,248 @@
       + Agregar Contenido
     </button>
   </div>
-  
+
+  <div class="section">
+    <div class="form-field">
+      <label>Direccion Permanente</label>
+      <input type="text" formControlName="permanentAddress" placeholder="Direccion Permanente">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Direccion Temporal</label>
+      <input type="text" formControlName="temporaryAddress" placeholder="Direccion Temporal">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Correo electrónico</label>
+      <input type="email" formControlName="email" placeholder="Email">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Telefono Permanente</label>
+      <input type="text" formControlName="permanentPhone" placeholder="Telefono Permanente">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Telefono Temporal</label>
+      <input type="text" formControlName="temporaryPhone" placeholder="Telefono Temporal">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Instrucciones de entrega</label>
+      <input type="text" formControlName="deliveryInstructions" placeholder="Instrucciones de entrega">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Informacion adicional</label>
+      <input type="text" formControlName="additionalInfo" placeholder="Informacion adicional">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Peso del Equipaje Facturado</label>
+      <input type="number" formControlName="checkedBaggageWeight" placeholder="Peso del Equipaje Facturado">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Peso del Equipaje Entregado</label>
+      <input type="number" formControlName="deliveredBaggageWeight" placeholder="Peso del Equipaje Entregado">
+    </div>
+  </div>
+
+  <div class="form-field">
+    <label>Diferencia de Peso (kg)</label>
+    <input type="number" 
+          formControlName="weightDifference" 
+          placeholder="Se calcula automáticamente"
+          readonly
+          class="readonly-field">
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Idioma</label>
+      <input type="text" formControlName="language" placeholder="Idioma">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Numero de Pasaporte</label>
+      <input type="text" formControlName="passportNumber" placeholder="Numero de Pasaporte">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Numero de Ticket</label>
+      <input type="text" formControlName="ticketNumber" placeholder="Numero de Ticket">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>PNR</label>
+      <input type="text" formControlName="pnr" placeholder="PNR">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>frequent flyer id</label>
+      <input type="text" formControlName="frequentFlyerId" placeholder="frequent flyer id">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Razon de Perdida</label>
+      <input type="text" formControlName="lossReason" placeholder="Razon de Perdida">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Estacion de Fallo</label>
+      <input type="text" formControlName="faultStation" placeholder="Estacion de Fallo">
+    </div>
+  </div>
+
+  <div class="seguro-section">
+    <h3>¿Tiene seguro? *</h3>
+    
+    <div class="seguro-grid">
+      <label class="seguro-card" 
+            [class.selected]="pIR.get('hasInsurance')?.value === true">
+        <input type="radio" 
+              formControlName="hasInsurance" 
+              [value]="true">
+        <span class="seguro-label">Sí</span>
+      </label>
+      
+      <label class="seguro-card" 
+            [class.selected]="pIR.get('hasInsurance')?.value === false">
+        <input type="radio" 
+              formControlName="hasInsurance" 
+              [value]="false">
+        <span class="seguro-label">No</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="seguro-section">
+    <h3>¿Maletas cerradas necesitan llave? *</h3>
+    
+    <div class="seguro-grid">
+      <label class="seguro-card" 
+            [class.selected]="pIR.get('keysAttached')?.value === true">
+        <input type="radio" 
+              formControlName="keysAttached" 
+              [value]="true">
+        <span class="seguro-label">Sí</span>
+      </label>
+      
+      <label class="seguro-card" 
+            [class.selected]="pIR.get('keysAttached')?.value === false">
+        <input type="radio" 
+              formControlName="keysAttached" 
+              [value]="false">
+        <span class="seguro-label">No</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Combinacion de Cerradura</label>
+      <input type="text" formControlName="lockCombination" placeholder="Combinacion de Cerradura">
+    </div>
+  </div>
+
+  <div class="seguro-section">
+    <h3>Kit de noche hombre o mujer *</h3>
+    
+    <div class="seguro-grid">
+      <label class="seguro-card" 
+            [class.selected]="pIR.get('nightKit')?.value === true">
+        <input type="radio" 
+              formControlName="nightKit" 
+              [value]="true">
+        <span class="seguro-label">Hombre</span>
+      </label>
+      
+      <label class="seguro-card" 
+            [class.selected]="pIR.get('nightKit')?.value === false">
+        <input type="radio" 
+              formControlName="nightKit" 
+              [value]="false">
+        <span class="seguro-label">Mujer</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <h3>Tipo de Daño *</h3>
+    <div class="tipo-reclamo-grid">
+      <label *ngFor="let tipo of damageType" 
+            class="tipo-card" 
+            [class.selected]="pIR.get('damageType')?.value === tipo.valor">
+        <input type="radio" 
+              formControlName="damageType" 
+              [value]="tipo.valor">
+        <span class="tipo-label">{{ tipo.etiqueta }}</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <h3>Condicion del equipaje *</h3>
+    <div class="tipo-reclamo-grid">
+      <label *ngFor="let condicion of condition" 
+            class="tipo-card" 
+            [class.selected]="pIR.get('condition')?.value === condicion.valor">
+        <input type="radio" 
+              formControlName="condition" 
+              [value]="condicion.valor">
+        <span class="tipo-label">{{ condicion.etiqueta }}</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="ubicaciones-danio-section">
+    <h3>Ubicación del Daño</h3>
+    <p>Seleccione todas las ubicaciones con daño:</p>
+    
+    <div class="ubicaciones-grid">
+      <label *ngFor="let location of damageLocations" 
+            class="ubicacion-card"
+            [class.selected]="isUbicacionSelected(location.valor)">
+        <input type="checkbox"
+              [checked]="isUbicacionSelected(location.valor)"
+              (change)="onUbicacionChange($event, location.valor)">
+        <span class="ubicacion-label">{{ location.etiqueta }}</span>
+      </label>
+    </div>
+
+    <div *ngIf="damageLocationsArray.length === 0" class="sin-seleccion">
+      No se han seleccionado ubicaciones
+    </div>
+  </div>
 
   <div class="section">
     <button type="submit" 

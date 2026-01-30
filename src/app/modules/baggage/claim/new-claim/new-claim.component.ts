@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ClaimService } from '../../../../services/claim.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-claim',
@@ -15,28 +16,84 @@ export class NewClaimComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private claimService: ClaimService
+    private claimService: ClaimService,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.pIR = this.fb.group({
+      //linea 1
       route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
-      bagtags: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
-      bagDescription: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
-      traceRoute: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
-      flightNumber: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
-      bagIdentification: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
-      contents: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      //linea 2
       airport: ['', Validators.required],
+      //linea 2.1
+      claimType: ['', Validators.required],
+      //linea 3
       airportText: ['', Validators.required],
       airline: ['', Validators.required],
       reference: ['', Validators.required],
-      claimType: ['', Validators.required],
-
+      //linea 4
       passengerName: ['', Validators.required],
       passengerLastName: ['', Validators.required],
+      //linea 5
       initials: ['', Validators.required],
+      //linea 6
+      bagtags: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      //linea 7
+      bagDescription: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      //linea 8
+      traceRoute: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      //linea 9
+      flightNumber: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      //linea 10
+      bagIdentification: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      //linea 11
+      contents: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      //linea 12
+      permanentAddress: [''],
+      //linea 13
+      temporaryAddress: [''],
+      //linea anadida
+      email: ['', [Validators.required, Validators.email]],
+      //linea 14
+      permanentPhone: [''],
+      temporaryPhone: [''],
+      //linea 15
+      deliveryInstructions: [''],
+      //linea 16
+      additionalInfo: [''],
+      //equipaje facturado
+      checkedBaggageWeight: [null, [Validators.required, Validators.min(0)]],
+      //equipaje entregado
+      deliveredBaggageWeight: [null, [Validators.required, Validators.min(0)]],
+      //diferencia de peso
+      weightDifference: [null],
+      language: [''],
+      passportNumber: [''],
+      ticketNumber: [''],
+      pnr: [''],
+      frequentFlyerId: [''],
+      lossReason: [''],
+      faultStation: [''],
+      hasInsurance: [null, Validators.required],
+      keysAttached: [null],
+      lockCombination: [''],
+      nightKit: [null],
+      damageType: [''],
+      condition: [''],
+      damageLocations: this.fb.array([])
+      
+      
+
     });
+
+    this.pIR.get('checkedBaggageWeight')?.valueChanges.subscribe(() => {
+      this.calcularDiferenciaPeso();
+    });
+    this.pIR.get('deliveredBaggageWeight')?.valueChanges.subscribe(() => {
+      this.calcularDiferenciaPeso();
+    });
+  
     
     // Inicializar con 2 rutas por defecto
     this.agregarRuta();
@@ -52,9 +109,33 @@ export class NewClaimComponent implements OnInit {
 
   claimType = [
     { valor: 'AHL', etiqueta: 'AHL' },
-    { valor: 'DAMAGED', etiqueta: 'Damaged' },
+    { valor: 'DPR', etiqueta: 'Damaged' },
     { valor: 'PILFERED', etiqueta: 'Pilfered' }
   ];
+
+  damageType = [
+    { valor: 'MINOR', etiqueta: 'Menor' },
+    { valor: 'MAJOR', etiqueta: 'Mayor' },
+    { valor: 'COMPLETE', etiqueta: 'Completo' }
+  ];
+
+  condition = [
+    { valor: 'GOOD', etiqueta: 'Buena' },
+    { valor: 'FAIR', etiqueta: 'Razonable' },
+    { valor: 'POOR', etiqueta: 'Mala' }
+  ];
+
+  damageLocations = [
+    { valor: 'COMBINATION_LOCK', etiqueta: 'Menor' },
+    { valor: 'HANDLE', etiqueta: 'Mayor' },
+    { valor: 'STRAPS', etiqueta: 'Completo' },
+    { valor: 'WHEELS', etiqueta: 'Ruedas' },
+    { valor: 'SIDE', etiqueta: 'Lado' },
+    { valor: 'END', etiqueta: 'Extremo' },
+    { valor: 'TOP', etiqueta: 'Parte Superior' },
+    { valor: 'BOTTOM', etiqueta: 'Parte Inferior' }
+  ];
+
 
   get route(): FormArray {
     return this.pIR.get('route') as FormArray;
@@ -189,7 +270,7 @@ export class NewClaimComponent implements OnInit {
 
   crearContenido(): FormGroup {
     return this.fb.group({
-      content: ['', Validators.required]
+      description: ['', Validators.required]
     });
   }
 
@@ -205,16 +286,54 @@ export class NewClaimComponent implements OnInit {
     }
   }
 
+  get damageLocationsArray(): FormArray {
+    return this.pIR.get('damageLocations') as FormArray;
+  }
+
+  onUbicacionChange(event: any, ubicacion: string): void {
+    if (event.target.checked) {
+      this.damageLocationsArray.push(this.fb.control(ubicacion));
+    } else {
+      const index = this.damageLocationsArray.controls.findIndex(
+        x => x.value === ubicacion
+      );
+      if (index >= 0) {
+        this.damageLocationsArray.removeAt(index);
+      }
+    }
+  }
+  
+  isUbicacionSelected(ubicacion: string): boolean {
+    return this.damageLocationsArray.controls.some(
+      x => x.value === ubicacion
+    );
+  }
+
+  calcularDiferenciaPeso(): void {
+    const pesoFacturado = this.pIR.get('checkedBaggageWeight')?.value;
+    const pesoEntregado = this.pIR.get('deliveredBaggageWeight')?.value;
+    
+    if (pesoFacturado !== null && pesoEntregado !== null) {
+      const diferencia = pesoFacturado - pesoEntregado;
+      const diferenciaRedondeada = Math.round(diferencia * 100) / 100;
+      this.pIR.get('weightDifference')?.setValue(diferenciaRedondeada);
+    } else {
+      this.pIR.get('weightDifference')?.setValue(null);
+    }
+  }
+
   onSubmit(): void {
     if (this.pIR.valid) {
       const datos = this.pIR.value;
-      
+      console.log('Datos del formulario:', datos);
       this.claimService.createClaim(datos).subscribe({
         next: (response) => {
           console.log('Éxito:', response);
+          const pirNumber = response.pirNumber;
           alert('Claim creado exitosamente');
-          this.pIR.reset();  // Limpia el formulario
-          // O redirige: this.router.navigate(['/claims']);
+          // this.pIR.reset();  // Limpia el formulario, si se quisiera hacer varios
+          // redirige a lista de reclamos
+          this.router.navigate(['/baggage/claim/view', pirNumber]);
         },
         error: (error) => {
           console.error('Error:', error);
