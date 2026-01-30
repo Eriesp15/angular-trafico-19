@@ -53,6 +53,8 @@ export class NewClaimComponent implements OnInit {
       permanentAddress: [''],
       //linea 13
       temporaryAddress: [''],
+      //linea anadida
+      email: ['', [Validators.required, Validators.email]],
       //linea 14
       permanentPhone: [''],
       temporaryPhone: [''],
