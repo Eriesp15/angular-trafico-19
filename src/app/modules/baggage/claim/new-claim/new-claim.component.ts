@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ClaimService } from '../../../../services/claim.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-claim',
@@ -15,7 +16,8 @@ export class NewClaimComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private claimService: ClaimService
+    private claimService: ClaimService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -326,8 +328,9 @@ export class NewClaimComponent implements OnInit {
         next: (response) => {
           console.log('Éxito:', response);
           alert('Claim creado exitosamente');
-          this.pIR.reset();  // Limpia el formulario
-          // O redirige: this.router.navigate(['/claims']);
+          // this.pIR.reset();  // Limpia el formulario, si se quisiera hacer varios
+          // redirige a lista de reclamos
+          this.router.navigate(['/baggage/claim/list']);
         },
         error: (error) => {
           console.error('Error:', error);
