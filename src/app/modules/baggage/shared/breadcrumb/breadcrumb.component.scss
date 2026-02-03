@@ -1,10 +1,10 @@
 .breadcrumb {
   padding: 14px 20px;
-  background-color: #fafafa;
+  background-color: var(--bg-card);
   border-radius: 12px;
   margin-bottom: 24px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--shadow-card);
+  box-shadow: 0 1px 3px var(--shadow-card);
 }
 
 .breadcrumb-list {
@@ -23,7 +23,7 @@
 }
 
 .breadcrumb-link {
-  color: #1976d2;
+  color: var(--text-link);
   text-decoration: none;
   padding: 8px 12px;
   border-radius: 8px;
@@ -33,7 +33,7 @@
   position: relative;
 
   &:hover {
-    color: #1565c0;
+    color: var(--text-link-hover);
     background-color: rgba(25, 118, 210, 0.08);
   }
 
@@ -43,11 +43,11 @@
 }
 
 .breadcrumb-current {
-  color: #424242;
+  color: var(--text-primary);
   padding: 8px 12px;
   font-size: 14px;
   font-weight: 600;
-  background-color: #e3f2fd;
+  background-color: var(--bg-card-secondary);
   border-radius: 8px;
 }
 
