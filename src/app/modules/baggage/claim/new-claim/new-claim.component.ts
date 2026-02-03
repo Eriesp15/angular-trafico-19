@@ -3,17 +3,21 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } fr
 import { CommonModule } from '@angular/common';
 import { ClaimService } from '../../../../services/claim.service';
 import { Router } from '@angular/router';
+import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-new-claim',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], 
+  imports: [CommonModule, ReactiveFormsModule, BreadcrumbComponent], 
   templateUrl: './new-claim.component.html',
   styleUrls: ['./new-claim.component.scss']
 })
 export class NewClaimComponent implements OnInit {
   pIR: FormGroup;
-
+  breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
+    { label: 'Nuevo Reclamo' } // Sin URL = no clickeable (página actual)
+  ];
   constructor(
     private fb: FormBuilder,
     private claimService: ClaimService,
