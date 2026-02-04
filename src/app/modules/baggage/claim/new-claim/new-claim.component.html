@@ -1,6 +1,6 @@
 <form class="realizar-reclamo-container" [formGroup]="pIR" (ngSubmit)="onSubmit()">
 
-
+  <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
   <div class="form-group" formArrayName="route">
       <h2>Rutas de Vuelo</h2>
     <div *ngFor="let stop of route.controls; let i = index" class="ruta-item">
@@ -257,6 +257,13 @@
     <div class="form-field">
       <label>Direccion Temporal</label>
       <input type="text" formControlName="temporaryAddress" placeholder="Direccion Temporal">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="form-field">
+      <label>Correo electrónico</label>
+      <input type="email" formControlName="email" placeholder="Email">
     </div>
   </div>
 

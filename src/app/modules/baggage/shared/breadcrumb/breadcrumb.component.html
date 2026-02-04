@@ -1,0 +1,37 @@
+<nav class="breadcrumb">
+  <ul class="breadcrumb-list">
+    <!-- Item Home -->
+    <li class="breadcrumb-item">
+      <a [routerLink]="homeItem.url" class="breadcrumb-link">
+        {{ homeItem.label }}
+      </a>
+    </li>
+
+    <!-- Separador después de Home -->
+    <li class="breadcrumb-separator" *ngIf="items.length > 0">
+      >
+    </li>
+
+    <!-- Items dinámicos -->
+    <ng-container *ngFor="let item of items; let last = last; let i = index">
+      <li class="breadcrumb-item">
+        <!-- Si tiene URL, es clickeable -->
+        <a *ngIf="item.url" 
+           [routerLink]="item.url" 
+           class="breadcrumb-link">
+          {{ item.label }}
+        </a>
+        
+        <!-- Si no tiene URL (último item), solo texto -->
+        <span *ngIf="!item.url" class="breadcrumb-current">
+          {{ item.label }}
+        </span>
+      </li>
+
+      <!-- Separador (excepto en el último) -->
+      <li class="breadcrumb-separator" *ngIf="!last">
+        >
+      </li>
+    </ng-container>
+  </ul>
+</nav>

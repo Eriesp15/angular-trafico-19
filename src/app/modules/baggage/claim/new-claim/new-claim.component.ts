@@ -2,20 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ClaimService } from '../../../../services/claim.service';
+import { Router } from '@angular/router';
+import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-new-claim',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], 
+  imports: [CommonModule, ReactiveFormsModule, BreadcrumbComponent], 
   templateUrl: './new-claim.component.html',
   styleUrls: ['./new-claim.component.scss']
 })
 export class NewClaimComponent implements OnInit {
   pIR: FormGroup;
-
+  breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
+    { label: 'Nuevo Reclamo' } // Sin URL = no clickeable (página actual)
+  ];
   constructor(
     private fb: FormBuilder,
-    private claimService: ClaimService
+    private claimService: ClaimService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -51,6 +57,8 @@ export class NewClaimComponent implements OnInit {
       permanentAddress: [''],
       //linea 13
       temporaryAddress: [''],
+      //linea anadida
+      email: ['', [Validators.required, Validators.email]],
       //linea 14
       permanentPhone: [''],
       temporaryPhone: [''],
@@ -325,9 +333,11 @@ export class NewClaimComponent implements OnInit {
       this.claimService.createClaim(datos).subscribe({
         next: (response) => {
           console.log('Éxito:', response);
+          const pirNumber = response.pirNumber;
           alert('Claim creado exitosamente');
-          this.pIR.reset();  // Limpia el formulario
-          // O redirige: this.router.navigate(['/claims']);
+          // this.pIR.reset();  // Limpia el formulario, si se quisiera hacer varios
+          // redirige a lista de reclamos
+          this.router.navigate(['/baggage/claim/view', pirNumber]);
         },
         error: (error) => {
           console.error('Error:', error);

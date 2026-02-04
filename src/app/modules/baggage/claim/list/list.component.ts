@@ -9,6 +9,7 @@ import { Subject } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import  { HttpClient } from "@angular/common/http"
 import { AEROPUERTOS_BOA,  ClaimType,  ClaimStatus } from "../../models/claim-type-config.model"
+import { BreadcrumbComponent, BreadcrumbItem } from "../../shared/breadcrumb/breadcrumb.component"
 
 // Interfaz PIR
 interface PIR {
@@ -38,11 +39,14 @@ interface PIR {
 @Component({
   selector: "app-list",
   standalone: true,
-  imports: [RouterOutlet, CommonModule, ReactiveFormsModule, MatPaginatorModule, MatSelectModule, MatIconModule],
+  imports: [RouterOutlet, CommonModule, ReactiveFormsModule, MatPaginatorModule, MatSelectModule, MatIconModule, BreadcrumbComponent],
   templateUrl: "./list.component.html",
   styleUrl: "./list.component.scss",
 })
 export class ListComponent implements OnInit, OnDestroy {
+  breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Lista de Reclamos'}
+  ];
   claims: PIR[] = []
   filteredClaims: PIR[] = []
   paginatedClaims: PIR[] = []
@@ -251,13 +255,18 @@ export class ListComponent implements OnInit, OnDestroy {
   }
 
   statusLabels: Record<string, string> = {
-    ABIERTO: "Abierto",
-    CERRADO: "Cerrado",
-    ANULADO: "Anulado",
-  }
+    PENDING: 'Pendiente',
+    IN_PROCESS: 'En proceso',
+    PURCHASED: 'Comprado',
+    REPAIRED: 'Reparado',
+    LOST: 'Perdido',
+    FOUND: 'Encontrado',
+    COMPENSATED: 'Indemnizado',
+    CLOSED: 'Cerrado'
+  };
 
   getStatusLabel(status: string): string {
-    return this.statusLabels[status] ?? status
+    return this.statusLabels[status] ?? status;
   }
 
   tipoLabels: Record<string, string> = {
