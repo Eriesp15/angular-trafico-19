@@ -15,6 +15,7 @@ import { StationContactComponent } from "./station-contact/station-contact.compo
 import { ReportsComponent } from "./reports/reports.component"
 import { NewOhlComponent } from "./ohl/new-ohl/new-ohl.component"
 import { SearchComponent } from "./search/search.component"
+import { SendToRepairDialogComponent } from "./claim/send-to-repair/send-to-repair-dialog.component"
 
 export default [
   {
@@ -87,4 +88,8 @@ export default [
     path: "search",
     component: SearchComponent,
   },
+  {
+    path: "repair",
+    component: SendToRepairDialogComponent,
+  }
 ] as Routes

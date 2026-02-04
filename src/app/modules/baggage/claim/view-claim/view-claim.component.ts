@@ -3,19 +3,26 @@ import { CommonModule } from "@angular/common"
 import { ActivatedRoute, Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
+import { MatDialogModule, MatDialog } from "@angular/material/dialog"
 import { HttpClient } from "@angular/common/http"
 import { ClaimType, getClaimTypeConfig, ClaimTypeConfig } from "../../models/claim-type-config.model"
+import { BreadcrumbComponent, BreadcrumbItem } from "../../shared/breadcrumb/breadcrumb.component"
+
 
 type ClaimStatus = "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED"
 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, BreadcrumbComponent],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
 export class ViewClaimComponent implements OnInit {
+  breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
+    { label: 'Visualizar Reclamo'}
+  ];
   claimId = ""
   diasTranscurridos = 0
   pirStatus: ClaimStatus = "PENDING"
@@ -45,6 +52,7 @@ export class ViewClaimComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -279,6 +287,20 @@ export class ViewClaimComponent implements OnInit {
 
   contactoEstaciones(): void {
     this.router.navigate(["/baggage/claim/station-contact", this.claimId])
+  }
+
+  enviarAReparacion(): void {
+    import("../send-to-repair/send-to-repair-dialog.component").then(({ SendToRepairDialogComponent }) => {
+      this.dialog.open(SendToRepairDialogComponent, {
+        width: "800px",
+        data: {
+          pirNumber: this.reclamoData?.informacionAdicional?.pirNumber,
+          pasajero: this.reclamoData?.pasajero,
+          equipaje: this.reclamoData?.equipaje,
+          reclamo: this.reclamoData?.reclamo,
+        },
+      })
+    })
   }
 
   getPirStatusClass(): string {

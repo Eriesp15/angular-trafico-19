@@ -1,4 +1,5 @@
 <div class="visualizar-pir">
+  <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
   <div class="pir-container">
     <!-- Header with Claim Type and Days Badge -->
     <div class="pir-header">
@@ -61,6 +62,10 @@
         <mat-icon>local_shipping</mat-icon>
         Realizar entrega
       </button>
+      <button class="action-btn" (click)="enviarAReparacion()">
+        <mat-icon>build</mat-icon>
+        Enviar a Reparación
+      </button>
       <button class="action-btn" (click)="indemnizar()">
         <mat-icon>paid</mat-icon>
         Añadir gasto
@@ -78,6 +83,40 @@
         <mat-icon>receipt</mat-icon>
         Ver gastos
       </button>
+    </div>
+
+    <!-- Información del PIR -->
+    <div class="section">
+      <h2 class="section-title">Información del PIR</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Número PIR</label>
+          <input type="text" [value]="reclamoData?.informacionAdicional?.pirNumber" readonly />
+        </div>
+        <div class="form-group">
+          <label>Fecha de Creación</label>
+          <input type="text" [value]="reclamoData?.informacionAdicional?.createdAt" readonly />
+        </div>
+        <div class="form-group">
+          <label>Última Actualización</label>
+          <input type="text" [value]="reclamoData?.informacionAdicional?.updatedAt" readonly />
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Aeropuerto Origen (Código)</label>
+          <input type="text" [value]="reclamoData?.informacionAdicional?.aeropuertoText" readonly />
+        </div>
+        <div class="form-group">
+          <label>Aerolínea</label>
+          <input type="text" [value]="reclamoData?.informacionAdicional?.aerolinea" readonly />
+        </div>
+        <div class="form-group">
+          <label>Referencia</label>
+          <input type="text" [value]="reclamoData?.informacionAdicional?.reference" readonly />
+        </div>
+      </div>
     </div>
 
     <!-- Datos del Pasajero -->
@@ -140,6 +179,24 @@
             <input type="email" [value]="reclamoData?.pasajero?.email" readonly />
           </div>
         </div>
+        <div class="form-group">
+          <label>PNR</label>
+          <div class="input-with-code">
+            <span class="code">PR</span>
+            <input type="text" [value]="reclamoData?.pasajero?.pnr" readonly />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Idioma</label>
+          <input type="text" [value]="reclamoData?.pasajero?.language" readonly />
+        </div>
+        <div class="form-group">
+          <label>Frequent Flyer ID</label>
+          <input type="text" [value]="reclamoData?.pasajero?.frequentFlyerId" readonly />
+        </div>
       </div>
 
       <div class="form-grid">
@@ -182,6 +239,31 @@
         <label>Estaciones Involucradas</label>
         <input type="text" [value]="reclamoData?.reclamo?.estacionesInvolucradas" readonly />
       </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Razón de Pérdida</label>
+          <input type="text" [value]="reclamoData?.reclamo?.lossReason" readonly />
+        </div>
+        <div class="form-group">
+          <label>Estación de Fallo</label>
+          <input type="text" [value]="reclamoData?.reclamo?.faultStation" readonly />
+        </div>
+        <div class="form-group">
+          <label>¿Tiene Seguro?</label>
+          <input type="text" [value]="reclamoData?.reclamo?.hasInsurance ? 'Sí' : 'No'" readonly />
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Instrucciones de Entrega</label>
+        <textarea [value]="reclamoData?.reclamo?.deliveryInstructions" readonly rows="2"></textarea>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Información Adicional</label>
+        <textarea [value]="reclamoData?.reclamo?.additionalInfo" readonly rows="2"></textarea>
+      </div>
     </div>
 
     <!-- Datos del Vuelo -->
@@ -193,16 +275,23 @@
           <input type="text" [value]="reclamoData?.vuelo?.numero" readonly />
         </div>
         <div class="form-group">
-          <label>Aerolínea</label>
-          <input type="text" [value]="reclamoData?.vuelo?.aerolinea" readonly />
-        </div>
-        <div class="form-group">
           <label>Fecha de Vuelo</label>
           <input type="text" [value]="reclamoData?.vuelo?.fecha" readonly />
         </div>
         <div class="form-group">
           <label>Hora de Salida</label>
-          <input type="text" [value]="reclamoData?.vuelo?.horaSalida" readonly />
+          <input type="text" [value]="reclamoData?.vuelo?.hora" readonly />
+        </div>
+      </div>
+
+      <!-- Todos los vuelos si existen varios -->
+      <div class="form-group full-width" *ngIf="reclamoData?.vuelosCompletos?.length > 1">
+        <label>Vuelos Registrados</label>
+        <div class="flights-list">
+          <div class="flight-item" *ngFor="let vuelo of reclamoData?.vuelosCompletos">
+            <span class="flight-number">{{ vuelo.numero }}</span>
+            <span class="flight-date">{{ vuelo.fecha }} - {{ vuelo.hora }}</span>
+          </div>
         </div>
       </div>
 
@@ -229,7 +318,7 @@
       <h2 class="section-title">Datos del Equipaje</h2>
       <div class="form-grid">
         <div class="form-group">
-          <label>Aerolíneas - Nro. de Ticket</label>
+          <label>Número de Ticket</label>
           <div class="input-with-code">
             <span class="code">TN</span>
             <input type="text" [value]="reclamoData?.equipaje?.numeroTicket" readonly />
@@ -238,7 +327,7 @@
       </div>
 
       <div class="form-group">
-        <label>Ruta y/o Lugar para Hacer Rastreo</label>
+        <label>Ruta de Equipaje</label>
         <div class="input-with-code">
           <span class="code">OD</span>
           <input type="text" [value]="reclamoData?.equipaje?.ruta" readonly />
@@ -247,19 +336,28 @@
 
       <div class="form-grid">
         <div class="form-group">
-          <label>Nro. de Vuelo - Fecha/Mes</label>
-          <div class="flight-input">
-            <div class="input-with-code">
-              <span class="code">FD</span>
-              <input type="text" [value]="reclamoData?.equipaje?.numeroVuelo" readonly />
-            </div>
-            <input type="text" [value]="reclamoData?.equipaje?.fechaVuelo" readonly />
+          <label>Número de Vuelo</label>
+          <div class="input-with-code">
+            <span class="code">FD</span>
+            <input type="text" [value]="reclamoData?.equipaje?.numeroVuelo" readonly />
           </div>
+        </div>
+        <div class="form-group">
+          <label>Fecha de Vuelo</label>
+          <input type="text" [value]="reclamoData?.equipaje?.fechaVuelo" readonly />
         </div>
       </div>
 
       <div class="form-group">
-        <label>Color Tipo Descripción</label>
+        <label>BagTags</label>
+        <div class="input-with-code">
+          <span class="code">BT</span>
+          <input type="text" [value]="reclamoData?.equipaje?.bagtags" readonly />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Color/Tipo/Descripción</label>
         <div class="input-with-code">
           <span class="code">CT</span>
           <input type="text" [value]="reclamoData?.equipaje?.colorTipo" readonly />
@@ -282,14 +380,39 @@
         </div>
       </div>
 
-      <div class="form-group full-width">
-        <label>Descripción del Equipaje</label>
-        <textarea [value]="reclamoData?.equipaje?.descripcion" readonly rows="2"></textarea>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Peso del Equipaje Facturado (kg)</label>
+          <input type="text" [value]="reclamoData?.equipaje?.pesoFacturado" readonly />
+        </div>
+        <div class="form-group">
+          <label>Peso del Equipaje Entregado (kg)</label>
+          <input type="text" [value]="reclamoData?.equipaje?.pesoEntregado" readonly />
+        </div>
+        <div class="form-group">
+          <label>Diferencia de Peso (kg)</label>
+          <input type="text" [value]="reclamoData?.equipaje?.diferenciaPeso" readonly />
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>¿Maletas Cerradas con Llave?</label>
+          <input type="text" [value]="reclamoData?.equipaje?.tienesCerradasConLlave" readonly />
+        </div>
+        <div class="form-group">
+          <label>Combinación de Cerradura</label>
+          <input type="text" [value]="reclamoData?.equipaje?.combinacionCerradura" readonly />
+        </div>
+        <div class="form-group">
+          <label>Kit de Noche</label>
+          <input type="text" [value]="reclamoData?.equipaje?.kitNoche" readonly />
+        </div>
       </div>
     </div>
 
-    <!-- Información del Daño - Solo mostrar si el reclamo es DAMAGED -->
-    <div class="section" *ngIf="reclamoData?.reclamo?.tipo === 'DAMAGED'">
+    <!-- Información del Daño - Solo mostrar si el reclamo es DPR o PILFERED -->
+    <div class="section" *ngIf="reclamoData?.reclamo?.tipo === 'DPR' || reclamoData?.reclamo?.tipo === 'PILFERED'">
       <h2 class="section-title">Información del Daño</h2>
       <div class="form-grid">
         <div class="form-group">
@@ -300,6 +423,11 @@
           <label>Condición</label>
           <input type="text" [value]="reclamoData?.dano?.condicion" readonly />
         </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Descripción del Daño</label>
+        <textarea [value]="reclamoData?.dano?.descripcionDano" readonly rows="2"></textarea>
       </div>
 
       <div class="form-group full-width" *ngIf="reclamoData?.dano?.partesAfectadas?.length > 0">
