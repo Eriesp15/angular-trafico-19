@@ -1,10 +1,10 @@
-import { Component,  OnInit } from "@angular/core"
+import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import {  ActivatedRoute,  Router, RouterModule } from "@angular/router"
+import { ActivatedRoute, Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
-import  { HttpClient } from "@angular/common/http"
-import {  ClaimType, getClaimTypeConfig,  ClaimTypeConfig } from "../../models/claim-type-config.model"
+import { HttpClient } from "@angular/common/http"
+import { ClaimType, getClaimTypeConfig, ClaimTypeConfig } from "../../models/claim-type-config.model"
 
 type ClaimStatus = "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED"
 
@@ -29,6 +29,7 @@ export class ViewClaimComponent implements OnInit {
   // Datos que se muestran en el frontend
   reclamoData: any = null
 
+  // Mapeo de estados sincronizado con list.component.ts
   statusLabels: Record<ClaimStatus, string> = {
     PENDING: "Pendiente",
     IN_PROCESS: "En proceso",
@@ -52,7 +53,6 @@ export class ViewClaimComponent implements OnInit {
       this.loadClaim(this.claimId)
     }
     this.calcularDiasTranscurridos()
-    this.loadPirStatus()
   }
 
   // Cargar un PIR desde el backend
@@ -61,104 +61,115 @@ export class ViewClaimComponent implements OnInit {
       next: (data) => {
         console.log("Datos del backend PIR:", data)
 
-        // ------------------------------
-        // Mapeo de pasajero
-        // ------------------------------
-        const nameParts = data.pasajero?.split(" ") || []
-        const lastName = data.passengerLastName || nameParts.shift() || "—"
-        const firstName = data.passengerName || nameParts.join(" ") || "—"
-
+        // Recuperar y mapear pasajero
         const pasajero = {
-          nombre: firstName,
-          apellidoPaterno: lastName,
+          nombre: data.passengerName ?? "—",
+          apellidoPaterno: data.passengerLastName ?? "—",
           apellidoMaterno: "—",
           direccionPermanente: data.permanentAddress ?? "—",
           direccionTemporal: data.temporaryAddress ?? "—",
           telefonoPermanente: data.permanentPhone ?? "—",
           telefonoTemporal: data.temporaryPhone ?? "—",
-          email: "—",
+          email: data.email ?? "—",
           numeroBoleto: data.ticketNumber ?? "—",
           iniciales: data.initials ?? "—",
           passportNumber: data.passportNumber ?? "—",
           frequentFlyerId: data.frequentFlyerId ?? "—",
           language: data.language ?? "—",
+          pnr: data.pnr ?? "—",
         }
 
-        // ------------------------------
-        // Mapeo de reclamo
-        // ------------------------------
+        // Recuperar y mapear reclamo
         const reclamo = {
           tipo: data.claimType ?? "AHL",
           fecha: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : "—",
-          hora: "—",
-          estacion: data.airport ?? "—",
-          estacionesInvolucradas: data.ruta ?? "—",
+          hora: data.createdAt ? new Date(data.createdAt).toLocaleTimeString() : "—",
+          estacion: data.airport?.code ?? data.airport ?? "—",
+          estacionesInvolucradas: data.route?.routeStops?.map((r: any) => r.stop?.code).join("-") ?? "—",
           lossReason: data.lossReason ?? "—",
+          faultStation: data.faultStation ?? "—",
           hasInsurance: data.hasInsurance ?? false,
-          estado: data.claimStatus || data.estado || "PENDING",
+          estado: data.claimStatus || "PENDING",
+          deliveryInstructions: data.deliveryInstructions ?? "—",
+          additionalInfo: data.additionalInfo ?? "—",
         }
 
         this.claimConfig = getClaimTypeConfig(reclamo.tipo as ClaimType)
         this.calcularAlertasDias()
-        this.loadPirStatus()
+        this.pirStatus = reclamo.estado as ClaimStatus
 
-        // ------------------------------
-        // Mapeo de vuelo
-        // ------------------------------
-        const vuelo = {
-          numero: data.flightNumbers?.[0]?.flightNo ?? "—",
-          fecha: "—",
-          horaSalida: "—",
-          aerolinea: data.airline ?? "—",
-        }
+        // Recuperar vuelos
+        const flightNumbers = data.flightNumbers?.map((f: any) => ({
+          numero: f.flightNo ?? "—",
+          fecha: f.flightDate ? new Date(f.flightDate).toLocaleDateString() : "—",
+          hora: f.flightDate ? new Date(f.flightDate).toLocaleTimeString() : "—",
+        })) ?? []
 
-        // ------------------------------
-        // Mapeo de ruta del vuelo
-        // ------------------------------
-        const routeStops = data.route?.routeStops ?? []
-        const ruta = routeStops.map((rs: any, index: number) => ({
+        // Recuperar ruta del vuelo
+        const ruta = data.route?.routeStops?.map((rs: any, index: number) => ({
           codigo: rs?.stop?.code || "—",
-          tipo: index === 0 ? "origen" : index === routeStops.length - 1 ? "destino" : "conexion",
-          horario: "—",
-        }))
+          ciudad: rs?.stop?.name || "—",
+          tipo: index === 0 ? "origen" : index === (data.route?.routeStops?.length - 1) ? "destino" : "conexion",
+          horario: rs?.scheduleTime ?? "—",
+        })) ?? []
 
-        // ------------------------------
-        // Mapeo de equipaje
-        // ------------------------------
+        // Recuperar equipaje
+        const bagtags = data.bagtags?.map((b: any) => b.number) ?? []
+        const bagDescriptions = data.bagDescriptions?.map((b: any) => b.description) ?? []
+        const contents = data.contents?.map((c: any) => c.description) ?? []
+        const baggageMarks = data.baggageIdentifications?.map((b: any) => b.mark) ?? []
+
         const equipaje = {
           numeroTicket: data.ticketNumber ?? "—",
-          ruta: data.ruta ?? "—",
+          ruta: data.route?.routeStops?.map((r: any) => r.stop?.code).join("-") ?? "—",
           numeroVuelo: data.flightNumbers?.[0]?.flightNo ?? "—",
-          fechaVuelo: "—",
-          colorTipo: "—",
-          marca: data.baggageMarks?.[0] ?? "—",
-          contenido: data.contents?.join(", ") ?? "—",
-          descripcion: data.bagDescriptions?.[0] ?? "—",
+          fechaVuelo: data.flightNumbers?.[0]?.flightDate ? new Date(data.flightNumbers[0].flightDate).toLocaleDateString() : "—",
+          bagtags: bagtags.join(", ") || "—",
+          colorTipo: bagDescriptions.join(", ") || "—",
+          marca: baggageMarks.join(", ") || "—",
+          contenido: contents.join(", ") || "—",
+          pesoFacturado: data.checkedBaggageWeight ?? "—",
+          pesoEntregado: data.deliveredBaggageWeight ?? "—",
+          diferenciaPeso: data.weightDifference ?? "—",
+          tienesCerradasConLlave: data.keysAttached ? "Sí" : "No",
+          combinacionCerradura: data.lockCombination ?? "—",
+          kitNoche: data.nightKit ? "Sí" : "No",
         }
 
-        // ------------------------------
-        // Mapeo de daños
-        // ------------------------------
+        // Recuperar daños
         const dano = {
-          tipoDano: data.damages?.[0]?.damageType ?? "—",
-          condicion: data.damages?.[0]?.condition ?? "—",
+          tipoDano: data.damageDetails?.[0]?.damageType ?? "—",
+          condicion: data.damageDetails?.[0]?.condition ?? "—",
           partesAfectadas:
-            data.damages?.map((d: any) => ({
-              codigo: d.code ?? "—",
-              nombre: d.description ?? "—",
+            data.damageDetails?.map((d: any) => ({
+              codigo: d.damageLocation ?? "—",
+              nombre: d.damageLocation ?? "—",
             })) ?? [],
+          descripcionDano: data.damageDetails?.map((d: any) => d.description).join(", ") ?? "—",
         }
 
-        // ------------------------------
-        // Asignar datos al frontend
-        // ------------------------------
+        // Información adicional
+        const informacionAdicional = {
+          pirNumber: data.pirNumber ?? "—",
+          aeropuertoOrig: data.airport?.code ?? "—",
+          aeropuertoText: data.airportText ?? "—",
+          aerolinea: data.airline ?? "—",
+          reference: data.reference ?? "—",
+          traceRoute: data.traceRoute?.routeStops?.map((r: any) => r.stop?.code).join("-") ?? "—",
+          createdAt: data.createdAt ? new Date(data.createdAt).toLocaleString() : "—",
+          updatedAt: data.updatedAt ? new Date(data.updatedAt).toLocaleString() : "—",
+        }
+
+        // Asignar todos los datos al frontend
         this.reclamoData = {
           pasajero,
           reclamo,
-          vuelo,
+          vuelo: flightNumbers[0] || { numero: "—", fecha: "—", hora: "—" },
+          vuelosCompletos: flightNumbers,
           ruta,
           equipaje,
           dano,
+          informacionAdicional,
         }
 
         console.log("Datos mapeados para frontend:", this.reclamoData)
@@ -268,11 +279,6 @@ export class ViewClaimComponent implements OnInit {
 
   contactoEstaciones(): void {
     this.router.navigate(["/baggage/claim/station-contact", this.claimId])
-  }
-
-  loadPirStatus(): void {
-    const statusFromData = this.reclamoData?.reclamo?.estado || "PENDING"
-    this.pirStatus = statusFromData as ClaimStatus
   }
 
   getPirStatusClass(): string {

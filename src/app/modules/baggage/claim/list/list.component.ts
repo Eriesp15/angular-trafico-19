@@ -51,9 +51,10 @@ export class ListComponent implements OnInit, OnDestroy {
   filteredClaims: PIR[] = []
   paginatedClaims: PIR[] = []
   loading = true
+  showFilters = false
 
   searchForm: FormGroup
-  selectedStatus: ClaimStatus | "ALL" = "ALL"
+  selectedStatus: "ALL" | "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED" = "ALL"
   selectedType: "ALL" | ClaimType = "ALL"
   selectedAeropuerto = "ALL"
   selectedDerivedFilter: "all" | "derived" | "original" = "all"
@@ -146,7 +147,7 @@ export class ListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.applyFilters())
   }
 
-  filterByStatus(status: ClaimStatus | "ALL"): void {
+  filterByStatus(status: "ALL" | "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED"): void {
     this.selectedStatus = status
     this.applyFilters()
   }
@@ -181,7 +182,7 @@ export class ListComponent implements OnInit, OnDestroy {
     let result = [...this.claims]
 
     if (this.selectedStatus !== "ALL") {
-      result = result.filter((c) => c.status === this.selectedStatus)
+      result = result.filter((c) => c.status === this.selectedStatus as ClaimStatus)
     }
 
     // Filtro por tipo
@@ -288,6 +289,10 @@ export class ListComponent implements OnInit, OnDestroy {
     this.filterOption = "all"
     this.selectedDate = ""
     this.applyFilters()
+  }
+
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters
   }
 
   navigateToClaim(id: string | undefined): void {
