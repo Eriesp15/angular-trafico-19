@@ -31,6 +31,9 @@ interface PIR {
   bagTag: string
   tipo: string
   aeropuerto?: string
+  derivedFromRegional?: string | null
+  derivedAt?: Date | null
+  originalRegional?: string | null
 }
 
 @Component({
@@ -53,6 +56,7 @@ export class ListComponent implements OnInit, OnDestroy {
   selectedStatus: ClaimStatus | "ALL" = "ALL"
   selectedType: "ALL" | ClaimType = "ALL"
   selectedAeropuerto = "ALL"
+  selectedDerivedFilter: "all" | "derived" | "original" = "all"
   filterOption: "all" | "recent" | "date" = "all"
   selectedDate = ""
 
@@ -157,6 +161,11 @@ export class ListComponent implements OnInit, OnDestroy {
     this.applyFilters()
   }
 
+  filterByDerived(filter: "all" | "derived" | "original"): void {
+    this.selectedDerivedFilter = filter
+    this.applyFilters()
+  }
+
   setFilterOption(option: "all" | "recent" | "date"): void {
     this.filterOption = option
     if (option !== "date") this.selectedDate = ""
@@ -182,6 +191,13 @@ export class ListComponent implements OnInit, OnDestroy {
 
     if (this.selectedAeropuerto !== "ALL") {
       result = result.filter((c) => c.aeropuerto === this.selectedAeropuerto)
+    }
+
+    // Filtro por reclamos derivados
+    if (this.selectedDerivedFilter === "derived") {
+      result = result.filter((c) => c.derivedFromRegional !== null && c.derivedFromRegional !== undefined)
+    } else if (this.selectedDerivedFilter === "original") {
+      result = result.filter((c) => !c.derivedFromRegional || c.derivedFromRegional === null)
     }
 
     if (this.filterOption === "recent") {

@@ -132,6 +132,37 @@
           </div>
         </div>
 
+        <!-- Nuevo filtro por Reclamos Derivados de Otras Regionales -->
+        <div class="filter-column">
+          <label class="filter-label">Origen del Reclamo:</label>
+          <div class="filter-buttons">
+            <button
+              [class.active]="selectedDerivedFilter === 'all'"
+              (click)="filterByDerived('all')"
+              class="filter-btn"
+              title="Mostrar todos los reclamos"
+            >
+              Todos
+            </button>
+            <button
+              [class.active]="selectedDerivedFilter === 'original'"
+              (click)="filterByDerived('original')"
+              class="filter-btn filter-original"
+              title="Mostrar solo reclamos originales de esta regional"
+            >
+              Locales
+            </button>
+            <button
+              [class.active]="selectedDerivedFilter === 'derived'"
+              (click)="filterByDerived('derived')"
+              class="filter-btn filter-derived"
+              title="Mostrar solo reclamos derivados de otras regionales"
+            >
+              Derivados
+            </button>
+          </div>
+        </div>
+
         <div class="filter-column">
           <label class="filter-label">Por Fecha:</label>
           <div class="filter-buttons">
@@ -189,6 +220,7 @@
         <thead>
           <tr>
             <th>PIR</th>
+            <th title="Indicador de derivación de otra regional">Derivado</th>
             <th>Tipo</th>
             <th>Pasajero</th>
             <th>Vuelo</th>
@@ -205,6 +237,19 @@
             (click)="navigateToClaim(claim.id)"
           >
             <td class="cell-id">{{ claim.id }}</td>
+            <td class="cell-derived">
+              <span 
+                *ngIf="claim.derivedFromRegional" 
+                class="derived-badge"
+                [title]="'Derivado de: ' + claim.derivedFromRegional"
+              >
+                <mat-icon>forward</mat-icon>
+                {{ claim.derivedFromRegional }}
+              </span>
+              <span *ngIf="!claim.derivedFromRegional" class="original-badge">
+                <mat-icon>home</mat-icon>
+              </span>
+            </td>
             <td class="cell-type">
               <!-- Badge con colores por tipo incluyendo OHL -->
               <span [class]="'badge badge-' + claim.claimType.toLowerCase()">

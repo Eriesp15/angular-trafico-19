@@ -23,24 +23,32 @@ export const defaultNavigation: ErpNavigationItem[] = [
                     link : '/baggage/claim/new'
                     },
                     {
-                    id   : 'follow',
+                    id   : 'list',
                     title: 'Listado de reclamos',
                     type : 'basic',
                     icon : 'heroicons_outline:list-bullet',
                     link : '/baggage/claim/list'
                     },
+                    {
+                    id   : 'closed',
+                    title: 'Recibo de cierre',
+                    type : 'basic',
+                    icon : 'heroicons_outline:list-bullet',
+                    link : '/baggage/claim/closing-receipt/:pir'
+                },
+
 
                 ]
             },
-            
-            // {
-            //     id   : 'follow',
-            //     title: 'Seguimiento',
-            //     type : 'basic',
-            //     icon : 'heroicons_outline:document-magnifying-glass',
-            //     link : '/baggage/follow'
-            // },
-            
+
+            {
+                 id   : 'follow',
+                 title: 'Seguimiento',
+                 type : 'basic',
+                 icon : 'heroicons_outline:document-magnifying-glass',
+                 link : '/baggage/claim/follow'
+             },
+
             // {
             //     id   : 'claim',
             //     title: 'Indemnizaciones',
@@ -48,13 +56,13 @@ export const defaultNavigation: ErpNavigationItem[] = [
             //     icon : 'heroicons_outline:banknotes',
             //     link : '/baggage/compensation',
             // },
-            
+
             {
                 id   : 'claim',
                 title: 'Empresas',
                 type : 'basic',
                 icon : 'heroicons_outline:building-office',
-                link : '/baggage/compensation',
+                link : '/baggage/claim/supplier',
             }
         ]
     },
