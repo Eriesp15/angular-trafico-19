@@ -16,6 +16,12 @@
             </div>
           </div>
           <div class="badge-wrapper">
+            <span class="badge-label">Estado del PIR</span>
+            <div class="badge-status" [ngClass]="getPirStatusClass()">
+              {{ getPirStatusLabel() }}
+            </div>
+          </div>
+          <div class="badge-wrapper">
             <span class="badge-label">Antigüedad</span>
             <div class="badge-days" [class.alert-danger]="diasTranscurridos >= 21" 
                  [class.alert-warning]="diasTranscurridos >= 3 && diasTranscurridos < 21"

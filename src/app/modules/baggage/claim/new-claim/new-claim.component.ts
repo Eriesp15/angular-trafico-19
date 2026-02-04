@@ -16,7 +16,7 @@ export class NewClaimComponent implements OnInit {
   pIR: FormGroup;
   breadcrumbItems: BreadcrumbItem[] = [
     { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
-    { label: 'Nuevo Reclamo' } // Sin URL = no clickeable (página actual)
+    { label: 'Nuevo Reclamo' } // Sin URL 
   ];
   constructor(
     private fb: FormBuilder,

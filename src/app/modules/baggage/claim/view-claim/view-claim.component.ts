@@ -6,6 +6,8 @@ import { MatIconModule } from "@angular/material/icon"
 import  { HttpClient } from "@angular/common/http"
 import {  ClaimType, getClaimTypeConfig,  ClaimTypeConfig } from "../../models/claim-type-config.model"
 
+type ClaimStatus = "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED"
+
 @Component({
   selector: "app-view-claim",
   standalone: true,
@@ -16,6 +18,7 @@ import {  ClaimType, getClaimTypeConfig,  ClaimTypeConfig } from "../../models/c
 export class ViewClaimComponent implements OnInit {
   claimId = ""
   diasTranscurridos = 0
+  pirStatus: ClaimStatus = "PENDING"
 
   claimConfig: ClaimTypeConfig | null = null
   alertasDias: { tipo: string; mensaje: string; color: string }[] = []
@@ -25,6 +28,17 @@ export class ViewClaimComponent implements OnInit {
 
   // Datos que se muestran en el frontend
   reclamoData: any = null
+
+  statusLabels: Record<ClaimStatus, string> = {
+    PENDING: "Pendiente",
+    IN_PROCESS: "En proceso",
+    PURCHASED: "Comprado",
+    REPAIRED: "Reparado",
+    LOST: "Perdido",
+    FOUND: "Encontrado",
+    COMPENSATED: "Indemnizado",
+    CLOSED: "Cerrado",
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -38,6 +52,7 @@ export class ViewClaimComponent implements OnInit {
       this.loadClaim(this.claimId)
     }
     this.calcularDiasTranscurridos()
+    this.loadPirStatus()
   }
 
   // Cargar un PIR desde el backend
@@ -80,10 +95,12 @@ export class ViewClaimComponent implements OnInit {
           estacionesInvolucradas: data.ruta ?? "—",
           lossReason: data.lossReason ?? "—",
           hasInsurance: data.hasInsurance ?? false,
+          estado: data.claimStatus || data.estado || "PENDING",
         }
 
         this.claimConfig = getClaimTypeConfig(reclamo.tipo as ClaimType)
         this.calcularAlertasDias()
+        this.loadPirStatus()
 
         // ------------------------------
         // Mapeo de vuelo
@@ -251,5 +268,28 @@ export class ViewClaimComponent implements OnInit {
 
   contactoEstaciones(): void {
     this.router.navigate(["/baggage/claim/station-contact", this.claimId])
+  }
+
+  loadPirStatus(): void {
+    const statusFromData = this.reclamoData?.reclamo?.estado || "PENDING"
+    this.pirStatus = statusFromData as ClaimStatus
+  }
+
+  getPirStatusClass(): string {
+    const statusClassMap: Record<ClaimStatus, string> = {
+      PENDING: "status-pending",
+      IN_PROCESS: "status-in-process",
+      PURCHASED: "status-purchased",
+      REPAIRED: "status-repaired",
+      LOST: "status-lost",
+      FOUND: "status-found",
+      COMPENSATED: "status-compensated",
+      CLOSED: "status-closed",
+    }
+    return statusClassMap[this.pirStatus] || "status-pending"
+  }
+
+  getPirStatusLabel(): string {
+    return this.statusLabels[this.pirStatus] || "Pendiente"
   }
 }
