@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } fr
 import { CommonModule } from '@angular/common';
 import { ClaimService } from '../../../../services/claim.service';
 import { Router } from '@angular/router';
-import { BreadcrumbComponent, BreadcrumbItem } from '../../shared/breadcrumb/breadcrumb.component';
+import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-new-claim',
