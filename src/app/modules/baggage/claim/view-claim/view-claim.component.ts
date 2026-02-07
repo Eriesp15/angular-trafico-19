@@ -14,17 +14,12 @@ import {  ClaimType, getClaimTypeConfig,  ClaimTypeConfig } from "../../models/c
   styleUrls: ["./view-claim.component.scss"],
 })
 export class ViewClaimComponent implements OnInit {
-  claimId = ""
-  diasTranscurridos = 0
-
-  claimConfig: ClaimTypeConfig | null = null
-  alertasDias: { tipo: string; mensaje: string; color: string }[] = []
+  claimId = "";
+  pirData: any = null;
+  antiguedadDias = 0;
 
   // URL base del backend
-  private readonly apiUrl = "http://localhost:3700/api/v1/claims/view"
-
-  // Datos que se muestran en el frontend
-  reclamoData: any = null
+  private readonly apiUrl = "http://localhost:3700/api/v1/claims/view";
 
   constructor(
     private route: ActivatedRoute,
@@ -37,7 +32,6 @@ export class ViewClaimComponent implements OnInit {
     if (this.claimId) {
       this.loadClaim(this.claimId)
     }
-    this.calcularDiasTranscurridos()
   }
 
   // Cargar un PIR desde el backend
@@ -45,106 +39,11 @@ export class ViewClaimComponent implements OnInit {
     this.http.get<any>(`${this.apiUrl}/${pirNumber}`).subscribe({
       next: (data) => {
         console.log("Datos del backend PIR:", data)
+        this.pirData = data;
+        this.calcularAntiguedad();
 
-        // ------------------------------
-        // Mapeo de pasajero
-        // ------------------------------
-        const nameParts = data.pasajero?.split(" ") || []
-        const lastName = data.passengerLastName || nameParts.shift() || "—"
-        const firstName = data.passengerName || nameParts.join(" ") || "—"
-
-        const pasajero = {
-          nombre: firstName,
-          apellidoPaterno: lastName,
-          apellidoMaterno: "—",
-          direccionPermanente: data.permanentAddress ?? "—",
-          direccionTemporal: data.temporaryAddress ?? "—",
-          telefonoPermanente: data.permanentPhone ?? "—",
-          telefonoTemporal: data.temporaryPhone ?? "—",
-          email: "—",
-          numeroBoleto: data.ticketNumber ?? "—",
-          iniciales: data.initials ?? "—",
-          passportNumber: data.passportNumber ?? "—",
-          frequentFlyerId: data.frequentFlyerId ?? "—",
-          language: data.language ?? "—",
-        }
-
-        // ------------------------------
-        // Mapeo de reclamo
-        // ------------------------------
-        const reclamo = {
-          tipo: data.claimType ?? "AHL",
-          fecha: data.createdAt ? new Date(data.createdAt).toLocaleDateString() : "—",
-          hora: "—",
-          estacion: data.airport ?? "—",
-          estacionesInvolucradas: data.ruta ?? "—",
-          lossReason: data.lossReason ?? "—",
-          hasInsurance: data.hasInsurance ?? false,
-        }
-
-        this.claimConfig = getClaimTypeConfig(reclamo.tipo as ClaimType)
-        this.calcularAlertasDias()
-
-        // ------------------------------
-        // Mapeo de vuelo
-        // ------------------------------
-        const vuelo = {
-          numero: data.flightNumbers?.[0]?.flightNo ?? "—",
-          fecha: "—",
-          horaSalida: "—",
-          aerolinea: data.airline ?? "—",
-        }
-
-        // ------------------------------
-        // Mapeo de ruta del vuelo
-        // ------------------------------
-        const routeStops = data.route?.routeStops ?? []
-        const ruta = routeStops.map((rs: any, index: number) => ({
-          codigo: rs?.stop?.code || "—",
-          tipo: index === 0 ? "origen" : index === routeStops.length - 1 ? "destino" : "conexion",
-          horario: "—",
-        }))
-
-        // ------------------------------
-        // Mapeo de equipaje
-        // ------------------------------
-        const equipaje = {
-          numeroTicket: data.ticketNumber ?? "—",
-          ruta: data.ruta ?? "—",
-          numeroVuelo: data.flightNumbers?.[0]?.flightNo ?? "—",
-          fechaVuelo: "—",
-          colorTipo: "—",
-          marca: data.baggageMarks?.[0] ?? "—",
-          contenido: data.contents?.join(", ") ?? "—",
-          descripcion: data.bagDescriptions?.[0] ?? "—",
-        }
-
-        // ------------------------------
-        // Mapeo de daños
-        // ------------------------------
-        const dano = {
-          tipoDano: data.damages?.[0]?.damageType ?? "—",
-          condicion: data.damages?.[0]?.condition ?? "—",
-          partesAfectadas:
-            data.damages?.map((d: any) => ({
-              codigo: d.code ?? "—",
-              nombre: d.description ?? "—",
-            })) ?? [],
-        }
-
-        // ------------------------------
-        // Asignar datos al frontend
-        // ------------------------------
-        this.reclamoData = {
-          pasajero,
-          reclamo,
-          vuelo,
-          ruta,
-          equipaje,
-          dano,
-        }
-
-        console.log("Datos mapeados para frontend:", this.reclamoData)
+        console.log("PIR cargado:", this.pirData)
+        console.log("tipo de reclamo:", this.pirData.claimType)
       },
       error: (err) => {
         console.error("Error cargando PIR:", err)
@@ -152,71 +51,18 @@ export class ViewClaimComponent implements OnInit {
     })
   }
 
-  calcularDiasTranscurridos(): void {
-    const fechaReclamo = new Date()
-    fechaReclamo.setDate(fechaReclamo.getDate() - 22)
-
-    const hoy = new Date()
-    const diferencia = hoy.getTime() - fechaReclamo.getTime()
-    this.diasTranscurridos = Math.floor(diferencia / (1000 * 60 * 60 * 24))
-  }
-
-  calcularAlertasDias(): void {
-    if (!this.claimConfig) return
-
-    this.alertasDias = []
-    const config = this.claimConfig
-
-    if (config.tipo === "AHL") {
-      if (this.diasTranscurridos >= 21) {
-        this.alertasDias.push({
-          tipo: "INDEMNIZAR",
-          mensaje: "Han pasado más de 21 días. Proceder con indemnización.",
-          color: "#d32f2f",
-        })
-      } else if (this.diasTranscurridos >= 3) {
-        this.alertasDias.push({
-          tipo: "CONTENIDO",
-          mensaje: "Han pasado más de 3 días. Solicitar formulario de contenido para búsqueda internacional.",
-          color: "#f57c00",
-        })
-      } else if (this.diasTranscurridos >= 1) {
-        this.alertasDias.push({
-          tipo: "BUSQUEDA_INTERNACIONAL",
-          mensaje: "Ha pasado más de 1 día. Iniciar búsqueda internacional con WorldTracer.",
-          color: "#1976d2",
-        })
-      }
-    }
-  }
-
-  isActionAllowed(action: string): boolean {
-    if (!this.claimConfig) return true
-
-    const actionMap: Record<string, keyof ClaimTypeConfig["accionesPermitidas"]> = {
-      formularioContenido: "formularioContenido",
-      realizarEntrega: "realizarEntrega",
-      cerrarReclamo: "cerrarReclamo",
+  private calcularAntiguedad(): void {
+    if (!this.pirData?.createdAt) {
+      this.antiguedadDias = 0;
+      return;
     }
 
-    const key = actionMap[action]
-    return key ? this.claimConfig.accionesPermitidas[key] : true
-  }
-
-  getTipoReclamo(): ClaimType {
-    return (this.reclamoData?.reclamo?.tipo as ClaimType) || "AHL"
-  }
-
-  imprimirPIR(): void {
-    window.print()
-  }
-
-  exportarPDF(): void {
-    console.log("[v0] Exportando PDF...")
-  }
-
-  cerrar(): void {
-    this.router.navigate(["/baggage"])
+    const fechaCreacion = new Date(this.pirData.createdAt);
+    const ahora = new Date();
+    const diferenciaMilisegundos = ahora.getTime() - fechaCreacion.getTime();
+    
+    // Calcular días
+    this.antiguedadDias = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
   }
 
   verHojaSeguimiento(): void {
@@ -233,7 +79,7 @@ export class ViewClaimComponent implements OnInit {
 
   indemnizar(): void {
     this.router.navigate(["/baggage/claim/add-expense", this.claimId], {
-      queryParams: { tipo: this.getTipoReclamo() },
+      queryParams: { tipo: 'DPR' },
     })
   }
 
@@ -251,5 +97,9 @@ export class ViewClaimComponent implements OnInit {
 
   contactoEstaciones(): void {
     this.router.navigate(["/baggage/claim/station-contact", this.claimId])
+  }
+
+  isAHL(): boolean {
+    return this.pirData?.claimType === 'AHL';
   }
 }

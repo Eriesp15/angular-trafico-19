@@ -1,17 +1,59 @@
+<div class="pir-container">
+  <div *ngIf="pirData">
+    <div>
+      <h1>Visualizar PIR</h1>
+      <p class="subtitle">Detalles del reclamo de irregularidad</p>
+    </div>
+    <span class="badge-label">Tipo de reclamo</span>
+    <div class="badge-type" >
+      {{ pirData.claimType }}
+    </div>
+    <span class="badge-label">Estado:</span>
+    <div class="badge-type" >
+      {{ pirData.claim.claimStatus }}
+    </div>
+    <span class="badge-label">Antiguedad:</span>
+    <div class="badge-type" >
+      {{ antiguedadDias }} días
+    </div>
+    <div class="alert alert-danger" *ngIf="antiguedadDias > 21">
+      ⚠️ Este PIR ha superado los 21 días de antigüedad
+    </div>
+    <div *ngIf="pirData">
+
+      <p>Botones de accion</p>
+      <button 
+        (click)="verHojaSeguimiento()">
+        Ver Hoja de Seguimiento
+      </button>
+      <button 
+        *ngIf="isAHL()"
+        (click)="verFormularioContenido()">
+        Ver Formulario de Contenido
+      </button>
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<!--
+
 <div class="visualizar-pir">
   <div class="pir-container">
-    <!-- Header with Claim Type and Days Badge -->
     <div class="pir-header">
       <div class="header-top">
         <div>
-          <h1>Visualización PIR</h1>
+          <h1>Visualizar PIR</h1>
           <p class="subtitle">Detalles del reclamo de irregularidad</p>
         </div>
-        <!-- Claim type badge in top right corner -->
         <div class="claim-badge">
           <div class="badge-wrapper">
             <span class="badge-label">Tipo de reclamo</span>
-            <div class="badge-type" [style.background-color]="claimConfig?.color">
+            <div class="badge-type" >
               {{ reclamoData?.reclamo?.tipo }}
             </div>
           </div>
@@ -27,7 +69,6 @@
       </div>
     </div>
 
-    <!-- Alertas por días transcurridos -->
     <div class="alerts-section" *ngIf="alertasDias.length > 0">
       <div class="alert-card" *ngFor="let alerta of alertasDias" [style.border-left-color]="alerta.color">
         <mat-icon [style.color]="alerta.color">warning</mat-icon>
@@ -38,13 +79,11 @@
       </div>
     </div>
 
-    <!-- Action buttons section replaces old claim type buttons -->
     <div class="action-buttons-section">
       <button class="action-btn" (click)="follow()">
         <mat-icon>description</mat-icon>
         Ver hoja seguimiento
       </button>
-      <!-- Solo mostrar si está permitido para el tipo de reclamo -->
       <button class="action-btn" (click)="verFormularioContenido()" 
               *ngIf="isActionAllowed('formularioContenido')">
         <mat-icon>assignment</mat-icon>
@@ -74,7 +113,6 @@
       </button>
     </div>
 
-    <!-- Datos del Pasajero -->
     <div class="section">
       <h2 class="section-title">Datos del Pasajero</h2>
       <div class="form-grid">
@@ -154,7 +192,6 @@
       </div>
     </div>
 
-    <!-- Datos del Reclamo -->
     <div class="section">
       <h2 class="section-title">Datos del Reclamo</h2>
       <div class="form-grid">
@@ -178,7 +215,6 @@
       </div>
     </div>
 
-    <!-- Datos del Vuelo -->
     <div class="section">
       <h2 class="section-title">Datos del Vuelo</h2>
       <div class="form-grid">
@@ -200,7 +236,6 @@
         </div>
       </div>
 
-      <!-- Ruta del Vuelo -->
       <div class="flight-route">
         <h3>Ruta del Vuelo</h3>
         <div class="route-visualization">
@@ -218,7 +253,6 @@
       </div>
     </div>
 
-    <!-- Datos del Equipaje -->
     <div class="section">
       <h2 class="section-title">Datos del Equipaje</h2>
       <div class="form-grid">
@@ -282,7 +316,6 @@
       </div>
     </div>
 
-    <!-- Información del Daño - Solo mostrar si el reclamo es DAMAGED -->
     <div class="section" *ngIf="reclamoData?.reclamo?.tipo === 'DAMAGED'">
       <h2 class="section-title">Información del Daño</h2>
       <div class="form-grid">
@@ -307,7 +340,6 @@
       </div>
     </div>
 
-    <!-- Acciones -->
     <div class="actions">
       <button class="btn btn-primary" (click)="imprimirPIR()">
         <mat-icon>print</mat-icon>
@@ -324,3 +356,4 @@
     </div>
   </div>
 </div>
+ comentario -->
