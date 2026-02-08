@@ -1,250 +1,389 @@
-:host { display: block; }
+:host {
+    display: block;
+}
 
-/* Título + acción */
+/* ===========================
+   Container (como follow)
+   =========================== */
+.cerrado-container {
+    min-height: 100vh;
+    background: var(--bg-page);
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ===========================
+   Encabezado
+   =========================== */
 .title-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: .25rem;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
 }
+
 .title {
-    font-size: 32px;
+    margin: 0;
+    color: var(--header-primary);
+    font-size: 1.8rem;
     font-weight: 800;
-    color: #114a86;
-    margin: 0 0 4px;
-}
-.sub   {
-    color: #5a6c80;
-    margin: 0 0 16px;
 }
 
-.header-actions button {
-    border-color: #0B4A8E;
-    color: #0B4A8E;
+.sub {
+    margin: 0.35rem 0 0 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
 }
 
-/* Paneles */
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    button {
+        border-color: var(--btn-primary) !important;
+        color: var(--btn-primary) !important;
+
+        mat-icon {
+            margin-right: 6px;
+        }
+    }
+}
+
+/* ===========================
+   Panels / Cards
+   =========================== */
 .panel {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 4px 18px rgba(17,74,134,0.08);
+    background: var(--bg-card);
+    border-radius: 8px;
+    box-shadow: 0 1px 4px var(--shadow-card);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
 }
-.panel-header {
-    background: #b3c7df;
-    color: #1c3655;
-    font-weight: 700;
-    padding: 10px 12px;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-.panel-body { padding: 14px 12px 6px 12px; }
-.mt-6 { margin-top: 24px; }
 
-/* Filas */
+.panel-header {
+    background: var(--btn-primary);
+    color: #fff;
+    font-weight: 800;
+    padding: 0.85rem 1rem;
+}
+
+.panel-body {
+    padding: 1rem;
+}
+
+/* ===========================
+   Rows (layout tipo follow)
+   =========================== */
 .row {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 14px;
+    grid-template-columns: 220px 1fr;
+    gap: 12px;
     margin: 10px 0;
+    align-items: center;
 }
-.label { font-weight: 700; color: #2f4a66; }
-.value { color: #1b2b40; display: flex; align-items: center; gap: 16px; }
 
-/* Inputs */
-.input {
+.label {
+    font-weight: 800;
+    color: var(--header-primary);
+}
+
+.value {
+    color: var(--text-primary);
+}
+
+/* ===========================
+   Inputs uniformes (como follow)
+   =========================== */
+.input,
+.direccion-input,
+.sig-input,
+.sig-textarea {
     width: 100%;
-    border: 1px solid #d7e3f2;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font: inherit;
-    background: #f9fbfe;
-    outline: none;
-}
-.input:focus { border-color: #6ea1df; background: #fff; }
-.input.short { max-width: 140px; }
-
-.radio-line { display: flex; gap: 24px; }
-
-/* Nota */
-.note {
-    color: #121111;
-    margin: 10px 12px 6px 12px;
-}
-
-/* Caja de firma */
-.signature-card {
-    border: 1px solid #d0d7e2;
-    border-radius: 10px;
-    margin: 10px 12px 16px 12px;
-    overflow: hidden;
-}
-.sig-row { display: grid; grid-template-columns: 160px 1fr; border-top: 1px solid #e6edf6; }
-.sig-row:first-child { border-top: none; }
-.sig-label {
-    background: #f3f6fb;
-    color: #2f4a66;
-    font-weight: 700;
-    padding: 10px 12px;
-}
-.sig-input, .sig-textarea {
-    border: none;
-    border-left: 1px solid #e6edf6;
-    padding: 10px 12px;
+    min-width: 0;
+    border: 1.5px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.65rem 0.75rem;
     font: inherit;
     background: #fff;
-    outline: none;
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+        outline: none;
+        border-color: var(--border-focus);
+        box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.12);
+    }
+
+    &:disabled {
+        background: #f5f6f8;
+        color: var(--text-muted);
+        cursor: not-allowed;
+    }
 }
-.sig-textarea { min-height: 100px; resize: vertical; }
 
-.two-cols { grid-template-columns: 1fr 1fr; }
-.sig-cell { display: grid; grid-template-columns: 160px 1fr; }
-.sig-box { border-left: 1px solid #e6edf6; background: white}
+/* Input corto */
+.input.short {
+    max-width: 180px;
+}
 
-/* FAB imprimir */
+/* ===========================
+   Radios
+   =========================== */
+.radio-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 1rem 0 0.5rem 0;
+    padding: 0.9rem 1rem;
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+
+    label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        color: var(--text-primary);
+        cursor: pointer;
+    }
+
+    input[type="radio"] {
+        accent-color: var(--btn-primary);
+        transform: translateY(1px);
+    }
+}
+
+/* Dirección a domicilio */
+.direccion-group {
+    margin-top: 0.75rem;
+    display: grid;
+    gap: 8px;
+
+    label {
+        font-weight: 800;
+        color: var(--header-primary);
+    }
+}
+
+/* ===========================
+   Botones (estilo similar al de tu compañera)
+   =========================== */
+.botones-entrega {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+    }
+
+    &:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+}
+
+.btn-confirmar {
+    background: var(--btn-primary);
+    color: var(--btn-text);
+
+    &:hover {
+        background: var(--btn-primary-hover);
+    }
+}
+
+.btn-subir {
+    background: #6c757d;
+    color: #fff;
+
+    &:hover {
+        background: #5a6268;
+    }
+}
+
+/* ===========================
+   Archivos cargados
+   =========================== */
+.archivo-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+
+    p {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-primary);
+    }
+
+    ul {
+        margin: 0;
+        padding-left: 1.2rem;
+
+        li {
+            margin: 6px 0;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+    }
+}
+
+/* ===========================
+   Nota (texto de aviso)
+   =========================== */
+.note {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: #fff7e6;
+    border: 1px solid rgba(122, 74, 0, 0.25);
+    border-left: 4px solid #7a4a00;
+    border-radius: 8px;
+    color: #7a4a00;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+/* ===========================
+   Caja de firma (estilo card)
+   =========================== */
+.signature-card {
+    margin-top: 1rem;
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 4px var(--shadow-card);
+    padding: 1rem;
+}
+
+.sig-row {
+    display: grid;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.sig-row.two-cols {
+    grid-template-columns: 1fr 1fr;
+}
+
+.sig-cell {
+    display: grid;
+    gap: 8px;
+}
+
+.sig-label {
+    font-weight: 800;
+    color: var(--header-primary);
+}
+
+.sig-box {
+    height: 90px;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.sig-textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+/* ===========================
+   FAB imprimir
+   =========================== */
 .print-fab {
     position: fixed;
     right: 24px;
     bottom: 24px;
-    background: #0B4A8E !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+    background: var(--btn-primary) !important;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     z-index: 1000;
 }
-.entrega-section {
-    background: #fff;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.06);
-    margin-top: 1.5rem;
-}
 
-.radio-group {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 1rem;
-    label { cursor: pointer; }
-}
+/* ===========================
+   Responsive
+   =========================== */
+@media (max-width: 768px) {
+    .cerrado-container {
+        padding: 1rem;
+    }
 
-.direccion-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem;
-    label { font-weight: 600; color: #111827; margin-bottom: .3rem; }
-    .direccion-input {
-        padding: .5rem .8rem;
-        border: 1px solid #d1d5db;
-        border-radius: .5rem;
-        width: 100%;
+    .title-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .row {
+        grid-template-columns: 1fr;
+        align-items: start;
+    }
+
+    .sig-row.two-cols {
+        grid-template-columns: 1fr;
+    }
+
+    .botones-entrega {
+        justify-content: flex-start;
     }
 }
 
-.botones-entrega {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.btn {
-    padding: .6rem 1rem;
-    border-radius: .6rem;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-}
-.btn-confirmar {
-    background: #022F70;
-    color: #fff;
-}
-.btn-confirmar:hover { background: #002D8F; }
-
-.btn-subir {
-    background: #FFB60D;
-    color: #1f2937;
-}
-.btn-subir:hover { background: #f7c43b; }
-
-.archivo-info {
-    margin-top: .8rem;
-    background: #F3F6FB;
-    padding: .6rem .8rem;
-    border-radius: .5rem;
-    font-size: .9rem;
-}
-.modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-}
-.modal {
-    background: #FEFDFB;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    width: min(500px, 90vw);
-    box-shadow: 0 10px 20px rgba(0,0,0,.15);
-}
-.modal textarea {
-    width: 100%;
-    border: 1px solid #d1d5db;
-    border-radius: .5rem;
-    padding: .5rem;
-    resize: none;
-    margin-top: .5rem;
-    font-family: 'Inter', sans-serif;
-    font-size: .95rem;
-}
-.copiado {
-    font-size: .9rem;
-    color: #22c55e;
-    margin-top: .5rem;
-    text-align: right;
-}
-.btn-amarillo {
-    background: #FFB60D;
-    color: #1f2937;
-    font-weight: 700;
-}
-/* Ocultar en pantalla los elementos marcados */
-.no-print { display: inline-flex; }
-
-/* Impresión */
+/* ===========================
+   Print
+   =========================== */
 @media print {
     .no-print,
     button,
-    mat-icon-button { display: none !important; }
-
-    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    @page { size: A4 portrait; margin: 12mm; }
-
-    .cerrado-container { padding: 0 !important; }
-    .panel { box-shadow: none !important; border: 1px solid #b9c6d8; page-break-inside: avoid; }
-    .panel-header { background: #A7C1DF !important; color: #0B4A8E !important; }
-
-    * { line-height: 1.15 !important; font-size: 12px !important; }
-    .sig-textarea { min-height: 80px; }
-    /* Ajustes de encabezado para impresión */
-    .title {
-        font-size: 28px !important;
-        font-weight: 900 !important;
-        text-align: center !important;
-        margin-bottom: 4px !important;
-        color: #0B4A8E !important;
-    }
-
-    .sub {
-        text-align: center !important;
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        color: #2f4a66 !important;
-        margin-bottom: 12px !important;
-    }
-
-    /* Ocultar botones del encabezado en impresión */
-    .header-actions {
+    mat-icon {
         display: none !important;
     }
 
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 8mm 10mm;
+    }
+
+    .cerrado-container {
+        padding: 0 !important;
+        background: #fff !important;
+        max-width: 100% !important;
+    }
+
+    .panel,
+    .signature-card {
+        box-shadow: none !important;
+    }
+
+    .panel-header {
+        background: var(--btn-primary) !important;
+        color: #fff !important;
+    }
 }

@@ -31,6 +31,9 @@ interface PIR {
   bagTag: string
   tipo: string
   aeropuerto?: string
+  derivedFromRegional?: string | null
+  derivedAt?: Date | null
+  originalRegional?: string | null
 }
 
 @Component({
@@ -48,11 +51,13 @@ export class ListComponent implements OnInit, OnDestroy {
   filteredClaims: PIR[] = []
   paginatedClaims: PIR[] = []
   loading = true
+  showFilters = false
 
   searchForm: FormGroup
-  selectedStatus: ClaimStatus | "ALL" = "ALL"
+  selectedStatus: "ALL" | "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED" = "ALL"
   selectedType: "ALL" | ClaimType = "ALL"
   selectedAeropuerto = "ALL"
+  selectedDerivedFilter: "all" | "derived" | "original" = "all"
   filterOption: "all" | "recent" | "date" = "all"
   selectedDate = ""
 
@@ -142,7 +147,7 @@ export class ListComponent implements OnInit, OnDestroy {
       .subscribe(() => this.applyFilters())
   }
 
-  filterByStatus(status: ClaimStatus | "ALL"): void {
+  filterByStatus(status: "ALL" | "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED"): void {
     this.selectedStatus = status
     this.applyFilters()
   }
@@ -154,6 +159,11 @@ export class ListComponent implements OnInit, OnDestroy {
 
   filterByAeropuerto(aeropuerto: string): void {
     this.selectedAeropuerto = aeropuerto
+    this.applyFilters()
+  }
+
+  filterByDerived(filter: "all" | "derived" | "original"): void {
+    this.selectedDerivedFilter = filter
     this.applyFilters()
   }
 
@@ -172,7 +182,7 @@ export class ListComponent implements OnInit, OnDestroy {
     let result = [...this.claims]
 
     if (this.selectedStatus !== "ALL") {
-      result = result.filter((c) => c.status === this.selectedStatus)
+      result = result.filter((c) => c.status === this.selectedStatus as ClaimStatus)
     }
 
     // Filtro por tipo
@@ -182,6 +192,13 @@ export class ListComponent implements OnInit, OnDestroy {
 
     if (this.selectedAeropuerto !== "ALL") {
       result = result.filter((c) => c.aeropuerto === this.selectedAeropuerto)
+    }
+
+    // Filtro por reclamos derivados
+    if (this.selectedDerivedFilter === "derived") {
+      result = result.filter((c) => c.derivedFromRegional !== null && c.derivedFromRegional !== undefined)
+    } else if (this.selectedDerivedFilter === "original") {
+      result = result.filter((c) => !c.derivedFromRegional || c.derivedFromRegional === null)
     }
 
     if (this.filterOption === "recent") {
@@ -272,6 +289,10 @@ export class ListComponent implements OnInit, OnDestroy {
     this.filterOption = "all"
     this.selectedDate = ""
     this.applyFilters()
+  }
+
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters
   }
 
   navigateToClaim(id: string | undefined): void {

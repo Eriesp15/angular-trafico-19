@@ -1,0 +1,157 @@
+.repair-dialog-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.info-section {
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border-left: 4px solid #003366;
+
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #003366;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .label {
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .value {
+    color: #6b7280;
+    word-break: break-word;
+  }
+}
+
+.repair-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  mat-form-field {
+    &.full-width {
+      width: 100%;
+    }
+
+    &.half-width {
+      width: calc(50% - 8px);
+
+      &:nth-child(odd) {
+        margin-right: auto;
+      }
+    }
+
+    ::ng-deep {
+      .mat-mdc-form-field-error {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+.authorization-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background-color: #fff3e0;
+  border-radius: 6px;
+  border-left: 4px solid #f57c00;
+
+  .auth-checkbox {
+    ::ng-deep {
+      .mdc-checkbox__native-control:checked ~ .mdc-checkbox__background {
+        background-color: #f57c00;
+      }
+    }
+  }
+
+  .auth-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  .error-message {
+    font-size: 12px;
+    color: #d32f2f;
+    margin-top: 4px;
+  }
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+::ng-deep {
+  .send-to-repair-dialog {
+    .mat-mdc-dialog-container {
+      padding: 0 !important;
+
+      .mdc-dialog__surface {
+        box-shadow: 0 5px 40px rgba(0, 0, 0, 0.16);
+      }
+    }
+
+    .mat-mdc-dialog-title {
+      padding: 24px 24px 16px 24px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #003366;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .mat-mdc-dialog-content {
+      padding: 24px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .mat-mdc-dialog-actions {
+      padding: 16px 24px;
+      border-top: 1px solid #e5e7eb;
+      gap: 8px;
+
+      button {
+        min-width: 100px;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .repair-form {
+    mat-form-field {
+      &.half-width {
+        width: 100% !important;
+      }
+    }
+  }
+}
