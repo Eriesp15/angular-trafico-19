@@ -15,14 +15,14 @@ import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { FollowService, FollowEntryDto, ClaimViewDto } from 'app/modules/baggage/services/follow.service';
-import { ApiClaimService } from '../services/api-claim.service';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
+
 type Canal = 'whatsapp' | 'email' | 'nota';
 
 type SeguimientoRow = {
-    fecha: string;   // DD-MM-YYYY
-    hora: string;    // HH:mm
+    fecha: string; // DD-MM-YYYY
+    hora: string; // HH:mm
     encargado: string;
     info: string;
     canal?: Canal;
@@ -32,8 +32,8 @@ type SeguimientoRow = {
 };
 
 type LlamadaRow = {
-    fecha: string;   // DD-MM-YYYY
-    hora: string;    // HH:mm
+    fecha: string; // DD-MM-YYYY
+    hora: string; // HH:mm
     celularCorreo: string;
     aQuien: string;
     observaciones: string;
@@ -42,70 +42,47 @@ type LlamadaRow = {
     sentAt?: string;
     autoObs?: string;
 };
-type AppUser = {
-    name?: string;
-    email?: string;
-};
-
-@Injectable({ providedIn: 'root' })
-export class OutboxService {
-    async sendWhatsApp(number: string, message: string): Promise<void> {
-        const res = await fetch('/api/outbox/whatsapp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ to: number, message })
-        });
-        if (!res.ok) throw new Error('No se pudo enviar WhatsApp');
-    }
-
-    async sendEmail(email: string, subject: string, body: string): Promise<void> {
-        const res = await fetch('/api/outbox/email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ to: email, subject, body })
-        });
-        if (!res.ok) throw new Error('No se pudo enviar Email');
-    }
-}
 
 @Component({
     selector: 'confirm-send-dialog',
     standalone: true,
     imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatDividerModule],
     template: `
-        <h2 mat-dialog-title style="display:flex;align-items:center;gap:8px">
-            <mat-icon>{{ data.canal === 'whatsapp' ? 'sms' : (data.canal === 'email' ? 'mail' : 'event_note') }}</mat-icon>
-            {{ data.canal === 'nota' ? 'Confirmar guardado de nota' : 'Confirmar envío' }}
-        </h2>
+    <h2 mat-dialog-title style="display:flex;align-items:center;gap:8px">
+      <mat-icon>{{ data.canal === 'whatsapp' ? 'sms' : (data.canal === 'email' ? 'mail' : 'event_note') }}</mat-icon>
+      {{ data.canal === 'nota' ? 'Confirmar guardado de nota' : 'Confirmar envío' }}
+    </h2>
 
-        <div mat-dialog-content>
-            <div *ngIf="data.canal !== 'nota'" style="margin-bottom:8px">
-                <div><strong>Destino:</strong> {{ data.to }}</div>
-                <div><strong>Canal:</strong> {{ data.canal | uppercase }}</div>
-            </div>
+    <div mat-dialog-content>
+      <div *ngIf="data.canal !== 'nota'" style="margin-bottom:8px">
+        <div><strong>Destino:</strong> {{ data.to }}</div>
+        <div><strong>Canal:</strong> {{ data.canal | uppercase }}</div>
+      </div>
 
-            <mat-divider></mat-divider>
+      <mat-divider></mat-divider>
 
-            <div style="margin-top:12px">
-                <div style="font-weight:600;margin-bottom:6px;">Mensaje a enviar/guardar:</div>
-                <pre style="white-space:pre-wrap;margin:0">{{ data.message }}</pre>
-            </div>
-        </div>
+      <div style="margin-top:12px">
+        <div style="font-weight:600;margin-bottom:6px;">Mensaje a enviar/guardar:</div>
+        <pre style="white-space:pre-wrap;margin:0">{{ data.message }}</pre>
+      </div>
+    </div>
 
-        <div mat-dialog-actions style="justify-content:flex-end">
-            <button mat-button (click)="close(false)">Cancelar</button>
-            <button mat-flat-button color="primary" (click)="close(true)">
-                {{ data.canal === 'nota' ? 'Guardar' : 'Enviar' }}
-            </button>
-        </div>
-    `
+    <div mat-dialog-actions style="justify-content:flex-end">
+      <button mat-button (click)="close(false)">Cancelar</button>
+      <button mat-flat-button color="primary" (click)="close(true)">
+        {{ data.canal === 'nota' ? 'Guardar' : 'Enviar' }}
+      </button>
+    </div>
+  `,
 })
 export class ConfirmSendDialogComponent {
     constructor(
         private ref: MatDialogRef<ConfirmSendDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { canal: Canal; to?: string; message: string }
     ) {}
-    close(ok: boolean) { this.ref.close(ok); }
+    close(ok: boolean) {
+        this.ref.close(ok);
+    }
 }
 
 @Component({
@@ -121,7 +98,7 @@ export class ConfirmSendDialogComponent {
         MatButtonToggleModule,
         MatSnackBarModule,
         MatTooltipModule,
-        MatChipsModule
+        MatChipsModule,
     ],
     templateUrl: './follow.component.html',
     styleUrl: './follow.component.scss',
@@ -140,25 +117,21 @@ export class FollowComponent implements OnInit {
     seguimientos: SeguimientoRow[] = [];
     llamadas: LlamadaRow[] = [];
 
+    currentUserName = '';
+
     constructor(
         private userService: UserService,
         private route: ActivatedRoute,
         private followService: FollowService,
         private dialog: MatDialog,
-        private outbox: OutboxService,
         private snack: MatSnackBar
-    ){}
-
-    currentUserName = '';
+    ) {}
 
     async ngOnInit(): Promise<void> {
-
-        // Escuchar usuario autenticado
+        // ✅ Usuario autenticado (para precargar "Encargado")
         this.userService.user$.subscribe((user: User) => {
-            this.currentUserName =
-                user?.name ||
-                user?.email ||
-                '';
+            // si tu User no tiene "name", cambia por la propiedad real (ej: firstName/lastName)
+            this.currentUserName = (user as any)?.name || (user as any)?.email || '';
         });
 
         // PIR
@@ -171,13 +144,12 @@ export class FollowComponent implements OnInit {
         await this.loadFromBackend(pir);
     }
 
-
-
     private async loadFromBackend(pir: string): Promise<void> {
         this.loading = true;
 
         try {
             const response: ClaimViewDto = await firstValueFrom(this.followService.getClaimViewByPir(pir));
+            console.log('CLAIM VIEW RESPONSE =>', response);
 
             // expediente
             this.expediente = {
@@ -185,36 +157,27 @@ export class FollowComponent implements OnInit {
                 tipo: response.claimType,
                 nombres: response.pasajero ?? `${response.passengerLastName} ${response.passengerName}`,
                 celular: (response.temporaryPhone || response.permanentPhone || '') as string,
-                correo: '', // si el backend luego manda email, lo conectas
+                correo: '', // ⚠️ tu backend no lo manda todavía (por eso sale vacío)
             };
 
-            const entries =
-                response.follow?.entries ??
-                response.claim?.follow?.entries ??
-                [];
-
-            const sorted = [...entries].sort(
-                (a, b) => new Date(a.eventAt).getTime() - new Date(b.eventAt).getTime()
-            );
+            const entries = response.follow?.entries ?? response.claim?.follow?.entries ?? [];
+            const sorted = [...entries].sort((a, b) => new Date(a.eventAt).getTime() - new Date(b.eventAt).getTime());
 
             this.seguimientos = sorted
-                .filter(e => e.channel !== 'CALL')
-                .map(e => {
+                .filter((e) => e.channel !== 'CALL')
+                .map((e) => {
                     const row = this.toSeguimientoRow(e);
-                    if (!row.encargado) {
-                        row.encargado = this.currentUserName;
-                    }
+                    if (!row.encargado) row.encargado = this.currentUserName;
                     return row;
                 });
 
+            this.llamadas = sorted.filter((e) => e.channel === 'CALL').map((e) => this.toLlamadaRow(e));
 
-            this.llamadas = sorted
-                .filter(e => e.channel === 'CALL')
-                .map(e => this.toLlamadaRow(e));
-
-            // si viene vacío, deja 1 fila para que el usuario agregue
+            // si viene vacío, deja 1 fila
             if (this.seguimientos.length === 0) {
-                this.seguimientos = [{ fecha: this.todayDDMMYYYY(), hora: this.nowHM(), encargado: '', info: '', locked: false }];
+                this.seguimientos = [
+                    { fecha: this.todayDDMMYYYY(), hora: this.nowHM(), encargado: this.currentUserName, info: '', locked: false, canal: 'nota' },
+                ];
             }
             if (this.llamadas.length === 0) {
                 this.llamadas = [{ fecha: this.todayDDMMYYYY(), hora: this.nowHM(), celularCorreo: '', aQuien: '', observaciones: '', locked: false }];
@@ -238,7 +201,7 @@ export class FollowComponent implements OnInit {
             encargado: e.performedByName ?? '',
             info: e.message ?? '',
             canal: this.backendChannelToCanal(e.channel),
-            locked: e.status !== 'PENDING', // SAVED/SENT => bloqueado
+            locked: e.status !== 'PENDING',
             sentAt: e.createdAt,
             to: e.contact ?? undefined,
         };
@@ -251,7 +214,7 @@ export class FollowComponent implements OnInit {
             fecha,
             hora,
             celularCorreo: e.contact ?? '',
-            aQuien: '', // si luego agregas contactName en backend, lo llenas aquí
+            aQuien: '',
             observaciones: e.message ?? '',
             locked: e.status !== 'PENDING',
             sentAt: e.createdAt,
@@ -264,7 +227,7 @@ export class FollowComponent implements OnInit {
         if (ch === 'WHATSAPP') return 'whatsapp';
         if (ch === 'EMAIL') return 'email';
         if (ch === 'NOTE') return 'nota';
-        return undefined; // CALL va a "llamadas"
+        return undefined;
     }
 
     private isoToFechaHora(iso: string): { fecha: string; hora: string } {
@@ -277,7 +240,7 @@ export class FollowComponent implements OnInit {
         return { fecha: `${dd}-${mm}-${yyyy}`, hora: `${hh}:${mi}` };
     }
 
-    // ------------------ TU UI (lo que ya tenías) ------------------
+    // ------------------ UI HELPERS ------------------
 
     print(): void {
         window.print();
@@ -315,17 +278,9 @@ export class FollowComponent implements OnInit {
     addSeguimientoRow(): void {
         this.seguimientos = [
             ...this.seguimientos,
-            {
-                fecha: this.todayDDMMYYYY(),
-                hora: this.nowHM(),
-                encargado: this.currentUserName,
-                info: '',
-                locked: false,
-                canal: 'nota',
-            },
+            { fecha: this.todayDDMMYYYY(), hora: this.nowHM(), encargado: this.currentUserName, info: '', locked: false, canal: 'nota' },
         ];
     }
-
 
     addLlamadaRow(): void {
         const base: LlamadaRow = {
@@ -336,7 +291,7 @@ export class FollowComponent implements OnInit {
             observaciones: this.generateObs(''),
             locked: false,
             obsTouched: false,
-            autoObs: this.generateObs('')
+            autoObs: this.generateObs(''),
         };
         this.llamadas = [...this.llamadas, base];
     }
@@ -409,9 +364,7 @@ export class FollowComponent implements OnInit {
                 `"Señor/a ${nombre}, le hablamos por el reclamo de su maleta (Exp. ${exp}). ` +
                 `Se le informa que . Que tenga un buen día."`;
         } else {
-            s.info =
-                `Atención en oficina: Se brindó información al pasajero ${nombre} ` +
-                `respecto a su reclamo (Exp. ${exp}). Detalle:  .`;
+            s.info = `Atención en oficina: Se brindó información al pasajero ${nombre} respecto a su reclamo (Exp. ${exp}). Detalle:  .`;
         }
     }
 
@@ -446,6 +399,7 @@ export class FollowComponent implements OnInit {
         return m ? m[1] : text;
     }
 
+    // ✅ AQUI ESTÁ EL CAMBIO CLAVE: ENVÍA AL BACKEND REAL (/notify/whatsapp y /notify/email)
     async confirmRow(i: number): Promise<void> {
         const s = this.seguimientos[i];
         if (!s || !s.canal) return;
@@ -455,7 +409,7 @@ export class FollowComponent implements OnInit {
 
         const dlg = this.dialog.open(ConfirmSendDialogComponent, {
             width: '560px',
-            data: { canal: s.canal, to, message }
+            data: { canal: s.canal, to, message },
         });
 
         const ok = await firstValueFrom(dlg.afterClosed());
@@ -464,27 +418,23 @@ export class FollowComponent implements OnInit {
         try {
             if (s.canal === 'whatsapp') {
                 if (!to) throw new Error('No hay número de celular del pasajero.');
-                await this.outbox.sendWhatsApp(to, message);
+                await firstValueFrom(this.followService.sendWhatsApp({ to, message }));
             } else if (s.canal === 'email') {
                 if (!to) throw new Error('No hay correo del pasajero.');
                 const subject = `Seguimiento de reclamo de equipaje ${this.expediente.tipo}-${this.expediente.expediente}`;
-                await this.outbox.sendEmail(to, subject, message);
+                await firstValueFrom(this.followService.sendEmail({ to, subject, message }));
             } else {
-                // nota: por ahora solo local (si luego haces POST al backend, lo conectamos)
+                // nota: por ahora solo local
             }
 
             s.locked = true;
             s.sentAt = new Date().toISOString();
             s.to = to;
 
-            this.snack.open(
-                s.canal === 'nota' ? 'Nota guardada.' : 'Mensaje enviado y fila bloqueada.',
-                'OK',
-                { duration: 2500 }
-            );
+            this.snack.open(s.canal === 'nota' ? 'Nota guardada.' : 'Mensaje enviado y fila bloqueada.', 'OK', { duration: 2500 });
         } catch (err: any) {
             console.error(err);
-            this.snack.open(err?.message || 'No se pudo completar la acción.', 'Cerrar', { duration: 3500 });
+            this.snack.open(err?.error?.message || err?.message || 'No se pudo completar la acción.', 'Cerrar', { duration: 3500 });
         }
     }
 
@@ -516,13 +466,11 @@ export class FollowComponent implements OnInit {
         if (!c) return;
 
         const nombre = (c.aQuien || '').trim();
-        const mensaje = (c.observaciones && c.observaciones.trim())
-            ? c.observaciones.trim()
-            : (nombre ? `Se hizo una llamada al ${nombre}.` : 'Se registró una llamada.');
+        const mensaje = c.observaciones && c.observaciones.trim() ? c.observaciones.trim() : nombre ? `Se hizo una llamada al ${nombre}.` : 'Se registró una llamada.';
 
         const dlg = this.dialog.open(ConfirmSendDialogComponent, {
             width: '560px',
-            data: { canal: 'nota', message: mensaje }
+            data: { canal: 'nota', message: mensaje },
         });
 
         const ok = await firstValueFrom(dlg.afterClosed());
@@ -537,11 +485,11 @@ export class FollowComponent implements OnInit {
         const nombre = (aQuien || '').trim();
         return nombre ? `Se hizo una llamada al ${nombre}.` : 'Se registró una llamada.';
     }
+
     autoGrow(ev: Event): void {
         const el = ev.target as HTMLTextAreaElement;
         if (!el) return;
         el.style.height = 'auto';
         el.style.height = `${el.scrollHeight}px`;
     }
-
 }

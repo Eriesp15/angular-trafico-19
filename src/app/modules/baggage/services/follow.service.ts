@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+export type NotifyWhatsAppReq = { to: string; message: string };
+export type NotifyEmailReq = { to: string; subject: string; message: string };
 
 export type FollowEntryDto = {
     id: string;
@@ -37,5 +39,14 @@ export class FollowService {
 
     getClaimViewByPir(pir: string): Observable<ClaimViewDto> {
         return this.http.get<ClaimViewDto>(`${this.api}/claims/view/${pir}`);
+    }
+    //  WhatsApp
+    sendWhatsApp(body: NotifyWhatsAppReq): Observable<{ ok: boolean; sid?: string }> {
+        return this.http.post<{ ok: boolean; sid?: string }>(`${this.api}/notify/whatsapp`, body);
+    }
+
+    //  Email
+    sendEmail(body: NotifyEmailReq): Observable<{ ok: boolean; messageId?: string }> {
+        return this.http.post<{ ok: boolean; messageId?: string }>(`${this.api}/notify/email`, body);
     }
 }
