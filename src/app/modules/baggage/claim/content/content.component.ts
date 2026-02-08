@@ -104,6 +104,13 @@ interface ContentData {
   signatureDate: string
   createdAt: string
   updatedAt: string
+  // Nuevos campos de Aduana
+  customsDeclared?: boolean
+  customsAirport?: string
+  packed?: boolean
+  combinationCode?: string
+  wheels?: string
+  retractablePuller?: boolean
 }
 
 interface ContentItem {
@@ -156,6 +163,9 @@ export class ContentComponent implements OnInit {
 
   isViewMode = true
   hasExistingData = false
+  showSummary = false
+  isConfirmed = false
+  maxItems = 17
 
   // Datos del pasajero y reclamo
   passengerName = ""
@@ -174,6 +184,11 @@ export class ContentComponent implements OnInit {
   baggageColors = BAGGAGE_COLORS
   baggageSizes = BAGGAGE_SIZES
   lockTypes = LOCK_TYPES
+
+  // Opciones para nuevos campos
+  materialOptions = ['Rígido', 'Lona', 'Metal', 'Cuero']
+  sizeOptions = ['Pequeño', 'Mediano', 'Grande']
+  wheelsOptions = ['No', '2', '4', '5']
 
   private readonly apiUrl = "http://localhost:3700/api/v1"
 
@@ -195,30 +210,42 @@ export class ContentComponent implements OnInit {
 
   private initForm(): void {
     this.contentForm = this.fb.group({
-      baggageDescription: ["", Validators.required],
-      baggageColor: ["", Validators.required],
-      baggageType: ["", Validators.required],
-      baggageBrand: [""],
-      baggageSize: [""],
+      // Sección Aduana
+      aduana: this.fb.group({
+        didAduana: ['No', Validators.required],
+        cityOrAirport: [''],
+        packed: ['No'],
+        combinationCode: ['000'],
+        wheels: ['No'],
+        retractableHandle: [false]
+      }),
+      // Sección Equipaje
+      equipaje: this.fb.group({
+        baggageDescription: ["", Validators.required],
+        baggageColor: ["", Validators.required],
+        baggageType: ["", Validators.required],
+        baggageBrand: [""],
+        baggageSize: [""],
+      }),
+      // Controles de peso
       registeredWeight: [{ value: "", disabled: true }],
       deliveredWeight: [""],
       weightDifference: [{ value: "", disabled: true }],
+      // Items de contenido
       contentItems: this.fb.array([]),
+      // Items valorados
       valuedItems: this.fb.array([]),
+      // Información adicional
       additionalNotes: [""],
       distinctiveMarks: [""],
       lockType: [""],
       hasKeys: [false],
-      lockCombination: [""],
       passengerDeclaration: [false, Validators.requiredTrue],
       passengerSignature: ["", Validators.required],
       signatureDate: [new Date(), Validators.required],
     })
 
     this.addContentItem()
-    this.addContentItem()
-    this.addContentItem()
-    this.addValuedItem()
   }
 
   get contentItems(): FormArray {
@@ -244,6 +271,7 @@ export class ContentComponent implements OnInit {
             this.contentData = contentData
             this.hasExistingData = true
             this.isViewMode = true
+            this.isConfirmed = true
             this.populateFormWithContentData(contentData)
             this.isLoading = false
           },
@@ -278,18 +306,32 @@ export class ContentComponent implements OnInit {
   }
 
   private populateFormWithContentData(data: ContentData): void {
-    this.contentForm.patchValue({
+    const aduanaData = {
+      didAduana: data.customsDeclared ? 'Si' : 'No',
+      cityOrAirport: data.customsAirport || '',
+      packed: data.packed ? 'Si' : 'No',
+      combinationCode: data.combinationCode || '000',
+      wheels: data.wheels || 'No',
+      retractableHandle: data.retractablePuller || false
+    }
+
+    const equipajeData = {
       baggageDescription: data.baggageDescription || "",
       baggageColor: data.baggageColor || "",
       baggageType: data.baggageType || "",
       baggageBrand: data.baggageBrand || "",
       baggageSize: data.baggageSize || "",
+    }
+
+    this.contentForm.patchValue({
+      aduana: aduanaData,
+      equipaje: equipajeData,
+      registeredWeight: data.registeredWeight || "",
       deliveredWeight: data.deliveredWeight || "",
       weightDifference: data.weightDifference || "",
       distinctiveMarks: data.distinctiveMarks || "",
       lockType: data.lockType || "",
       hasKeys: data.hasKeys || false,
-      lockCombination: data.lockCombination || "",
       additionalNotes: data.additionalNotes || "",
       passengerDeclaration: data.passengerDeclaration || false,
       passengerSignature: data.passengerSignature || "",
@@ -338,6 +380,7 @@ export class ContentComponent implements OnInit {
   }
 
   enableEditMode(): void {
+    if (this.isConfirmed) return
     this.isViewMode = false
     // Asegurarse de que hay al menos 3 items de contenido
     while (this.contentItems.length < 3) {
@@ -350,23 +393,29 @@ export class ContentComponent implements OnInit {
       this.populateFormWithContentData(this.contentData)
     }
     this.isViewMode = true
+    this.showSummary = false
+  }
+
+  createContentItem(): FormGroup {
+    return this.fb.group({
+      category: ["", Validators.required],
+      description: ["", Validators.required],
+      quantity: [1, [Validators.required, Validators.min(1)]],
+      color: [""],
+      brand: [""],
+      approximateValue: [""],
+    })
   }
 
   addContentItem(): void {
-    if (this.contentItems.length < 12) {
-      const contentItem = this.fb.group({
-        category: ["", Validators.required],
-        description: ["", Validators.required],
-        quantity: [1, [Validators.required, Validators.min(1)]],
-        color: [""],
-        brand: [""],
-        approximateValue: [""],
-      })
-      this.contentItems.push(contentItem)
+    if (this.isConfirmed) return
+    if (this.contentItems.length < this.maxItems) {
+      this.contentItems.push(this.createContentItem())
     }
   }
 
   removeContentItem(index: number): void {
+    if (this.isConfirmed) return
     if (this.contentItems.length > 3) {
       this.contentItems.removeAt(index)
     }
@@ -424,37 +473,97 @@ export class ContentComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.contentForm.valid) {
-      this.isSaving = true
-
-      const formData = {
-        pirNumber: this.claimId,
-        passengerName: this.passengerName,
-        passengerLastName: this.passengerLastName,
-        ...this.contentForm.getRawValue(),
-        updatedAt: new Date().toISOString(),
-        createdAt: this.contentData?.createdAt || new Date().toISOString(),
-      }
-
-      this.http.post(`${this.apiUrl}/claims/${this.claimId}/content`, formData).subscribe({
-        next: () => {
-          this.contentData = formData as ContentData
-          this.hasExistingData = true
-          this.isViewMode = true
-          this.isSaving = false
-        },
-        error: (err) => {
-          console.error("Error guardando contenido:", err)
-          this.isSaving = false
-          // Para desarrollo, simular éxito
-          this.contentData = formData as ContentData
-          this.hasExistingData = true
-          this.isViewMode = true
-        },
-      })
-    } else {
-      this.markFormGroupTouched(this.contentForm)
+    if (this.isConfirmed) return
+    if (this.contentForm.invalid) {
+      this.contentForm.markAllAsTouched()
+      alert('Por favor, completa los campos obligatorios.')
+      return
     }
+    this.showSummary = true
+  }
+
+  confirmSummary(): void {
+    if (this.isConfirmed) return
+
+    this.isSaving = true
+    const rawValue = this.contentForm.getRawValue()
+
+    const payload = {
+      pirNumber: this.claimId,
+      passengerName: this.passengerName,
+      passengerLastName: this.passengerLastName,
+      // Mapeo de Aduana
+      customsDeclared: rawValue.aduana.didAduana === 'Si',
+      customsAirport: rawValue.aduana.cityOrAirport || 'N/A',
+      packed: rawValue.aduana.packed === 'Si',
+      combinationCode: rawValue.aduana.combinationCode || '000',
+      wheels: rawValue.aduana.wheels?.toString() || 'No',
+      retractablePuller: !!rawValue.aduana.retractableHandle,
+      // Equipaje
+      baggageDescription: rawValue.equipaje.baggageDescription || "",
+      baggageColor: rawValue.equipaje.baggageColor || "",
+      baggageType: rawValue.equipaje.baggageType || "",
+      baggageBrand: rawValue.equipaje.baggageBrand || "",
+      baggageSize: rawValue.equipaje.baggageSize || "",
+      // Pesos
+      registeredWeight: rawValue.registeredWeight || "",
+      deliveredWeight: rawValue.deliveredWeight || "",
+      weightDifference: rawValue.weightDifference || "0",
+      // Items
+      contentItems: rawValue.contentItems || [],
+      valuedItems: rawValue.valuedItems || [],
+      // Info adicional
+      distinctiveMarks: rawValue.distinctiveMarks || "",
+      lockType: rawValue.lockType || "",
+      hasKeys: rawValue.hasKeys || false,
+      additionalNotes: rawValue.additionalNotes || "",
+      passengerDeclaration: rawValue.passengerDeclaration || false,
+      passengerSignature: rawValue.passengerSignature || "",
+      signatureDate: rawValue.signatureDate || new Date(),
+      updatedAt: new Date().toISOString(),
+      createdAt: this.contentData?.createdAt || new Date().toISOString(),
+    }
+
+    this.http.post(`${this.apiUrl}/claims/${this.claimId}/content`, payload).subscribe({
+      next: () => {
+        this.contentData = payload as ContentData
+        this.hasExistingData = true
+        this.isConfirmed = true
+        this.showSummary = false
+        this.isViewMode = true
+        this.contentForm.disable()
+        this.isSaving = false
+        alert('Formulario guardado y bloqueado con éxito.')
+      },
+      error: (err) => {
+        console.error('Error al guardar:', err)
+        this.isSaving = false
+        alert('Error al guardar el formulario. Revisa la consola.')
+        // Para desarrollo, simular éxito
+        this.contentData = payload as ContentData
+        this.hasExistingData = true
+        this.isConfirmed = true
+        this.showSummary = false
+        this.isViewMode = true
+        this.contentForm.disable()
+      },
+    })
+  }
+
+  backToForm(): void {
+    this.showSummary = false
+  }
+
+  printSummary(): void {
+    window.print()
+  }
+
+  printForm(): void {
+    window.print()
+  }
+
+  goBack(): void {
+    this.router.navigate(["/baggage/claim/view", this.claimId])
   }
 
   private markFormGroupTouched(formGroup: FormGroup | FormArray): void {
@@ -465,13 +574,5 @@ export class ContentComponent implements OnInit {
         control.markAsTouched()
       }
     })
-  }
-
-  printForm(): void {
-    window.print()
-  }
-
-  goBack(): void {
-    this.router.navigate(["/baggage/claim/view", this.claimId])
   }
 }

@@ -1,265 +1,422 @@
-:host { display: block; }
+:host {
+    display: block;
+}
+
+/* ===========================
+   Variables (usa las globales)
+   =========================== */
+.seguimiento-container {
+    min-height: 100vh;
+    background: var(--bg-page);
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
 
 /* ===========================
    Encabezado
    =========================== */
-.title-row{
-    display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:.25rem;
-}
-.header-actions button{ border-color:#0B4A8E;color:#0B4A8E; }
-
-/* FAB imprimir */
-.print-fab{
-    position:fixed;right:24px;bottom:24px;background:#0B4A8E!important;
-    box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:1000;
+.title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
 }
 
-/* etiqueta general para ocultar en impresión */
-.no-print{ display:inline-flex; }
-/* ===========================
-   IMPRESIÓN
-   =========================== */
-@media print {
-    .no-print, button, mat-icon-button, .table-actions, .row-tools { display:none!important; }
+.title {
+    margin: 0;
+    color: var(--header-primary);
+    font-size: 1.8rem;
+    font-weight: 700;
+}
 
-    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    @page { size: A4 portrait; margin: 8mm 10mm; }
-    .seguimiento-container { padding: 0!important; }
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 
-    .panel, .table-card { box-shadow:none!important; border:1px solid #b9c6d8; }
-    .panel-header, .table-header { background:#A7C1DF!important; color:#0B4A8E!important; }
-    * { line-height:1.1!important; font-size:12px!important; }
-
-    /* Oculta etiquetas móviles ::before */
-    .table-body .row > div::before,
-    .table-body .row.five-cols > div::before {
-        content:"" !important; display:none !important;
+    button {
+        border-color: var(--btn-primary);
+        color: var(--btn-primary);
     }
-
-    /* === PRIMERA TABLA (Seguimientos) — 4 columnas y INFO más ancha === */
-    .table-card:first-of-type .table-header{
-        display:grid !important;
-        grid-template-columns: 80px 60px 100px 1fr !important; /* Fecha | Hora | Encargado | Información (ahora MUY ancha) */
-        column-gap: 6px !important;
-    }
-    .table-card:first-of-type .table-body .row{
-        display:grid !important;
-        grid-template-columns: 80px 60px 100px 1fr !important; /* la última columna ocupa todo lo restante */
-        padding: 4px 8px !important;
-        margin: 0 !important;
-        padding-right: 0 !important;
-        position: static !important;
-        column-gap: 6px !important;
-    }
-
-    /* Asegura que el área de Información use el 100% del ancho */
-    .table-card:first-of-type .table-body .row > div:nth-child(4),
-    .table-card:first-of-type .table-header > div:nth-child(4){
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-
-    .table-card:first-of-type .table-body .row > div:nth-child(4) .cell-textarea,
-    .table-card:first-of-type .table-body .row > div:nth-child(4) textarea{
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box;
-        min-height: 90px !important;
-        height: auto !important;
-        resize: none !important;
-        overflow: visible !important;
-        white-space: normal !important;
-    }
-
-    /* “• Guardado” debajo del texto (sin crear nueva columna) */
-    .table-card:first-of-type .table-body .row.locked-row > div:nth-child(4)::after{
-        content: "  •  Guardado";
-        display: block;
-        margin-top: 4px;
-        font-weight: 600;
-        color: #1c3655;
-        white-space: nowrap;
-    }
-
-    /* === SEGUNDA TABLA (Llamadas/Contacto) — 5 columnas como siempre === */
-    .table-card:nth-of-type(2) .table-header{
-        display:grid !important;
-        grid-template-columns: 100px 60px 140px 160px minmax(0,1fr) !important; /* sin columna extra */
-    }
-    .table-card:nth-of-type(2) .table-body .row{
-        display:grid !important;
-        grid-template-columns: 100px 60px 140px 160px minmax(0,1fr) !important; /* Observaciones = última y flexible */
-        padding: 4px 8px !important;
-        margin: 0 !important;
-        padding-right: 0 !important;
-        position: static !important;
-    }
-
-    /* “• Guardado” a la DERECHA (en la última celda de cada fila) */
-    .table-card:nth-of-type(2) .table-body .row.locked-row > div:last-child{
-        text-align: right !important;
-    }
-    .table-card:nth-of-type(2) .table-body .row.locked-row > div:last-child::after{
-        content: "• Guardado";
-        display: inline-block;
-        margin-left: 8px;
-        font-weight: 600;
-        color: #1c3655;
-        white-space: nowrap;
-    }
-
-    /* Inputs nítidos en papel */
-    input, textarea{
-        border:1px solid #a5b4c8!important;
-        background:white!important;
-        box-shadow:none!important;
-        padding:4px 6px!important;
-        font-size:12px!important;
-    }
-
-    /* Oculta cualquier chip/estado flotante para evitar solapes */
-    .row-status { display:none!important; }
 }
 
 /* ===========================
-   Tipografía & paneles (pantalla)
+   Panel (Detalles)
    =========================== */
-.title{ font-size:28px;font-weight:800;color:#114a86;margin:0 0 4px 0; }
-.sub{ color:#5a6c80;margin:0 0 16px 0; }
-.panel{ background:#fff;border-radius:10px; }
-.panel-header{
-    background:#98b3d4;color:#223b5c;font-weight:700;padding:10px 12px;
-    border-top-left-radius:8px;border-top-right-radius:8px;
+.panel {
+    background: var(--bg-card);
+    border-radius: 8px;
+    box-shadow: 0 1px 4px var(--shadow-card);
+    overflow: hidden;
 }
-.panel-body{ padding:12px 12px 4px 12px; }
+
+.panel-header {
+    background: var(--btn-primary);
+    color: #fff;
+    font-weight: 700;
+    padding: 0.85rem 1rem;
+}
+
+.panel-body {
+    padding: 1rem;
+}
+
+/* Detalles */
+.row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 12px;
+    margin: 8px 0;
+}
+
+.row.two-cols {
+    grid-template-columns: 1fr 1fr;
+}
+
+.label {
+    font-weight: 700;
+    color: var(--header-primary);
+}
+
+.value {
+    color: var(--text-primary);
+}
 
 /* ===========================
-   Filas detalle (encabezado)
+   Tablas
    =========================== */
-.row{
-    display:grid;grid-template-columns:220px 1fr;gap:12px;margin:6px 0;
+.table-card {
+    margin: 1.25rem 1rem 1.25rem 1rem;
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
 }
-.row.two-cols{ grid-template-columns:1fr 1fr; }
-.label{ font-weight:600;color:#2f4a66; }
-.value{ color:#1b2b40; }
 
-/* ===========================
-   Tabla (pantalla)
-   =========================== */
-.table-card{
-    background:#fff;border-radius:12px;margin-top:10px;
-    box-shadow:0 1px 0 rgba(0,0,0,.04),0 4px 18px rgba(17,74,134,.08);
+/* Header wrap: header + título Acciones */
+.table-header-wrap {
+    display: grid;
+    grid-template-columns: 1fr 240px; /* misma columna de acciones que en filas */
+    align-items: stretch;
 }
-.table-header{
-    display:grid;grid-template-columns:120px 80px 170px 1fr; /* Seguimientos */
-    background:#b3c7df;color:#1c3655;font-weight:700;padding:10px 12px;
-    border-top-left-radius:12px;border-top-right-radius:12px;
-}
-.table-header.five-cols{ grid-template-columns:120px 80px 190px 200px 1fr; } /* Llamadas */
 
-.table-body .row{
-    display:grid;grid-template-columns:100px 70px 160px 1fr;align-items:start;background:#fff;
-    padding-right:clamp(180px,9vw,260px);border-top:1px solid #e4ecf5;position:relative;
+.table-header {
+    display: grid;
+    grid-template-columns: 120px 80px 170px 1fr; /* Seguimientos */
+    background: var(--btn-primary);
+    color: #fff;
+    font-weight: 700;
+    padding: 0.9rem 0.9rem;
+    gap: 10px;
 }
-.table-body .row.five-cols{
-    grid-template-columns:100px 70px 170px 200px 1fr;padding-right:clamp(160px,8vw,240px);
+
+.table-header.five-cols {
+    /* Llamadas: A quien más chico, Observaciones más grande */
+    grid-template-columns: 120px 80px 180px 140px 1fr;
+}
+
+.table-actions-title {
+    background: var(--btn-primary);
+    color: #fff;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+    letter-spacing: 0.3px;
+}
+
+/* Cuerpo */
+.table-body {
+    background: var(--bg-card);
+}
+
+/* Fila Seguimiento: 4 columnas + acciones */
+.seguimiento-grid {
+    display: grid;
+    grid-template-columns: 120px 80px 170px 1fr 240px; /* acciones al final */
+    gap: 10px;
+    padding: 0.75rem 0.9rem;
+    border-top: 1px solid var(--border-color);
+    align-items: start;
+}
+
+/* Fila Llamadas: 5 columnas + acciones */
+.llamadas-grid {
+    display: grid;
+    grid-template-columns: 120px 80px 180px 140px 1fr 240px; /* acciones al final */
+    gap: 10px;
+    padding: 0.75rem 0.9rem;
+    border-top: 1px solid var(--border-color);
+    align-items: start;
 }
 
 /* Inputs */
-.cell-input, .cell-textarea{
-    width:100%;min-width:0;border:1px solid #d7e3f2;border-radius:8px;padding:8px 10px;
-    outline:none;font:inherit;background:#f9fbfe;
+.cell-input,
+.cell-textarea {
+    width: 100%;
+    min-width: 0;
+    border: 1.5px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.65rem 0.75rem;
+    font: inherit;
+    background: #fff;
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+        outline: none;
+        border-color: var(--border-focus);
+        box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.12);
+    }
 }
-.cell-input:focus, .cell-textarea:focus{ border-color:#6ea1df;background:#fff; }
-.cell-textarea{ min-height:64px;
-    max-width: 650px;
-    resize:vertical;
-    white-space:pre-wrap;
-    word-break:break-word; }
 
-.table-actions{ display:flex;justify-content:flex-end;padding:10px 12px 14px 12px; }
-.icon-trash{ position:absolute;right:8px;top:8px;color:#cc3344; }
-
-/* Bloqueado */
-.locked-row input, .locked-row textarea{
-    background:#f6f7fb!important;border-color:#e0e6f1!important;color:#55647a!important;pointer-events:none;
+/* Textarea: que NO corte texto y crezca */
+.cell-textarea {
+    resize: none;            /* auto-grow por JS */
+    overflow: hidden;        /* evita scroll interno */
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 44px;
 }
 
 /* ===========================
-   Herramientas por fila (canal/confirmar)
+   Columna Acciones (sin sobreponer)
    =========================== */
-.row-tools{
-    position:absolute;right:12px;top:8px;display:flex;gap:6px;align-items:center;z-index:5;flex-wrap:wrap;
+.actions-col {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-left: 6px;
+    border-left: 1px solid var(--border-color);
 }
 
-/* Toggles canal compactos y visibles */
-.canal-toggle{
-    display:inline-flex;gap:4px;background:#f2f6fc;border:1px solid #9db7d8;border-radius:10px;padding:2px 4px;flex-shrink:0;
+/* Toggle:*/
+.canal-toggle {
+    display: inline-flex;
+    background: #fff;
+    border: 1.5px solid var(--border-color);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 4px;
 }
-.canal-toggle mat-button-toggle{
-    min-width:34px;height:32px;padding:0 6px;border-radius:8px;border:1px solid transparent;background:#fff;
-}
-.canal-toggle mat-button-toggle.mat-button-toggle-checked{ background:#dfeaf7;border-color:#0b4a8e; }
-.canal-toggle mat-icon{ font-size:18px;line-height:18px; }
 
-/* Botón confirmar  */
-.confirm-btn{
-    border-color:#0b4a8e!important;color:#0b4a8e!important;height:32px;padding:0 10px;font-size:12px;
-    line-height:32px;min-width:0;
+.canal-toggle mat-button-toggle {
+    min-width: 34px;
+    width: 50px;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
-.confirm-btn mat-icon{ font-size:18px;margin-right:4px; }
 
-/* Estado flotante (solo pantalla) */
-.row-status{ position:absolute;right:12px;top:8px; }
-mat-chip{ font-weight:600;color:#123a66;background:#e8f0fe;white-space:nowrap; }
-.chip-wa{ background:#e7f7ee;color:#0f5132; }
-.chip-mail{ background:#eef4ff;color:#1a3e79; }
-.chip-nota{ background:#fff7e6;color:#7a4a00; }
-.chip-llamada{ background:#fff3cd;color:#7a4a00;font-weight:600; }
+.canal-toggle mat-button-toggle.mat-button-toggle-checked {
+    background: rgba(0, 51, 102, 0.12);
+    border-color: var(--btn-primary);
+}
+
+.canal-toggle mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+}
+
+/* Botón confirmar */
+.confirm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-color: var(--btn-primary) !important;
+    color: var(--btn-primary) !important;
+    height: 34px;
+    padding: 0 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: 6px;
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* Trash siempre visible*/
+.trash-btn {
+    color: #cc3344;
+    mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* Chips locked */
+mat-chip {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.chip-wa {
+    background: #e7f7ee;
+    color: #0f5132;
+}
+
+.chip-mail {
+    background: #eef4ff;
+    color: #1a3e79;
+}
+
+.chip-nota {
+    background: #fff7e6;
+    color: #7a4a00;
+}
+
+.chip-llamada {
+    background: #fff3cd;
+    color: #7a4a00;
+    font-weight: 700;
+}
+
+/* Locked: bloquea inputs */
+.locked-row .cell-input,
+.locked-row .cell-textarea {
+    background: #f5f6f8 !important;
+    color: var(--text-muted) !important;
+    pointer-events: none;
+}
 
 /* ===========================
-   Responsive (solo pantalla)
+   Botón + (derecha)
    =========================== */
-/* Tablets */
-@media screen and (max-width:1024px){
-    .table-body .row{ padding-right:180px; }
-    .table-body .row.five-cols{ padding-right:160px; }
+.table-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    padding: 0.9rem 0.9rem 1rem 0.9rem;
+    border-top: 1px solid var(--border-color);
+
+    /* empuja el + a la derecha sí o sí */
+    button:first-child {
+        margin-left: auto;
+        background: var(--btn-primary) !important;
+    }
 }
 
-/* Móvil (layout card/stacked) */
-@media screen and (max-width:768px){
-    .table-header, .table-header.five-cols{ display:none; }
-    .table-body{ padding:4px 6px 10px; }
-    .table-body .row, .table-body .row.five-cols{
-        padding:12px;margin:10px 6px;border:1px solid #e6eef7;border-radius:12px;
-        box-shadow:0 2px 10px rgba(17,74,134,.05);grid-template-columns:1fr;gap:10px;padding-right:0;
-    }
-    .table-body .row > div, .table-body .row.five-cols > div{
-        display:grid;grid-template-columns:120px 1fr;align-items:start;gap:8px;
-    }
-    /* Etiquetas para móvil (Seguimientos) */
-    .table-body .row > div:nth-child(1)::before{ content:"Fecha"; }
-    .table-body .row > div:nth-child(2)::before{ content:"Hora"; }
-    .table-body .row > div:nth-child(3)::before{ content:"Encargado"; }
-    .table-body .row > div:nth-child(4)::before{ content:"Información"; }
-    /* Etiquetas para móvil (Llamadas) */
-    .table-body .row.five-cols > div:nth-child(1)::before{ content:"Fecha"; }
-    .table-body .row.five-cols > div:nth-child(2)::before{ content:"Hora"; }
-    .table-body .row.five-cols > div:nth-child(3)::before{ content:"Celular/Correo"; }
-    .table-body .row.five-cols > div:nth-child(4)::before{ content:"A quién"; }
-    .table-body .row.five-cols > div:nth-child(5)::before{ content:"Observaciones"; }
+/* FAB imprimir (si lo quieres fijo como antes) */
+.print-fab {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    background: var(--btn-primary) !important;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
 
-    .table-body .row > div::before, .table-body .row.five-cols > div::before{
-        display:inline-block;font-weight:600;color:#2f4a66;min-width:120px;padding-top:6px;
+/* ===========================
+   Responsive
+   =========================== */
+@media (max-width: 1200px) {
+    .table-header-wrap {
+        grid-template-columns: 1fr;
     }
 
-    .cell-input, .cell-textarea{ width:100%; }
-    .cell-textarea{ min-height:90px; }
+    .table-actions-title {
+        display: none;
+    }
 
-    /* Herramientas y estado pasan debajo */
-    .row-tools{ position:static;margin-top:6px;justify-content:flex-end;flex-wrap:wrap;gap:8px; }
-    .row-status{ position:static;margin-top:4px;display:inline-flex;justify-content:flex-end;width:100%; }
+    .seguimiento-grid {
+        grid-template-columns: 120px 80px 170px 1fr; /* sin acciones en grilla */
+    }
 
-    /* Detalle de expediente en una columna */
-    .row, .row.two-cols{ grid-template-columns:1fr; }
+    .llamadas-grid {
+        grid-template-columns: 120px 80px 180px 140px 1fr; /* sin acciones */
+    }
+
+    .actions-col {
+        grid-column: 1 / -1;
+        justify-content: flex-end;
+        border-left: none;
+        padding-left: 0;
+        padding-top: 6px;
+    }
+}
+
+/* Móvil */
+@media (max-width: 768px) {
+    .seguimiento-container {
+        padding: 1rem;
+    }
+
+    .title-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .row{
+        grid-template-columns: 1fr;
+    }
+
+    /* filas como cards */
+    .seguimiento-grid,
+    .llamadas-grid {
+        grid-template-columns: 1fr;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin: 10px;
+        padding: 12px;
+    }
+
+    .actions-col {
+        justify-content: flex-end;
+        border: none;
+        padding: 0;
+    }
+}
+
+/* ===========================
+   Print
+   =========================== */
+@media print {
+    .no-print,
+    button {
+        display: none !important;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 8mm 10mm;
+    }
+
+    .seguimiento-container {
+        padding: 0 !important;
+        background: #fff !important;
+        max-width: 100% !important;
+    }
+
+    .panel,
+    .table-card {
+        box-shadow: none !important;
+    }
+
+    .panel-header,
+    .table-header {
+        background: #003366 !important;
+        color: #fff !important;
+    }
 }
