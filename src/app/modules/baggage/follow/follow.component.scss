@@ -58,6 +58,12 @@
     font-weight: 700;
     padding: 0.85rem 1rem;
 }
+.label-title {
+    background: var(--btn-primary-hover);
+    color: #fff;
+    font-weight: 700;
+    padding: 0.85rem 1rem;
+}
 
 .panel-body {
     padding: 1rem;
@@ -420,3 +426,30 @@ mat-chip {
         color: #fff !important;
     }
 }
+/* ===========================
+   FIX chips (Angular Material MDC pisa estilos)
+   =========================== */
+:host ::ng-deep .mat-mdc-chip.chip-wa {
+    background: #e7f7ee !important;
+    border: 1px solid #b7e4c7 !important;
+}
+:host ::ng-deep .mat-mdc-chip.chip-mail {
+    background: #eef4ff !important;
+    border: 1px solid #b9dcff !important;
+}
+:host ::ng-deep .mat-mdc-chip.chip-nota {
+    background: #fff7e6 !important;
+    border: 1px solid #ffe0a3 !important;
+}
+:host ::ng-deep .mat-mdc-chip.chip-llamada {
+    background: #fff3cd !important;
+    border: 1px solid #ffe0a3 !important;
+}
+
+:host ::ng-deep .mat-mdc-chip .mdc-evolution-chip__text-label {
+    font-weight: 800 !important;
+}
+:host ::ng-deep .mat-mdc-chip.chip-wa .mdc-evolution-chip__text-label { color: #0f5132 !important; }
+:host ::ng-deep .mat-mdc-chip.chip-mail .mdc-evolution-chip__text-label { color: #1a3e79 !important; }
+:host ::ng-deep .mat-mdc-chip.chip-nota .mdc-evolution-chip__text-label { color: #7a4a00 !important; }
+:host ::ng-deep .mat-mdc-chip.chip-llamada .mdc-evolution-chip__text-label { color: #7a4a00 !important; }

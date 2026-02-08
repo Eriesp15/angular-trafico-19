@@ -1,225 +1,334 @@
-/* ======================================================
-      CONTENEDOR PRINCIPAL
-====================================================== */
-.supplier-container {
-    padding: 1.5rem;
+:host {
+    display: block;
 }
 
+/* ===========================
+   Container (estándar follow)
+   =========================== */
+.supplier-container {
+    min-height: 100vh;
+    background: var(--bg-page);
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ===========================
+   Header
+   =========================== */
 .header {
+    background: var(--bg-card);
+    padding: 1.5rem 1.75rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 4px var(--shadow-card);
+    border: 1px solid var(--border-color);
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .title {
-    font-size: 28px;
+    margin: 0;
+    color: var(--header-primary);
+    font-size: 1.8rem;
     font-weight: 800;
-    color: #022f70;
 }
 
-/* ======================================================
-      BOTONES
-====================================================== */
+/* ===========================
+   Buttons base (tipo compañera)
+   =========================== */
 .btn {
-    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.7rem 1.25rem;
     border-radius: 6px;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
+    border: 1px solid transparent;
+    font-size: 0.95rem;
+    font-weight: 800;
     cursor: pointer;
+    transition: all 0.25s ease;
+    user-select: none;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+    }
+
+    &:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    &.small {
+        padding: 0.45rem 0.8rem;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
 }
 
-.btn-light {
-    background: #eef5ff;
-}
-
-.btn-yellow {
-    background: #ffb60d;
-}
-
+/* Azul principal */
 .btn-blue {
-    background: #4267b2;
-    color: white;
+    background: var(--btn-primary);
+    color: var(--btn-text);
+    border-color: var(--btn-primary);
+
+    &:hover {
+        background: var(--btn-primary-hover);
+    }
 }
 
-/* ======================================================
-      BOTÓN DE TRES PUNTITOS
-====================================================== */
+/* Amarillo “acción” (tipo tu botón actual) */
+.btn-yellow {
+    background: #f6c343;
+    color: #3a2b00;
+    border-color: rgba(58, 43, 0, 0.15);
+
+    &:hover {
+        background: #ebb62f;
+    }
+}
+
+/* Light */
+.btn-light {
+    background: #fff;
+    color: var(--text-primary);
+    border-color: var(--border-color);
+
+    &:hover {
+        background: #f9fafb;
+    }
+}
+
+/* Botón 3 puntitos */
 .btn-dots {
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    padding: 4px;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: #fff;
     cursor: pointer;
-    line-height: 1;
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: #f9fafb;
+        border-color: var(--border-focus);
+    }
 }
 
-/* ======================================================
-      DROPDOWN DE TIPOS Y EMPRESAS
-====================================================== */
+/* ===========================
+   Grupos por tipo
+   =========================== */
+.grupo {
+    background: transparent;
+    margin-bottom: 1.25rem;
+}
+
+/* Header del grupo */
+.grupo-header {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--header-primary);
+    border-radius: 8px;
+    box-shadow: 0 1px 4px var(--shadow-card);
+    padding: 1rem 1.25rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    span {
+        color: var(--text-secondary);
+        font-weight: 700;
+    }
+
+    b {
+        color: var(--text-primary);
+        font-weight: 900;
+    }
+}
+
+/* ===========================
+   Dropdown (menu)
+   =========================== */
 .dropdown {
     position: absolute;
-    right: 0;
-    top: 28px;
-    background: white;
+    right: 12px;
+    top: calc(100% + 8px);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    border: 1px solid #d8e0ef;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    z-index: 20;
-    width: 140px;
-    animation: fadeIn 0.15s ease-out;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    min-width: 160px;
+    z-index: 50;
+
+    .item {
+        padding: 10px 12px;
+        font-weight: 800;
+        color: var(--text-primary);
+        cursor: pointer;
+
+        &:hover {
+            background: #f9fafb;
+        }
+    }
 }
 
-.dropdown .item {
-    padding: 0.5rem 0.8rem;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.dropdown .item:hover {
-    background: #f2f6ff;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ======================================================
-      AGRUPADOR POR TIPO
-====================================================== */
-.grupo {
-    margin-top: 1.5rem;
-    position: relative;
-}
-
-.grupo-header {
-    background: #cfe0f5;
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-}
-
-/* ======================================================
-      CARDS
-====================================================== */
+/* ===========================
+   Cards grid
+   =========================== */
 .cards {
     margin-top: 1rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1rem;
 }
 
+/* Card empresa */
 .card {
-    background: #fff;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 10px;
-    padding: 1rem;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    position: relative;
+    box-shadow: 0 1px 4px var(--shadow-card);
+    overflow: hidden;
 }
 
-/* Encabezado con tres puntitos */
 .card-head-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     position: relative;
+    padding: 1rem 1.25rem;
+    background: #f9fafb;
+    border-bottom: 1px solid var(--border-color);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .card-title {
     margin: 0;
-    font-size: 1.2rem;
-    color: #022f70;
+    color: var(--header-primary);
+    font-weight: 900;
+    font-size: 1.05rem;
 }
 
-/* ======================================================
-      ESTADO / SWITCH
-====================================================== */
-
+/* Estado + switch */
 .estado {
+    padding: 0.8rem 1.25rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: .4rem;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-color);
+
+    span {
+        font-weight: 900;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+    }
+
+    .activo {
+        background: #e7f7ee;
+        color: #0f5132;
+        border: 1px solid rgba(15, 81, 50, 0.18);
+    }
+
+    .inactivo {
+        background: #fff3cd;
+        color: #7a4a00;
+        border: 1px solid rgba(122, 74, 0, 0.18);
+    }
 }
 
-.estado .activo {
-    color: #16a34a;
-    font-weight: bold;
-}
-
-.estado .inactivo {
-    color: #b91c1c;
-    font-weight: bold;
-}
-
+/* Switch simple */
 .switch {
     position: relative;
-    width: 44px;
-    height: 24px;
+    width: 46px;
+    height: 26px;
+    display: inline-block;
+
+    input {
+        display: none;
+    }
+
+    .slider {
+        position: absolute;
+        inset: 0;
+        background: #d1d5db;
+        border-radius: 999px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        &:before {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 3px;
+            top: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    input:checked + .slider {
+        background: var(--btn-primary);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(20px);
+    }
 }
 
-.switch input {
-    display: none;
-}
-
-.slider {
-    position: absolute;
-    inset: 0;
-    background: #ccc;
-    border-radius: 999px;
-    transition: 0.3s;
-}
-
-.slider::before {
-    content: '';
-    position: absolute;
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background: white;
-    border-radius: 50%;
-    transition: 0.3s;
-}
-
-input:checked + .slider {
-    background: #16a34a;
-}
-
-input:checked + .slider::before {
-    transform: translateX(20px);
-}
-
-/* ======================================================
-      BODY DE LA CARD
-====================================================== */
 .card-body {
-    margin-top: 10px;
-    line-height: 1.4rem;
+    padding: 1rem 1.25rem;
+    color: var(--text-secondary);
+
+    p {
+        margin: 0.4rem 0;
+        line-height: 1.35;
+
+        b {
+            color: var(--text-primary);
+        }
+    }
 }
 
-/* ======================================================
-      ACCIONES DE LA CARD
-====================================================== */
 .card-actions {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border-color);
     display: flex;
-    margin-top: 1rem;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
 }
 
-/* ======================================================
-      MODALES
-====================================================== */
+/* ===========================
+   Modal
+   =========================== */
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 999;
 }
 
 .modal {
@@ -227,88 +336,155 @@ input:checked + .slider::before {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-
-    width: min(420px, 90%);
-    background: #ffffff;
-    padding: 1.7rem 1.4rem;
-    border-radius: 14px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-
-    z-index: 1100;
-    animation: modalShow .25s ease-out;
-}
-
-@keyframes modalShow {
-    from { opacity: 0; transform: translate(-50%, -47%); }
-    to   { opacity: 1; transform: translate(-50%, -50%); }
+    width: min(560px, calc(100vw - 24px));
+    background: var(--bg-card);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    padding: 1.25rem 1.25rem 1rem;
+    z-index: 1000;
 }
 
 .modal-title {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #022f70;
-}
-
-.modal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    margin-bottom: 1.4rem;
+    margin: 0 0 0.75rem 0;
+    color: var(--header-primary);
+    font-weight: 900;
 }
 
 .modal-label {
-    font-weight: 600;
-    margin-top: 0.7rem;
-    color: #233b57;
+    display: block;
+    margin: 0.9rem 0 0.35rem 0;
+    font-weight: 900;
+    color: var(--header-primary);
+}
+
+.modal-form {
+    display: grid;
+    gap: 0.75rem;
+
+    label {
+        font-weight: 900;
+        color: var(--header-primary);
+    }
+
+    input {
+        width: 100%;
+        border: 1.5px solid var(--border-color);
+        border-radius: 6px;
+        padding: 0.65rem 0.75rem;
+        background: #fff;
+        color: var(--text-primary);
+
+        &:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.12);
+        }
+
+        &:disabled {
+            background: #f5f6f8;
+            color: var(--text-muted);
+        }
+    }
 }
 
 .modal-actions {
+    margin-top: 1rem;
     display: flex;
+    gap: 0.75rem;
     justify-content: flex-end;
-    gap: 0.65rem;
+    flex-wrap: wrap;
 }
 
-/* ======================================================
-      PIR (sugerencias y chips)
-====================================================== */
+/* ===========================
+   Asignar PIR (chips + sugerencias)
+   =========================== */
 .input {
     width: 100%;
-    border: 1px solid #cdd6e6;
-    padding: 0.5rem;
+    border: 1.5px solid var(--border-color);
     border-radius: 6px;
-    margin-bottom: .5rem;
+    padding: 0.65rem 0.75rem;
+    background: #fff;
+    color: var(--text-primary);
+
+    &:focus {
+        outline: none;
+        border-color: var(--border-focus);
+        box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.12);
+    }
 }
 
 .pir-suggestions {
-    background: #f3f6fb;
-    border: 1px solid #dbe3f3;
-    border-radius: 6px;
-    margin-bottom: .5rem;
+    margin-top: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-card);
+    max-height: 220px;
+    overflow-y: auto;
 }
 
 .pir-item {
-    padding: 0.4rem;
+    padding: 10px 12px;
     cursor: pointer;
-}
+    font-weight: 800;
+    color: var(--text-primary);
 
-.pir-item:hover {
-    background: #e3edff;
+    &:hover {
+        background: #f9fafb;
+    }
 }
 
 .pir-chips {
     display: flex;
-    gap: 0.4rem;
     flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.75rem;
 }
 
 .chip {
-    background: #d6e8ff;
-    padding: 0.3rem 0.6rem;
+    background: #e8f0fe;
+    color: #123a66;
+    border: 1px solid rgba(18, 58, 102, 0.15);
     border-radius: 999px;
+    padding: 6px 10px;
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    .close {
+        cursor: pointer;
+        font-weight: 900;
+        opacity: 0.75;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
 }
 
-.close {
-    margin-left: 6px;
-    cursor: pointer;
+/* ===========================
+   Responsive
+   =========================== */
+@media (max-width: 768px) {
+    .supplier-container {
+        padding: 1rem;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .grupo-header {
+        padding: 1rem;
+    }
+
+    .card-head-row,
+    .card-body,
+    .card-actions,
+    .estado {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 }
