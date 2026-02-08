@@ -9,7 +9,7 @@ import { Subject } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import  { HttpClient } from "@angular/common/http"
 import { AEROPUERTOS_BOA,  ClaimType,  ClaimStatus } from "../../models/claim-type-config.model"
-import { BreadcrumbComponent, BreadcrumbItem } from "../../shared/breadcrumb/breadcrumb.component"
+import { BreadcrumbComponent, BreadcrumbItem } from "@erp/components/breadcrumb/breadcrumb.component"
 
 // Interfaz PIR
 interface PIR {
