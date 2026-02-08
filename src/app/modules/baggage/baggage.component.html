@@ -110,9 +110,10 @@
             </td>
             <td class="cell-bagtag">{{ claim.bagTag }}</td>
             <td class="cell-status">
-              <span [class]="'status-badge ' + getStatusBadgeClass(claim.estado)">
-                {{ claim.estado }}
-              </span>
+             <span [class]="'status-badge ' + getStatusBadgeClass(claim.estado)">
+  {{ getStatusLabel(claim.estado) }}
+</span>
+
             </td>
           </tr>
         </tbody>
