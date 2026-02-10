@@ -6,7 +6,7 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatDialogModule, MatDialog } from "@angular/material/dialog"
 import { HttpClient } from "@angular/common/http"
 import { ClaimType, getClaimTypeConfig, ClaimTypeConfig } from "../../models/claim-type-config.model"
-import { BreadcrumbComponent, BreadcrumbItem } from "../../shared/breadcrumb/breadcrumb.component"
+import { BreadcrumbComponent, BreadcrumbItem} from "@erp/components/breadcrumb/breadcrumb.component"
 
 
 type ClaimStatus = "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED"

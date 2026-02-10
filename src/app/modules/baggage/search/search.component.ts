@@ -12,7 +12,7 @@ import { Router, RouterModule } from "@angular/router"
 import { HttpClient } from "@angular/common/http"
 import { Subject } from "rxjs"
 import { takeUntil } from "rxjs/operators"
-import { BreadcrumbComponent, BreadcrumbItem } from '../shared/breadcrumb/breadcrumb.component';
+import { BreadcrumbComponent, BreadcrumbItem } from "@erp/components/breadcrumb/breadcrumb.component"
 
 interface SearchResult {
   id: string
