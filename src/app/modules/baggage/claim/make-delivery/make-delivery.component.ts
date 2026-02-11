@@ -211,12 +211,12 @@ export class MakeDeliveryComponent implements OnInit {
     const deliveryData = {
       pirNumber: this.pirNumber,
       tipo: this.deliveryForm.value.tipo,
-      addressType: this.selectedAddressType,
       direccion: this.deliveryForm.value.direccion,
       telefono: this.deliveryForm.value.telefono,
       referencia: this.deliveryForm.value.referencia,
       aeropuerto: this.deliveryForm.value.aeropuerto,
     }
+
 
 
     this.http.post<any>(`${this.apiUrl}/make-delivery`, deliveryData).subscribe({
