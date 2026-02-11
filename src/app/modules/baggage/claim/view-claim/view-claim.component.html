@@ -70,10 +70,10 @@
         <mat-icon>paid</mat-icon>
         Añadir gasto
       </button>
-      <button class="action-btn" (click)="contactoEstaciones()">
+      <!-- <button class="action-btn" (click)="contactoEstaciones()">
         <mat-icon>sync_alt</mat-icon>
         Contacto estaciones
-      </button>
+      </button> -->
       <button class="action-btn" (click)="cerrarReclamo()"
               *ngIf="isActionAllowed('cerrarReclamo')">
         <mat-icon>check_circle</mat-icon>
@@ -82,6 +82,10 @@
       <button class="action-btn" (click)="verGastos()">
         <mat-icon>receipt</mat-icon>
         Ver gastos
+      </button>
+      <button class="action-btn" [routerLink]="['/baggage/search']">
+        <mat-icon>flight_takeoff</mat-icon>
+        World Tracer
       </button>
     </div>
 

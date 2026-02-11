@@ -1,20 +1,30 @@
 import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
+import { FormsModule } from "@angular/forms"
 import { ActivatedRoute, Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
 import { MatDialogModule, MatDialog } from "@angular/material/dialog"
 import { HttpClient } from "@angular/common/http"
 import { ClaimType, getClaimTypeConfig, ClaimTypeConfig } from "../../models/claim-type-config.model"
-import { BreadcrumbComponent, BreadcrumbItem } from "../../shared/breadcrumb/breadcrumb.component"
+import { BreadcrumbComponent, BreadcrumbItem} from "@erp/components/breadcrumb/breadcrumb.component"
 
 
-type ClaimStatus = "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED"
+type ClaimStatus =
+  | "PENDING"
+  | "IN_PROCESS"
+  | "PURCHASED"
+  | "REPAIRING"
+  | "LOST"
+  | "FOUND"
+  | "COMPENSATED"
+  | "DELIVERED"
+  | "CLOSED"
 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, BreadcrumbComponent],
+  imports: [CommonModule, RouterModule, FormsModule, MatButtonModule, MatIconModule, MatDialogModule, BreadcrumbComponent],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
@@ -30,6 +40,11 @@ export class ViewClaimComponent implements OnInit {
   claimConfig: ClaimTypeConfig | null = null
   alertasDias: { tipo: string; mensaje: string; color: string }[] = []
 
+  // World Tracer fields
+  worldTracerCodigo = ""
+  worldTracerEstado = ""
+  worldTracerDescripcion = ""
+
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view"
 
@@ -41,12 +56,14 @@ export class ViewClaimComponent implements OnInit {
     PENDING: "Pendiente",
     IN_PROCESS: "En proceso",
     PURCHASED: "Comprado",
-    REPAIRED: "Reparado",
+    REPAIRING: "En reparación",
     LOST: "Perdido",
     FOUND: "Encontrado",
     COMPENSATED: "Indemnizado",
+    DELIVERED: "Entregado",
     CLOSED: "Cerrado",
   }
+
 
   constructor(
     private route: ActivatedRoute,
@@ -97,14 +114,19 @@ export class ViewClaimComponent implements OnInit {
           lossReason: data.lossReason ?? "—",
           faultStation: data.faultStation ?? "—",
           hasInsurance: data.hasInsurance ?? false,
-          estado: data.claimStatus || "PENDING",
+          estado: data.claim?.claimStatus || "PENDING",
           deliveryInstructions: data.deliveryInstructions ?? "—",
           additionalInfo: data.additionalInfo ?? "—",
         }
 
         this.claimConfig = getClaimTypeConfig(reclamo.tipo as ClaimType)
         this.calcularAlertasDias()
-        this.pirStatus = reclamo.estado as ClaimStatus
+        this.pirStatus =
+          data.claim?.claimStatus && data.claim.claimStatus in this.statusLabels
+            ? data.claim.claimStatus
+            : "PENDING"
+
+
 
         // Recuperar vuelos
         const flightNumbers = data.flightNumbers?.map((f: any) => ({
@@ -308,14 +330,17 @@ export class ViewClaimComponent implements OnInit {
       PENDING: "status-pending",
       IN_PROCESS: "status-in-process",
       PURCHASED: "status-purchased",
-      REPAIRED: "status-repaired",
+      REPAIRING: "status-repairing",
       LOST: "status-lost",
       FOUND: "status-found",
       COMPENSATED: "status-compensated",
+      DELIVERED: "status-delivered",
       CLOSED: "status-closed",
     }
+
     return statusClassMap[this.pirStatus] || "status-pending"
   }
+
 
   getPirStatusLabel(): string {
     return this.statusLabels[this.pirStatus] || "Pendiente"
