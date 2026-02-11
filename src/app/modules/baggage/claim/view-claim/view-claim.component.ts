@@ -85,7 +85,7 @@ export class ViewClaimComponent implements OnInit {
   }
 
   verHojaSeguimiento(): void {
-    this.router.navigate(["/baggage/follow"])
+    this.router.navigate(["/baggage/claim/follow", this.claimId])
   }
 
   verFormularioContenido(): void {
