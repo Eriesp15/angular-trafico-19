@@ -29,13 +29,13 @@ export class NewClaimComponent implements OnInit {
       //linea 1
       route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
       //linea 2
-      airport: ['', Validators.required],
+      originatorAirport: ['', Validators.required],
       //linea 2.1
       claimType: ['', Validators.required],
       //linea 3
-      airportText: ['', Validators.required],
-      airline: ['', Validators.required],
-      reference: ['', Validators.required],
+      airportText: [''],
+      airline: [''],
+      reference: [''],
       //linea 4
       passengerName: ['', Validators.required],
       passengerLastName: ['', Validators.required],

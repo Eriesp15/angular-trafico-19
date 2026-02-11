@@ -32,8 +32,207 @@
         Ver Formulario de Contenido
       </button>
     </div>
+    <div>
+      <p>Datos del PIR:</p>
 
-
+      <div class="form-field">
+        <label>Ruta:</label>
+        <span *ngFor="let routeStop of pirData.route?.routeStops; let i = index">
+          {{ routeStop.stop.code }}
+          <span *ngIf="i < pirData.route.routeStops.length - 1"> → </span>
+        </span>
+      </div>
+      <div class="form-field">
+        <label>Estacion originadora:</label>
+        <span class="field-value">{{ pirData.originatorAirport }}</span>
+      </div>
+      <div class="form-field">
+        <label>Tipo de reclamo  :</label>
+        <span class="field-value">{{ pirData.claimType }}</span>
+      </div>
+      <div class="form-field">
+        <label>Aeropuerto/Aerolinea/Referencia:</label>
+        <span class="field-value">{{ pirData.airportText }} / {{ pirData.airline }} / {{ pirData.reference }}</span>
+      </div>
+      <div class="form-field">
+        <label>Apellidos y Nombres del pasajero:</label>
+        <span class="field-value">{{ pirData.passengerLastName }} / {{ pirData.passengerName }}</span>
+      </div>
+      <div class="form-field">
+        <label>Iniciales del Pasajero:</label>
+        <span class="field-value">{{ pirData.initials }}</span>
+      </div>
+      <div class="form-field">
+        <label>Numero de ticket/Bag tag number:</label>
+        <div class="bagtags-display">
+          <span *ngFor="let bagtag of pirData.bagtags; let i = index">
+            {{ bagtag.number }}<span *ngIf="i < pirData.bagtags.length - 1"> / </span>
+          </span>
+          <span *ngIf="!pirData.bagtags || pirData.bagtags.length === 0">
+            Sin bagtags
+          </span>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Color Tipo Descripcion:</label>
+        <div class="bagtags-display">
+          <span *ngFor="let bagDescription of pirData.bagDescriptions; let i = index">
+            {{ bagDescription.description }}<span *ngIf="i < pirData.bagDescriptions.length - 1"> / </span>
+          </span>
+          <span *ngIf="!pirData.bagDescriptions || pirData.bagDescriptions.length === 0">
+            Sin descripciones
+          </span>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Ruta para hacer rastreo:</label>
+        <span *ngFor="let traceRouteStop of pirData.traceRoute?.traceRouteStops; let i = index">
+          {{ traceRouteStop.traceStop.code }}
+          <span *ngIf="i < pirData.traceRoute.traceRouteStops.length - 1"> → </span>
+        </span>
+      </div>
+      <div class="form-field">
+        <label>Numero de vuelo/Fecha(dia,mes):</label>
+        <div class="bagtags-display">
+          <span *ngFor="let flightNumber of pirData.flightNumbers; let i = index">
+            {{ flightNumber.flightNo }} / {{ flightNumber.flightDate | date:'dd MMM' | uppercase}}<span *ngIf="i < pirData.flightNumbers.length - 1"> || </span>
+          </span>
+          <span *ngIf="!pirData.flightNumbers || pirData.flightNumbers.length === 0">
+            Sin vuelos
+          </span>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Marca en la maleta, Identificacion exterior, otras marcas:</label>
+        <div class="bagtags-display">
+          <div *ngFor="let baggageIdentification of pirData.baggageIdentifications">
+            {{ baggageIdentification.mark }}
+          </div>
+          <span *ngIf="!pirData.baggageIdentifications || pirData.baggageIdentifications.length === 0">
+            Sin identificaciones
+          </span>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Contenido:</label>
+        <div class="bagtags-display">
+          <div *ngFor="let content of pirData.contents">
+            {{ content.description }}
+          </div>
+          <span *ngIf="!pirData.contents || pirData.contents.length === 0">
+            Sin contenido
+          </span>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Direccion permanente:</label>
+        <span class="field-value">{{ pirData.permanentAddress }}</span>
+      </div>
+      <div class="form-field">
+        <label>Direccion temporal:</label>
+        <span class="field-value">{{ pirData.temporaryAddress }}</span>
+      </div>
+      <div class="form-field">
+        <label>Telefono permanente:</label>
+        <span class="field-value">{{ pirData.permanentPhone }}</span>
+      </div>
+      <div class="form-field">
+        <label>Telefono temporal:</label>
+        <span class="field-value">{{ pirData.temporaryPhone }}</span>
+      </div>
+      <div class="form-field">
+        <label>Instrucciones de entrega:</label>
+        <span class="field-value">{{ pirData.deliveryInstructions }}</span>
+      </div>
+      <div class="form-field">
+        <label>Texto libre:</label>
+        <span class="field-value">{{ pirData.additionalInfo }}</span>
+      </div>
+      <h2>Elementos Adicionales</h2>
+      <div class="form-field">
+        <label>Peso del equipaje facturado:</label>
+        <span class="field-value">{{ pirData.checkedBaggageWeight }}</span>
+      </div>
+      <div class="form-field">
+        <label>Peso del equipaje entregado:</label>
+        <span class="field-value">{{ pirData.deliveredBaggageWeight }}</span>
+      </div>
+      <div class="form-field">
+        <label>Diferencia de peso:</label>
+        <span class="field-value">{{ pirData.weightDifference }}</span>
+      </div>
+      <div class="form-field">
+        <label>Idioma:</label>
+        <span class="field-value">{{ pirData.language }}</span>
+      </div>
+      <div class="form-field">
+        <label>Numero de pasaporte:</label>
+        <span class="field-value">{{ pirData.passportNumber }}</span>
+      </div>
+      <div class="form-field">
+        <label>Numero de ticket:</label>
+        <span class="field-value">{{ pirData.ticketNumber }}</span>
+      </div>
+      <div class="form-field">
+        <label>Localizador de registro PNR:</label>
+        <span class="field-value">{{ pirData.pnr }}</span>
+      </div>
+      <div class="form-field">
+        <label>Localizador de viajero frecuente:</label>
+        <span class="field-value">{{ pirData.frequentFlyerId }}</span>
+      </div>
+      <div class="form-field">
+        <label>Razon de perdida:</label>
+        <span class="field-value">{{ pirData.lossReason }}</span>
+      </div>
+      <div class="form-field">
+        <label>Tiene seguro?</label>
+        <span class="field-value">{{ pirData.hasInsurance ? 'Sí' : 'No' }}</span>
+      </div>
+      <div class="form-field">
+        <label>Si la maleta necesita llaves, estan adjuntas al PIR?</label>
+        <span class="field-value">{{ pirData.keysAttached ? 'Sí' : 'No' }}</span>
+      </div>
+      <div class="form-field">
+        <label>Tiene seguro?</label>
+        <span class="field-value">{{ pirData.hasInsurance ? 'Sí' : 'No' }}</span>
+      </div>
+      <div class="form-field">
+        <label>Combinacion de cerradura</label>
+        <span class="field-value">{{ pirData.lockCombination}}</span>
+      </div>
+      <div class="form-field">
+        <label>Tiene seguro?</label>
+        <span class="field-value">{{ pirData.hasInsurance ? 'Sí' : 'No' }}</span>
+      </div>
+      <div class="form-field">
+        <label>Kit de noche</label>
+        <span class="field-value">
+          {{ pirData.nightKit === false ? 'Mujer' : pirData.nightKit === true ? 'Hombre' : 'No tiene' }}
+        </span>
+      </div>
+    </div>
+    <h2>Informacion de dano</h2>
+    <div class="form-field">
+      <label>Tipo de daño</label>
+      <span class="field-value">
+        {{ pirData.damageDetails[0].damageType }}
+      </span>
+    </div>
+    <div class="form-field">
+      <label>Condicion</label>
+      <span class="field-value">
+        {{ pirData.damageDetails[0].condition }}
+      </span>
+    </div>
+    <div class="info-item">
+      <label>Ubicaciones:</label>
+      <div class="damage-locations">
+        <span class="location-badge" *ngFor="let location of pirData.damageDetails[0].damageLocation">
+          {{ location }}
+        </span>
+      </div>
+    </div>
   </div>
 
 </div>
