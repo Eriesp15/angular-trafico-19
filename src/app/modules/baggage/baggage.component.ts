@@ -54,7 +54,8 @@ export class BaggageComponent implements OnInit, OnDestroy {
     LOST: 'Perdido',
     FOUND: 'Encontrado',
     COMPENSATED: 'Indemnizado',
-    CLOSED: 'Cerrado'
+    CLOSED: 'Cerrado',
+    DELIVERED: 'Entregado',
   };
 
   // Mapeo de tipos para mostrar etiquetas en español

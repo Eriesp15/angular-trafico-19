@@ -262,8 +262,9 @@ export class ListComponent implements OnInit, OnDestroy {
     REPAIRED: 'Reparado',
     LOST: 'Perdido',
     FOUND: 'Encontrado',
+    CLOSED: 'Cerrado',
+    DELIVERED: 'Entregado',
     COMPENSATED: 'Indemnizado',
-    CLOSED: 'Cerrado'
   };
 
   getStatusLabel(status: string): string {
