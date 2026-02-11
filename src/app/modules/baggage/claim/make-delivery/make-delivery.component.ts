@@ -50,6 +50,13 @@ export class MakeDeliveryComponent implements OnInit {
   confirmationData: ConfirmationData | null = null
   isLoading = false
   passengerInfo: any = null
+  temporaryAddress = ""
+  permanentAddress = ""
+  temporaryPhone = ""
+  permanentPhone = ""
+  selectedAddressType: 'temporal' | 'permanente' = 'temporal'
+
+
 
   // URL del API
   private apiUrl = "http://localhost:3700/api/v1/delivery"
@@ -105,26 +112,24 @@ export class MakeDeliveryComponent implements OnInit {
    */
   loadPassengerInfo(): void {
     this.isLoading = true
-    
+
     this.http.get<any>(`${this.apiUrl}/passenger-info/${this.pirNumber}`).subscribe({
       next: (data) => {
         this.passengerInfo = data
-        
-        // Prellenar campos del formulario con los datos del PIR
-        const direccionCompleta =
-          data.temporaryAddress || data.permanentAddress || ""
 
-        const telefonoContacto =
-          data.temporaryPhone || data.permanentPhone || ""
+        this.temporaryAddress = data.temporaryAddress || ""
+        this.permanentAddress = data.permanentAddress || ""
+        this.temporaryPhone = data.temporaryPhone || ""
+        this.permanentPhone = data.permanentPhone || ""
 
+        // por defecto mostramos temporal
         this.deliveryForm.patchValue({
-          direccion: data.direccion || "",
-          telefono: data.telefono || "",
+          direccion: this.temporaryAddress,
+          telefono: this.temporaryPhone,
         })
-        
+
         this.isLoading = false
-        
-        // Mostrar mensaje informativo si hay instrucciones de entrega
+
         if (data.deliveryInstructions) {
           this.showInfo(`Instrucciones: ${data.deliveryInstructions}`)
         }
@@ -136,6 +141,7 @@ export class MakeDeliveryComponent implements OnInit {
       },
     })
   }
+
 
   updateFormValidators(): void {
     const direccionControl = this.deliveryForm.get("direccion")
@@ -205,11 +211,13 @@ export class MakeDeliveryComponent implements OnInit {
     const deliveryData = {
       pirNumber: this.pirNumber,
       tipo: this.deliveryForm.value.tipo,
+      addressType: this.selectedAddressType,
       direccion: this.deliveryForm.value.direccion,
       telefono: this.deliveryForm.value.telefono,
       referencia: this.deliveryForm.value.referencia,
       aeropuerto: this.deliveryForm.value.aeropuerto,
     }
+
 
     this.http.post<any>(`${this.apiUrl}/make-delivery`, deliveryData).subscribe({
       next: (response) => {
@@ -245,6 +253,23 @@ export class MakeDeliveryComponent implements OnInit {
     const control = this.deliveryForm.get(fieldName)
     return control?.hasError("required") && (control?.touched || false)
   }
+
+  onAddressTypeChange(tipo: 'temporal' | 'permanente'): void {
+    this.selectedAddressType = tipo
+
+    if (tipo === "temporal") {
+      this.deliveryForm.patchValue({
+        direccion: this.temporaryAddress,
+        telefono: this.temporaryPhone,
+      })
+    } else {
+      this.deliveryForm.patchValue({
+        direccion: this.permanentAddress,
+        telefono: this.permanentPhone,
+      })
+    }
+  }
+
 
   /**
    * Marcar todos los campos del formulario como tocados para mostrar errores
