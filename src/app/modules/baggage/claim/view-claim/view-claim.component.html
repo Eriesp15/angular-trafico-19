@@ -216,19 +216,19 @@
     <div class="form-field">
       <label>Tipo de daño</label>
       <span class="field-value">
-        {{ pirData.damageDetails[0].damageType }}
+        {{ pirData?.damageDetails[0]?.damageType }}
       </span>
     </div>
     <div class="form-field">
       <label>Condicion</label>
       <span class="field-value">
-        {{ pirData.damageDetails[0].condition }}
+        {{ pirData?.damageDetails[0]?.condition }}
       </span>
     </div>
     <div class="info-item">
       <label>Ubicaciones:</label>
       <div class="damage-locations">
-        <span class="location-badge" *ngFor="let location of pirData.damageDetails[0].damageLocation">
+        <span class="location-badge" *ngFor="let location of pirData?.damageDetails[0]?.damageLocation">
           {{ location }}
         </span>
       </div>
