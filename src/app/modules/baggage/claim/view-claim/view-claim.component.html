@@ -1,8 +1,10 @@
 <div class="pir-container">
-  <div *ngIf="pirData">
-    <div>
+  <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+  <div class="pir-content" *ngIf="pirData">
+    <div class="pir-header">
       <h1>Visualizar PIR</h1>
       <p class="subtitle">Detalles del reclamo de irregularidad</p>
+      <p> Numero de PIR: {{ pirData.pirNumber }}</p>
     </div>
     <span class="badge-label">Tipo de reclamo</span>
     <div class="badge-type" >
@@ -33,14 +35,16 @@
       </button>
     </div>
     <div>
-      <p>Datos del PIR:</p>
+    <h2>Datos del PIR:</h2>
 
       <div class="form-field">
         <label>Ruta:</label>
-        <span *ngFor="let routeStop of pirData.route?.routeStops; let i = index">
-          {{ routeStop.stop.code }}
-          <span *ngIf="i < pirData.route.routeStops.length - 1"> → </span>
-        </span>
+        <div class="route-display">
+          <span *ngFor="let routeStop of pirData.route?.routeStops; let i = index">
+            {{ routeStop.stop.code }}
+            <span *ngIf="i < pirData.route.routeStops.length - 1"> → </span>
+          </span>
+        </div>
       </div>
       <div class="form-field">
         <label>Estacion originadora:</label>
@@ -86,10 +90,12 @@
       </div>
       <div class="form-field">
         <label>Ruta para hacer rastreo:</label>
-        <span *ngFor="let traceRouteStop of pirData.traceRoute?.traceRouteStops; let i = index">
-          {{ traceRouteStop.traceStop.code }}
-          <span *ngIf="i < pirData.traceRoute.traceRouteStops.length - 1"> → </span>
-        </span>
+        <div class="route-display">
+          <span *ngFor="let traceRouteStop of pirData.traceRoute?.traceRouteStops; let i = index">
+            {{ traceRouteStop.traceStop.code }}
+            <span *ngIf="i < pirData.traceRoute.traceRouteStops.length - 1"> → </span>
+          </span>
+        </div>
       </div>
       <div class="form-field">
         <label>Numero de vuelo/Fecha(dia,mes):</label>
@@ -212,7 +218,7 @@
         </span>
       </div>
     </div>
-    <h2>Informacion de dano</h2>
+    <h2>Informacion de daño</h2>
     <div class="form-field">
       <label>Tipo de daño</label>
       <span class="field-value">
@@ -225,9 +231,9 @@
         {{ pirData?.damageDetails[0]?.condition }}
       </span>
     </div>
-    <div class="info-item">
+    <div class="form-field">
       <label>Ubicaciones:</label>
-      <div class="damage-locations">
+      <div class="bagtags-display">
         <span class="location-badge" *ngFor="let location of pirData?.damageDetails[0]?.damageLocation">
           {{ location }}
         </span>

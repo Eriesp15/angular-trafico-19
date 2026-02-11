@@ -67,9 +67,9 @@ export class NewClaimComponent implements OnInit {
       //linea 16
       additionalInfo: [''],
       //equipaje facturado
-      checkedBaggageWeight: [null, [Validators.required, Validators.min(0)]],
+      checkedBaggageWeight: [null],
       //equipaje entregado
-      deliveredBaggageWeight: [null, [Validators.required, Validators.min(0)]],
+      deliveredBaggageWeight: [null],
       //diferencia de peso
       weightDifference: [null],
       language: [''],
@@ -79,12 +79,12 @@ export class NewClaimComponent implements OnInit {
       frequentFlyerId: [''],
       lossReason: [''],
       faultStation: [''],
-      hasInsurance: [null, Validators.required],
+      hasInsurance: [null],
       keysAttached: [null],
       lockCombination: [''],
       nightKit: [null],
-      damageType: [''],
-      condition: [''],
+      damageType: [null],
+      condition: [null],
       damageLocations: this.fb.array([])
       
       
@@ -168,6 +168,28 @@ export class NewClaimComponent implements OnInit {
   get contents(): FormArray {
     return this.pIR.get('contents') as FormArray;
   }
+  
+  clearInsurance(): void {
+    this.pIR.get('hasInsurance')?.setValue(null);
+  }
+
+  clearKeysAttached(): void {
+    this.pIR.get('keysAttached')?.setValue(null);
+  }
+
+  clearNightKit(): void {
+    this.pIR.get('nightKit')?.setValue(null);
+  }
+
+  clearDamageType(): void {
+    this.pIR.get('damageType')?.setValue(null);
+  }
+
+  clearCondition(): void {
+    this.pIR.get('condition')?.setValue(null);
+  }
+
+
 
   crearRuta(): FormGroup {
     return this.fb.group({

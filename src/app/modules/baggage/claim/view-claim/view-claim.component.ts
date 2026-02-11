@@ -4,12 +4,13 @@ import {  ActivatedRoute,  Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
 import  { HttpClient } from "@angular/common/http"
-import {  ClaimType, getClaimTypeConfig,  ClaimTypeConfig } from "../../models/claim-type-config.model"
+import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
+
 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
@@ -17,6 +18,10 @@ export class ViewClaimComponent implements OnInit {
   claimId = "";
   pirData: any = null;
   antiguedadDias = 0;
+  breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
+    { label: 'Visualizar Reclamo' } // Sin URL = no clickeable (página actual)
+  ];
 
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view";
@@ -41,6 +46,11 @@ export class ViewClaimComponent implements OnInit {
         console.log("Datos del backend PIR:", data)
         this.pirData = data;
         this.calcularAntiguedad();
+        this.breadcrumbItems = [
+          { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
+          { label: 'Visualizar Reclamo' },
+          { label: this.pirData?.pirNumber || '' }
+        ];
 
         console.log("PIR cargado:", this.pirData)
         console.log("tipo de reclamo:", this.pirData.claimType)

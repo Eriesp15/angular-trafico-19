@@ -22,8 +22,11 @@
           {{ item.label }}
         </a>
         
-        <!-- Si no tiene URL (último item), solo texto -->
-        <span *ngIf="!item.url" class="breadcrumb-current">
+        <!-- Si no tiene URL solo texto -->
+        <span *ngIf="!item.url && !last" class="breadcrumb-text">
+          {{ item.label }}
+        </span>
+              <span *ngIf="last" class="breadcrumb-current">
           {{ item.label }}
         </span>
       </li>
