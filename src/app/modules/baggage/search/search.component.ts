@@ -6,24 +6,12 @@ import { MatIconModule } from "@angular/material/icon"
 import { MatInputModule } from "@angular/material/input"
 import { MatFormFieldModule } from "@angular/material/form-field"
 import { MatCardModule } from "@angular/material/card"
-import { MatDividerModule } from "@angular/material/divider"
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner"
 import { Router, RouterModule } from "@angular/router"
 import { HttpClient } from "@angular/common/http"
 import { Subject } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 import { BreadcrumbComponent, BreadcrumbItem } from "@erp/components/breadcrumb/breadcrumb.component"
-
-interface SearchResult {
-  id: string
-  pirNumber: string
-  passengerName: string
-  claimType: string
-  status: string
-  createdAt: string
-  bagtag?: string
-  content?: string
-}
 
 @Component({
   selector: "app-search",
@@ -37,7 +25,6 @@ interface SearchResult {
     MatInputModule,
     MatFormFieldModule,
     MatCardModule,
-    MatDividerModule,
     MatProgressSpinnerModule,
     RouterModule,
     BreadcrumbComponent,
@@ -46,47 +33,27 @@ interface SearchResult {
   styleUrls: ["./search.component.scss"],
 })
 export class SearchComponent implements OnInit, OnDestroy {
-  breadcrumbItems: BreadcrumbItem[] = [{ label: "Buscar Equipaje" }]
+  breadcrumbItems: BreadcrumbItem[] = [
+    { label: "World Tracer" }
+  ]
 
-  searchByBagTagForm: FormGroup
-  searchByContentForm: FormGroup
-  searchResults: SearchResult[] = []
-  isSearching = false
-  activeTab = 0
-  noResults = false
+  worldTracerForm: FormGroup
+  isProcessing = false
+  successMessage = ""
+  errorMessage = ""
 
   private destroy$ = new Subject<void>()
   private readonly apiUrl = "http://localhost:3700/api/v1"
-
-  statusLabels: Record<string, string> = {
-    PENDING: "Pendiente",
-    IN_PROCESS: "En proceso",
-    PURCHASED: "Comprado",
-    REPAIRED: "Reparado",
-    LOST: "Perdido",
-    FOUND: "Encontrado",
-    COMPENSATED: "Indemnizado",
-    CLOSED: "Cerrado",
-  }
-
-  tipoLabels: Record<string, string> = {
-    AHL: "Equipaje Faltante",
-    DPR: "Equipaje Dañado",
-    PILFERED: "Equipaje Saqueado",
-    OHL: "Equipaje Sobrante",
-  }
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private http: HttpClient,
   ) {
-    this.searchByBagTagForm = this.fb.group({
-      bagTag: ["", [Validators.required, Validators.minLength(3)]],
-    })
-
-    this.searchByContentForm = this.fb.group({
-      description: ["", [Validators.required, Validators.minLength(3)]],
+    this.worldTracerForm = this.fb.group({
+      codigo: ["", [Validators.required, Validators.minLength(1)]],
+      estado: ["", [Validators.required, Validators.minLength(1)]],
+      descripcion: ["", [Validators.required, Validators.minLength(5)]],
     })
   }
 
@@ -97,115 +64,49 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.destroy$.complete()
   }
 
-  searchByBagTag(): void {
-    if (this.searchByBagTagForm.invalid) return
+  guardarWorldTracer(): void {
+    if (this.worldTracerForm.invalid) return
 
-    this.isSearching = true
-    this.noResults = false
-    const bagTag = this.searchByBagTagForm.get("bagTag")?.value
+    this.isProcessing = true
+    this.successMessage = ""
+    this.errorMessage = ""
 
-    this.http
-      .get<any[]>(`${this.apiUrl}/claims/list`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.searchResults = data
-            .filter((item) => item.BagTag?.includes(bagTag))
-            .map((item) => ({
-              id: item.PIR,
-              pirNumber: item.PIR,
-              passengerName: item.Pasajero,
-              claimType: item.Tipo,
-              status: item.Estado,
-              createdAt: item.Fecha,
-              bagtag: item.BagTag,
-            }))
-
-          this.noResults = this.searchResults.length === 0
-          this.isSearching = false
-        },
-        error: (err) => {
-          console.error("Error en búsqueda:", err)
-          this.isSearching = false
-          this.noResults = true
-        },
-      })
-  }
-
-  searchByContent(): void {
-    if (this.searchByContentForm.invalid) return
-
-    this.isSearching = true
-    this.noResults = false
-    const description = this.searchByContentForm.get("description")?.value.toLowerCase()
-
-    this.http
-      .get<any[]>(`${this.apiUrl}/claims/list`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.searchResults = data
-            .filter((item) => {
-              const content = (item.Contenido || "").toLowerCase()
-              const passenger = (item.Pasajero || "").toLowerCase()
-              return content.includes(description) || passenger.includes(description)
-            })
-            .map((item) => ({
-              id: item.PIR,
-              pirNumber: item.PIR,
-              passengerName: item.Pasajero,
-              claimType: item.Tipo,
-              status: item.Estado,
-              createdAt: item.Fecha,
-              content: item.Contenido,
-            }))
-
-          this.noResults = this.searchResults.length === 0
-          this.isSearching = false
-        },
-        error: (err) => {
-          console.error("Error en búsqueda:", err)
-          this.isSearching = false
-          this.noResults = true
-        },
-      })
-  }
-
-  getStatusClass(status: string): string {
-    const statusClassMap: Record<string, string> = {
-      PENDING: "status-pending",
-      IN_PROCESS: "status-in-process",
-      PURCHASED: "status-purchased",
-      REPAIRED: "status-repaired",
-      LOST: "status-lost",
-      FOUND: "status-found",
-      COMPENSATED: "status-compensated",
-      CLOSED: "status-closed",
+    const worldTracerData = {
+      codigo: this.worldTracerForm.get("codigo")?.value,
+      estado: this.worldTracerForm.get("estado")?.value,
+      descripcion: this.worldTracerForm.get("descripcion")?.value,
+      fechaRegistro: new Date().toLocaleString('es-BO'),
     }
-    return statusClassMap[status] || "status-pending"
-  }
 
-  getStatusLabel(status: string): string {
-    return this.statusLabels[status] || status
-  }
+    console.log("[v0] Guardando información World Tracer:", worldTracerData)
 
-  getTipoLabel(tipo: string): string {
-    return this.tipoLabels[tipo] || tipo
-  }
+    // TODO: Implementar llamada a backend para guardar datos de World Tracer
+    // this.http.post(`${this.apiUrl}/world-tracer`, worldTracerData)
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe({
+    //     next: (response) => {
+    //       this.successMessage = "Información del World Tracer guardada exitosamente"
+    //       this.worldTracerForm.reset()
+    //       this.isProcessing = false
+    //       setTimeout(() => {
+    //         this.successMessage = ""
+    //       }, 5000)
+    //     },
+    //     error: (err) => {
+    //       console.error("Error al guardar World Tracer:", err)
+    //       this.errorMessage = "Error al guardar la información. Intente nuevamente."
+    //       this.isProcessing = false
+    //     },
+    //   })
 
-  viewClaim(pirNumber: string): void {
-    this.router.navigate(["/baggage/claim/view", pirNumber])
-  }
-
-  clearResults(): void {
-    this.searchResults = []
-    this.searchByBagTagForm.reset()
-    this.searchByContentForm.reset()
-    this.noResults = false
-  }
-
-  switchTab(tabIndex: number): void {
-    this.activeTab = tabIndex
-    this.clearResults()
+    // Simulación temporal
+    setTimeout(() => {
+      this.successMessage = "Información del World Tracer guardada exitosamente"
+      this.worldTracerForm.reset()
+      this.isProcessing = false
+      setTimeout(() => {
+        this.successMessage = ""
+      }, 3000)
+    }, 1000)
   }
 }

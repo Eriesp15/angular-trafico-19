@@ -239,6 +239,41 @@
   &:last-of-type {
     margin-bottom: 24px;
   }
+
+  &.world-tracer-card {
+    background-color: #f0f7ff;
+    border: 2px solid #003366;
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      .close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        color: #003366;
+        transition: all 0.2s;
+
+        &:hover {
+          background-color: rgba(0, 51, 102, 0.1);
+          border-radius: 4px;
+        }
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
 }
 
 .section-title {

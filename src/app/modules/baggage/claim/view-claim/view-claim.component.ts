@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
+import { FormsModule } from "@angular/forms"
 import { ActivatedRoute, Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
@@ -14,7 +15,7 @@ type ClaimStatus = "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, MatDialogModule, BreadcrumbComponent],
+  imports: [CommonModule, RouterModule, FormsModule, MatButtonModule, MatIconModule, MatDialogModule, BreadcrumbComponent],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
@@ -29,6 +30,11 @@ export class ViewClaimComponent implements OnInit {
 
   claimConfig: ClaimTypeConfig | null = null
   alertasDias: { tipo: string; mensaje: string; color: string }[] = []
+
+  // World Tracer fields
+  worldTracerCodigo = ""
+  worldTracerEstado = ""
+  worldTracerDescripcion = ""
 
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view"
