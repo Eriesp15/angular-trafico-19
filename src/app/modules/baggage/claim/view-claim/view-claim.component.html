@@ -23,16 +23,38 @@
     </div>
     <div *ngIf="pirData">
 
-      <p>Botones de accion</p>
-      <button 
-        (click)="verHojaSeguimiento()">
-        Ver Hoja de Seguimiento
-      </button>
-      <button 
-        *ngIf="isAHL()"
-        (click)="verFormularioContenido()">
-        Ver Formulario de Contenido
-      </button>
+      <h2>Botones de accion</h2>
+      <div class="action-buttons">
+        <button 
+          (click)="verHojaSeguimiento()">
+          Ver Hoja de Seguimiento
+        </button>
+        <button 
+          *ngIf="isAHL()"
+          (click)="verFormularioContenido()">
+          Ver Formulario de Contenido
+        </button>
+        <button class="action-btn" (click)="realizarEntrega()">
+          <mat-icon>local_shipping</mat-icon>
+          Realizar entrega
+        </button>
+        <button class="action-btn" (click)="indemnizar()">
+          <mat-icon>paid</mat-icon>
+          Añadir gasto
+        </button>
+        <button class="action-btn" (click)="contactoEstaciones()">
+          <mat-icon>sync_alt</mat-icon>
+          Contacto estaciones
+        </button>
+        <button class="action-btn" (click)="cerrarReclamo()">
+          <mat-icon>check_circle</mat-icon>
+          Cerrar reclamo
+        </button>
+        <button class="action-btn" (click)="verGastos()">
+          <mat-icon>receipt</mat-icon>
+          Ver gastos
+        </button>
+      </div>
     </div>
     <div>
     <h2>Datos del PIR:</h2>
