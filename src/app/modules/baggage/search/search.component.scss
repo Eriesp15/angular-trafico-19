@@ -1,0 +1,136 @@
+.search-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .search-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 32px 0 40px 0;
+
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 32px;
+      font-weight: 600;
+      color: #003366;
+      margin: 0 0 12px 0;
+
+      .header-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+        color: #003366;
+      }
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  .world-tracer-form {
+    margin-bottom: 40px;
+
+    .form-card {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+
+      mat-card-header {
+        margin-bottom: 24px;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 16px;
+
+        mat-card-title {
+          font-size: 20px;
+          font-weight: 600;
+          color: #003366;
+          margin: 0;
+        }
+
+        mat-card-subtitle {
+          color: #666;
+          font-size: 14px;
+        }
+      }
+
+      mat-card-content {
+        form {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+
+          .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+
+            @media (max-width: 768px) {
+              grid-template-columns: 1fr;
+            }
+          }
+
+          mat-form-field {
+            width: 100%;
+
+            &.full-width {
+              grid-column: 1 / -1;
+            }
+          }
+
+          .save-btn {
+            width: fit-content;
+            min-width: 200px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .spinner {
+              margin: 0 !important;
+            }
+
+            &:disabled {
+              opacity: 0.6;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .success-message,
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #4caf50;
+  }
+
+  .error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #f44336;
+  }
+}
+

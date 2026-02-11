@@ -1,16 +1,17 @@
-import { Component,  OnInit } from "@angular/core"
+import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import {  ActivatedRoute,  Router, RouterModule } from "@angular/router"
+import { FormsModule } from "@angular/forms"
+import { ActivatedRoute, Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
 import  { HttpClient } from "@angular/common/http"
 import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
-
+import { MatDialogModule, MatDialog } from "@angular/material/dialog"
 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
@@ -23,13 +24,21 @@ export class ViewClaimComponent implements OnInit {
     { label: 'Visualizar Reclamo' } // Sin URL = no clickeable (página actual)
   ];
 
+  // World Tracer fields
+  worldTracerCodigo = ""
+  worldTracerEstado = ""
+  worldTracerDescripcion = ""
+
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view";
+
+
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -112,4 +121,18 @@ export class ViewClaimComponent implements OnInit {
   isAHL(): boolean {
     return this.pirData?.claimType === 'AHL';
   }
+  enviarAReparacion(): void {
+    import("../send-to-repair/send-to-repair-dialog.component").then(({ SendToRepairDialogComponent }) => {
+      this.dialog.open(SendToRepairDialogComponent, {
+        width: "800px",
+        data: {
+          pirNumber: this.pirData?.informacionAdicional?.pirNumber,
+          pasajero: this.pirData?.pasajero,
+          equipaje: this.pirData?.equipaje,
+          reclamo: this.pirData?.reclamo,
+        },
+      })
+    })
+  }
+
 }

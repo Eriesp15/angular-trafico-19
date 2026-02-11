@@ -235,6 +235,26 @@
       }
     }
 
+    &.action-search {
+      border-color: #009688;
+      color: #009688;
+
+      &:hover {
+        background-color: #009688;
+        color: white;
+      }
+    }
+
+    &.action-supplier {
+      border-color: #6b5b95;
+      color: #6b5b95;
+
+      &:hover {
+        background-color: #6b5b95;
+        color: white;
+      }
+    }
+
     &.action-report {
       border-color: #ff9800;
       color: #ff9800;

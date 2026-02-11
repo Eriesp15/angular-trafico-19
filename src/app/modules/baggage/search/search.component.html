@@ -1,0 +1,97 @@
+<div class="search-container">
+  <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+
+  <div class="search-header">
+    <h1>
+      <mat-icon class="header-icon">flight_takeoff</mat-icon>
+      World Tracer
+    </h1>
+    <p class="subtitle">Registre y actualice el estado del World Tracer para el reclamo</p>
+  </div>
+
+  <!-- World Tracer Form -->
+  <div class="world-tracer-form">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>Información del World Tracer</mat-card-title>
+        <mat-card-subtitle>Complete los datos de seguimiento del World Tracer</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="worldTracerForm" (ngSubmit)="guardarWorldTracer()">
+          <div class="form-grid">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Código World Tracer</mat-label>
+              <input
+                matInput
+                formControlName="codigo"
+                placeholder="Ingrese el código de World Tracer"
+                type="text"
+              />
+              <mat-icon matPrefix>label</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Estado del World Tracer</mat-label>
+              <input
+                matInput
+                formControlName="estado"
+                placeholder="Ej: En búsqueda, Ubicado, Entregado"
+                type="text"
+              />
+              <mat-icon matPrefix>info</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descripción del Seguimiento</mat-label>
+            <textarea
+              matInput
+              formControlName="descripcion"
+              placeholder="Detalle el estado y seguimiento del equipaje en World Tracer"
+              rows="4"
+            ></textarea>
+            <mat-icon matPrefix>description</mat-icon>
+          </mat-form-field>
+
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="worldTracerForm.invalid || isProcessing"
+            class="save-btn"
+          >
+            <mat-icon *ngIf="!isProcessing">save</mat-icon>
+            <mat-spinner *ngIf="isProcessing" diameter="20" class="spinner"></mat-spinner>
+            {{ isProcessing ? "Guardando..." : "Guardar Información World Tracer" }}
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Success Message -->
+  <div class="success-message" *ngIf="successMessage">
+    <mat-icon>check_circle</mat-icon>
+    <span>{{ successMessage }}</span>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="errorMessage">
+    <mat-icon>error</mat-icon>
+    <span>{{ errorMessage }}</span>
+  </div>
+</div>
+  <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+
+  <div class="search-header">
+    <h1>
+      <mat-icon class="header-icon">luggage</mat-icon>
+      Buscar Equipaje
+    </h1>
+    <p class="subtitle">Rastree equipajes por BagTag o busque por contenido - Similar a World Tracer</p>
+  </div>
+
+  <div class="search-layout">
+  
+</div>

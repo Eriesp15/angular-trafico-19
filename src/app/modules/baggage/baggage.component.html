@@ -51,6 +51,10 @@
         <mat-icon class="action-icon">list_alt</mat-icon>
         <span>Ver Reclamos</span>
       </button>
+      <button routerLink="/baggage/claim/supplier" class="action-btn action-supplier">
+        <mat-icon class="action-icon">business</mat-icon>
+        <span>Proveedores</span>
+      </button>
       <!-- Botón de reportes funcional -->
       <button (click)="navigateToReports()" class="action-btn action-report">
         <mat-icon class="action-icon">bar_chart</mat-icon>
@@ -106,9 +110,10 @@
             </td>
             <td class="cell-bagtag">{{ claim.bagTag }}</td>
             <td class="cell-status">
-              <span [class]="'status-badge ' + getStatusBadgeClass(claim.estado)">
-                {{ claim.estado }}
-              </span>
+             <span [class]="'status-badge ' + getStatusBadgeClass(claim.estado)">
+  {{ getStatusLabel(claim.estado) }}
+</span>
+
             </td>
           </tr>
         </tbody>

@@ -1,4 +1,4 @@
-<div class="seguimiento-container p-6">
+<div class="seguimiento-container">
     <!-- Encabezado con acción -->
     <div class="title-row">
         <h1 class="title">Hoja de seguimiento</h1>
@@ -12,11 +12,10 @@
         </div>
     </div>
 
-    <p class="sub">Detalles del seguimiento</p>
-
     <!-- Bloque: Detalles de seguimiento -->
+
     <div class="panel">
-        <div class="panel-header">Detalles de seguimiento</div>
+        <div class="panel-header">Datos</div>
         <div class="panel-body">
             <div class="row">
                 <span class="label">Tipo de expediente</span>
@@ -29,220 +28,261 @@
             <div class="row">
                 <span class="label">Nombres y apellidos:</span>
                 <span class="value">{{ expediente.nombres }}</span>
-            </div>
-            <div class="row two-cols">
-                <div>
-                    <span class="label">Telefono de contacto/Celular:</span>
-                    <span class="value">{{ expediente.celular }}</span>
-                </div>
-                <div>
-                    <span class="label">Correo Electronico:</span>
-                    <span class="value">{{ expediente.correo }}</span>
-                </div>
+                <span class="label">Telefono de contacto/Celular:</span>
+                <span class="value">{{ expediente.celular }}</span>
+                <span class="label">Correo Electronico:</span>
+                <span class="value">{{ expediente.correo }}</span>
+
             </div>
         </div>
 
         <!-- Tabla: Seguimientos -->
+        <div class="label-title">Detalles de seguimiento</div>
+
         <div class="table-card">
-            <div class="table-header">
-                <div>Fecha</div>
-                <div>Hora</div>
-                <div>Encargado</div>
-                <div>Información</div>
+            <div class="table-header-wrap">
+                <div class="table-header">
+                    <div>Fecha</div>
+                    <div>Hora</div>
+                    <div>Encargado</div>
+                    <div>Información</div>
+                </div>
+
+                <div class="table-actions-title no-print">Acciones</div>
             </div>
 
+
             <div class="table-body">
-                <div
-                    class="row"
-                    *ngFor="let s of seguimientos; let i = index; trackBy: trackByIndex"
-                    [class.locked-row]="s.locked"
-                >
-                    <div>
-                        <input
-                            class="cell-input"
-                            [readonly]="s.locked"
-                            [(ngModel)]="s.fecha"
-                            placeholder="DD-MM-YYYY"
-                            (input)="onDateInput($event, s, 'fecha')"
-                        />
-                    </div>
-                    <div>
-                        <input
-                            class="cell-input"
-                            [readonly]="s.locked"
-                            [(ngModel)]="s.hora"
-                            placeholder="HH:mm"
-                            (input)="onTimeInput($event, s, 'hora')"
-                        />
-                    </div>
-                    <div>
-                        <input
-                            class="cell-input"
-                            [readonly]="s.locked"
-                            [(ngModel)]="s.encargado"
-                            placeholder="Encargado"
-                        />
-                    </div>
-                    <div>
-            <textarea
-                class="cell-textarea"
+            <div
+            class="row seguimiento-grid"
+            *ngFor="let s of seguimientos; let i = index; trackBy: trackByIndex"
+            [class.locked-row]="s.locked"
+            >
+            <div>
+                <input
+                class="cell-input"
                 [readonly]="s.locked"
-                [(ngModel)]="s.info"
-                placeholder="Información"
-            ></textarea>
-                    </div>
-
-                    <!-- Herramientas por fila (canal, confirmar, estado) -->
-                    <div class="row-tools no-print" *ngIf="!s.locked">
-                        <mat-button-toggle-group
-                            class="canal-toggle"
-                            [(ngModel)]="s.canal"
-                            (change)="onCanalChange(s)"
-                            aria-label="Seleccionar canal"
-                        >
-                            <mat-button-toggle [value]="'whatsapp'" matTooltip="WhatsApp">
-                                <mat-icon>sms</mat-icon>
-                            </mat-button-toggle>
-                            <mat-button-toggle [value]="'email'" matTooltip="Email">
-                                <mat-icon>mail</mat-icon>
-                            </mat-button-toggle>
-                            <mat-button-toggle [value]="'nota'" matTooltip="Nota (oficina)">
-                                <mat-icon>event_note</mat-icon>
-                            </mat-button-toggle>
-                        </mat-button-toggle-group>
-
-                        <button
-                            mat-stroked-button
-                            color="primary"
-                            class="confirm-btn"
-                            [disabled]="!canConfirm(s)"
-                            (click)="confirmRow(i)"
-                        >
-                            <mat-icon style="margin-right:6px">check</mat-icon>
-                            Confirmar
-                        </button>
-                    </div>
-
-                    <div class="row-status" *ngIf="s.locked">
-                        <mat-chip
-                            [ngClass]="{
-                'chip-wa': s.canal === 'whatsapp',
-                'chip-mail': s.canal === 'email',
-                'chip-nota': s.canal === 'nota'
-              }"
-                        >{{ statusLabel(s) }}</mat-chip
-                        >
-                    </div>
-
-                    <!-- Botón borrar (solo aparece en filas vacías y no bloqueadas) -->
-                    <button
-                        mat-icon-button
-                        class="icon-trash"
-                        aria-label="Eliminar fila"
-                        (click)="removeSeguimientoRow(i)"
-                        *ngIf="!s.locked && !s.fecha && !s.hora && !s.encargado && !s.info"
-                    >
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </div>
+                [(ngModel)]="s.fecha"
+                placeholder="DD-MM-YYYY"
+                (input)="onDateInput($event, s, 'fecha')"
+                />
             </div>
 
-            <div class="table-actions">
-                <button mat-mini-fab color="primary" (click)="addSeguimientoRow()">
-                    <mat-icon>add</mat-icon>
+            <div>
+                <input
+                class="cell-input"
+                [readonly]="s.locked"
+                [(ngModel)]="s.hora"
+                placeholder="HH:mm"
+                (input)="onTimeInput($event, s, 'hora')"
+                />
+            </div>
+
+            <div>
+                <input
+                class="cell-input"
+                [readonly]="s.locked"
+                [(ngModel)]="s.encargado"
+                placeholder="Encargado"
+                />
+            </div>
+
+            <div>
+                <textarea
+                    class="cell-textarea auto-grow"
+                    [readonly]="s.locked"
+                    [(ngModel)]="s.info"
+                    placeholder="Información"
+                    (input)="autoGrow($event)"
+                ></textarea>
+
+            </div>
+
+            <!-- ✅ Columna Acciones-->
+            <div class="actions-col no-print">
+                <ng-container *ngIf="!s.locked; else lockedSeguimiento">
+                <mat-button-toggle-group
+                    class="canal-toggle"
+                    [(ngModel)]="s.canal"
+                    (change)="onCanalChange(s)"
+                    aria-label="Seleccionar canal"
+                >
+                    <mat-button-toggle [value]="'nota'" matTooltip="Nota (oficina)">
+                        <mat-icon>event_note</mat-icon>
+                    </mat-button-toggle>
+                    <mat-button-toggle [value]="'whatsapp'" matTooltip="WhatsApp">
+                    <mat-icon>sms</mat-icon>
+                    </mat-button-toggle>
+                    <mat-button-toggle [value]="'email'" matTooltip="Email">
+                    <mat-icon>mail</mat-icon>
+                    </mat-button-toggle>
+
+                </mat-button-toggle-group>
+
+                <button
+                    mat-stroked-button
+                    color="primary"
+                    class="confirm-btn"
+                    [disabled]="!canConfirm(s)"
+                    (click)="confirmRow(i)"
+                >
+                    <mat-icon>check</mat-icon>
+                    Confirmar
                 </button>
+
+                <!-- ✅ Borrar siempre visible si NO está bloqueada -->
+                <button
+                    mat-icon-button
+                    class="trash-btn"
+                    aria-label="Eliminar fila"
+                    (click)="removeSeguimientoRow(i)"
+                >
+                    <mat-icon>delete</mat-icon>
+                </button>
+                </ng-container>
+
+                <ng-template #lockedSeguimiento>
+                <mat-chip
+                    [ngClass]="{
+                    'chip-wa': s.canal === 'whatsapp',
+                    'chip-mail': s.canal === 'email',
+                    'chip-nota': s.canal === 'nota'
+                    }"
+                >
+                    {{ statusLabel(s) }}
+                </mat-chip>
+                </ng-template>
+            </div>
             </div>
         </div>
-    </div>
 
-    <!-- Bloque: Registro de llamadas / Contacto (sin cambios funcionales) -->
-    <div class="panel mt-8">
-        <div class="panel-header">Registro de llamadas/Contacto</div>
+        <div class="table-actions no-print">
+            <button mat-mini-fab color="primary" (click)="addSeguimientoRow()">
+            <mat-icon>add</mat-icon>
+            </button>
+        </div>
+        </div>
+
+        <!-- Tabla: Llamadas -->
+        <div class="label-title">Detalles de llamadas</div>
 
         <div class="table-card">
-            <div class="table-header five-cols">
-                <div>Fecha</div>
-                <div>Hora</div>
-                <div>Celular/Correo</div>
-                <div>A quien se dio la informacion</div>
-                <div>Observaciones</div>
-            </div>
 
-            <div class="table-body">
-                <div class="row five-cols"
-                     *ngFor="let c of llamadas; let i = index; trackBy: trackByIndex"
-                     [class.locked-row]="c.locked">
-
-                    <div>
-                        <input class="cell-input" [readonly]="c.locked"
-                               [(ngModel)]="c.fecha" placeholder="DD-MM-YYYY"
-                               (input)="onDateInput($event, c, 'fecha')" />
-                    </div>
-
-                    <div>
-                        <input class="cell-input" [readonly]="c.locked"
-                               [(ngModel)]="c.hora" placeholder="HH:mm"
-                               (input)="onTimeInput($event, c, 'hora')" />
-                    </div>
-
-                    <div>
-                        <input class="cell-input" [readonly]="c.locked"
-                               [(ngModel)]="c.celularCorreo"
-                               placeholder="Ej: 76543210 o correo" />
-                    </div>
-
-                    <div>
-                        <input class="cell-input" [readonly]="c.locked"
-                               [(ngModel)]="c.aQuien" placeholder="Nombre"
-                               (input)="onAQuienInput(c)" />
-                    </div>
-
-                    <div>
-                        <input class="cell-input"
-                               [readonly]="c.locked"
-                               [(ngModel)]="c.observaciones"
-                               placeholder="Observaciones"
-                               (input)="onObservacionesInput(c)" />
-                    </div>
-
-                    <!-- Herramientas: Confirmar / Estado -->
-                    <div class="row-tools no-print" *ngIf="!c.locked">
-                        <button mat-stroked-button color="primary" class="confirm-btn"
-                                [disabled]="!canConfirmLlamada(c)"
-                                (click)="confirmLlamada(i)">
-                            <mat-icon style="margin-right:6px">check</mat-icon>
-                            Confirmar
-                        </button>
-                    </div>
-
-                    <div class="row-status" *ngIf="c.locked">
-                        <mat-chip class="chip-llamada">Guardado (llamada)</mat-chip>
-                    </div>
-
-                    <!-- Borrar solo si está vacía y no bloqueada -->
-                    <button mat-icon-button class="icon-trash" aria-label="Eliminar fila"
-                            (click)="removeLlamadaRow(i)"
-                            *ngIf="!c.locked && !c.fecha && !c.hora && !c.celularCorreo && !c.aQuien && !c.observaciones">
-                        <mat-icon>delete</mat-icon>
-                    </button>
+            <div class="table-header-wrap">
+                <div class="table-header five-cols">
+                    <div>Fecha</div>
+                    <div>Hora</div>
+                    <div>Celular/Correo</div>
+                    <div>A quien se dio la informacion</div>
+                    <div>Observaciones</div>
                 </div>
 
+                <div class="table-actions-title no-print">Acciones</div>
             </div>
 
-            <div class="table-actions">
-                <button mat-mini-fab color="primary" (click)="addLlamadaRow()">
-                    <mat-icon>add</mat-icon>
-                </button>
+
+            <div class="table-body">
+            <div
+            class="row llamadas-grid"
+            *ngFor="let c of llamadas; let i = index; trackBy: trackByIndex"
+            [class.locked-row]="c.locked"
+            >
+            <div>
+                <input
+                class="cell-input"
+                [readonly]="c.locked"
+                [(ngModel)]="c.fecha"
+                placeholder="DD-MM-YYYY"
+                (input)="onDateInput($event, c, 'fecha')"
+                />
+            </div>
+
+            <div>
+                <input
+                class="cell-input"
+                [readonly]="c.locked"
+                [(ngModel)]="c.hora"
+                placeholder="HH:mm"
+                (input)="onTimeInput($event, c, 'hora')"
+                />
+            </div>
+
+            <div>
+                <input
+                class="cell-input"
+                [readonly]="c.locked"
+                [(ngModel)]="c.celularCorreo"
+                placeholder="Ej: 76543210 o correo"
+                />
+            </div>
+
+            <div>
+                <input
+                class="cell-input"
+                [readonly]="c.locked"
+                [(ngModel)]="c.aQuien"
+                placeholder="Nombre"
+                (input)="onAQuienInput(c)"
+                />
+            </div>
+
+            <div>
+                <input
+                class="cell-input"
+                [readonly]="c.locked"
+                [(ngModel)]="c.observaciones"
+                placeholder="Observaciones"
+                (input)="onObservacionesInput(c)"
+                />
+            </div>
+
+            <!-- ✅ Acciones -->
+            <div class="actions-col no-print">
+                <ng-container *ngIf="!c.locked; else lockedLlamada">
                 <button
-                    class="print-fab no-print"
-                    mat-fab
+                    mat-stroked-button
                     color="primary"
-                    (click)="print()"
-                    aria-label="Imprimir"
+                    class="confirm-btn"
+                    [disabled]="!canConfirmLlamada(c)"
+                    (click)="confirmLlamada(i)"
                 >
-                    <mat-icon>print</mat-icon>
+                    <mat-icon>check</mat-icon>
+                    Confirmar
                 </button>
+
+                <button
+                    mat-icon-button
+                    class="trash-btn"
+                    aria-label="Eliminar fila"
+                    (click)="removeLlamadaRow(i)"
+                >
+                    <mat-icon>delete</mat-icon>
+                </button>
+                </ng-container>
+
+                <ng-template #lockedLlamada>
+                <mat-chip class="chip-llamada">Guardado (llamada)</mat-chip>
+                </ng-template>
+            </div>
             </div>
         </div>
+
+        <div class="table-actions no-print">
+            <button mat-mini-fab color="primary" (click)="addLlamadaRow()">
+            <mat-icon>add</mat-icon>
+            </button>
+
+            <button
+            class="print-fab"
+            mat-fab
+            color="primary"
+            (click)="print()"
+            aria-label="Imprimir"
+            >
+            <mat-icon>print</mat-icon>
+            </button>
+        </div>
+        </div>
+
     </div>
 </div>

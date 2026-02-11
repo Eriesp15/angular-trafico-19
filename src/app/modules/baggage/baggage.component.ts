@@ -28,9 +28,9 @@ interface RecentClaim {
   id?: string
   pir: string
   pasajero: string
-  tipo: "AHL" | "DAMAGED" | "PILFERED"
+  tipo: "AHL" | "DPR" | "PILFERED" | "OHL"
   bagTag: string
-  estado: "DRAFT" | "REGISTERED" | "PROCESSING" | "RESOLVED" | "CLOSED" | "PENDING"
+  estado: "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED"
   fecha: string
   vuelo: string
   ruta: string
@@ -45,6 +45,27 @@ interface RecentClaim {
   styleUrl: "./baggage.component.scss",
 })
 export class BaggageComponent implements OnInit, OnDestroy {
+  // Mapeo de estados para mostrar etiquetas en español
+  statusLabels: Record<string, string> = {
+    PENDING: 'Pendiente',
+    IN_PROCESS: 'En proceso',
+    PURCHASED: 'Comprado',
+    REPAIRED: 'Reparado',
+    LOST: 'Perdido',
+    FOUND: 'Encontrado',
+    COMPENSATED: 'Indemnizado',
+    CLOSED: 'Cerrado',
+    DELIVERED: 'Entregado',
+  };
+
+  // Mapeo de tipos para mostrar etiquetas en español
+  tipoLabels: Record<string, string> = {
+    AHL: "Equipaje Faltante",
+    DPR: "Equipaje Dañado",
+    PILFERED: "Equipaje Saqueado",
+    OHL: "Equipaje Sobrante",
+  }
+
   metrics: MetricCard[] = [
     {
       title: "Reclamos Activos",
@@ -160,17 +181,17 @@ export class BaggageComponent implements OnInit, OnDestroy {
   }
 
   private calcularMetricas(claims: RecentClaim[]): void {
-    const activos = claims.filter((c) => c.estado !== "CLOSED" && c.estado !== "RESOLVED").length
+    const activos = claims.filter((c) => c.estado !== "CLOSED" && c.estado !== "COMPENSATED").length
 
     const requierenAtencion = claims.filter(
-      (c) => c.estado !== "CLOSED" && c.estado !== "RESOLVED" && (c.diasTranscurridos || 0) >= 3,
+      (c) => c.estado !== "CLOSED" && c.estado !== "COMPENSATED" && (c.diasTranscurridos || 0) >= 3,
     ).length
 
     const hoy = new Date()
     const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1)
     const cerradosEsteMes = claims.filter((c) => {
       const fechaClaim = new Date(c.fecha.split("/").reverse().join("-"))
-      return (c.estado === "CLOSED" || c.estado === "RESOLVED") && fechaClaim >= inicioMes
+      return (c.estado === "CLOSED" || c.estado === "COMPENSATED") && fechaClaim >= inicioMes
     }).length
 
     const tiempoPromedio =
@@ -209,7 +230,7 @@ export class BaggageComponent implements OnInit, OnDestroy {
   }
 
   private calcularAlertas(claims: RecentClaim[]): void {
-    const activeClaims = claims.filter((c) => c.estado !== "CLOSED" && c.estado !== "RESOLVED")
+    const activeClaims = claims.filter((c) => c.estado !== "CLOSED" && c.estado !== "COMPENSATED")
 
     // Solo AHL tienen alertas por tiempo
     const ahlClaims = activeClaims.filter((c) => c.tipo === "AHL")
@@ -272,18 +293,22 @@ export class BaggageComponent implements OnInit, OnDestroy {
 
   getStatusBadgeClass(estado: string): string {
     switch (estado) {
-      case "DRAFT":
-        return "badge-draft"
-      case "REGISTERED":
-        return "badge-registered"
-      case "PROCESSING":
-        return "badge-processing"
-      case "RESOLVED":
-        return "badge-resolved"
+      case "PENDING":
+        return "badge-pending"
+      case "IN_PROCESS":
+        return "badge-in-process"
+      case "PURCHASED":
+        return "badge-purchased"
+      case "REPAIRED":
+        return "badge-repaired"
+      case "LOST":
+        return "badge-lost"
+      case "FOUND":
+        return "badge-found"
+      case "COMPENSATED":
+        return "badge-compensated"
       case "CLOSED":
         return "badge-closed"
-      case "PENDING":
-        return "badge-warning"
       default:
         return "badge-default"
     }
@@ -293,26 +318,23 @@ export class BaggageComponent implements OnInit, OnDestroy {
     switch (tipo) {
       case "AHL":
         return "badge-ahl"
-      case "DAMAGED":
-        return "badge-damaged"
+      case "DPR":
+        return "badge-dpr"
       case "PILFERED":
         return "badge-pilfered"
+      case "OHL":
+        return "badge-ohl"
       default:
         return "badge-default"
     }
   }
 
-  getStatusColor(estado: string): string {
-    switch (estado) {
-      case "PENDING":
-        return "#ff9800"
-      case "PROCESSING":
-        return "#0066cc"
-      case "CLOSED":
-        return "#00a651"
-      default:
-        return "#666"
-    }
+  getStatusLabel(status: string): string {
+    return this.statusLabels[status] ?? status
+  }
+
+  getTipoLabel(tipo: string): string {
+    return this.tipoLabels[tipo] ?? tipo
   }
 
   getDaysClass(dias: number | undefined): string {
