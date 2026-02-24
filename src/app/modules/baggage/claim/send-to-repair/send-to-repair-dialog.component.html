@@ -1,0 +1,147 @@
+<h2 mat-dialog-title>Enviar a Reparación</h2>
+
+<mat-dialog-content>
+  <div class="repair-dialog-container">
+    <!-- Información del PIR -->
+    <div class="info-section">
+      <h3>Información del PIR</h3>
+      <div class="info-item">
+        <span class="label">Número PIR:</span>
+        <span class="value">{{ data.pirNumber }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Pasajero:</span>
+        <span class="value">{{ data.pasajero?.nombre }} {{ data.pasajero?.apellidoPaterno }}</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Equipaje:</span>
+        <span class="value">{{ data.equipaje?.colorTipo || "—" }}</span>
+      </div>
+    </div>
+
+    <!-- Formulario de Reparación -->
+    <form [formGroup]="repairForm" class="repair-form">
+      <!-- Proveedor de Reparación -->
+      <mat-form-field class="full-width">
+        <mat-label>Proveedor de Reparación</mat-label>
+        <mat-select formControlName="repairProvider">
+          <mat-option *ngFor="let provider of repairProviders" [value]="provider.id">
+            {{ provider.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="f['repairProvider'].hasError('required')">
+          El proveedor es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Tipo de Reparación -->
+      <mat-form-field class="full-width">
+        <mat-label>Tipo de Reparación</mat-label>
+        <mat-select formControlName="repairType">
+          <mat-option *ngFor="let type of repairTypes" [value]="type.value">
+            {{ type.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="f['repairType'].hasError('required')">
+          El tipo de reparación es requerido
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Descripción de la Reparación -->
+      <mat-form-field class="full-width">
+        <mat-label>Descripción de la Reparación</mat-label>
+        <textarea
+          matInput
+          formControlName="description"
+          placeholder="Describir los daños y la reparación necesaria..."
+          rows="3"
+        ></textarea>
+        <mat-error *ngIf="f['description'].hasError('required')">
+          La descripción es requerida
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Prioridad -->
+      <mat-form-field class="half-width">
+        <mat-label>Prioridad</mat-label>
+        <mat-select formControlName="priority">
+          <mat-option value="low">Baja</mat-option>
+          <mat-option value="medium">Media</mat-option>
+          <mat-option value="high">Alta</mat-option>
+          <mat-option value="urgent">Urgente</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Costo Estimado -->
+      <mat-form-field class="half-width">
+        <mat-label>Costo Estimado ($)</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="estimatedCost"
+          placeholder="0.00"
+          min="0"
+          step="0.01"
+        />
+        <mat-error *ngIf="f['estimatedCost'].hasError('required')">
+          El costo estimado es requerido
+        </mat-error>
+        <mat-error *ngIf="f['estimatedCost'].hasError('min')">
+          El costo debe ser mayor a 0
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Fecha Estimada -->
+      <mat-form-field class="full-width">
+        <mat-label>Fecha Estimada de Reparación</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="estimatedDate" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="f['estimatedDate'].hasError('required')">
+          La fecha estimada es requerida
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Notas Adicionales -->
+      <mat-form-field class="full-width">
+        <mat-label>Notas Adicionales</mat-label>
+        <textarea
+          matInput
+          formControlName="notes"
+          placeholder="Observaciones o instrucciones especiales..."
+          rows="2"
+        ></textarea>
+      </mat-form-field>
+
+      <!-- Autorización -->
+      <div class="authorization-section">
+        <mat-checkbox formControlName="authorizeRepair" class="auth-checkbox">
+          <span class="auth-text">
+            Autorizo la reparación del equipaje según los términos especificados
+          </span>
+        </mat-checkbox>
+        <mat-error *ngIf="f['authorizeRepair'].hasError('required') && submitted" class="error-message">
+          Debe autorizar la reparación para continuar
+        </mat-error>
+      </div>
+    </form>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">
+    <mat-icon>close</mat-icon>
+    Cancelar
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="loading"
+    class="submit-btn"
+  >
+    <mat-icon *ngIf="!loading">build</mat-icon>
+    <span *ngIf="loading">Enviando...</span>
+    <span *ngIf="!loading">Enviar a Reparación</span>
+  </button>
+</mat-dialog-actions>
