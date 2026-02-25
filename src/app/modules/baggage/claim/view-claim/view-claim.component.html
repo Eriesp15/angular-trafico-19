@@ -68,6 +68,41 @@
             </button>
           </ng-container>
         </ng-container>
+        <!-- Si es que es DPR muestra todo su flujo -->
+        <ng-container *ngIf="isDPR()">
+          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
+            <button class="action-btn" (click)="enviarAReparacion()">
+              Enviar a Reparación
+            </button>
+            <button class="action-btn" (click)="enviarACochabamba()">
+              Enviar a Cochabamba
+            </button>
+            <button class="action-btn" (click)="indemnizar()">
+              Indemnizar(Compra de maleta)
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRING'">
+            <button class="action-btn" (click)="recogerMaleta()">
+              Recoger maleta en reparación
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'TRANSFERRED'">
+            <button class="action-btn" (click)="enviarAReparacion()">
+              Enviar a Reparación
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRED'">
+            <button class="action-btn" (click)="realizarEntrega()">
+              Realizar entrega
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
+            <button class="action-btn" (click)="cerrarReclamo()">
+              Cerrar reclamo
+            </button>
+          </ng-container>
+        </ng-container>
+
       </div>
       <h3>Acciones permitidas:</h3>
 
