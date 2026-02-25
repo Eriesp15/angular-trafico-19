@@ -121,6 +121,9 @@ export class ViewClaimComponent implements OnInit {
   isAHL(): boolean {
     return this.pirData?.claimType === 'AHL';
   }
+  isPILFERED(): boolean {
+    return this.pirData?.claimType === 'PILFERED';
+  }
   enviarAReparacion(): void {
     import("../send-to-repair/send-to-repair-dialog.component").then(({ SendToRepairDialogComponent }) => {
       this.dialog.open(SendToRepairDialogComponent, {

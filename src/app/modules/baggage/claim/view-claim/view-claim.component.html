@@ -55,6 +55,19 @@
             </button>
           </ng-container>
         </ng-container>
+        <!-- Si es que es PILFERED muestra todo su flujo -->
+        <ng-container *ngIf="isPILFERED()">
+          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
+            <button class="action-btn" (click)="indemnizar()">
+              Indemnizar
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
+            <button class="action-btn" (click)="cerrarReclamo()">
+              Cerrar reclamo
+            </button>
+          </ng-container>
+        </ng-container>
       </div>
       <h3>Acciones permitidas:</h3>
 
