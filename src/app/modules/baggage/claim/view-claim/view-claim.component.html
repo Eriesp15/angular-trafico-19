@@ -24,6 +24,89 @@
     <div *ngIf="pirData">
 
       <h2>Botones de accion</h2>
+      <h3>Siguiente movimiento:</h3>
+      <div class="action-buttons">
+        <!-- Si es que es AHL muestra todo su flujo -->
+        <ng-container *ngIf="isAHL()">
+          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
+            <button>
+              Indicar Búsqueda Local
+            </button>
+            <button>
+              Indicar Búsqueda World Tracer
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'IN_PROCESS'">
+            <button (click)="indicarEncontrado()">
+              Indicar Encontrado
+            </button>
+            <button (click)="indemnizar()">
+              Indemnizar (Equipaje perdido)
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'FOUND'">
+            <button (click)="indicarEntregado()">
+              Realizar entrega
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
+            <button class="action-btn" (click)="cerrarReclamo()">
+              Cerrar reclamo
+            </button>
+          </ng-container>
+        </ng-container>
+        <!-- Si es que es PILFERED muestra todo su flujo -->
+        <ng-container *ngIf="isPILFERED()">
+          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
+            <button class="action-btn" (click)="indemnizar()">
+              Indemnizar
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
+            <button class="action-btn" (click)="cerrarReclamo()">
+              Cerrar reclamo
+            </button>
+          </ng-container>
+        </ng-container>
+        <!-- Si es que es DPR muestra todo su flujo -->
+        <ng-container *ngIf="isDPR()">
+          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
+            <button class="action-btn" (click)="enviarAReparacion()">
+              Enviar a Reparación
+            </button>
+            <button class="action-btn" (click)="enviarACochabamba()">
+              Enviar a Cochabamba
+            </button>
+            <button class="action-btn" (click)="indemnizar()">
+              Indemnizar(Compra de maleta)
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRING'">
+            <button class="action-btn" (click)="recogerMaleta()">
+              Recoger maleta en reparación
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'TRANSFERRED'">
+            <button class="action-btn" (click)="enviarAReparacion()">
+              Enviar a Reparación
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRED'">
+            <button class="action-btn" (click)="realizarEntrega()">
+              Realizar entrega
+            </button>
+          </ng-container>
+          <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
+            <button class="action-btn" (click)="cerrarReclamo()">
+              Cerrar reclamo
+            </button>
+          </ng-container>
+        </ng-container>
+
+      </div>
+      <h3>Acciones permitidas:</h3>
+
+      <h3>Todas las acciones de este reclamo:</h3>
       <div class="action-buttons">
         <button 
           (click)="verHojaSeguimiento()">
