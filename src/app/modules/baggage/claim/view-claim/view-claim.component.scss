@@ -89,22 +89,22 @@ button:disabled {
 
   .field-value {
     padding: 10px 12px;
-    background-color: #f9fafb;
-    border: 1px solid #e5e7eb;
+    background-color: var(--bg-card-secondary);
+    border: 1px solid var(--border-secondary);
     border-radius: 6px;
     font-size: 15px;
-    color: #111827;
+    color: var(--text-primary);
     font-weight: 500;
   }
 }
 
 .route-display {
   padding: 10px 12px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background-color: var(--bg-card-secondary);
+  border: 1px solid var(--border-secondary);
   border-radius: 6px;
   font-size: 15px;
-  color: #111827;
+  color: var(--text-primary);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -118,11 +118,11 @@ button:disabled {
 
 .bagtags-display {
   padding: 10px 12px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background-color: var(--bg-card-secondary);
+  border: 1px solid var(--border-secondary);
   border-radius: 6px;
   font-size: 15px;
-  color: #111827;
+  color: var(--text-primary);
   
   span {
     font-weight: 500;
