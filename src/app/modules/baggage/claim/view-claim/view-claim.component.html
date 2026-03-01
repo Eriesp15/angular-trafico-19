@@ -1,22 +1,31 @@
 <div class="pir-container">
   <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
   <div class="pir-content" *ngIf="pirData">
-    <div class="pir-header">
-      <h1>Visualizar PIR</h1>
-      <p class="subtitle">Detalles del reclamo de irregularidad</p>
-      <p> Numero de PIR: {{ pirData.pirNumber }}</p>
-    </div>
-    <span class="badge-label">Tipo de reclamo</span>
-    <div class="badge-type" >
-      {{ pirData.claimType }}
-    </div>
-    <span class="badge-label">Estado:</span>
-    <div class="badge-type" >
-      {{ pirData.claim.claimStatus }}
-    </div>
-    <span class="badge-label">Antiguedad:</span>
-    <div class="badge-type" >
-      {{ antiguedadDias }} días
+    <div class="pir-top">
+      <div class="pir-header">
+        <h1>Visualizar PIR</h1>
+        <p> Numero de PIR: {{ pirData.pirNumber }}</p>
+      </div>
+      <div class="claim-badge">
+        <div class="badge-item">
+          <span class="badge-label">Tipo de reclamo</span>
+          <div class="badge-type" >
+            {{ pirData.claimType }}
+          </div>
+        </div>
+        <div class="badge-item">
+          <span class="badge-label">Estado:</span>
+          <div class="badge-type" >
+            {{ pirData.claim.claimStatus }}
+          </div>
+        </div>
+        <div class="badge-item">
+          <span class="badge-label">Antiguedad:</span>
+          <div class="badge-type" >
+            {{ antiguedadDias }} días
+          </div>
+        </div>
+      </div>
     </div>
     <div class="alert alert-danger" *ngIf="antiguedadDias > 21">
       ⚠️ Este PIR ha superado los 21 días de antigüedad
@@ -28,7 +37,7 @@
       <div class="action-buttons">
         <!-- Si es que es AHL muestra todo su flujo -->
         <ng-container *ngIf="isAHL()">
-          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
+          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'|| pirData.claim.claimStatus === 'IN_PROCESS'">
             <button>
               Indicar Búsqueda Local
             </button>
@@ -102,9 +111,7 @@
             </button>
           </ng-container>
         </ng-container>
-
       </div>
-      <h3>Acciones permitidas:</h3>
 
       <h3>Todas las acciones de este reclamo:</h3>
       <div class="action-buttons">
@@ -117,11 +124,11 @@
           (click)="verFormularioContenido()">
           Ver Formulario de Contenido
         </button>
-        <button class="action-btn" (click)="realizarEntrega()">
+        <button *ngIf="isAHL() || isDPR()" class="action-btn" (click)="realizarEntrega()">
           <mat-icon>local_shipping</mat-icon>
           Realizar entrega
         </button>
-        <button class="action-btn" (click)="enviarAReparacion()">
+        <button *ngIf="isDPR()" class="action-btn" (click)="enviarAReparacion()">
           <mat-icon>build</mat-icon>
           Enviar a Reparación
         </button>
@@ -137,7 +144,7 @@
           <mat-icon>receipt</mat-icon>
           Ver gastos
         </button>
-        <button class="action-btn" [routerLink]="['/baggage/search']">
+        <button  *ngIf="isAHL()" class="action-btn" [routerLink]="['/baggage/search']">
           <mat-icon>flight_takeoff</mat-icon>
           World Tracer
         </button>
