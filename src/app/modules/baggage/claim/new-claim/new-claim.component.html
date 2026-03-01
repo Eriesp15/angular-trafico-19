@@ -113,11 +113,14 @@
       <div class="form-group" formArrayName="bagDescription">
         <div *ngFor="let description of bagDescription.controls; let i = index" class="bagtag-item">
           <div [formGroupName]="i">
-            <input type="text" 
+            <input type="text"
                   formControlName="description" 
-                  placeholder="Ej: 234/43/32"
+                  placeholder="Ej: WT01DBC"
                   maxlength="7"
                   class="bagtag-input">
+            <button type="button" class="btn-add" (click)="indiceActual = i; modalIdentificacionAbierto = true">
+              Llenar por interfaz
+            </button>
             
             <button type="button" 
                     class="btn-remove"
@@ -126,6 +129,86 @@
               ✕ Eliminar
             </button>
           </div>
+        </div>
+      </div>
+
+            <!-- Modal de identificacion de equipaje -->
+      <div class="modal-overlay" *ngIf="modalIdentificacionAbierto" (click)="modalIdentificacionAbierto = false">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          
+          <div class="modal-header">
+            <h2>Identificación de Equipaje</h2>
+            <button class="btn-close" (click)="modalIdentificacionAbierto = false">✕</button>
+          </div>
+          
+          <div class="modal-body">
+            <div class="form-field">
+              <label>Color</label>
+              <select [(ngModel)]="color" [ngModelOptions]="{standalone: true}">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let color of colors" [value]="color.value">
+                  {{ color.description }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Tipo</label>
+              <select [(ngModel)]="type" [ngModelOptions]="{standalone: true}">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let type of types" [value]="type.value">
+                  {{ type.description }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Material</label>
+              <select [(ngModel)]="material" [ngModelOptions]="{standalone: true}">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let material of materials" [value]="material.value">
+                  {{ material.description }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Elementos basicos</label>
+              <select [(ngModel)]="basicElement" [ngModelOptions]="{standalone: true}">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let basicElement of basicElements" [value]="basicElement.value">
+                  {{ basicElement.description }}
+                </option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Elementos externos</label>
+              <select [(ngModel)]="externalElement" [ngModelOptions]="{standalone: true}">
+                <option value="">Seleccionar...</option>
+                <option *ngFor="let externalElement of externalElements" [value]="externalElement.value">
+                  {{ externalElement.description }}
+                </option>
+              </select>
+            </div>
+
+            <div class="preview-box" *ngIf="type && color && material && basicElement && externalElement">
+              <strong>{{ color + type + material + basicElement + externalElement }}</strong>
+            </div>
+
+          </div>
+          
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="modalIdentificacionAbierto = false">
+              Cancelar
+            </button>
+            <button class="btn btn-primary" 
+                    (click)="aplicarCodigo()"
+                    [disabled]="!type || !color || !material || !basicElement || !externalElement">
+              Aplicar
+            </button>
+          </div>
+          
         </div>
       </div>
       
@@ -529,3 +612,4 @@
     </div>
   </div>
 </form>
+
