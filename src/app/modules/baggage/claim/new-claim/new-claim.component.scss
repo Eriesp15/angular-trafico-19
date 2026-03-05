@@ -113,8 +113,8 @@
   transition: all 0.3s;
 
   &:hover {
-    background-color: var(--border-focus);
-    border-color: var(--border-focus);
+    background-color: var(--bg-card-secondary);
+    border-color: var(--text-secondary);
   }
 
   &.selected {
