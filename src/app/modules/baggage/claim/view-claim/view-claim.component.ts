@@ -28,6 +28,23 @@ export class ViewClaimComponent implements OnInit {
   worldTracerCodigo = ""
   worldTracerEstado = ""
   worldTracerDescripcion = ""
+  statusLabels: Record<string, string> = {
+    PENDING: 'Pendiente',
+    TRANSFERRED: 'Transferido',
+    SEARCHING: 'En búsqueda',
+    REPAIRING: 'En reparación',
+    COMPENSATED: 'Indemnizado',
+    LOST: 'Perdido',
+    FOUND: 'Encontrado',
+    REPAIRED: 'Reparado',
+    RECEIVED: 'Recibido',
+    DELIVERED: 'Entregado',
+    CLOSED: 'Cerrado',
+  };
+
+  getStatusLabel(status: string): string {
+    return this.statusLabels[status] ?? status;
+  }
 
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view";
