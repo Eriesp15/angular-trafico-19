@@ -7,6 +7,7 @@ import { MatIconModule } from "@angular/material/icon"
 import  { HttpClient } from "@angular/common/http"
 import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
 import { MatDialogModule, MatDialog } from "@angular/material/dialog"
+import { ClaimStatusService } from "app/services/claim-status/claim-status.service"
 
 @Component({
   selector: "app-view-claim",
@@ -39,6 +40,7 @@ export class ViewClaimComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private dialog: MatDialog,
+    public claimStatusService: ClaimStatusService,
   ) {}
 
   ngOnInit(): void {

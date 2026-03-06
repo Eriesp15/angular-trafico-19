@@ -10,6 +10,19 @@ button {
   font-size: 1rem;
 }
 
+.badge-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.claim-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
 .badge-label {
   font-size: 12px;
   font-weight: 600;
@@ -59,8 +72,22 @@ button:disabled {
   box-shadow: 0 1px 4px var(--shadow-card);
 }
 
+
+.pir-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  gap: 20px;
+  
+  // Para pantallas pequeñas, que se apilen verticalmente
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
 .pir-header {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--header-primary);
   margin-bottom: 24px;
@@ -89,22 +116,22 @@ button:disabled {
 
   .field-value {
     padding: 10px 12px;
-    background-color: #f9fafb;
-    border: 1px solid #e5e7eb;
+    background-color: var(--bg-card-secondary);
+    border: 1px solid var(--border-secondary);
     border-radius: 6px;
     font-size: 15px;
-    color: #111827;
+    color: var(--text-primary);
     font-weight: 500;
   }
 }
 
 .route-display {
   padding: 10px 12px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background-color: var(--bg-card-secondary);
+  border: 1px solid var(--border-secondary);
   border-radius: 6px;
   font-size: 15px;
-  color: #111827;
+  color: var(--text-primary);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -118,11 +145,11 @@ button:disabled {
 
 .bagtags-display {
   padding: 10px 12px;
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background-color: var(--bg-card-secondary);
+  border: 1px solid var(--border-secondary);
   border-radius: 6px;
   font-size: 15px;
-  color: #111827;
+  color: var(--text-primary);
   
   span {
     font-weight: 500;
@@ -138,5 +165,12 @@ h2 {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--header-primary);
+  margin-bottom: 16px;
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
   margin-bottom: 16px;
 }
