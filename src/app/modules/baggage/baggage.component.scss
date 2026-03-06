@@ -245,6 +245,16 @@
       }
     }
 
+    &.action-supplier {
+      border-color: #6b5b95;
+      color: #6b5b95;
+
+      &:hover {
+        background-color: #6b5b95;
+        color: white;
+      }
+    }
+
     &.action-report {
       border-color: #ff9800;
       color: #ff9800;

@@ -252,7 +252,7 @@
                 {{ claim.derivedFromRegional }}
               </span>
               <span *ngIf="!claim.derivedFromRegional" class="original-badge">
-                <mat-icon>home</mat-icon>
+                <p>NO</p>
               </span>
             </td>
             <td class="cell-type">
@@ -273,7 +273,7 @@
             <td class="cell-status">
               <!-- Status badge con nuevos estados -->
               <span [class]="'status-badge ' + getStatusClass(claim.status)">
-                {{ getStatusLabel(claim.status) }}
+                {{ claimStatusService.getStatusLabel(claim.status) }}
               </span>
             </td>
           </tr>

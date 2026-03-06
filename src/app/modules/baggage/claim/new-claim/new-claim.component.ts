@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ClaimService } from '../../../../services/claim.service';
 import { Router } from '@angular/router';
@@ -8,7 +8,7 @@ import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/
 @Component({
   selector: 'app-new-claim',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, BreadcrumbComponent], 
+  imports: [CommonModule, ReactiveFormsModule, BreadcrumbComponent, FormsModule], 
   templateUrl: './new-claim.component.html',
   styleUrls: ['./new-claim.component.scss']
 })
@@ -17,6 +17,54 @@ export class NewClaimComponent implements OnInit {
   breadcrumbItems: BreadcrumbItem[] = [
     { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
     { label: 'Nuevo Reclamo' } // Sin URL 
+  ];
+  modalIdentificacionAbierto = false;
+  indiceActual = 0;
+  type = '';
+  color = '';
+  material = '';
+  externalElement = '';
+  basicElement = '';
+
+  colors = [
+    { value: 'BK', description: 'Negro (Black)' },
+    { value: 'BL', description: 'Azul (Blue)' },
+    { value: 'RD', description: 'Rojo (Red)' },
+    { value: 'GY', description: 'Gris (Gray)' },
+    { value: 'GN', description: 'Verde (Green)' },
+    { value: 'YW', description: 'Amarillo (Yellow)' },
+    { value: 'WH', description: 'Blanco (White)' },
+    { value: 'BR', description: 'Marrón (Brown)' },
+    { value: 'OR', description: 'Naranja (Orange)' },
+    { value: 'PK', description: 'Rosa (Pink)' },
+    { value: 'PU', description: 'Púrpura (Purple)' }
+  ];
+  types = [
+    { value: 'SU', description: 'Maleta (Suitcase)' },
+    { value: 'BA', description: 'Bolso (Bag)' },
+    { value: 'BP', description: 'Mochila (Backpack)' },
+    { value: 'BX', description: 'Caja (Box)' },
+    { value: 'CA', description: 'Portafolio (Case)' },
+    { value: 'GB', description: 'Bolsa de ropa (Garment Bag)' },
+    { value: 'OT', description: 'Otro (Other)' }
+  ];
+  materials = [
+    { value: 'D', description: 'Dual / soft/hard' },
+    { value: 'L', description: 'Leather' },
+    { value: 'M', description: 'Metal' },
+    { value: 'R', description: 'Rigid'},
+    { value: 'T', description: 'Tweed' }
+  ];
+  basicElements = [
+    { value: 'B', description: 'Single item in a box'},
+    { value: 'K', description: 'Cabin size'}
+  ];
+  externalElements = [
+    { value: 'C', description: 'Combination lock'},
+    { value: 'H', description: 'Handle'},
+    { value: 'S', description: 'Straps'},
+    { value: 'W', description: 'Wheels'},
+    { value: 'X', description: 'No external descriptive elements'}
   ];
   constructor(
     private fb: FormBuilder,
@@ -29,13 +77,13 @@ export class NewClaimComponent implements OnInit {
       //linea 1
       route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
       //linea 2
-      airport: ['', Validators.required],
+      originatorAirport: ['', Validators.required],
       //linea 2.1
       claimType: ['', Validators.required],
       //linea 3
-      airportText: ['', Validators.required],
-      airline: ['', Validators.required],
-      reference: ['', Validators.required],
+      airportText: [''],
+      airline: [''],
+      reference: [''],
       //linea 4
       passengerName: ['', Validators.required],
       passengerLastName: ['', Validators.required],
@@ -67,9 +115,9 @@ export class NewClaimComponent implements OnInit {
       //linea 16
       additionalInfo: [''],
       //equipaje facturado
-      checkedBaggageWeight: [null, [Validators.required, Validators.min(0)]],
+      checkedBaggageWeight: [null],
       //equipaje entregado
-      deliveredBaggageWeight: [null, [Validators.required, Validators.min(0)]],
+      deliveredBaggageWeight: [null],
       //diferencia de peso
       weightDifference: [null],
       language: [''],
@@ -79,12 +127,12 @@ export class NewClaimComponent implements OnInit {
       frequentFlyerId: [''],
       lossReason: [''],
       faultStation: [''],
-      hasInsurance: [null, Validators.required],
+      hasInsurance: [null],
       keysAttached: [null],
       lockCombination: [''],
       nightKit: [null],
-      damageType: [''],
-      condition: [''],
+      damageType: [null],
+      condition: [null],
       damageLocations: this.fb.array([])
       
       
@@ -168,6 +216,28 @@ export class NewClaimComponent implements OnInit {
   get contents(): FormArray {
     return this.pIR.get('contents') as FormArray;
   }
+  
+  clearInsurance(): void {
+    this.pIR.get('hasInsurance')?.setValue(null);
+  }
+
+  clearKeysAttached(): void {
+    this.pIR.get('keysAttached')?.setValue(null);
+  }
+
+  clearNightKit(): void {
+    this.pIR.get('nightKit')?.setValue(null);
+  }
+
+  clearDamageType(): void {
+    this.pIR.get('damageType')?.setValue(null);
+  }
+
+  clearCondition(): void {
+    this.pIR.get('condition')?.setValue(null);
+  }
+
+
 
   crearRuta(): FormGroup {
     return this.fb.group({
@@ -233,6 +303,19 @@ export class NewClaimComponent implements OnInit {
 
   eliminarBagDescription(index: number): void {
     this.bagDescription.removeAt(index);
+  }
+
+  aplicarCodigo(): void {
+    const codigo =  this.color + this.type + this.material + this.basicElement + this.externalElement;
+    this.bagDescription.at(this.indiceActual).get('description')?.setValue(codigo);
+    
+    // Limpiar y cerrar
+    this.type = '';
+    this.color = '';
+    this.material = '';
+    this.externalElement = '';
+    this.basicElement = '';
+    this.modalIdentificacionAbierto = false;
   }
 
   crearVuelo(): FormGroup {
