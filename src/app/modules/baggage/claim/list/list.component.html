@@ -273,7 +273,7 @@
             <td class="cell-status">
               <!-- Status badge con nuevos estados -->
               <span [class]="'status-badge ' + getStatusClass(claim.status)">
-                {{ getStatusLabel(claim.status) }}
+                {{ claimStatusService.getStatusLabel(claim.status) }}
               </span>
             </td>
           </tr>

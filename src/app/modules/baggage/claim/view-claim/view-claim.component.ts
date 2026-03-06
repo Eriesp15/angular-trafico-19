@@ -7,6 +7,7 @@ import { MatIconModule } from "@angular/material/icon"
 import  { HttpClient } from "@angular/common/http"
 import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
 import { MatDialogModule, MatDialog } from "@angular/material/dialog"
+import { ClaimStatusService } from "app/services/claim-status/claim-status.service"
 
 @Component({
   selector: "app-view-claim",
@@ -28,23 +29,6 @@ export class ViewClaimComponent implements OnInit {
   worldTracerCodigo = ""
   worldTracerEstado = ""
   worldTracerDescripcion = ""
-  statusLabels: Record<string, string> = {
-    PENDING: 'Pendiente',
-    TRANSFERRED: 'Transferido',
-    SEARCHING: 'En búsqueda',
-    REPAIRING: 'En reparación',
-    COMPENSATED: 'Indemnizado',
-    LOST: 'Perdido',
-    FOUND: 'Encontrado',
-    REPAIRED: 'Reparado',
-    RECEIVED: 'Recibido',
-    DELIVERED: 'Entregado',
-    CLOSED: 'Cerrado',
-  };
-
-  getStatusLabel(status: string): string {
-    return this.statusLabels[status] ?? status;
-  }
 
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view";
@@ -56,6 +40,7 @@ export class ViewClaimComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private dialog: MatDialog,
+    public claimStatusService: ClaimStatusService,
   ) {}
 
   ngOnInit(): void {

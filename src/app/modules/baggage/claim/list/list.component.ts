@@ -10,6 +10,7 @@ import { takeUntil } from "rxjs/operators"
 import  { HttpClient } from "@angular/common/http"
 import { AEROPUERTOS_BOA,  ClaimType,  ClaimStatus } from "../../models/claim-type-config.model"
 import { BreadcrumbComponent, BreadcrumbItem } from "@erp/components/breadcrumb/breadcrumb.component"
+import { ClaimStatusService } from "app/services/claim-status/claim-status.service"
 
 // Interfaz PIR
 interface PIR {
@@ -75,6 +76,7 @@ export class ListComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private http: HttpClient,
+    public claimStatusService: ClaimStatusService,
   ) {
     this.searchForm = this.fb.group({
       query: [""],
@@ -253,22 +255,6 @@ export class ListComponent implements OnInit, OnDestroy {
 
   getStatusClass(status: ClaimStatus): string {
     return `status-${status.toLowerCase()}`
-  }
-
-  statusLabels: Record<string, string> = {
-    PENDING: 'Pendiente',
-    IN_PROCESS: 'En proceso',
-    PURCHASED: 'Comprado',
-    REPAIRED: 'Reparado',
-    LOST: 'Perdido',
-    FOUND: 'Encontrado',
-    CLOSED: 'Cerrado',
-    DELIVERED: 'Entregado',
-    COMPENSATED: 'Indemnizado',
-  };
-
-  getStatusLabel(status: string): string {
-    return this.statusLabels[status] ?? status;
   }
 
   tipoLabels: Record<string, string> = {
