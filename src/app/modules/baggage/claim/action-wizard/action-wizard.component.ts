@@ -35,8 +35,8 @@ export class ActionWizardComponent {
         this.config = data.config;
         this.pirData = data.pirData;
         this.step = 1;
-        
-        // ✨ AUTOCOMPLETAR AQUÍ
+
+        //metodo de autocompletado
         this.formData = this.autofillForm();
       }
     });
@@ -77,5 +77,16 @@ export class ActionWizardComponent {
     
     this.wizardService.close();
     window.location.reload();
+  }
+    onFieldChange(fieldName: string, value: any) {
+    // Actualizar el valor en formData
+    this.formData[fieldName] = value;
+    // formData.pricePerKg = 50
+    
+    // Recalcular si hay función de cálculo
+    if (this.config.calculate) {
+      this.formData = this.config.calculate(this.formData);
+      // Ahora: formData.total = 5 * 50 = 250
+    }
   }
 }
