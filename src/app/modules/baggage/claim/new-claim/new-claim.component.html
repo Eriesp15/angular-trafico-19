@@ -29,7 +29,7 @@
     
     <div class="form-field">
       <label>Originador</label>
-      <input type="text" formControlName="originatorAirport" placeholder="Aeropuerto">
+      <input type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="20">
     </div>
 
     <div class="form-group">
@@ -87,7 +87,8 @@
             <input type="text" 
                   formControlName="number" 
                   placeholder="Ej: ABC123456"
-                  class="bagtag-input">
+                  class="bagtag-input"
+                  maxlength="20">
             
             <button type="button" 
                     class="btn-remove"
@@ -252,7 +253,7 @@
         <div [formGroupName]="i">
           
           <div class="form-field">
-            <input type="text" formControlName="flightNo" placeholder="Numero de vuelo {{ i + 1 }}">
+            <input type="text" formControlName="flightNo" placeholder="Numero de vuelo {{ i + 1 }}" maxlength="10">
           </div>
 
           <div class="form-field">
@@ -285,7 +286,7 @@
         <div [formGroupName]="i">
           
           <div class="form-field">
-            <input type="text" formControlName="mark" placeholder="Marca {{ i + 1 }}">
+            <input type="text" formControlName="mark" placeholder="Marca {{ i + 1 }}" maxlength="200">
           </div>
           
           <button type="button" 
@@ -311,7 +312,7 @@
         <div [formGroupName]="i">
           
           <div class="form-field">
-            <input type="text" formControlName="description" placeholder="Contenido {{ i + 1 }}">
+            <input type="text" formControlName="description" placeholder="Contenido {{ i + 1 }}" maxlength="100">
           </div>
           
           <button type="button" 
@@ -334,35 +335,35 @@
     <div class="section">
       <div class="form-field">
         <label>Direccion Permanente</label>
-        <input type="text" formControlName="permanentAddress" placeholder="Direccion Permanente">
+        <input type="text" formControlName="permanentAddress" placeholder="Direccion Permanente" maxlength="200">
       </div>
     </div>
 
     <div class="section">
       <div class="form-field">
         <label>Direccion Temporal</label>
-        <input type="text" formControlName="temporaryAddress" placeholder="Direccion Temporal">
+        <input type="text" formControlName="temporaryAddress" placeholder="Direccion Temporal" maxlength="200">
       </div>
     </div>
 
     <div class="section">
       <div class="form-field">
         <label>Correo electrónico</label>
-        <input type="email" formControlName="email" placeholder="Email">
+        <input type="email" formControlName="email" placeholder="Email" maxlength="200">
       </div>
     </div>
 
     <div class="section">
       <div class="form-field">
         <label>Telefono Permanente</label>
-        <input type="text" formControlName="permanentPhone" placeholder="Telefono Permanente">
+        <input type="text" formControlName="permanentPhone" placeholder="Telefono Permanente" maxlength="20">
       </div>
     </div>
 
     <div class="section">
       <div class="form-field">
         <label>Telefono Temporal</label>
-        <input type="text" formControlName="temporaryPhone" placeholder="Telefono Temporal">
+        <input type="text" formControlName="temporaryPhone" placeholder="Telefono Temporal" maxlength="20">
       </div>
     </div>
 
