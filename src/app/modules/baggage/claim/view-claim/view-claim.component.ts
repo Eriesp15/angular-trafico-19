@@ -8,11 +8,13 @@ import  { HttpClient } from "@angular/common/http"
 import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
 import { MatDialogModule, MatDialog } from "@angular/material/dialog"
 import { ClaimStatusService } from "app/services/claim-status/claim-status.service"
+import { ActionWizardService } from "../action-wizard/action-wizard.service"
+import { ActionWizardComponent } from "../action-wizard/action-wizard.component"
 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule, ActionWizardComponent],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
@@ -41,6 +43,7 @@ export class ViewClaimComponent implements OnInit {
     private http: HttpClient,
     private dialog: MatDialog,
     public claimStatusService: ClaimStatusService,
+    private actionWizard: ActionWizardService,
   ) {}
 
   ngOnInit(): void {
@@ -94,14 +97,17 @@ export class ViewClaimComponent implements OnInit {
     this.router.navigate([`/baggage/claim/content/${this.claimId}`])
   }
 
-  realizarEntrega(): void {
-    this.router.navigate([`/baggage/claim/make-delivery/${this.claimId}`])
+  realizarEntrega() {
+    this.actionWizard.open('DELIVER', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
   }
 
-  indemnizar(): void {
-    this.router.navigate(["/baggage/claim/add-expense", this.claimId], {
-      queryParams: { tipo: 'DPR' },
-    })
+  // Indemnizar (AHL, PILFERED, DPR)
+  indemnizar() {
+    this.actionWizard.open('COMPENSATE', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
   }
 
   cerrarReclamo(): void {
@@ -142,5 +148,7 @@ export class ViewClaimComponent implements OnInit {
       })
     })
   }
+
+  
 
 }
