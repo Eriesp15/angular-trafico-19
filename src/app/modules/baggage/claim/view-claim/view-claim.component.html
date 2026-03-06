@@ -1,5 +1,6 @@
 <div class="pir-container">
   <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+  <app-action-wizard></app-action-wizard>
   <div class="pir-content" *ngIf="pirData">
     <div class="pir-top">
       <div class="pir-header">
@@ -38,10 +39,10 @@
         <!-- Si es que es AHL muestra todo su flujo -->
         <ng-container *ngIf="isAHL()">
           <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'|| pirData.claim.claimStatus === 'IN_PROCESS'">
-            <button>
+            <button (click)="indicarBusquedaLocal()">
               Indicar Búsqueda Local
             </button>
-            <button>
+            <button (click)="indicarBusquedaWorldTracer()">
               Indicar Búsqueda World Tracer
             </button>
           </ng-container>
