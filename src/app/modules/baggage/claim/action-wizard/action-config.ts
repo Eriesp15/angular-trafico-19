@@ -1,181 +1,432 @@
 // ===== CONFIGURACIÓN DE ACCIONES =====
 
+const v = (label: string, value: any, suffix = '') =>
+  value != null && value !== '' && value !== undefined
+    ? `${label}: ${value}${suffix}. `
+    : '';
+
+// ---------------------------------------------------------------------------
+
 export const COMPENSATE = {
   id: 'COMPENSATE',
   title: 'Indemnizar Equipaje',
-  
+
+  // Datos recuperados automáticamente de la BD
   autofill: {
-    checkedWeight: 'checkedBaggageWeight',
-    deliveredWeight: 'deliveredBaggageWeight',
-    weightDifference: 'weightDifference'
+    checkedWeight:    'checkedBaggageWeight',
+    deliveredWeight:  'deliveredBaggageWeight',
+    weightDifference: 'weightDifference',
   },
-  
+
   calculate: (formData: any) => {
     formData.total = (formData.weightDifference || 0) * (formData.pricePerKg || 0);
     return formData;
   },
-  
+
   fields: [
-    { name: 'checkedWeight', label: 'Peso facturado (kg)', type: 'number', readonly: true },
-    { name: 'deliveredWeight', label: 'Peso entregado (kg)', type: 'number', readonly: true },
-    { name: 'weightDifference', label: 'Diferencia (kg)', type: 'number', readonly: true },
-    { name: 'pricePerKg', label: 'Precio por kg ($)', type: 'number', placeholder: 'Ej: 50' },
-    { name: 'total', label: 'Total a pagar ($)', type: 'number', readonly: true },
-    { name: 'paymentMethod', label: 'Método de pago', type: 'select', 
-      options: ['Efectivo', 'Transferencia', 'Cheque'] }
+    {
+      name: 'compensationType',
+      label: '* Tipo de indemnización',
+      type: 'select',
+      options: [
+        'Pérdida total (por peso de etiqueta)',
+        'Saqueo / Diferencia de peso',
+        'Daño — Reposición de maleta',
+        'Daño — Reembolso contra factura',
+      ],
+    },
+    { name: 'checkedWeight',    label: 'Peso facturado (kg)',   type: 'number', readonly: true },
+    { name: 'deliveredWeight',  label: 'Peso entregado (kg)',   type: 'number', readonly: true },
+    { name: 'weightDifference', label: 'Diferencia (kg)',       type: 'number', readonly: true },
+    { name: 'pricePerKg',       label: '* Precio por kg (USD)', type: 'number', placeholder: 'Nacional: 25 | Internacional: 10' },
+    { name: 'total',            label: 'Total a pagar (USD)',   type: 'number', readonly: true },
+    {
+      name: 'paymentMethod',
+      label: '* Método de pago',
+      type: 'select',
+      options: ['Efectivo', 'Reposición de maleta', 'Reembolso contra factura'],
+    },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' },
   ],
-  
-  getMessage: (data: any) => 
-    `Se procedió con la indemnización por ${data.weightDifference}kg de equipaje perdido. Total pagado: $${data.total} mediante ${data.paymentMethod}.`,
-  
-  newStatus: 'COMPENSATED'
+
+  getMessage: (data: any) =>
+    `Indemnización procesada. ` +
+    v('Tipo', data.compensationType) +
+    v('Diferencia', data.weightDifference, 'kg') +
+    v('Total', data.total, ' USD') +
+    v('Método', data.paymentMethod) +
+    v('Obs', data.notes),
+
+  newStatus: 'COMPENSATED',
 };
+
+// ---------------------------------------------------------------------------
+
+export const INDICATE_GPN = {
+  id: 'INDICATE_GPN',
+  title: 'Pagar Gastos de Primera Necesidad (GPN)',
+  // MSA §6.2 — Solo aplica fuera de residencia con demora atribuible a BoA.
+  // Nacional: Bs. 70 | Internacional: USD 50.
+
+  fields: [
+    {
+      name: 'flightType',
+      label: '* Tipo de vuelo',
+      type: 'select',
+      options: ['Nacional (Bs. 70)', 'Internacional (USD 50)'],
+    },
+    {
+      name: 'delayAttributable',
+      label: '* ¿Demora atribuible a BoA?',
+      type: 'select',
+      options: ['Sí', 'No — Late Check-In', 'No — Fuerza mayor', 'No — Exceso de equipaje'],
+    },
+    { name: 'gpnAmount',     label: '* Monto pagado',              type: 'number' },
+    {
+      name: 'currency',
+      label: '* Moneda',
+      type: 'select',
+      options: ['BOB', 'USD'],
+    },
+    { name: 'receiptNumber', label: '* N° de comprobante de pago', type: 'text' },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' },
+  ],
+
+  getMessage: (data: any) =>
+    `GPN registrado. ` +
+    v('Vuelo', data.flightType) +
+    v('Demora atribuible a BoA', data.delayAttributable) +
+    v('Monto', data.gpnAmount) +
+    v('Moneda', data.currency) +
+    v('Comprobante', data.receiptNumber) +
+    v('Obs', data.notes),
+
+  newStatus: 'GPN_PAID',
+};
+
+// ---------------------------------------------------------------------------
 
 export const INDICATE_LOCAL_SEARCH = {
   id: 'INDICATE_LOCAL_SEARCH',
   title: 'Indicar Búsqueda Local',
-  
+
   fields: [
-    { name: 'searchArea', label: 'Área de búsqueda', type: 'select', 
-      options: ['Terminal', 'Bodega', 'Rampa', 'Oficina de Perdidos'] },
-    { name: 'searchDate', label: 'Fecha de búsqueda', type: 'datetime-local' },
-    { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Detalles adicionales...' }
+    {
+      name: 'searchArea',
+      label: '* Área de búsqueda',
+      type: 'select',
+      options: [
+        'Bodega / Buzones de aeronave',
+        'Rampa',
+        'Cinta de entrega',
+        'Depósito / Almacén del aeropuerto',
+        'Mostradores de Check-In',
+        'Aduana',
+        'Otra aerolínea en estación',
+      ],
+    },
+    { name: 'searchDate', label: '* Fecha y hora de búsqueda', type: 'datetime-local' },
+    {
+      name: 'searchResult',
+      label: '* Resultado',
+      type: 'select',
+      options: ['No encontrado', 'Encontrado — registrar en "Equipaje Encontrado"', 'Pendiente'],
+    },
+    { name: 'stationsContacted', label: 'Estaciones contactadas', type: 'text', placeholder: 'Ej: CBB, VVI, LPB' },
+    { name: 'notes',              label: 'Observaciones',          type: 'textarea' },
   ],
-  
-  getMessage: (data: any) => 
-    `Se inició búsqueda local en ${data.searchArea}. ${data.notes || ''}`,
-  
-  newStatus: 'SEARCHING'
+
+  getMessage: (data: any) =>
+    `Búsqueda local iniciada. ` +
+    v('Área', data.searchArea) +
+    v('Resultado', data.searchResult) +
+    v('Estaciones contactadas', data.stationsContacted) +
+    v('Obs', data.notes),
+
+  newStatus: 'SEARCHING',
 };
+
+// ---------------------------------------------------------------------------
 
 export const INDICATE_WT_SEARCH = {
   id: 'INDICATE_WT_SEARCH',
   title: 'Indicar Búsqueda World Tracer',
-  
+
   fields: [
-    { name: 'wtReference', label: 'Referencia World Tracer', type: 'text', placeholder: 'Ej: WT123456' },
-    { name: 'searchDate', label: 'Fecha de registro', type: 'datetime-local' },
-    { name: 'notes', label: 'Observaciones', type: 'textarea' }
+    {
+      name: 'fileType',
+      label: '* Tipo de expediente',
+      type: 'select',
+      options: [
+        'AHL — Equipaje demorado / faltante',
+        'OHD — Equipaje sobrante',
+        'DPR — Daño o saqueo',
+      ],
+    },
+    { name: 'wtReference', label: '* Referencia World Tracer',  type: 'text', placeholder: 'Ej: VVIOB12345' },
+    { name: 'searchDate',  label: '* Fecha de registro en WT',  type: 'datetime-local' },
+    {
+      name: 'actionFileReviewed',
+      label: 'Estado del Action File',
+      type: 'select',
+      options: ['Sin novedades', 'Matches encontrados', 'Pendiente de revisión'],
+    },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' },
   ],
-  
-  getMessage: (data: any) => 
-    `Se registró en World Tracer con referencia: ${data.wtReference}. ${data.notes || ''}`,
-  
-  newStatus: 'SEARCHING'
+
+  getMessage: (data: any) =>
+    `Búsqueda WT registrada. ` +
+    v('Tipo', data.fileType) +
+    v('Referencia', data.wtReference) +
+    v('Action File', data.actionFileReviewed) +
+    v('Obs', data.notes),
+
+  newStatus: 'SEARCHING',
 };
+
+// ---------------------------------------------------------------------------
 
 export const INDICATE_FOUND = {
   id: 'INDICATE_FOUND',
   title: 'Indicar Equipaje Encontrado',
-  
+
   fields: [
-    { name: 'foundLocation', label: 'Lugar donde se encontró', type: 'text', placeholder: 'Ej: Bodega Terminal 1' },
-    { name: 'foundDate', label: 'Fecha de hallazgo', type: 'datetime-local' },
-    { name: 'condition', label: 'Condición del equipaje', type: 'select',
-      options: ['Buena', 'Regular', 'Dañada'] },
-    { name: 'notes', label: 'Observaciones', type: 'textarea' }
+    { name: 'foundLocation', label: '* Lugar donde se encontró',  type: 'text', placeholder: 'Ej: Bodega Terminal 1 — VVI' },
+    { name: 'foundDate',     label: '* Fecha y hora de hallazgo', type: 'datetime-local' },
+    {
+      name: 'condition',
+      label: '* Condición del equipaje',
+      type: 'select',
+      options: ['Buena', 'Regular', 'Dañada'],
+    },
+    { name: 'foundWeight', label: 'Peso al hallazgo (kg)', type: 'number' },
+    { name: 'notes',       label: 'Observaciones',         type: 'textarea' },
   ],
-  
-  getMessage: (data: any) => 
-    `Equipaje encontrado en ${data.foundLocation}. Condición: ${data.condition}. ${data.notes || ''}`,
-  
-  newStatus: 'FOUND'
+
+  getMessage: (data: any) =>
+    `Equipaje encontrado. ` +
+    v('Lugar', data.foundLocation) +
+    v('Condición', data.condition) +
+    v('Peso', data.foundWeight, 'kg') +
+    v('Obs', data.notes),
+
+  newStatus: 'FOUND',
 };
+
+// ---------------------------------------------------------------------------
 
 export const DELIVER = {
   id: 'DELIVER',
   title: 'Realizar Entrega',
-  
+  // MSA §5.5.4.5 y Formulario "Recibo de Entrega" (§4.3)
+
   autofill: {
-    recipientName: 'passengerName'
+    // recipientName se autocompleta con passengerName solo si relationship === 'El mismo pasajero'
+    recipientName: 'passengerName',
   },
-  
+
   fields: [
-    { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local' },
-    { name: 'recipientName', label: 'Nombre de quien recibe', type: 'text' },
-    { name: 'recipientId', label: 'CI/Pasaporte', type: 'text', placeholder: 'Documento de identidad' },
-    { name: 'relationship', label: 'Relación con el pasajero', type: 'select',
-      options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'] },
-    { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Condición del equipaje, notas...' }
+    { name: 'deliveryDate', label: '* Fecha y hora de entrega', type: 'datetime-local' },
+    {
+      name: 'deliveryLocation',
+      label: '* Lugar de entrega',
+      type: 'select',
+      options: [
+        'Oficina de Equipajes en aeropuerto',
+        'Domicilio del pasajero',
+        'Hotel / alojamiento temporal',
+        'Otra oficina BoA',
+      ],
+    },
+    {
+      // Solo visible si deliveryLocation === 'Domicilio del pasajero' | 'Hotel / alojamiento temporal'
+      name: 'deliveryAddress',
+      label: '* Dirección de entrega',
+      type: 'text',
+      showIf: { field: 'deliveryLocation', values: ['Domicilio del pasajero', 'Hotel / alojamiento temporal'] },
+    },
+    {
+      name: 'relationship',
+      label: '* Relación con el pasajero',
+      type: 'select',
+      options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'],
+    },
+    {
+      // Se autocompleta con passengerName si relationship === 'El mismo pasajero'
+      // Queda editable si es Familiar o Persona autorizada
+      name: 'recipientName',
+      label: '* Nombre de quien recibe',
+      type: 'text',
+      autofillIf: { field: 'relationship', value: 'El mismo pasajero', source: 'passengerName' },
+    },
+    { name: 'deliveredWeight', label: '* Peso entregado (kg)', type: 'number' },
+    { name: 'notes',           label: 'Observaciones',         type: 'textarea', placeholder: 'Condición del equipaje al entregar...' },
   ],
-  
-  getMessage: (data: any) => 
-    `Equipaje entregado a ${data.recipientName} (${data.recipientId}). ${data.notes || ''}`,
-  
-  newStatus: 'DELIVERED'
+
+  getMessage: (data: any) =>
+    `Equipaje entregado. ` +
+    v('Lugar', data.deliveryLocation) +
+    v('Dirección', data.deliveryAddress) +
+    v('Receptor', data.recipientName) +
+    v('Relación', data.relationship) +
+    v('Peso entregado', data.deliveredWeight, 'kg') +
+    v('Obs', data.notes),
+
+  newStatus: 'DELIVERED',
 };
+
+// ---------------------------------------------------------------------------
 
 export const SEND_TO_REPAIR = {
   id: 'SEND_TO_REPAIR',
   title: 'Enviar a Reparación',
-  
+  // MSA §6.5.1.1 — Reparación puede ser gestionada por BoA o por el pasajero.
+
   fields: [
-    { name: 'repairShop', label: 'Taller de reparación', type: 'text', placeholder: 'Nombre del taller' },
-    { name: 'estimatedDate', label: 'Fecha estimada de retorno', type: 'date' },
-    { name: 'damageDescription', label: 'Descripción del daño', type: 'textarea' },
-    { name: 'estimatedCost', label: 'Costo estimado ($)', type: 'number' }
+    {
+      name: 'repairModality',
+      label: '* Modalidad',
+      type: 'select',
+      options: [
+        'BoA gestiona — maleta en custodia',
+        'Pasajero lleva — reembolso contra factura',
+      ],
+    },
+    { name: 'repairShop',        label: 'Taller de reparación',       type: 'text',     placeholder: 'Requerido si BoA gestiona' },
+    { name: 'estimatedDate',     label: 'Fecha estimada de retorno',  type: 'date' },
+    { name: 'damageDescription', label: '* Descripción del daño',     type: 'textarea' },
+    { name: 'estimatedCost',     label: 'Costo estimado (USD)',       type: 'number' },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' },
   ],
-  
-  getMessage: (data: any) => 
-    `Enviado a reparación en ${data.repairShop}. Retorno estimado: ${data.estimatedDate}. Costo estimado: $${data.estimatedCost}.`,
-  
-  newStatus: 'REPAIRING'
+
+  getMessage: (data: any) =>
+    `Enviado a reparación. ` +
+    v('Modalidad', data.repairModality) +
+    v('Taller', data.repairShop) +
+    v('Daño', data.damageDescription) +
+    v('Costo estimado', data.estimatedCost, ' USD') +
+    v('Retorno estimado', data.estimatedDate) +
+    v('Obs', data.notes),
+
+  newStatus: 'REPAIRING',
 };
+
+// ---------------------------------------------------------------------------
 
 export const PICKUP_REPAIRED = {
   id: 'PICKUP_REPAIRED',
   title: 'Recoger Maleta de Reparación',
-  
+
   fields: [
-    { name: 'pickupDate', label: 'Fecha de recogida', type: 'datetime-local' },
-    { name: 'actualCost', label: 'Costo real ($)', type: 'number' },
-    { name: 'condition', label: 'Estado después de reparación', type: 'select',
-      options: ['Excelente', 'Buena', 'Aceptable'] },
-    { name: 'notes', label: 'Notas de reparación', type: 'textarea' }
+    { name: 'pickupDate', label: '* Fecha y hora de recogida',      type: 'datetime-local' },
+    { name: 'actualCost', label: '* Costo real de reparación (USD)', type: 'number' },
+    {
+      name: 'condition',
+      label: '* Estado tras reparación',
+      type: 'select',
+      options: ['Excelente', 'Buena', 'Aceptable'],
+    },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' },
   ],
-  
-  getMessage: (data: any) => 
-    `Recogido de reparación. Costo: $${data.actualCost}. Estado: ${data.condition}. ${data.notes || ''}`,
-  
-  newStatus: 'REPAIRED'
+
+  getMessage: (data: any) =>
+    `Maleta recogida de reparación. ` +
+    v('Costo real', data.actualCost, ' USD') +
+    v('Estado', data.condition) +
+    v('Obs', data.notes),
+
+  newStatus: 'REPAIRED',
 };
+
+// ---------------------------------------------------------------------------
 
 export const TRANSFER_TO_CBB = {
   id: 'TRANSFER_TO_CBB',
-  title: 'Transferir a Cochabamba',
-  
+  title: 'Centralizar a CBBLZ',
+  // MSA §5.7.6.1 — Al día 8. El OHD NO se cierra.
+
   fields: [
-    { name: 'transferReason', label: 'Motivo de transferencia', type: 'textarea' },
-    { name: 'transferDate', label: 'Fecha de transferencia', type: 'datetime-local' },
-    { name: 'responsiblePerson', label: 'Responsable en Cochabamba', type: 'text' }
+    { name: 'expedientDay',   label: '* Día del expediente (debe ser ≥7)', type: 'number' },
+    { name: 'transferDate',   label: '* Fecha y hora de transferencia',    type: 'datetime-local' },
+    { name: 'transferReason', label: '* Motivo',                           type: 'textarea',
+      placeholder: 'Ej: Propietario no localizado en 7 días. Búsquedas sin resultado.' },
+    {
+      name: 'localSearchDocumented',
+      label: '* ¿Acciones de búsqueda documentadas?',
+      type: 'select',
+      options: ['Sí', 'No — pendiente'],
+    },
+    {
+      name: 'flzTransactionSent',
+      label: '* ¿Transacción FLZ enviada en WT?',
+      type: 'select',
+      options: ['Sí', 'No — pendiente'],
+    },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' },
   ],
-  
-  getMessage: (data: any) => 
-    `Transferido a Cochabamba. Motivo: ${data.transferReason}. Responsable: ${data.responsiblePerson}.`,
-  
-  newStatus: 'TRANSFERRED'
+
+  getMessage: (data: any) =>
+    `Equipaje centralizado a CBBLZ. ` +
+    v('Día del expediente', data.expedientDay) +
+    v('Motivo', data.transferReason) +
+    v('Búsquedas documentadas', data.localSearchDocumented) +
+    v('FLZ enviado', data.flzTransactionSent) +
+    v('Obs', data.notes),
+
+  newStatus: 'TRANSFERRED',
 };
+
+// ---------------------------------------------------------------------------
 
 export const CLOSE_CLAIM = {
   id: 'CLOSE_CLAIM',
   title: 'Cerrar Reclamo',
-  
+  // MSA §5.5.4.8 — Al cerrar deben constar peso, precinto, costos y estación de fallo.
+
   fields: [
-    { name: 'closureReason', label: 'Motivo de cierre', type: 'select',
-      options: ['Resuelto satisfactoriamente', 'Indemnizado', 'Equipaje entregado', 'Otro'] },
-    { name: 'closureNotes', label: 'Notas de cierre', type: 'textarea', 
-      placeholder: 'Resumen final del caso...' }
+    {
+      name: 'closureReason',
+      label: '* Motivo de cierre',
+      type: 'select',
+      options: [
+        'Equipaje entregado al pasajero',
+        'Indemnización pagada — pérdida total',
+        'Indemnización pagada — saqueo',
+        'Reparación completada y devuelta',
+        'Reposición de maleta realizada',
+        'Reclamo rechazado — fuera de política',
+        'Reclamo rechazado — extemporáneo',
+        'Búsqueda de cortesía — sin indemnización',
+      ],
+    },
+    { name: 'finalWeight', label: 'Peso final del equipaje (kg)', type: 'number' },
+    { name: 'totalCost',   label: 'Costo total del caso (USD)',    type: 'number' },
+    { name: 'failStation', label: 'Estación de fallo',             type: 'text', placeholder: 'Ej: VVI, CBB — o "No determinada"' },
+    {
+      name: 'conciliationSigned',
+      label: '¿Acuerdo de conciliación firmado?',
+      type: 'select',
+      options: ['Sí', 'No aplica', 'Pendiente'],
+    },
+    { name: 'closureNotes', label: '* Resumen final', type: 'textarea' },
   ],
-  
-  getMessage: (data: any) => 
-    `Reclamo cerrado. Motivo: ${data.closureReason}. ${data.closureNotes}`,
-  
-  newStatus: 'CLOSED'
+
+  getMessage: (data: any) =>
+    `Reclamo cerrado. ` +
+    v('Motivo', data.closureReason) +
+    v('Peso final', data.finalWeight, 'kg') +
+    v('Costo total', data.totalCost, ' USD') +
+    v('Estación de fallo', data.failStation) +
+    v('Conciliación firmada', data.conciliationSigned) +
+    v('Resumen', data.closureNotes),
+
+  newStatus: 'CLOSED',
 };
 
 // ===== EXPORTAR TODAS LAS ACCIONES =====
 export const ACTIONS: Record<string, any> = {
   COMPENSATE,
+  INDICATE_GPN,
   INDICATE_LOCAL_SEARCH,
   INDICATE_WT_SEARCH,
   INDICATE_FOUND,
@@ -183,5 +434,5 @@ export const ACTIONS: Record<string, any> = {
   SEND_TO_REPAIR,
   PICKUP_REPAIRED,
   TRANSFER_TO_CBB,
-  CLOSE_CLAIM
+  CLOSE_CLAIM,
 };
