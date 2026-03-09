@@ -1,9 +1,18 @@
 // ===== CONFIGURACIÓN DE ACCIONES =====
-
+// Actualizado según MSA Parte C - Servicio de Equipajes (Rev. Original 01/09/2024)
 const v = (label: string, value: any, suffix = '') =>
   value != null && value !== '' && value !== undefined
     ? `${label}: ${value}${suffix}. `
     : '';
+    
+const resolve = (pirData: any, path: string): any => {
+  return path.split('.').reduce((obj, key) => {
+    if (obj == null) return undefined;
+    return Array.isArray(obj) ? obj[parseInt(key)] : obj[key];
+  }, pirData);
+};
+
+export { resolve };
 
 // ---------------------------------------------------------------------------
 
@@ -11,7 +20,7 @@ export const COMPENSATE = {
   id: 'COMPENSATE',
   title: 'Indemnizar Equipaje',
 
-  // Datos recuperados automáticamente de la BD
+  // Campos del PIR que se autocompletan automáticamente al abrir el modal
   autofill: {
     checkedWeight:    'checkedBaggageWeight',
     deliveredWeight:  'deliveredBaggageWeight',
@@ -190,6 +199,11 @@ export const INDICATE_FOUND = {
   id: 'INDICATE_FOUND',
   title: 'Indicar Equipaje Encontrado',
 
+  // Al encontrar el equipaje, se precarga el peso facturado como referencia
+  autofill: {
+    referenceWeight: 'checkedBaggageWeight',
+  },
+
   fields: [
     { name: 'foundLocation', label: '* Lugar donde se encontró',  type: 'text', placeholder: 'Ej: Bodega Terminal 1 — VVI' },
     { name: 'foundDate',     label: '* Fecha y hora de hallazgo', type: 'datetime-local' },
@@ -199,15 +213,16 @@ export const INDICATE_FOUND = {
       type: 'select',
       options: ['Buena', 'Regular', 'Dañada'],
     },
-    { name: 'foundWeight', label: 'Peso al hallazgo (kg)', type: 'number' },
-    { name: 'notes',       label: 'Observaciones',         type: 'textarea' },
+    { name: 'referenceWeight', label: 'Peso facturado (kg) — referencia', type: 'number', readonly: true },
+    { name: 'foundWeight',     label: 'Peso al hallazgo (kg)',            type: 'number' },
+    { name: 'notes',           label: 'Observaciones',                    type: 'textarea' },
   ],
 
   getMessage: (data: any) =>
     `Equipaje encontrado. ` +
     v('Lugar', data.foundLocation) +
     v('Condición', data.condition) +
-    v('Peso', data.foundWeight, 'kg') +
+    v('Peso hallado', data.foundWeight, 'kg') +
     v('Obs', data.notes),
 
   newStatus: 'FOUND',
@@ -221,8 +236,12 @@ export const DELIVER = {
   // MSA §5.5.4.5 y Formulario "Recibo de Entrega" (§4.3)
 
   autofill: {
-    // recipientName se autocompleta con passengerName solo si relationship === 'El mismo pasajero'
-    recipientName: 'passengerName',
+    // Nombre del pasajero — se usa cuando la relación es "El mismo pasajero"
+    recipientName:   'passengerFullName',       // campo virtual resuelto en el componente
+    // Pesos del PIR
+    checkedWeight:   'checkedBaggageWeight',
+    // Direcciones registradas en el PIR
+    // deliveryAddress se asigna condicionalmente según deliveryLocation (ver autofillIf en el campo)
   },
 
   fields: [
@@ -239,11 +258,16 @@ export const DELIVER = {
       ],
     },
     {
-      // Solo visible si deliveryLocation === 'Domicilio del pasajero' | 'Hotel / alojamiento temporal'
+      // Visible solo si deliveryLocation es domicilio u hotel.
+      // Se autocompleta: domicilio → permanentAddress, hotel → temporaryAddress
       name: 'deliveryAddress',
       label: '* Dirección de entrega',
       type: 'text',
       showIf: { field: 'deliveryLocation', values: ['Domicilio del pasajero', 'Hotel / alojamiento temporal'] },
+      autofillIf: [
+        { when: { field: 'deliveryLocation', value: 'Domicilio del pasajero' },    source: 'permanentAddress' },
+        { when: { field: 'deliveryLocation', value: 'Hotel / alojamiento temporal' }, source: 'temporaryAddress' },
+      ],
     },
     {
       name: 'relationship',
@@ -252,15 +276,18 @@ export const DELIVER = {
       options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'],
     },
     {
-      // Se autocompleta con passengerName si relationship === 'El mismo pasajero'
-      // Queda editable si es Familiar o Persona autorizada
+      // Se autocompleta con nombre completo del pasajero si relationship === 'El mismo pasajero'
+      // Editable si es Familiar o Persona autorizada
       name: 'recipientName',
       label: '* Nombre de quien recibe',
       type: 'text',
-      autofillIf: { field: 'relationship', value: 'El mismo pasajero', source: 'passengerName' },
+      autofillIf: [
+        { when: { field: 'relationship', value: 'El mismo pasajero' }, source: 'passengerFullName' },
+      ],
     },
-    { name: 'deliveredWeight', label: '* Peso entregado (kg)', type: 'number' },
-    { name: 'notes',           label: 'Observaciones',         type: 'textarea', placeholder: 'Condición del equipaje al entregar...' },
+    { name: 'checkedWeight',   label: 'Peso facturado (kg) — referencia', type: 'number', readonly: true },
+    { name: 'deliveredWeight', label: '* Peso entregado (kg)',             type: 'number' },
+    { name: 'notes',           label: 'Observaciones',                     type: 'textarea', placeholder: 'Condición del equipaje al entregar...' },
   ],
 
   getMessage: (data: any) =>
@@ -292,11 +319,11 @@ export const SEND_TO_REPAIR = {
         'Pasajero lleva — reembolso contra factura',
       ],
     },
-    { name: 'repairShop',        label: 'Taller de reparación',       type: 'text',     placeholder: 'Requerido si BoA gestiona' },
-    { name: 'estimatedDate',     label: 'Fecha estimada de retorno',  type: 'date' },
-    { name: 'damageDescription', label: '* Descripción del daño',     type: 'textarea' },
-    { name: 'estimatedCost',     label: 'Costo estimado (USD)',       type: 'number' },
-    { name: 'notes', label: 'Observaciones', type: 'textarea' },
+    { name: 'repairShop',        label: 'Taller de reparación',      type: 'text',     placeholder: 'Requerido si BoA gestiona' },
+    { name: 'estimatedDate',     label: 'Fecha estimada de retorno', type: 'date' },
+    { name: 'damageDescription', label: '* Descripción del daño',    type: 'textarea' },
+    { name: 'estimatedCost',     label: 'Costo estimado (USD)',      type: 'number' },
+    { name: 'notes',             label: 'Observaciones',             type: 'textarea' },
   ],
 
   getMessage: (data: any) =>
@@ -381,7 +408,13 @@ export const TRANSFER_TO_CBB = {
 export const CLOSE_CLAIM = {
   id: 'CLOSE_CLAIM',
   title: 'Cerrar Reclamo',
-  // MSA §5.5.4.8 — Al cerrar deben constar peso, precinto, costos y estación de fallo.
+  // MSA §5.5.4.8
+
+  // Al cerrar se precarga el peso facturado y la estación de fallo del PIR
+  autofill: {
+    finalWeight: 'checkedBaggageWeight',
+    failStation: 'faultStation',
+  },
 
   fields: [
     {
@@ -400,8 +433,8 @@ export const CLOSE_CLAIM = {
       ],
     },
     { name: 'finalWeight', label: 'Peso final del equipaje (kg)', type: 'number' },
-    { name: 'totalCost',   label: 'Costo total del caso (USD)',    type: 'number' },
-    { name: 'failStation', label: 'Estación de fallo',             type: 'text', placeholder: 'Ej: VVI, CBB — o "No determinada"' },
+    { name: 'totalCost',   label: 'Costo total del caso (USD)',   type: 'number' },
+    { name: 'failStation', label: 'Estación de fallo',            type: 'text' },
     {
       name: 'conciliationSigned',
       label: '¿Acuerdo de conciliación firmado?',

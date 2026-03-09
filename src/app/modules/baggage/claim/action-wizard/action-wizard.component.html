@@ -1,5 +1,5 @@
 <div class="modal-overlay" *ngIf="isOpen">
-  <div class="wizard-container" (click)="$event.stopPropagation()">
+  <div class="wizard-container">
     
     <!-- Header -->
     <div class="wizard-header">
@@ -26,7 +26,7 @@
       
       <!-- PASO 1: Formulario -->
       <div *ngIf="step === 1" class="step-content">
-        <div *ngFor="let field of config?.fields" class="form-field">
+        <div *ngFor="let field of config?.fields" class="form-field" [hidden]="!isFieldVisible(field)">
           <label>{{ field.label }}</label>
           
           <!-- Input texto -->
