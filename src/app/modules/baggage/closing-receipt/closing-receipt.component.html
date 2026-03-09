@@ -39,6 +39,7 @@
         <div class="panel-header">Detalles de entrega</div>
         <div class="panel-body">
 
+            <!-- Fecha de entrega -->
             <div class="row">
                 <label class="label">Fecha entrega:</label>
                 <input type="date" class="input"
@@ -46,6 +47,7 @@
                        [disabled]="cerrado">
             </div>
 
+            <!-- Cantidad de equipajes -->
             <div class="row">
                 <label class="label">Cantidad entregada:</label>
                 <input type="number" class="input short"
@@ -53,6 +55,7 @@
                        [disabled]="cerrado">
             </div>
 
+            <!-- Modo de entrega -->
             <div class="radio-group">
                 <label>
                     <input type="radio" name="entrega"
@@ -70,6 +73,7 @@
                 </label>
             </div>
 
+            <!-- Dirección de entrega si es "domicilio" -->
             <div *ngIf="form.entregaModo === 'domicilio'" class="direccion-group">
                 <label>Dirección de entrega:</label>
                 <input type="text" class="direccion-input"
@@ -77,34 +81,20 @@
                        [disabled]="cerrado">
             </div>
 
-            <div class="botones-entrega no-print">
-
-                <!-- SUBIDA DE ARCHIVOS -->
-                <label class="btn btn-subir" *ngIf="!cerrado">
-                    Subir documentos (PDF o imágenes)
-                    <input type="file" accept="image/*,.pdf" multiple hidden
-                           (change)="seleccionarArchivos($event)">
-                </label>
-
-                <button class="btn btn-confirmar"
-                        *ngIf="!cerrado"
-                        (click)="abrirModalCierre()">
-                    Confirmar cierre
-                </button>
-            </div>
-
+            <!-- Archivos subidos -->
             <div *ngIf="archivosSubidos.length > 0" class="archivo-info">
                 <p><b>Documentos cargados:</b></p>
                 <ul>
-                    <li *ngFor="let f of archivosSubidos">📄 {{ f.name }}</li>
+                    <li *ngFor="let archivo of archivosSubidos">
+                        📄 {{ archivo.fileName }}
+                        <!-- Botón de eliminar con "X" -->
+                        <button class="delete-btn" (click)="eliminarArchivo(archivo.id)">
+                            <mat-icon>close</mat-icon>
+                        </button>                    </li>
                 </ul>
             </div>
-        </div>
-    </div>
 
-    <div class="note">
-        Si usted llegó a un acuerdo con la empresa o si no desea continuar con el presente reclamo,
-        le solicitamos firmar en el siguiente recuadro.
+        </div>
     </div>
 
     <!-- Caja de firma -->
@@ -136,6 +126,37 @@
                       [disabled]="cerrado"></textarea>
         </div>
     </div>
+
+    <!-- Botones de subir y confirmar -->
+    <div class="botones-entrega no-print" *ngIf="!cerrado">
+        <!-- Subida de archivos -->
+        <label class="btn btn-subir">
+            Subir documentos (PDF o imágenes)
+            <input type="file" accept="image/*,.pdf" multiple hidden
+                   (change)="seleccionarArchivos($event)">
+        </label>
+
+        <button class="btn btn-confirmar"
+                (click)="abrirModalCierre()">
+            Confirmar cierre
+        </button>
+    </div>
+
+    <!-- Modal de Confirmación de Cierre -->
+    <div class="modal" *ngIf="modalCierreAbierto">
+        <div class="modal-content">
+            <p>¿Está seguro de que desea confirmar el cierre?</p>
+            <button (click)="confirmarCierre()">Confirmar</button>
+            <button (click)="modalCierreAbierto = false">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Nota al final -->
+    <div class="note">
+        Si usted llegó a un acuerdo con la empresa o si no desea continuar con el presente reclamo,
+        le solicitamos firmar en el siguiente recuadro.
+    </div>
+
 </div>
 
 <!-- FAB imprimir -->

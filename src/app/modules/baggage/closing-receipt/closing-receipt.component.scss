@@ -2,9 +2,9 @@
     display: block;
 }
 
-/* ===========================
+/* ============================
    Container (como follow)
-   =========================== */
+   ============================ */
 .cerrado-container {
     min-height: 100vh;
     background: var(--bg-page);
@@ -13,9 +13,9 @@
     margin: 0 auto;
 }
 
-/* ===========================
+/* ============================
    Encabezado
-   =========================== */
+   ============================ */
 .title-row {
     display: flex;
     align-items: flex-start;
@@ -52,9 +52,9 @@
     }
 }
 
-/* ===========================
+/* ============================
    Panels / Cards
-   =========================== */
+   ============================ */
 .panel {
     background: var(--bg-card);
     border-radius: 8px;
@@ -74,9 +74,9 @@
     padding: 1rem;
 }
 
-/* ===========================
+/* ============================
    Rows (layout tipo follow)
-   =========================== */
+   ============================ */
 .row {
     display: grid;
     grid-template-columns: 220px 1fr;
@@ -94,9 +94,9 @@
     color: var(--text-primary);
 }
 
-/* ===========================
+/* ============================
    Inputs uniformes (como follow)
-   =========================== */
+   ============================ */
 .input,
 .direccion-input,
 .sig-input,
@@ -129,9 +129,9 @@
     max-width: 180px;
 }
 
-/* ===========================
+/* ============================
    Radios
-   =========================== */
+   ============================ */
 .radio-group {
     display: flex;
     gap: 1rem;
@@ -169,9 +169,9 @@
     }
 }
 
-/* ===========================
+/* ============================
    Botones (estilo similar al de tu compañera)
-   =========================== */
+   ============================ */
 .botones-entrega {
     display: flex;
     gap: 0.75rem;
@@ -225,9 +225,9 @@
     }
 }
 
-/* ===========================
+/* ============================
    Archivos cargados
-   =========================== */
+   ============================ */
 .archivo-info {
     margin-top: 1rem;
     padding: 1rem;
@@ -252,9 +252,9 @@
     }
 }
 
-/* ===========================
+/* ============================
    Nota (texto de aviso)
-   =========================== */
+   ============================ */
 .note {
     margin-top: 1.5rem;
     padding: 1rem 1.25rem;
@@ -267,9 +267,9 @@
     line-height: 1.35;
 }
 
-/* ===========================
+/* ============================
    Caja de firma (estilo card)
-   =========================== */
+   ============================ */
 .signature-card {
     margin-top: 1rem;
     background: var(--bg-card);
@@ -311,9 +311,9 @@
     resize: vertical;
 }
 
-/* ===========================
+/* ============================
    FAB imprimir
-   =========================== */
+   ============================ */
 .print-fab {
     position: fixed;
     right: 24px;
@@ -324,9 +324,9 @@
     z-index: 1000;
 }
 
-/* ===========================
+/* ============================
    Responsive
-   =========================== */
+   ============================ */
 @media (max-width: 768px) {
     .cerrado-container {
         padding: 1rem;
@@ -351,9 +351,9 @@
     }
 }
 
-/* ===========================
+/* ============================
    Print
-   =========================== */
+   ============================ */
 @media print {
     .no-print,
     button,
@@ -386,4 +386,63 @@
         background: var(--btn-primary) !important;
         color: #fff !important;
     }
+}
+
+/* ============================
+   Botón de eliminar "X" discreta
+   ============================ */
+/* Estilo para el botón de eliminar con "X" discreta */
+.delete-btn {
+    background-color: transparent;  /* Sin fondo */
+    border: none;  /* Sin bordes */
+    color: black;  /* Color negro */
+    font-size: 18px;  /* Tamaño de fuente adecuado para la X */
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.delete-btn:hover {
+    color: #333;  /* Gris oscuro cuando pasa el ratón */
+}
+
+/* Estilo general para los botones */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Estilo para el modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.modal-content button {
+    margin: 10px;
 }
