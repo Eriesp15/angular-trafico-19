@@ -8,7 +8,7 @@
         <div [formGroupName]="i">
           
           <div class="form-field">
-            <input type="text" formControlName="stop" placeholder="Ruta {{ i + 1 }}">
+            <input type="text" formControlName="stop" placeholder="Ruta {{ i + 1 }}" maxlength="7">
           </div>
           
           <button type="button" 
@@ -29,7 +29,7 @@
     
     <div class="form-field">
       <label>Originador</label>
-      <input type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="20">
+      <input type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="7">
     </div>
 
     <div class="form-group">
