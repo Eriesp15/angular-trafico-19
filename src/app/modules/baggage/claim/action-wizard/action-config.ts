@@ -20,13 +20,11 @@ export const COMPENSATE = {
     { name: 'deliveredWeight', label: 'Peso entregado (kg)', type: 'number', readonly: true },
     { name: 'weightDifference', label: 'Diferencia (kg)', type: 'number', readonly: true },
     { name: 'pricePerKg', label: 'Precio por kg ($)', type: 'number', placeholder: 'Ej: 50' },
-    { name: 'total', label: 'Total a pagar ($)', type: 'number', readonly: true },
-    { name: 'paymentMethod', label: 'Método de pago', type: 'select', 
-      options: ['Efectivo', 'Transferencia', 'Cheque'] }
+    { name: 'total', label: 'Total a pagar ($)', type: 'number', readonly: true }
   ],
   
   getMessage: (data: any) => 
-    `Se procedió con la indemnización por ${data.weightDifference}kg de equipaje perdido. Total pagado: $${data.total} mediante ${data.paymentMethod}.`,
+    `Se procedió con la indemnización por ${data.weightDifference}kg de equipaje perdido. Total pagado: $${data.total}`,
   
   newStatus: 'COMPENSATED'
 };
@@ -36,9 +34,6 @@ export const INDICATE_LOCAL_SEARCH = {
   title: 'Indicar Búsqueda Local',
   
   fields: [
-    { name: 'searchArea', label: 'Área de búsqueda', type: 'select', 
-      options: ['Terminal', 'Bodega', 'Rampa', 'Oficina de Perdidos'] },
-    { name: 'searchDate', label: 'Fecha de búsqueda', type: 'datetime-local' },
     { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Detalles adicionales...' }
   ],
   
@@ -93,7 +88,6 @@ export const DELIVER = {
   fields: [
     { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local' },
     { name: 'recipientName', label: 'Nombre de quien recibe', type: 'text' },
-    { name: 'recipientId', label: 'CI/Pasaporte', type: 'text', placeholder: 'Documento de identidad' },
     { name: 'relationship', label: 'Relación con el pasajero', type: 'select',
       options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'] },
     { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Condición del equipaje, notas...' }

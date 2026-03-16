@@ -19,11 +19,13 @@ import { ActionWizardService } from "./action-wizard.service";
 export class ActionWizardComponent {
   isOpen = false;
   step = 1;
+  saving = false;
   
   config: any;
   pirData: any;
   formData: any = {};
   message = '';
+  onSuccessCallback?: () => void;  // Función para recargar después de guardar
 
   constructor(
     public wizardService: ActionWizardService,
@@ -34,7 +36,9 @@ export class ActionWizardComponent {
       if (data) {
         this.config = data.config;
         this.pirData = data.pirData;
+        this.onSuccessCallback = data.onSuccess;
         this.step = 1;
+        this.message = '';
 
         //metodo de autocompletado
         this.formData = this.autofillForm();
@@ -44,7 +48,7 @@ export class ActionWizardComponent {
 
   // Función que llena los campos automáticamente
   autofillForm() {
-    const data: any = {};
+    let data: any = {};
     
     if (this.config.autofill) {
       // Para cada campo que tiene autofill
@@ -52,6 +56,10 @@ export class ActionWizardComponent {
         // Copiar valor del PIR al formulario
         data[formField] = this.pirData[pirField as string];
       }
+    }
+
+    if (this.config.calculate) {
+      data = this.config.calculate(data);
     }
     
     return data;
@@ -67,18 +75,35 @@ export class ActionWizardComponent {
   }
 
   async save() {
-    await this.http.post('/api/pir/action', {
+    this.saving = true;
+    
+    const payload = {
       pirId: this.pirData.id,
       action: this.config.id,
-      data: this.formData,
-      message: this.message,
+      formData: this.formData,
+      trackingMessage: this.message,
       newStatus: this.config.newStatus
-    }).toPromise();
+    };
     
-    this.wizardService.close();
-    window.location.reload();
+    console.log('Payload:', payload);
+    
+    try {
+      const response = await this.http.post('/api/pir/action', payload).toPromise();
+      console.log('Respuesta:', response);
+      
+      if (this.onSuccessCallback) {
+        this.onSuccessCallback();
+      }
+      
+      this.wizardService.close();
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al guardar la acción');
+    } finally {
+      this.saving = false;
+    }
   }
-    onFieldChange(fieldName: string, value: any) {
+  onFieldChange(fieldName: string, value: any) {
     // Actualizar el valor en formData
     this.formData[fieldName] = value;
     // formData.pricePerKg = 50
