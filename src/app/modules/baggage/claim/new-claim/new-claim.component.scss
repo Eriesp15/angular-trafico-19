@@ -130,6 +130,13 @@
     }
   }
 
+  h2 {
+      font-weight: 500;
+      color: var(--text-primary);
+      font-size: 14px;
+  }
+
+
   // Sección (para agrupar varios campos)
   .section {
     display: flex;
