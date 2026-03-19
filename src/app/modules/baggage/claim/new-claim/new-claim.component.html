@@ -4,20 +4,20 @@
   <div class="form-content">
     <div class="form-group" formArrayName="route">
       <label>Rutas de Vuelo</label>
-      <div *ngFor="let stop of route.controls; let i = index" class="ruta-item">
-        <div [formGroupName]="i">
-          
-          <div class="form-field">
-            <input type="text" formControlName="stop" placeholder="Ruta {{ i + 1 }}">
+      <div class="section">
+
+
+          <div *ngFor="let stop of route.controls; let i = index">
+            <div [formGroupName]="i" class="form-field">
+              <input type="text" formControlName="stop" placeholder="Ruta {{ i + 1 }}">              
+              <button type="button" 
+                      class="btn-remove"
+                      (click)="eliminarRuta(i)"
+                      [disabled]="route.length <= 2">
+                ✕ Eliminar
+              </button>
+            </div>
           </div>
-          
-          <button type="button" 
-                  class="btn-remove"
-                  (click)="eliminarRuta(i)"
-                  [disabled]="route.length <= 2">
-            ✕ Eliminar
-          </button>
-        </div>
       </div>
       <button type="button" 
           class="btn-add"
@@ -51,7 +51,7 @@
         <label>Aeropuerto</label>
         <input type="text" formControlName="airportText" placeholder="Aeropuerto" maxlength="3">
       </div>
-        <div class="form-field">
+      <div class="form-field">
         <label>Aerolinea</label>
         <input type="text" formControlName="airline" placeholder="Aerolinea" maxlength="2">
       </div>
@@ -78,16 +78,15 @@
       </div>
     </div>
 
-    <div class="section">
+    <div class="form-group">
       <h2>Bagtags</h2>
       
-      <div class="form-group" formArrayName="bagtags">
-        <div *ngFor="let bagtag of bagtags.controls; let i = index" class="bagtag-item">
-          <div [formGroupName]="i">
+      <div class="section" formArrayName="bagtags">
+        <div *ngFor="let bagtag of bagtags.controls; let i = index">
+          <div [formGroupName]="i" class="form-field">
             <input type="text" 
                   formControlName="number" 
                   placeholder="Ej: ABC123456"
-                  class="bagtag-input"
                   maxlength="20">
             
             <button type="button" 
@@ -108,17 +107,16 @@
       </button>
     </div>
 
-    <div class="section">
+    <div class="form-group">
       <h2>Color/tipo/descripcion</h2>
 
-      <div class="form-group" formArrayName="bagDescription">
+      <div class="section" formArrayName="bagDescription">
         <div *ngFor="let description of bagDescription.controls; let i = index" class="bagtag-item">
-          <div [formGroupName]="i">
+          <div [formGroupName]="i" class="form-field">
             <input type="text"
                   formControlName="description" 
                   placeholder="Ej: WT01DBC"
-                  maxlength="7"
-                  class="bagtag-input">
+                  maxlength="7">
             <button type="button" class="btn-add" (click)="indiceActual = i; modalIdentificacionAbierto = true">
               Llenar por interfaz
             </button>
@@ -223,20 +221,19 @@
 
     <div class="form-group" formArrayName="traceRoute">
         <h2>Ruta a rastrear</h2>
-      <div *ngFor="let stop of traceRoute.controls; let i = index" class="ruta-item">
-        <div [formGroupName]="i">
-          
-          <div class="form-field">
+      <div class="section">
+        <div *ngFor="let stop of traceRoute.controls; let i = index">
+          <div [formGroupName]="i"class="form-field">
             <input type="text" formControlName="traceRouteStop" placeholder="Ruta {{ i + 1 }}" maxlength="3">
-          </div>
-          
-          <button type="button" 
-                  class="btn-remove"
-                  (click)="eliminarRutaARastrear(i)"
-                  [disabled]="traceRoute.length <= 1">
-            ✕ Eliminar
-          </button>
+            
+            <button type="button" 
+                    class="btn-remove"
+                    (click)="eliminarRutaARastrear(i)"
+                    [disabled]="traceRoute.length <= 1">
+              ✕ Eliminar
+            </button>
 
+          </div>
         </div>
       </div>
       <button type="button" 
@@ -249,28 +246,24 @@
 
     <div class="form-group" formArrayName="flightNumber">
         <h2>Numero de vuelo</h2>
-      <div *ngFor="let flight of flightNumber.controls; let i = index" class="ruta-item">
-        <div [formGroupName]="i">
-          
-          <div class="form-field">
-            <input type="text" formControlName="flightNo" placeholder="Numero de vuelo {{ i + 1 }}" maxlength="10">
-          </div>
+      <div class="section">
+        <div *ngFor="let flight of flightNumber.controls; let i = index">
+          <div [formGroupName]="i " class="form-field">
+              <input type="text" formControlName="flightNo" placeholder="Numero de vuelo {{ i + 1 }}" maxlength="10">
 
-          <div class="form-field">
-            <input
-              type="datetime-local"
-              formControlName="flightDate"
-              placeholder="Fecha y hora de vuelo {{ i + 1 }}">
+              <input
+                type="datetime-local"
+                formControlName="flightDate"
+                placeholder="Fecha y hora de vuelo {{ i + 1 }}">
+            
+            <button type="button" 
+                    class="btn-remove"
+                    (click)="eliminarVuelo(i)"
+                    [disabled]="flightNumber.length <= 1">
+              ✕ Eliminar
+            </button>
           </div>
-          
-          <button type="button" 
-                  class="btn-remove"
-                  (click)="eliminarVuelo(i)"
-                  [disabled]="flightNumber.length <= 1">
-            ✕ Eliminar
-          </button>
         </div>
-
       </div>
       <button type="button" 
           class="btn-add"
@@ -282,22 +275,20 @@
 
     <div class="form-group" formArrayName="bagIdentification">
       <h2>Marca en la maleta</h2>
-      <div *ngFor="let identification of bagIdentification.controls; let i = index" class="ruta-item">
-        <div [formGroupName]="i">
-          
-          <div class="form-field">
+      <div class="section">
+        <div *ngFor="let identification of bagIdentification.controls; let i = index" class="ruta-item">
+          <div [formGroupName]="i" class="form-field">
             <input type="text" formControlName="mark" placeholder="Marca {{ i + 1 }}" maxlength="200">
+            <button type="button" 
+                    class="btn-remove"
+                    (click)="eliminarIdentificacion(i)"
+                    [disabled]="bagIdentification.length <= 1">
+              ✕ Eliminar
+            </button>
           </div>
-          
-          <button type="button" 
-                  class="btn-remove"
-                  (click)="eliminarIdentificacion(i)"
-                  [disabled]="bagIdentification.length <= 1">
-            ✕ Eliminar
-          </button>
-        </div>
 
-      </div>
+        </div>
+       </div>
       <button type="button" 
           class="btn-add"
           (click)="agregarIdentificacion()" 
@@ -308,21 +299,18 @@
 
     <div class="form-group" formArrayName="contents">
       <h2>Contenido</h2>
-      <div *ngFor="let description of contents.controls; let i = index" class="ruta-item">
-        <div [formGroupName]="i">
-          
-          <div class="form-field">
-            <input type="text" formControlName="description" placeholder="Contenido {{ i + 1 }}" maxlength="100">
+      <div class="section">
+        <div *ngFor="let description of contents.controls; let i = index" class="ruta-item">
+          <div [formGroupName]="i" class="form-field">
+              <input type="text" formControlName="description" placeholder="Contenido {{ i + 1 }}" maxlength="100">
+            <button type="button" 
+                    class="btn-remove"
+                    (click)="eliminarContenido(i)"
+                    [disabled]="contents.length <= 1">
+              ✕ Eliminar
+            </button>
           </div>
-          
-          <button type="button" 
-                  class="btn-remove"
-                  (click)="eliminarContenido(i)"
-                  [disabled]="contents.length <= 1">
-            ✕ Eliminar
-          </button>
         </div>
-
       </div>
       <button type="button" 
           class="btn-add"
@@ -456,7 +444,7 @@
     <div class="form-group">
       <h3>¿Tiene seguro? *</h3>
 
-      <div class="tipo-reclamo-grid">
+      <div class="section">
         <label class="tipo-card" 
               [class.selected]="pIR.get('hasInsurance')?.value === true">
           <input type="radio" 
@@ -484,7 +472,7 @@
     <div class="form-group">
       <h3>¿Maletas cerradas necesitan llave? *</h3>
       
-      <div class="tipo-reclamo-grid">
+      <div class="section">
         <label class="tipo-card" 
               [class.selected]="pIR.get('keysAttached')?.value === true">
           <input type="radio" 
@@ -519,7 +507,7 @@
     <div class="form-group">
       <h3>Kit de noche hombre o mujer *</h3>
       
-      <div class="tipo-reclamo-grid">
+      <div class="section">
         <label class="tipo-card" 
               [class.selected]="pIR.get('nightKit')?.value === true">
           <input type="radio" 
@@ -546,7 +534,7 @@
 
     <div class="form-group">
       <h3>Tipo de Daño *</h3>
-      <div class="tipo-reclamo-grid">
+      <div class="section">
         <label *ngFor="let tipo of damageType" 
               class="tipo-card" 
               [class.selected]="pIR.get('damageType')?.value === tipo.valor">
@@ -566,7 +554,7 @@
 
     <div class="form-group">
       <h3>Condicion del equipaje *</h3>
-      <div class="tipo-reclamo-grid">
+      <div class="section">
         <label *ngFor="let condicion of condition" 
               class="tipo-card" 
               [class.selected]="pIR.get('condition')?.value === condicion.valor">
@@ -588,7 +576,7 @@
       <h3>Ubicación del Daño</h3>
       <p>Seleccione todas las ubicaciones con daño:</p>
       
-      <div class="tipo-reclamo-grid">
+      <div class="section">
         <label *ngFor="let location of damageLocations" 
               class="tipo-card"
               [class.selected]="isUbicacionSelected(location.valor)">
