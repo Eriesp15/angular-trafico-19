@@ -27,7 +27,10 @@
       <!-- PASO 1: Formulario -->
       <div *ngIf="step === 1" class="step-content">
         <div *ngFor="let field of config?.fields" class="form-field">
-          <label>{{ field.label }}</label>
+          <label>
+            {{ field.label }}
+            <span *ngIf="field.required" class="required">*</span>
+          </label>
           
           <!-- Input texto -->
           <input *ngIf="field.type === 'text'"
@@ -35,7 +38,8 @@
                  [(ngModel)]="formData[field.name]"
                  (ngModelChange)="onFieldChange(field.name, $event)"
                  [readonly]="field.readonly"
-                 [placeholder]="field.placeholder || ''">
+                 [placeholder]="field.placeholder || ''"
+                 [required]="field.required">
           
           <!-- Input número -->
           <input *ngIf="field.type === 'number'"

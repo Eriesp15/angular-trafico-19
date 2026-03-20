@@ -19,7 +19,7 @@ export const COMPENSATE = {
     { name: 'checkedWeight', label: 'Peso facturado (kg)', type: 'number', readonly: true },
     { name: 'deliveredWeight', label: 'Peso entregado (kg)', type: 'number', readonly: true },
     { name: 'weightDifference', label: 'Diferencia (kg)', type: 'number', readonly: true },
-    { name: 'pricePerKg', label: 'Precio por kg ($)', type: 'number', placeholder: 'Ej: 50' },
+    { name: 'pricePerKg', label: 'Precio por kg ($)', type: 'number', placeholder: 'Ej: 50', required: true },
     { name: 'total', label: 'Total a pagar ($)', type: 'number', readonly: true }
   ],
   
