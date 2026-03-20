@@ -49,7 +49,7 @@ export const INDICATE_WT_SEARCH = {
   
   fields: [
     { name: 'wtReference', label: 'Referencia World Tracer', type: 'text', placeholder: 'Ej: WT123456' },
-    { name: 'searchDate', label: 'Fecha de registro', type: 'datetime-local' },
+    { name: 'searchDate', label: 'Fecha de registro', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
   
@@ -65,7 +65,7 @@ export const INDICATE_FOUND = {
   
   fields: [
     { name: 'foundLocation', label: 'Lugar donde se encontró', type: 'text', placeholder: 'Ej: Bodega Terminal 1' },
-    { name: 'foundDate', label: 'Fecha de hallazgo', type: 'datetime-local' },
+    { name: 'foundDate', label: 'Fecha de hallazgo', type: 'datetime-local'},
     { name: 'condition', label: 'Condición del equipaje', type: 'select',
       options: ['Buena', 'Regular', 'Dañada'] },
     { name: 'notes', label: 'Observaciones', type: 'textarea' }

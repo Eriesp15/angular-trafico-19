@@ -58,6 +58,14 @@ export class ActionWizardComponent {
       }
     }
 
+    if (this.config.fields) {
+      this.config.fields.forEach((field: any) => {
+        if (field.defaultValue !== undefined && data[field.name] === undefined) {
+          data[field.name] = field.defaultValue;  // ← Aquí se aplica
+        }
+      });
+    }
+
     if (this.config.calculate) {
       data = this.config.calculate(data);
     }
