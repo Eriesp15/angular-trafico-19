@@ -178,6 +178,9 @@ h3 {
 
 // ── Tipo card (radio / checkbox) ──────────────────────────────────────────────
 .tipo-card {
+    flex: 1 1 90px;      // crece y se encoge, pero nunca menos de 90px
+  min-width: 90px;     // límite para pantallas pequeñas
+  max-width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -188,7 +191,16 @@ h3 {
   cursor: pointer;
   transition: all 0.15s;
   background: var(--bg-card);
+    flex-direction: column;  // apila checkbox → imagen → label verticalmente
+  text-align: center;
+  min-width: 90px;
 
+  .location-img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    pointer-events: none;
+  }
   &:hover {
     background-color: var(--bg-card-hover);
     border-color: #c2d4f5;

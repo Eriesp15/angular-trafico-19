@@ -256,28 +256,29 @@ h3 {
   }
 }
 
-// ── Botones acción primaria ───────────────────────────────────────────────────
 .btn-add {
   margin-top: 0;
   background-color: #1b4fad;
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+
+  padding: 0.6rem 1.2rem; // más ancho y alto equilibrado
+  font-size: 16px; // ligeramente más grande
+  font-weight: 600;
+
+  height: auto; // 🔥 importante, quita la limitación
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  height: 36px;
-  flex-shrink: 0;
+  gap: 8px; // un poco más de espacio entre icono y texto
+
   transition: background 0.15s;
 
   mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
     line-height: 1;
   }
 
@@ -289,22 +290,25 @@ h3 {
 .btn-secondary-action {
   background: transparent;
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 0.5rem 1rem;
+  border: 2px solid var(--text-primary);
+  border-radius: 8px;
+
+  padding: 0.6rem 1.2rem; // igual proporción que el primario
+  font-size: 16px; // mismo tamaño de texto
+  font-weight: 500;
+
+  height: auto; // 🔥 quitar restricción
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  height: 36px;
+  gap: 8px; // mismo espacio que el primario
+
   transition: all 0.15s;
 
   mat-icon {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
     line-height: 1;
   }
 
@@ -314,7 +318,6 @@ h3 {
     color: #1b4fad;
   }
 }
-
 // ── No selection placeholder ──────────────────────────────────────────────────
 .no-selection {
   font-size: 13px;
