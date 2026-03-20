@@ -48,13 +48,13 @@ export const INDICATE_WT_SEARCH = {
   title: 'Indicar Búsqueda World Tracer',
   
   fields: [
-    { name: 'wtReference', label: 'Referencia World Tracer', type: 'text', placeholder: 'Ej: WT123456' },
-    { name: 'searchDate', label: 'Fecha de registro', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
+    { name: 'wtReference', label: 'Referencia World Tracer', type: 'text', placeholder: 'Ej: WT123456', required: true},
+    { name: 'searchDate', label: 'Fecha de registro', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required:true},
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
   
   getMessage: (data: any) => 
-    `Se registró en World Tracer con referencia: ${data.wtReference}. ${data.notes || ''}`,
+    `Se registró en World Tracer en fecha: ${data.searchDate}. ${data.notes || ''}`,
   
   newStatus: 'SEARCHING'
 };
@@ -64,15 +64,15 @@ export const INDICATE_FOUND = {
   title: 'Indicar Equipaje Encontrado',
   
   fields: [
-    { name: 'foundLocation', label: 'Lugar donde se encontró', type: 'text', placeholder: 'Ej: Bodega Terminal 1' },
-    { name: 'foundDate', label: 'Fecha de hallazgo', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
-    { name: 'condition', label: 'Condición del equipaje', type: 'select',
+    { name: 'foundLocation', label: 'Lugar donde se encontró', type: 'text', placeholder: 'Ej: Bodega Aeropuerto CBBA' },
+    { name: 'foundDate', label: 'Fecha de hallazgo', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true},
+    { name: 'condition', label: 'Condición del equipaje', type: 'select', required:true,
       options: ['Buena', 'Regular', 'Dañada'] },
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
   
   getMessage: (data: any) => 
-    `Equipaje encontrado en ${data.foundLocation}. Condición: ${data.condition}. ${data.notes || ''}`,
+    `Equipaje encontrado en ${data.foundLocation || ''} Fecha: ${data.foundDate}. Condición: ${data.condition}. ${data.notes || ''}`,
   
   newStatus: 'FOUND'
 };
@@ -105,13 +105,13 @@ export const SEND_TO_REPAIR = {
   
   fields: [
     { name: 'repairShop', label: 'Taller de reparación', type: 'text', placeholder: 'Nombre del taller' },
-    { name: 'estimatedDate', label: 'Fecha estimada de retorno', type: 'date' },
-    { name: 'damageDescription', label: 'Descripción del daño', type: 'textarea' },
+    { name: 'estimatedDate', label: 'Fecha estimada de retorno', type: 'date', defaultValue: new Date(Date.now() + (5 * 24 * 60 * 60 * 1000) - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 10)},
+    { name: 'damageDescription', label: 'Descripción del daño', type: 'textarea', required: true},
     { name: 'estimatedCost', label: 'Costo estimado ($)', type: 'number' }
   ],
   
   getMessage: (data: any) => 
-    `Enviado a reparación en ${data.repairShop}. Retorno estimado: ${data.estimatedDate}. Costo estimado: $${data.estimatedCost}.`,
+    `Enviado a reparación en ${data.repairShop}. Retorno estimado: ${data.estimatedDate}.`,
   
   newStatus: 'REPAIRING'
 };
@@ -121,7 +121,7 @@ export const PICKUP_REPAIRED = {
   title: 'Recoger Maleta de Reparación',
   
   fields: [
-    { name: 'pickupDate', label: 'Fecha de recogida', type: 'datetime-local' },
+    { name: 'pickupDate', label: 'Fecha de recogida', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
     { name: 'actualCost', label: 'Costo real ($)', type: 'number' },
     { name: 'condition', label: 'Estado después de reparación', type: 'select',
       options: ['Excelente', 'Buena', 'Aceptable'] },
