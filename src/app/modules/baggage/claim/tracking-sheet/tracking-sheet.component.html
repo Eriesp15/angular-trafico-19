@@ -1,0 +1,61 @@
+
+<div class= "main-container">
+      <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+    <div class="page">
+
+        <div *ngIf="loading" class="center">Cargando...</div>
+        <div *ngIf="error" class="center error">No se pudo cargar la hoja de seguimiento.</div>
+
+        <ng-container *ngIf="data && !loading">
+
+            <div class="header">
+            <h2>Hoja de Seguimiento</h2>
+            </div>
+
+            <!-- Actividades -->
+            <h3 class="section-title">Actividades ({{ data.activities.length }})</h3>
+            <div *ngIf="data.activities.length === 0" class="center muted">Sin actividades.</div>
+            <div *ngFor="let a of data.activities" class="card">
+            <div class="card-row">
+                <span class="tag">{{ translate(a.activityType) }}</span>
+                <span class="muted small">{{ formatDate(a.activityDate) }}</span>
+                <button *ngIf="a.metadata" class="eye-btn" (click)="openMeta = openMeta === a.id ? null : a.id">
+                {{ openMeta === a.id ? '🙈 Ocultar' : '👁 Metadata' }}
+                </button>
+            </div>
+            <p>{{ a.description }}</p>
+            <div *ngIf="a.performedBy" class="muted small">Por: {{ a.performedBy }}</div>
+            <div *ngIf="openMeta === a.id && a.metadata" class="meta-box">
+                <div *ngFor="let entry of metaEntries(a.metadata)" class="meta-row">
+                <span class="meta-key">{{ entry[0] }}</span>
+                <span>{{ entry[1] }}</span>
+                </div>
+            </div>
+            </div>
+
+            <!-- Comunicaciones -->
+            <h3 class="section-title">Comunicaciones ({{ data.communications.length }})</h3>
+            <div *ngIf="data.communications.length === 0" class="center muted">Sin comunicaciones.</div>
+            <div *ngFor="let c of data.communications" class="card">
+            <div class="card-row">
+                <span class="tag tag--comm">{{ translate(c.communicationType) }}</span>
+                <span class="muted small">{{ formatDate(c.communicationDate) }}</span>
+                <button class="eye-btn" (click)="openComm = openComm === c.id ? null : c.id">
+                {{ openComm === c.id ? '🙈 Ocultar' : '👁 Ver' }}
+                </button>
+            </div>
+            <div *ngIf="c.subject" class="subject">{{ c.subject }}</div>
+            <p>{{ c.message }}</p>
+            <div *ngIf="openComm === c.id" class="meta-box">
+                <div *ngIf="c.contactName" class="meta-row"><span class="meta-key">Contacto</span><span>{{ c.contactName }}</span></div>
+                <div *ngIf="c.contactEmail" class="meta-row"><span class="meta-key">Email</span><span>{{ c.contactEmail }}</span></div>
+                <div *ngIf="c.contactPhone" class="meta-row"><span class="meta-key">Teléfono</span><span>{{ c.contactPhone }}</span></div>
+                <div *ngIf="c.response" class="meta-row"><span class="meta-key">Respuesta</span><span>{{ c.response }}</span></div>
+                <div class="meta-row"><span class="meta-key">Seguimiento</span><span>{{ c.followUpRequired ? 'Sí' : 'No' }}</span></div>
+                <div *ngIf="c.followUpDate" class="meta-row"><span class="meta-key">Fecha seguimiento</span><span>{{ formatDate(c.followUpDate) }}</span></div>
+            </div>
+            </div>
+
+        </ng-container>
+    </div>
+</div>
