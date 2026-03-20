@@ -2,811 +2,300 @@
   <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
   <app-action-wizard></app-action-wizard>
   <div class="pir-content" *ngIf="pirData">
+
+    <!-- Top: header + badges -->
     <div class="pir-top">
       <div class="pir-header">
         <h1>Visualizar PIR</h1>
-        <p> Numero de PIR: {{ pirData.pirNumber }}</p>
+        <p class="pir-header__sub">Número de PIR: <span class="pir-header__num">{{ pirData.pirNumber }}</span></p>
       </div>
       <div class="claim-badge">
         <div class="badge-item">
           <span class="badge-label">Tipo de reclamo</span>
-          <div class="badge-type" >
-            {{ pirData.claimType }}
-          </div>
+          <div class="badge-type">{{ pirData.claimType }}</div>
         </div>
         <div class="badge-item">
           <span class="badge-label">Estado:</span>
-          <div class="badge-type" >
-            {{ claimStatusService.getStatusLabel(pirData.claim.claimStatus) }}
-          </div>
+          <div class="badge-type">{{ claimStatusService.getStatusLabel(pirData.claim.claimStatus) }}</div>
         </div>
         <div class="badge-item">
-          <span class="badge-label">Antiguedad:</span>
-          <div class="badge-type" >
-            {{ antiguedadDias }} días
-          </div>
+          <span class="badge-label">Antigüedad:</span>
+          <div class="badge-type" [class.badge-type--warn]="antiguedadDias > 21">{{ antiguedadDias }} días</div>
         </div>
       </div>
     </div>
-    <div class="alert alert-danger" *ngIf="antiguedadDias > 21">
+
+    <!-- Alert -->
+    <div class="pir-alert" *ngIf="antiguedadDias > 21">
       ⚠️ Este PIR ha superado los 21 días de antigüedad
     </div>
+
     <div *ngIf="pirData">
 
-      <h2>Botones de accion</h2>
-      <h3>Siguiente movimiento:</h3>
-      <div class="action-buttons">
-        <!-- Si es que es AHL muestra todo su flujo -->
-        <ng-container *ngIf="isAHL()">
-          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'|| pirData.claim.claimStatus === 'IN_PROCESS'">
-            <button (click)="indicarBusquedaLocal()">
-              Indicar Búsqueda Local
-            </button>
-            <button (click)="indicarBusquedaWorldTracer()">
-              Indicar Búsqueda World Tracer
-            </button>
+      <!-- Acciones -->
+      <div class="pir-section pir-section--actions">
+        <h2>Botones de acción</h2>
+        <h3>Siguiente movimiento:</h3>
+        <div class="action-buttons">
+          <ng-container *ngIf="isAHL()">
+            <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'|| pirData.claim.claimStatus === 'IN_PROCESS'">
+              <button (click)="indicarBusquedaLocal()">Indicar Búsqueda Local</button>
+              <button (click)="indicarBusquedaWorldTracer()">Indicar Búsqueda World Tracer</button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'SEARCHING'">
+              <button (click)="indicarEncontrado()">Indicar Encontrado</button>
+              <button (click)="indemnizar()">Indemnizar (Equipaje perdido)</button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'FOUND'">
+              <button (click)="realizarEntrega()">Realizar entrega</button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
+              <button class="action-btn" (click)="cerrarReclamo()">Cerrar reclamo</button>
+            </ng-container>
           </ng-container>
-          <ng-container *ngIf="pirData.claim.claimStatus === 'SEARCHING'">
-            <button (click)="indicarEncontrado()">
-              Indicar Encontrado
-            </button>
-            <button (click)="indemnizar()">
-              Indemnizar (Equipaje perdido)
-            </button>
+          <ng-container *ngIf="isPILFERED()">
+            <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
+              <button class="action-btn" (click)="indemnizar()">Indemnizar</button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
+              <button class="action-btn" (click)="cerrarReclamo()">Cerrar reclamo</button>
+            </ng-container>
           </ng-container>
-          <ng-container *ngIf="pirData.claim.claimStatus === 'FOUND'">
-            <button (click)="realizarEntrega()">
-              Realizar entrega
-            </button>
+          <ng-container *ngIf="isDPR()">
+            <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
+              <button class="action-btn" (click)="enviarAReparacion()">Enviar a Reparación</button>
+              <button class="action-btn" (click)="enviarACochabamba()">Enviar a Cochabamba</button>
+              <button class="action-btn" (click)="indemnizar()">Indemnizar (Compra de maleta)</button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRING'">
+              <button class="action-btn" (click)="recogerMaleta()">Recoger maleta en reparación</button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'TRANSFERRED'">
+              <button class="action-btn" (click)="enviarAReparacion()">Enviar a Reparación</button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRED'">
+              <button class="action-btn" (click)="realizarEntrega()">Realizar entrega</button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
+              <button class="action-btn" (click)="cerrarReclamo()">Cerrar reclamo</button>
+            </ng-container>
           </ng-container>
-          <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
-            <button class="action-btn" (click)="cerrarReclamo()">
-              Cerrar reclamo
-            </button>
-          </ng-container>
-        </ng-container>
-        <!-- Si es que es PILFERED muestra todo su flujo -->
-        <ng-container *ngIf="isPILFERED()">
-          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
-            <button class="action-btn" (click)="indemnizar()">
-              Indemnizar
-            </button>
-          </ng-container>
-          <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
-            <button class="action-btn" (click)="cerrarReclamo()">
-              Cerrar reclamo
-            </button>
-          </ng-container>
-        </ng-container>
-        <!-- Si es que es DPR muestra todo su flujo -->
-        <ng-container *ngIf="isDPR()">
-          <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
-            <button class="action-btn" (click)="enviarAReparacion()">
-              Enviar a Reparación
-            </button>
-            <button class="action-btn" (click)="enviarACochabamba()">
-              Enviar a Cochabamba
-            </button>
-            <button class="action-btn" (click)="indemnizar()">
-              Indemnizar(Compra de maleta)
-            </button>
-          </ng-container>
-          <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRING'">
-            <button class="action-btn" (click)="recogerMaleta()">
-              Recoger maleta en reparación
-            </button>
-          </ng-container>
-          <ng-container *ngIf="pirData.claim.claimStatus === 'TRANSFERRED'">
-            <button class="action-btn" (click)="enviarAReparacion()">
-              Enviar a Reparación
-            </button>
-          </ng-container>
-          <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRED'">
-            <button class="action-btn" (click)="realizarEntrega()">
-              Realizar entrega
-            </button>
-          </ng-container>
-          <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
-            <button class="action-btn" (click)="cerrarReclamo()">
-              Cerrar reclamo
-            </button>
-          </ng-container>
-        </ng-container>
+        </div>
+
+        <h3>Todas las acciones de este reclamo:</h3>
+        <div class="action-buttons action-buttons--secondary">
+          <button (click)="verHojaSeguimiento()">Ver Hoja de Seguimiento</button>
+          <button *ngIf="isAHL()" (click)="verFormularioContenido()">Ver Formulario de Contenido</button>
+          <button *ngIf="isAHL() || isDPR()" class="action-btn" (click)="realizarEntrega()">
+            <mat-icon>local_shipping</mat-icon> Realizar entrega
+          </button>
+          <button *ngIf="isDPR()" class="action-btn" (click)="enviarAReparacion()">
+            <mat-icon>build</mat-icon> Enviar a Reparación
+          </button>
+          <button class="action-btn" (click)="indemnizar()">
+            <mat-icon>paid</mat-icon> Añadir gasto
+          </button>
+          <button class="action-btn" (click)="cerrarReclamo()">
+            <mat-icon>check_circle</mat-icon> Cerrar reclamo
+          </button>
+          <button class="action-btn" (click)="verGastos()">
+            <mat-icon>receipt</mat-icon> Ver gastos
+          </button>
+          <button *ngIf="isAHL()" class="action-btn" [routerLink]="['/baggage/search']">
+            <mat-icon>flight_takeoff</mat-icon> World Tracer
+          </button>
+        </div>
       </div>
 
-      <h3>Todas las acciones de este reclamo:</h3>
-      <div class="action-buttons">
-        <button 
-          (click)="verHojaSeguimiento()">
-          Ver Hoja de Seguimiento
-        </button>
-        <button 
-          *ngIf="isAHL()"
-          (click)="verFormularioContenido()">
-          Ver Formulario de Contenido
-        </button>
-        <button *ngIf="isAHL() || isDPR()" class="action-btn" (click)="realizarEntrega()">
-          <mat-icon>local_shipping</mat-icon>
-          Realizar entrega
-        </button>
-        <button *ngIf="isDPR()" class="action-btn" (click)="enviarAReparacion()">
-          <mat-icon>build</mat-icon>
-          Enviar a Reparación
-        </button>
-        <button class="action-btn" (click)="indemnizar()">
-          <mat-icon>paid</mat-icon>
-          Añadir gasto
-        </button>
-        <button class="action-btn" (click)="cerrarReclamo()">
-          <mat-icon>check_circle</mat-icon>
-          Cerrar reclamo
-        </button>
-        <button class="action-btn" (click)="verGastos()">
-          <mat-icon>receipt</mat-icon>
-          Ver gastos
-        </button>
-        <button  *ngIf="isAHL()" class="action-btn" [routerLink]="['/baggage/search']">
-          <mat-icon>flight_takeoff</mat-icon>
-          World Tracer
-        </button>
-      </div>
-    </div>
-    <div>
-    <h2>Datos del PIR:</h2>
+      <!-- Datos del PIR -->
+      <div class="pir-section">
+        <h2>Datos del PIR</h2>
 
-      <div class="form-field">
-        <label>Ruta:</label>
-        <div class="route-display">
-          <span *ngFor="let routeStop of pirData.route?.routeStops; let i = index">
-            {{ routeStop.stop.code }}
-            <span *ngIf="i < pirData.route.routeStops.length - 1"> → </span>
+        <div class="form-field">
+          <label>Ruta:</label>
+          <div class="route-display">
+            <span *ngFor="let routeStop of pirData.route?.routeStops; let i = index">
+              {{ routeStop.stop.code }}
+              <span *ngIf="i < pirData.route.routeStops.length - 1"> → </span>
+            </span>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Estación originadora:</label>
+          <span class="field-value">{{ pirData.originatorAirport }}</span>
+        </div>
+        <div class="form-field">
+          <label>Tipo de reclamo:</label>
+          <span class="field-value">{{ pirData.claimType }}</span>
+        </div>
+        <div class="form-field">
+          <label>Aeropuerto / Aerolínea / Referencia:</label>
+          <span class="field-value">{{ pirData.airportText }} / {{ pirData.airline }} / {{ pirData.reference }}</span>
+        </div>
+        <div class="form-field">
+          <label>Apellidos y Nombres del pasajero:</label>
+          <span class="field-value">{{ pirData.passengerLastName }} / {{ pirData.passengerName }}</span>
+        </div>
+        <div class="form-field">
+          <label>Iniciales del Pasajero:</label>
+          <span class="field-value">{{ pirData.initials }}</span>
+        </div>
+        <div class="form-field">
+          <label>Número de ticket / Bag tag number:</label>
+          <div class="bagtags-display">
+            <span *ngFor="let bagtag of pirData.bagtags; let i = index">
+              {{ bagtag.number }}<span *ngIf="i < pirData.bagtags.length - 1"> / </span>
+            </span>
+            <span *ngIf="!pirData.bagtags || pirData.bagtags.length === 0">Sin bagtags</span>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Color / Tipo / Descripción:</label>
+          <div class="bagtags-display">
+            <span *ngFor="let bagDescription of pirData.bagDescriptions; let i = index">
+              {{ bagDescription.description }}<span *ngIf="i < pirData.bagDescriptions.length - 1"> / </span>
+            </span>
+            <span *ngIf="!pirData.bagDescriptions || pirData.bagDescriptions.length === 0">Sin descripciones</span>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Ruta para hacer rastreo:</label>
+          <div class="route-display">
+            <span *ngFor="let traceRouteStop of pirData.traceRoute?.traceRouteStops; let i = index">
+              {{ traceRouteStop.traceStop.code }}
+              <span *ngIf="i < pirData.traceRoute.traceRouteStops.length - 1"> → </span>
+            </span>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Número de vuelo / Fecha (día, mes):</label>
+          <div class="bagtags-display">
+            <span *ngFor="let flightNumber of pirData.flightNumbers; let i = index">
+              {{ flightNumber.flightNo }} / {{ flightNumber.flightDate | date:'dd MMM' | uppercase }}<span *ngIf="i < pirData.flightNumbers.length - 1"> || </span>
+            </span>
+            <span *ngIf="!pirData.flightNumbers || pirData.flightNumbers.length === 0">Sin vuelos</span>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Marca en la maleta / Identificación exterior / Otras marcas:</label>
+          <div class="bagtags-display">
+            <div *ngFor="let baggageIdentification of pirData.baggageIdentifications">{{ baggageIdentification.mark }}</div>
+            <span *ngIf="!pirData.baggageIdentifications || pirData.baggageIdentifications.length === 0">Sin identificaciones</span>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Contenido:</label>
+          <div class="bagtags-display">
+            <div *ngFor="let content of pirData.contents">{{ content.description }}</div>
+            <span *ngIf="!pirData.contents || pirData.contents.length === 0">Sin contenido</span>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Dirección permanente:</label>
+          <span class="field-value">{{ pirData.permanentAddress }}</span>
+        </div>
+        <div class="form-field">
+          <label>Dirección temporal:</label>
+          <span class="field-value">{{ pirData.temporaryAddress }}</span>
+        </div>
+        <div class="form-field">
+          <label>Teléfono permanente:</label>
+          <span class="field-value">{{ pirData.permanentPhone }}</span>
+        </div>
+        <div class="form-field">
+          <label>Teléfono temporal:</label>
+          <span class="field-value">{{ pirData.temporaryPhone }}</span>
+        </div>
+        <div class="form-field">
+          <label>Instrucciones de entrega:</label>
+          <span class="field-value">{{ pirData.deliveryInstructions }}</span>
+        </div>
+        <div class="form-field">
+          <label>Texto libre:</label>
+          <span class="field-value">{{ pirData.additionalInfo }}</span>
+        </div>
+      </div>
+
+      <!-- Elementos adicionales -->
+      <div class="pir-section">
+        <h2>Elementos Adicionales</h2>
+        <div class="form-field">
+          <label>Peso del equipaje facturado:</label>
+          <span class="field-value">{{ pirData.checkedBaggageWeight }}</span>
+        </div>
+        <div class="form-field">
+          <label>Peso del equipaje entregado:</label>
+          <span class="field-value">{{ pirData.deliveredBaggageWeight }}</span>
+        </div>
+        <div class="form-field">
+          <label>Diferencia de peso:</label>
+          <span class="field-value">{{ pirData.weightDifference }}</span>
+        </div>
+        <div class="form-field">
+          <label>Idioma:</label>
+          <span class="field-value">{{ pirData.language }}</span>
+        </div>
+        <div class="form-field">
+          <label>Número de pasaporte:</label>
+          <span class="field-value">{{ pirData.passportNumber }}</span>
+        </div>
+        <div class="form-field">
+          <label>Número de ticket:</label>
+          <span class="field-value">{{ pirData.ticketNumber }}</span>
+        </div>
+        <div class="form-field">
+          <label>Localizador de registro PNR:</label>
+          <span class="field-value">{{ pirData.pnr }}</span>
+        </div>
+        <div class="form-field">
+          <label>Localizador de viajero frecuente:</label>
+          <span class="field-value">{{ pirData.frequentFlyerId }}</span>
+        </div>
+        <div class="form-field">
+          <label>Razón de pérdida:</label>
+          <span class="field-value">{{ pirData.lossReason }}</span>
+        </div>
+        <div class="form-field">
+          <label>¿Tiene seguro?</label>
+          <span class="field-value">{{ pirData.hasInsurance ? 'Sí' : 'No' }}</span>
+        </div>
+        <div class="form-field">
+          <label>¿Maleta necesita llaves y están adjuntas al PIR?</label>
+          <span class="field-value">{{ pirData.keysAttached ? 'Sí' : 'No' }}</span>
+        </div>
+        <div class="form-field">
+          <label>Combinación de cerradura:</label>
+          <span class="field-value">{{ pirData.lockCombination }}</span>
+        </div>
+        <div class="form-field">
+          <label>Kit de noche:</label>
+          <span class="field-value">
+            {{ pirData.nightKit === false ? 'Mujer' : pirData.nightKit === true ? 'Hombre' : 'No tiene' }}
           </span>
         </div>
       </div>
-      <div class="form-field">
-        <label>Estacion originadora:</label>
-        <span class="field-value">{{ pirData.originatorAirport }}</span>
-      </div>
-      <div class="form-field">
-        <label>Tipo de reclamo  :</label>
-        <span class="field-value">{{ pirData.claimType }}</span>
-      </div>
-      <div class="form-field">
-        <label>Aeropuerto/Aerolinea/Referencia:</label>
-        <span class="field-value">{{ pirData.airportText }} / {{ pirData.airline }} / {{ pirData.reference }}</span>
-      </div>
-      <div class="form-field">
-        <label>Apellidos y Nombres del pasajero:</label>
-        <span class="field-value">{{ pirData.passengerLastName }} / {{ pirData.passengerName }}</span>
-      </div>
-      <div class="form-field">
-        <label>Iniciales del Pasajero:</label>
-        <span class="field-value">{{ pirData.initials }}</span>
-      </div>
-      <div class="form-field">
-        <label>Numero de ticket/Bag tag number:</label>
-        <div class="bagtags-display">
-          <span *ngFor="let bagtag of pirData.bagtags; let i = index">
-            {{ bagtag.number }}<span *ngIf="i < pirData.bagtags.length - 1"> / </span>
-          </span>
-          <span *ngIf="!pirData.bagtags || pirData.bagtags.length === 0">
-            Sin bagtags
-          </span>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Color Tipo Descripcion:</label>
-        <div class="bagtags-display">
-          <span *ngFor="let bagDescription of pirData.bagDescriptions; let i = index">
-            {{ bagDescription.description }}<span *ngIf="i < pirData.bagDescriptions.length - 1"> / </span>
-          </span>
-          <span *ngIf="!pirData.bagDescriptions || pirData.bagDescriptions.length === 0">
-            Sin descripciones
-          </span>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Ruta para hacer rastreo:</label>
-        <div class="route-display">
-          <span *ngFor="let traceRouteStop of pirData.traceRoute?.traceRouteStops; let i = index">
-            {{ traceRouteStop.traceStop.code }}
-            <span *ngIf="i < pirData.traceRoute.traceRouteStops.length - 1"> → </span>
-          </span>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Numero de vuelo/Fecha(dia,mes):</label>
-        <div class="bagtags-display">
-          <span *ngFor="let flightNumber of pirData.flightNumbers; let i = index">
-            {{ flightNumber.flightNo }} / {{ flightNumber.flightDate | date:'dd MMM' | uppercase}}<span *ngIf="i < pirData.flightNumbers.length - 1"> || </span>
-          </span>
-          <span *ngIf="!pirData.flightNumbers || pirData.flightNumbers.length === 0">
-            Sin vuelos
-          </span>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Marca en la maleta, Identificacion exterior, otras marcas:</label>
-        <div class="bagtags-display">
-          <div *ngFor="let baggageIdentification of pirData.baggageIdentifications">
-            {{ baggageIdentification.mark }}
-          </div>
-          <span *ngIf="!pirData.baggageIdentifications || pirData.baggageIdentifications.length === 0">
-            Sin identificaciones
-          </span>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Contenido:</label>
-        <div class="bagtags-display">
-          <div *ngFor="let content of pirData.contents">
-            {{ content.description }}
-          </div>
-          <span *ngIf="!pirData.contents || pirData.contents.length === 0">
-            Sin contenido
-          </span>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Direccion permanente:</label>
-        <span class="field-value">{{ pirData.permanentAddress }}</span>
-      </div>
-      <div class="form-field">
-        <label>Direccion temporal:</label>
-        <span class="field-value">{{ pirData.temporaryAddress }}</span>
-      </div>
-      <div class="form-field">
-        <label>Telefono permanente:</label>
-        <span class="field-value">{{ pirData.permanentPhone }}</span>
-      </div>
-      <div class="form-field">
-        <label>Telefono temporal:</label>
-        <span class="field-value">{{ pirData.temporaryPhone }}</span>
-      </div>
-      <div class="form-field">
-        <label>Instrucciones de entrega:</label>
-        <span class="field-value">{{ pirData.deliveryInstructions }}</span>
-      </div>
-      <div class="form-field">
-        <label>Texto libre:</label>
-        <span class="field-value">{{ pirData.additionalInfo }}</span>
-      </div>
-      <h2>Elementos Adicionales</h2>
-      <div class="form-field">
-        <label>Peso del equipaje facturado:</label>
-        <span class="field-value">{{ pirData.checkedBaggageWeight }}</span>
-      </div>
-      <div class="form-field">
-        <label>Peso del equipaje entregado:</label>
-        <span class="field-value">{{ pirData.deliveredBaggageWeight }}</span>
-      </div>
-      <div class="form-field">
-        <label>Diferencia de peso:</label>
-        <span class="field-value">{{ pirData.weightDifference }}</span>
-      </div>
-      <div class="form-field">
-        <label>Idioma:</label>
-        <span class="field-value">{{ pirData.language }}</span>
-      </div>
-      <div class="form-field">
-        <label>Numero de pasaporte:</label>
-        <span class="field-value">{{ pirData.passportNumber }}</span>
-      </div>
-      <div class="form-field">
-        <label>Numero de ticket:</label>
-        <span class="field-value">{{ pirData.ticketNumber }}</span>
-      </div>
-      <div class="form-field">
-        <label>Localizador de registro PNR:</label>
-        <span class="field-value">{{ pirData.pnr }}</span>
-      </div>
-      <div class="form-field">
-        <label>Localizador de viajero frecuente:</label>
-        <span class="field-value">{{ pirData.frequentFlyerId }}</span>
-      </div>
-      <div class="form-field">
-        <label>Razon de perdida:</label>
-        <span class="field-value">{{ pirData.lossReason }}</span>
-      </div>
-      <div class="form-field">
-        <label>Tiene seguro?</label>
-        <span class="field-value">{{ pirData.hasInsurance ? 'Sí' : 'No' }}</span>
-      </div>
-      <div class="form-field">
-        <label>Si la maleta necesita llaves, estan adjuntas al PIR?</label>
-        <span class="field-value">{{ pirData.keysAttached ? 'Sí' : 'No' }}</span>
-      </div>
-      <div class="form-field">
-        <label>Tiene seguro?</label>
-        <span class="field-value">{{ pirData.hasInsurance ? 'Sí' : 'No' }}</span>
-      </div>
-      <div class="form-field">
-        <label>Combinacion de cerradura</label>
-        <span class="field-value">{{ pirData.lockCombination}}</span>
-      </div>
-      <div class="form-field">
-        <label>Tiene seguro?</label>
-        <span class="field-value">{{ pirData.hasInsurance ? 'Sí' : 'No' }}</span>
-      </div>
-      <div class="form-field">
-        <label>Kit de noche</label>
-        <span class="field-value">
-          {{ pirData.nightKit === false ? 'Mujer' : pirData.nightKit === true ? 'Hombre' : 'No tiene' }}
-        </span>
-      </div>
-    </div>
-    <h2>Informacion de daño</h2>
-    <div class="form-field">
-      <label>Tipo de daño</label>
-      <span class="field-value">
-        {{ pirData?.damageDetails[0]?.damageType }}
-      </span>
-    </div>
-    <div class="form-field">
-      <label>Condicion</label>
-      <span class="field-value">
-        {{ pirData?.damageDetails[0]?.condition }}
-      </span>
-    </div>
-    <div class="form-field">
-      <label>Ubicaciones:</label>
-      <div class="bagtags-display">
-        <span class="location-badge" *ngFor="let location of pirData?.damageDetails[0]?.damageLocation">
-          {{ location }}
-        </span>
-      </div>
-    </div>
-  </div>
 
-</div>
-
-
-
-<!--
-
-<div class="visualizar-pir">
-  <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
-  <div class="pir-container">
-    <div class="pir-header">
-      <div class="header-top">
-        <div>
-          <h1>Visualizar PIR</h1>
-          <p class="subtitle">Detalles del reclamo de irregularidad</p>
+      <!-- Información de daño -->
+      <div class="pir-section">
+        <h2>Información de daño</h2>
+        <div class="form-field">
+          <label>Tipo de daño:</label>
+          <span class="field-value">{{ pirData?.damageDetails[0]?.damageType }}</span>
         </div>
-        <div class="claim-badge">
-          <div class="badge-wrapper">
-            <span class="badge-label">Tipo de reclamo</span>
-            <div class="badge-type" >
-              {{ reclamoData?.reclamo?.tipo }}
-            </div>
-          </div>
-          <div class="badge-wrapper">
-            <span class="badge-label">Estado del PIR</span>
-            <div class="badge-status" [ngClass]="getPirStatusClass()">
-              {{ getPirStatusLabel() }}
-            </div>
-          </div>
-          <div class="badge-wrapper">
-            <span class="badge-label">Antigüedad</span>
-            <div class="badge-days" [class.alert-danger]="diasTranscurridos >= 21" 
-                 [class.alert-warning]="diasTranscurridos >= 3 && diasTranscurridos < 21"
-                 [class.alert-info]="diasTranscurridos >= 1 && diasTranscurridos < 3">
-              {{ diasTranscurridos }} días
-            </div>
-          </div>
+        <div class="form-field">
+          <label>Condición:</label>
+          <span class="field-value">{{ pirData?.damageDetails[0]?.condition }}</span>
         </div>
-      </div>
-    </div>
-
-    <div class="alerts-section" *ngIf="alertasDias.length > 0">
-      <div class="alert-card" *ngFor="let alerta of alertasDias" [style.border-left-color]="alerta.color">
-        <mat-icon [style.color]="alerta.color">warning</mat-icon>
-        <div class="alert-content">
-          <span class="alert-type">{{ alerta.tipo }}</span>
-          <span class="alert-message">{{ alerta.mensaje }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="action-buttons-section">
-      <button class="action-btn" (click)="follow()">
-        <mat-icon>description</mat-icon>
-        Ver hoja seguimiento
-      </button>
-      <button class="action-btn" (click)="verFormularioContenido()" 
-              *ngIf="isActionAllowed('formularioContenido')">
-        <mat-icon>assignment</mat-icon>
-        Ver formulario contenido
-      </button>
-      <button class="action-btn" (click)="realizarEntrega()"
-              *ngIf="isActionAllowed('realizarEntrega')">
-        <mat-icon>local_shipping</mat-icon>
-        Realizar entrega
-      </button>
-      <button class="action-btn" (click)="enviarAReparacion()">
-        <mat-icon>build</mat-icon>
-        Enviar a Reparación
-      </button>
-      <button class="action-btn" (click)="indemnizar()">
-        <mat-icon>paid</mat-icon>
-        Añadir gasto
-      </button>
-      <button class="action-btn" (click)="cerrarReclamo()"
-              *ngIf="isActionAllowed('cerrarReclamo')">
-        <mat-icon>check_circle</mat-icon>
-        Cerrar reclamo
-      </button>
-      <button class="action-btn" (click)="verGastos()">
-        <mat-icon>receipt</mat-icon>
-        Ver gastos
-      </button>
-      <button class="action-btn" [routerLink]="['/baggage/search']">
-        <mat-icon>flight_takeoff</mat-icon>
-        World Tracer
-      </button>
-    </div>
-
-    <div class="section">
-      <h2 class="section-title">Información del PIR</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Número PIR</label>
-          <input type="text" [value]="reclamoData?.informacionAdicional?.pirNumber" readonly />
-        </div>
-        <div class="form-group">
-          <label>Fecha de Creación</label>
-          <input type="text" [value]="reclamoData?.informacionAdicional?.createdAt" readonly />
-        </div>
-        <div class="form-group">
-          <label>Última Actualización</label>
-          <input type="text" [value]="reclamoData?.informacionAdicional?.updatedAt" readonly />
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Aeropuerto Origen (Código)</label>
-          <input type="text" [value]="reclamoData?.informacionAdicional?.aeropuertoText" readonly />
-        </div>
-        <div class="form-group">
-          <label>Aerolínea</label>
-          <input type="text" [value]="reclamoData?.informacionAdicional?.aerolinea" readonly />
-        </div>
-        <div class="form-group">
-          <label>Referencia</label>
-          <input type="text" [value]="reclamoData?.informacionAdicional?.reference" readonly />
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2 class="section-title">Datos del Pasajero</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Nombre(s)</label>
-          <div class="input-with-code">
-            <span class="code">NM</span>
-            <input type="text" [value]="reclamoData?.pasajero?.nombre" readonly />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Apellido Paterno</label>
-          <input type="text" [value]="reclamoData?.pasajero?.apellidoPaterno" readonly />
-        </div>
-        <div class="form-group">
-          <label>Apellido Materno</label>
-          <input type="text" [value]="reclamoData?.pasajero?.apellidoMaterno" readonly />
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Dirección Permanente del Pasajero</label>
-          <div class="input-with-code">
-            <span class="code">PA</span>
-            <input type="text" [value]="reclamoData?.pasajero?.direccionPermanente" readonly />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Dirección Temporal del Pasajero</label>
-          <div class="input-with-code">
-            <span class="code">TA</span>
-            <input type="text" [value]="reclamoData?.pasajero?.direccionTemporal" readonly />
+        <div class="form-field">
+          <label>Ubicaciones:</label>
+          <div class="bagtags-display bagtags-display--tags">
+            <span class="location-badge" *ngFor="let location of pirData?.damageDetails[0]?.damageLocation">
+              {{ location }}
+            </span>
           </div>
         </div>
       </div>
 
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Teléfono Permanente del Pasajero</label>
-          <div class="input-with-code">
-            <span class="code">TP</span>
-            <input type="text" [value]="reclamoData?.pasajero?.telefonoPermanente" readonly />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Teléfono Temporal del Pasajero</label>
-          <div class="input-with-code">
-            <span class="code">TT</span>
-            <input type="text" [value]="reclamoData?.pasajero?.telefonoTemporal" readonly />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Correo Electrónico del Pasajero</label>
-          <div class="input-with-code">
-            <span class="code">TM</span>
-            <input type="email" [value]="reclamoData?.pasajero?.email" readonly />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>PNR</label>
-          <div class="input-with-code">
-            <span class="code">PR</span>
-            <input type="text" [value]="reclamoData?.pasajero?.pnr" readonly />
-          </div>
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Idioma</label>
-          <input type="text" [value]="reclamoData?.pasajero?.language" readonly />
-        </div>
-        <div class="form-group">
-          <label>Frequent Flyer ID</label>
-          <input type="text" [value]="reclamoData?.pasajero?.frequentFlyerId" readonly />
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Nro. de Boleto</label>
-          <div class="input-with-code">
-            <span class="code">TK</span>
-            <input type="text" [value]="reclamoData?.pasajero?.numeroBoleto" readonly />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Iniciales del Pasajero</label>
-          <div class="input-with-code">
-            <span class="code">IT</span>
-            <input type="text" [value]="reclamoData?.pasajero?.iniciales" readonly />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2 class="section-title">Datos del Reclamo</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Estación Originadora</label>
-          <input type="text" [value]="reclamoData?.reclamo?.estacion" readonly />
-        </div>
-        <div class="form-group">
-          <label>Fecha del Reclamo</label>
-          <input type="text" [value]="reclamoData?.reclamo?.fecha" readonly />
-        </div>
-        <div class="form-group">
-          <label>Hora del Reclamo</label>
-          <input type="text" [value]="reclamoData?.reclamo?.hora" readonly />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Estaciones Involucradas</label>
-        <input type="text" [value]="reclamoData?.reclamo?.estacionesInvolucradas" readonly />
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Razón de Pérdida</label>
-          <input type="text" [value]="reclamoData?.reclamo?.lossReason" readonly />
-        </div>
-        <div class="form-group">
-          <label>Estación de Fallo</label>
-          <input type="text" [value]="reclamoData?.reclamo?.faultStation" readonly />
-        </div>
-        <div class="form-group">
-          <label>¿Tiene Seguro?</label>
-          <input type="text" [value]="reclamoData?.reclamo?.hasInsurance ? 'Sí' : 'No'" readonly />
-        </div>
-      </div>
-
-      <div class="form-group full-width">
-        <label>Instrucciones de Entrega</label>
-        <textarea [value]="reclamoData?.reclamo?.deliveryInstructions" readonly rows="2"></textarea>
-      </div>
-
-      <div class="form-group full-width">
-        <label>Información Adicional</label>
-        <textarea [value]="reclamoData?.reclamo?.additionalInfo" readonly rows="2"></textarea>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2 class="section-title">Datos del Vuelo</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Número de Vuelo</label>
-          <input type="text" [value]="reclamoData?.vuelo?.numero" readonly />
-        </div>
-        <div class="form-group">
-          <label>Fecha de Vuelo</label>
-          <input type="text" [value]="reclamoData?.vuelo?.fecha" readonly />
-        </div>
-        <div class="form-group">
-          <label>Hora de Salida</label>
-          <input type="text" [value]="reclamoData?.vuelo?.hora" readonly />
-        </div>
-      </div>
-      <div class="form-group full-width" *ngIf="reclamoData?.vuelosCompletos?.length > 1">
-        <label>Vuelos Registrados</label>
-        <div class="flights-list">
-          <div class="flight-item" *ngFor="let vuelo of reclamoData?.vuelosCompletos">
-            <span class="flight-number">{{ vuelo.numero }}</span>
-            <span class="flight-date">{{ vuelo.fecha }} - {{ vuelo.hora }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="flight-route">
-        <h3>Ruta del Vuelo</h3>
-        <div class="route-visualization">
-          <div class="route-step" *ngFor="let step of reclamoData?.ruta; let i = index">
-            <div class="route-circle" [class.active]="true">
-              <span class="route-code">{{ step.codigo }}</span>
-            </div>
-            <div class="route-info">
-              <div class="route-city">{{ step.ciudad }}</div>
-              <div class="route-time">{{ step.horario }}</div>
-            </div>
-            <div class="route-line" *ngIf="i < reclamoData?.ruta?.length - 1"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2 class="section-title">Datos del Equipaje</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Número de Ticket</label>
-          <div class="input-with-code">
-            <span class="code">TN</span>
-            <input type="text" [value]="reclamoData?.equipaje?.numeroTicket" readonly />
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Ruta de Equipaje</label>
-        <div class="input-with-code">
-          <span class="code">OD</span>
-          <input type="text" [value]="reclamoData?.equipaje?.ruta" readonly />
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Número de Vuelo</label>
-          <div class="input-with-code">
-            <span class="code">FD</span>
-            <input type="text" [value]="reclamoData?.equipaje?.numeroVuelo" readonly />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Fecha de Vuelo</label>
-          <input type="text" [value]="reclamoData?.equipaje?.fechaVuelo" readonly />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>BagTags</label>
-        <div class="input-with-code">
-          <span class="code">BT</span>
-          <input type="text" [value]="reclamoData?.equipaje?.bagtags" readonly />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Color/Tipo/Descripción</label>
-        <div class="input-with-code">
-          <span class="code">CT</span>
-          <input type="text" [value]="reclamoData?.equipaje?.colorTipo" readonly />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Marca de la Maleta</label>
-        <div class="input-with-code">
-          <span class="code">BI</span>
-          <input type="text" [value]="reclamoData?.equipaje?.marca" readonly />
-        </div>
-      </div>
-
-      <div class="form-group full-width">
-        <label>Contenido</label>
-        <div class="input-with-code">
-          <span class="code">CC</span>
-          <textarea [value]="reclamoData?.equipaje?.contenido" readonly rows="2"></textarea>
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Peso del Equipaje Facturado (kg)</label>
-          <input type="text" [value]="reclamoData?.equipaje?.pesoFacturado" readonly />
-        </div>
-        <div class="form-group">
-          <label>Peso del Equipaje Entregado (kg)</label>
-          <input type="text" [value]="reclamoData?.equipaje?.pesoEntregado" readonly />
-        </div>
-        <div class="form-group">
-          <label>Diferencia de Peso (kg)</label>
-          <input type="text" [value]="reclamoData?.equipaje?.diferenciaPeso" readonly />
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>¿Maletas Cerradas con Llave?</label>
-          <input type="text" [value]="reclamoData?.equipaje?.tienesCerradasConLlave" readonly />
-        </div>
-        <div class="form-group">
-          <label>Combinación de Cerradura</label>
-          <input type="text" [value]="reclamoData?.equipaje?.combinacionCerradura" readonly />
-        </div>
-        <div class="form-group">
-          <label>Kit de Noche</label>
-          <input type="text" [value]="reclamoData?.equipaje?.kitNoche" readonly />
-        </div>
-      </div>
-    </div>
-
-    <div class="section" *ngIf="reclamoData?.reclamo?.tipo === 'DAMAGED'">
-      <h2 class="section-title">Información del Daño</h2>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Tipo de Daño</label>
-          <input type="text" [value]="reclamoData?.dano?.tipoDano" readonly />
-        </div>
-        <div class="form-group">
-          <label>Condición</label>
-          <input type="text" [value]="reclamoData?.dano?.condicion" readonly />
-        </div>
-      </div>
-
-      <div class="form-group full-width">
-        <label>Descripción del Daño</label>
-        <textarea [value]="reclamoData?.dano?.descripcionDano" readonly rows="2"></textarea>
-      </div>
-
-      <div class="form-group full-width" *ngIf="reclamoData?.dano?.partesAfectadas?.length > 0">
-        <label>Partes Afectadas</label>
-        <div class="damage-parts-display">
-          <div class="damage-part-item" *ngFor="let parte of reclamoData?.dano?.partesAfectadas">
-            <span class="part-code">{{ parte.codigo }}</span>
-            <span class="part-name">{{ parte.nombre }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="btn btn-primary" (click)="imprimirPIR()">
-        <mat-icon>print</mat-icon>
-        Imprimir PIR
-      </button>
-      <button class="btn btn-secondary" (click)="exportarPDF()">
-        <mat-icon>picture_as_pdf</mat-icon>
-        Exportar PDF
-      </button>
-      <button class="btn btn-outline" (click)="cerrar()">
-        <mat-icon>close</mat-icon>
-        Cerrar
-      </button>
     </div>
   </div>
 </div>
- comentario -->
