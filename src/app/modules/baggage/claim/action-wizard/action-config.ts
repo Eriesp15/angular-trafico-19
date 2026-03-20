@@ -86,9 +86,10 @@ export const DELIVER = {
   },
   
   fields: [
+    { name: 'deliveryCompany', label: 'Empresa de envio', type: 'text', required: true},
     { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
-    { name: 'recipientName', label: 'Nombre de quien recibe', type: 'text' },
-    { name: 'relationship', label: 'Relación con el pasajero', type: 'select',
+    { name: 'recipientName', label: 'Nombre de quien recibe', type: 'text', required: true},
+    { name: 'relationship', label: 'Relación con el pasajero', type: 'select', required: true,
       options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'] },
     { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Condición del equipaje, notas...' }
   ],
