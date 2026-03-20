@@ -19,7 +19,7 @@ export const COMPENSATE = {
     { name: 'checkedWeight', label: 'Peso facturado (kg)', type: 'number', readonly: true },
     { name: 'deliveredWeight', label: 'Peso entregado (kg)', type: 'number', readonly: true },
     { name: 'weightDifference', label: 'Diferencia (kg)', type: 'number', readonly: true },
-    { name: 'pricePerKg', label: 'Precio por kg ($)', type: 'number', placeholder: 'Ej: 50' },
+    { name: 'pricePerKg', label: 'Precio por kg ($)', type: 'number', placeholder: 'Ej: 50', required: true },
     { name: 'total', label: 'Total a pagar ($)', type: 'number', readonly: true }
   ],
   
@@ -38,7 +38,7 @@ export const INDICATE_LOCAL_SEARCH = {
   ],
   
   getMessage: (data: any) => 
-    `Se inició búsqueda local en ${data.searchArea}. ${data.notes || ''}`,
+    `Se inició la búsqueda local. ${data.notes || ''}`,
   
   newStatus: 'SEARCHING'
 };
@@ -49,7 +49,7 @@ export const INDICATE_WT_SEARCH = {
   
   fields: [
     { name: 'wtReference', label: 'Referencia World Tracer', type: 'text', placeholder: 'Ej: WT123456' },
-    { name: 'searchDate', label: 'Fecha de registro', type: 'datetime-local' },
+    { name: 'searchDate', label: 'Fecha de registro', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
   
@@ -65,7 +65,7 @@ export const INDICATE_FOUND = {
   
   fields: [
     { name: 'foundLocation', label: 'Lugar donde se encontró', type: 'text', placeholder: 'Ej: Bodega Terminal 1' },
-    { name: 'foundDate', label: 'Fecha de hallazgo', type: 'datetime-local' },
+    { name: 'foundDate', label: 'Fecha de hallazgo', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
     { name: 'condition', label: 'Condición del equipaje', type: 'select',
       options: ['Buena', 'Regular', 'Dañada'] },
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
@@ -86,7 +86,7 @@ export const DELIVER = {
   },
   
   fields: [
-    { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local' },
+    { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
     { name: 'recipientName', label: 'Nombre de quien recibe', type: 'text' },
     { name: 'relationship', label: 'Relación con el pasajero', type: 'select',
       options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'] },
@@ -94,7 +94,7 @@ export const DELIVER = {
   ],
   
   getMessage: (data: any) => 
-    `Equipaje entregado a ${data.recipientName} (${data.recipientId}). ${data.notes || ''}`,
+    `Equipaje entregado a ${data.recipientName}, siendo ${data.relationship}. ${data.notes || ''}`,
   
   newStatus: 'DELIVERED'
 };
