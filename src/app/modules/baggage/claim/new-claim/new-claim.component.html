@@ -33,7 +33,7 @@
       </div>
 
       <div class="form-group">
-        <h3>Tipo de Reclamo *</h3>
+        <h2>Tipo de Reclamo *</h2>
         <div class="section">
           <label *ngFor="let tipo of claimType" 
                 class="tipo-card" 
@@ -494,7 +494,7 @@
       </div>
 
       <div class="form-group-border">
-        <h3>Kit de noche hombre o mujer *</h3>
+        <h2>Kit de noche hombre o mujer *</h2>
         
         <div class="section">
           <label class="tipo-card" 
@@ -524,7 +524,7 @@
 
     <div class="section">
       <div class="form-group-border">
-        <h3>Tipo de Daño *</h3>
+        <h2>Tipo de Daño *</h2>
         <div class="section">
           <label *ngFor="let tipo of damageType" 
                 class="tipo-card" 
@@ -544,7 +544,7 @@
       </div>
 
       <div class="form-group-border">
-        <h3>Condicion del equipaje *</h3>
+        <h2>Condicion del equipaje *</h2>
         <div class="section">
           <label *ngFor="let condicion of condition" 
                 class="tipo-card" 
@@ -565,7 +565,7 @@
     </div>
 
     <div class="form-group-border">
-      <h3>Ubicación del Daño</h3>
+      <h2>Ubicación del Daño</h2>
       <p>Seleccione todas las ubicaciones con daño:</p>
       
       <div class="section">
@@ -579,7 +579,7 @@
         </label>
       </div>
 
-      <div *ngIf="damageLocationsArray.length === 0" class="sin-seleccion">
+      <div *ngIf="damageLocationsArray.length === 0" class="form-group-border">
         No se han seleccionado ubicaciones
       </div>
     </div>
