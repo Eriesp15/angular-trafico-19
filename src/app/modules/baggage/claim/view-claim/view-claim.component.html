@@ -51,7 +51,9 @@
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
               <button class="action-btn" (click)="cerrarReclamo()">Cerrar reclamo</button>
+              <button class="action-btn" (click)="cerrarReclamoMal()">Cerrar reclamo Melvi</button>
             </ng-container>
+            
           </ng-container>
           <ng-container *ngIf="isPILFERED()">
             <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">

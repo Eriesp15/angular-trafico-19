@@ -148,8 +148,14 @@ export class ViewClaimComponent implements OnInit {
     });
   }
 
-  cerrarReclamo(): void {
+  cerrarReclamoMal(): void {
     this.router.navigate([`/baggage/claim/closing-receipt/${this.claimId}`])
+  }
+
+  cerrarReclamo(): void {
+    this.actionWizard.open('CLOSE_CLAIM', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
   }
 
   verGastos(): void {
