@@ -26,23 +26,24 @@
         + Agregar Ruta
       </button>
     </div>
-    
-    <div class="form-field">
-      <label>Originador</label>
-      <input type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="20">
-    </div>
+    <div class="section">
+      <div class="form-field">
+        <label>Originador</label>
+        <input type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="20">
+      </div>
 
-    <div class="form-group">
-      <h3>Tipo de Reclamo *</h3>
-      <div class="tipo-reclamo-grid">
-        <label *ngFor="let tipo of claimType" 
-              class="tipo-card" 
-              [class.selected]="pIR.get('claimType')?.value === tipo.valor">
-          <input type="radio" 
-                formControlName="claimType" 
-                [value]="tipo.valor">
-          <span class="tipo-label">{{ tipo.etiqueta }}</span>
-        </label>
+      <div class="form-group">
+        <h3>Tipo de Reclamo *</h3>
+        <div class="section">
+          <label *ngFor="let tipo of claimType" 
+                class="tipo-card" 
+                [class.selected]="pIR.get('claimType')?.value === tipo.valor">
+            <input type="radio" 
+                  formControlName="claimType" 
+                  [value]="tipo.valor">
+            <span class="tipo-label">{{ tipo.etiqueta }}</span>
+          </label>
+        </div>
       </div>
     </div>
 
@@ -62,11 +63,11 @@
     </div>
     
     <div class="section">
-      <div class="form-field">
+      <div class="form-field-large">
         <label>Apellidos del pasajero</label>
         <input type="text" formControlName="passengerLastName" placeholder="Apellidos del pasajero">
       </div>
-      <div class="form-field">
+      <div class="form-field-large">
         <label>Nombres del pasajero</label>
         <input type="text" formControlName="passengerName" placeholder="Nombres del pasajero">
       </div>
@@ -321,14 +322,14 @@
     </div>
 
     <div class="section">
-      <div class="form-field">
+      <div class="form-field-large">
         <label>Direccion Permanente</label>
         <input type="text" formControlName="permanentAddress" placeholder="Direccion Permanente" maxlength="200">
       </div>
     </div>
 
     <div class="section">
-      <div class="form-field">
+      <div class="form-field-large">
         <label>Direccion Temporal</label>
         <input type="text" formControlName="temporaryAddress" placeholder="Direccion Temporal" maxlength="200">
       </div>
@@ -346,9 +347,6 @@
         <label>Telefono Permanente</label>
         <input type="text" formControlName="permanentPhone" placeholder="Telefono Permanente" maxlength="20">
       </div>
-    </div>
-
-    <div class="section">
       <div class="form-field">
         <label>Telefono Temporal</label>
         <input type="text" formControlName="temporaryPhone" placeholder="Telefono Temporal" maxlength="20">
@@ -374,32 +372,26 @@
         <label>Peso del Equipaje Facturado</label>
         <input type="number" formControlName="checkedBaggageWeight" placeholder="Peso del Equipaje Facturado">
       </div>
-    </div>
 
-    <div class="section">
       <div class="form-field">
         <label>Peso del Equipaje Entregado</label>
         <input type="number" formControlName="deliveredBaggageWeight" placeholder="Peso del Equipaje Entregado">
       </div>
-    </div>
 
-    <div class="form-field">
-      <label>Diferencia de Peso (kg)</label>
-      <input type="number" 
-            formControlName="weightDifference" 
-            placeholder="Se calcula automáticamente"
-            readonly
-            class="readonly-field">
-    </div>
+      <div class="form-field">
+        <label>Diferencia de Peso (kg)</label>
+        <input type="number" 
+              formControlName="weightDifference" 
+              placeholder="Se calcula automáticamente"
+              readonly
+              class="readonly-field">
+      </div>
 
-    <div class="section">
       <div class="form-field">
         <label>Idioma</label>
         <input type="text" formControlName="language" placeholder="Idioma" maxlength="10">
       </div>
-    </div>
 
-    <div class="section">
       <div class="form-field">
         <label>Numero de Pasaporte</label>
         <input type="text" formControlName="passportNumber" placeholder="Numero de Pasaporte">
@@ -411,18 +403,14 @@
         <label>Numero de Ticket</label>
         <input type="text" formControlName="ticketNumber" placeholder="Numero de Ticket">
       </div>
-    </div>
 
-    <div class="section">
       <div class="form-field">
-        <label>PNR</label>
+        <label>PNR grabar ubicador</label>
         <input type="text" formControlName="pnr" placeholder="PNR">
       </div>
-    </div>
 
-    <div class="section">
       <div class="form-field">
-        <label>frequent flyer id</label>
+        <label>Identificador de viajero frecuente</label>
         <input type="text" formControlName="frequentFlyerId" placeholder="frequent flyer id">
       </div>
     </div>
@@ -441,138 +429,142 @@
       </div>
     </div>
 
-    <div class="form-group">
-      <h3>¿Tiene seguro? *</h3>
+    <div class="section">
+      <div class="form-group-border">
+        <h2>¿Tiene seguro?</h2>
 
-      <div class="section">
-        <label class="tipo-card" 
-              [class.selected]="pIR.get('hasInsurance')?.value === true">
-          <input type="radio" 
-                formControlName="hasInsurance" 
-                [value]="true">
-          <span class="tipo-label">Sí</span>
-        </label>
-        
-        <label class="tipo-card" 
-              [class.selected]="pIR.get('hasInsurance')?.value === false">
-          <input type="radio" 
-                formControlName="hasInsurance" 
-                [value]="false">
-          <span class="tipo-label">No</span>
-        </label>
+        <div class="section">
+          <label class="tipo-card" 
+                [class.selected]="pIR.get('hasInsurance')?.value === true">
+            <input type="radio" 
+                  formControlName="hasInsurance" 
+                  [value]="true">
+            <span class="tipo-label">Sí</span>
+          </label>
+          
+          <label class="tipo-card" 
+                [class.selected]="pIR.get('hasInsurance')?.value === false">
+            <input type="radio" 
+                  formControlName="hasInsurance" 
+                  [value]="false">
+            <span class="tipo-label">No</span>
+          </label>
+        </div>
+        <button type="button" 
+                class="btn-remove" 
+                (click)="clearInsurance()"
+                *ngIf="pIR.get('hasInsurance')?.value !== null">
+          ✕ Limpiar
+        </button>
       </div>
-      <button type="button" 
-              class="btn-remove" 
-              (click)="clearInsurance()"
-              *ngIf="pIR.get('hasInsurance')?.value !== null">
-        ✕ Limpiar
-      </button>
-    </div>
 
-    <div class="form-group">
-      <h3>¿Maletas cerradas necesitan llave? *</h3>
-      
-      <div class="section">
-        <label class="tipo-card" 
-              [class.selected]="pIR.get('keysAttached')?.value === true">
-          <input type="radio" 
-                formControlName="keysAttached" 
-                [value]="true">
-          <span class="tipo-label">Sí</span>
-        </label>
+      <div class="form-group-border">
+        <h2>¿Maletas cerradas necesitan llave y se adjuntan?</h2>
         
-        <label class="tipo-card" 
-              [class.selected]="pIR.get('keysAttached')?.value === false">
-          <input type="radio" 
-                formControlName="keysAttached" 
-                [value]="false">
-          <span class="tipo-label">No</span>
-        </label>
+        <div class="section">
+          <label class="tipo-card" 
+                [class.selected]="pIR.get('keysAttached')?.value === true">
+            <input type="radio" 
+                  formControlName="keysAttached" 
+                  [value]="true">
+            <span class="tipo-label">Sí</span>
+          </label>
+          
+          <label class="tipo-card" 
+                [class.selected]="pIR.get('keysAttached')?.value === false">
+            <input type="radio" 
+                  formControlName="keysAttached" 
+                  [value]="false">
+            <span class="tipo-label">No</span>
+          </label>
+        </div>
+        <button type="button" 
+                class="btn-remove" 
+                (click)="clearKeysAttached()"
+                *ngIf="pIR.get('keysAttached')?.value !== null">
+          ✕ Limpiar
+        </button>
       </div>
-      <button type="button" 
-              class="btn-remove" 
-              (click)="clearKeysAttached()"
-              *ngIf="pIR.get('keysAttached')?.value !== null">
-        ✕ Limpiar
-      </button>
+
+      <div class="form-group-border">
+        <div class="form-field">
+          <label>Combinacion de Cerradura</label>
+          <input type="text" formControlName="lockCombination" placeholder="Combinacion de Cerradura">
+        </div>
+      </div>
+
+      <div class="form-group-border">
+        <h3>Kit de noche hombre o mujer *</h3>
+        
+        <div class="section">
+          <label class="tipo-card" 
+                [class.selected]="pIR.get('nightKit')?.value === true">
+            <input type="radio" 
+                  formControlName="nightKit" 
+                  [value]="true">
+            <span class="tipo-label">Hombre</span>
+          </label>
+          
+          <label class="tipo-card" 
+                [class.selected]="pIR.get('nightKit')?.value === false">
+            <input type="radio" 
+                  formControlName="nightKit" 
+                  [value]="false">
+            <span class="tipo-label">Mujer</span>
+          </label>
+        </div>
+        <button type="button" 
+                class="btn-remove" 
+                (click)="pIR.get('nightKit')?.setValue(null)"
+                *ngIf="pIR.get('nightKit')?.value !== null">
+          ✕ Limpiar
+        </button>
+      </div>
     </div>
 
     <div class="section">
-      <div class="form-field">
-        <label>Combinacion de Cerradura</label>
-        <input type="text" formControlName="lockCombination" placeholder="Combinacion de Cerradura">
+      <div class="form-group-border">
+        <h3>Tipo de Daño *</h3>
+        <div class="section">
+          <label *ngFor="let tipo of damageType" 
+                class="tipo-card" 
+                [class.selected]="pIR.get('damageType')?.value === tipo.valor">
+            <input type="radio" 
+                  formControlName="damageType" 
+                  [value]="tipo.valor">
+            <span class="tipo-label">{{ tipo.etiqueta }}</span>
+          </label>
+        </div>
+        <button type="button" 
+                class="btn-remove" 
+                (click)="pIR.get('damageType')?.setValue(null)"
+                *ngIf="pIR.get('damageType')?.value !== null">
+          ✕ Limpiar
+        </button>
+      </div>
+
+      <div class="form-group-border">
+        <h3>Condicion del equipaje *</h3>
+        <div class="section">
+          <label *ngFor="let condicion of condition" 
+                class="tipo-card" 
+                [class.selected]="pIR.get('condition')?.value === condicion.valor">
+            <input type="radio" 
+                  formControlName="condition" 
+                  [value]="condicion.valor">
+            <span class="tipo-label">{{ condicion.etiqueta }}</span>
+          </label>
+        </div>
+        <button type="button" 
+                class="btn-remove" 
+                (click)="clearCondition()"
+                *ngIf="pIR.get('condition')?.value !== null">
+          ✕ Limpiar
+        </button>
       </div>
     </div>
 
-    <div class="form-group">
-      <h3>Kit de noche hombre o mujer *</h3>
-      
-      <div class="section">
-        <label class="tipo-card" 
-              [class.selected]="pIR.get('nightKit')?.value === true">
-          <input type="radio" 
-                formControlName="nightKit" 
-                [value]="true">
-          <span class="tipo-label">Hombre</span>
-        </label>
-        
-        <label class="tipo-card" 
-              [class.selected]="pIR.get('nightKit')?.value === false">
-          <input type="radio" 
-                formControlName="nightKit" 
-                [value]="false">
-          <span class="tipo-label">Mujer</span>
-        </label>
-      </div>
-      <button type="button" 
-              class="btn-remove" 
-              (click)="pIR.get('nightKit')?.setValue(null)"
-              *ngIf="pIR.get('nightKit')?.value !== null">
-        ✕ Limpiar
-      </button>
-    </div>
-
-    <div class="form-group">
-      <h3>Tipo de Daño *</h3>
-      <div class="section">
-        <label *ngFor="let tipo of damageType" 
-              class="tipo-card" 
-              [class.selected]="pIR.get('damageType')?.value === tipo.valor">
-          <input type="radio" 
-                formControlName="damageType" 
-                [value]="tipo.valor">
-          <span class="tipo-label">{{ tipo.etiqueta }}</span>
-        </label>
-      </div>
-      <button type="button" 
-              class="btn-remove" 
-              (click)="pIR.get('damageType')?.setValue(null)"
-              *ngIf="pIR.get('damageType')?.value !== null">
-        ✕ Limpiar
-      </button>
-    </div>
-
-    <div class="form-group">
-      <h3>Condicion del equipaje *</h3>
-      <div class="section">
-        <label *ngFor="let condicion of condition" 
-              class="tipo-card" 
-              [class.selected]="pIR.get('condition')?.value === condicion.valor">
-          <input type="radio" 
-                formControlName="condition" 
-                [value]="condicion.valor">
-          <span class="tipo-label">{{ condicion.etiqueta }}</span>
-        </label>
-      </div>
-      <button type="button" 
-              class="btn-remove" 
-              (click)="clearCondition()"
-              *ngIf="pIR.get('condition')?.value !== null">
-        ✕ Limpiar
-      </button>
-    </div>
-
-    <div class="form-group">
+    <div class="form-group-border">
       <h3>Ubicación del Daño</h3>
       <p>Seleccione todas las ubicaciones con daño:</p>
       
