@@ -596,3 +596,11 @@ button[disabled] {
 .ver-link:hover {
     text-decoration: underline;
 }
+.signature-image {
+    display: block;
+    width: 100%;
+    max-width: 700px;
+    height: 180px;
+    object-fit: contain;
+    background: #fff;
+}

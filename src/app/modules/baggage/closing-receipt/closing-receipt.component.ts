@@ -49,13 +49,13 @@ export class ClosingReceiptComponent
     cerrado = false;
     pir!: string;
 
-    // Firma nueva dibujada por el usuario (base64)
+    // firma nueva dibujada por el usuario
     firmaBase64: string | null = null;
 
-    // Firma a mostrar en canvas (puede venir del backend como dataURL)
+    // firma que debe verse en el canvas
     firmaVistaSrc: string | null = null;
 
-    // Si hay firma guardada, no se debe dibujar encima; primero limpiar
+    // si ya hay firma guardada, no se dibuja encima
     firmaBloqueada = false;
 
     guardandoBorrador = false;
@@ -104,10 +104,13 @@ export class ClosingReceiptComponent
     }
 
     ngAfterViewInit(): void {
-        // Solo intenta inicializar si el canvas ya está visible
         setTimeout(() => {
-            this.inicializarCanvasFirmaConReintento();
-        }, 50);
+            if (this.firmaVistaSrc) {
+                this.programarRestauracionFirma();
+            } else {
+                this.inicializarCanvasFirmaConReintento();
+            }
+        }, 80);
     }
 
     ngDoCheck(): void {
@@ -135,21 +138,23 @@ export class ClosingReceiptComponent
             return;
         }
 
-        const firmaActual = this.firmaVistaSrc;
-
-        this.inicializarCanvasFirmaConReintento();
-
-        if (firmaActual) {
-            setTimeout(() => {
-                this.restaurarFirma(firmaActual);
-            }, 50);
-        }
+        setTimeout(() => {
+            if (this.firmaVistaSrc) {
+                this.programarRestauracionFirma();
+            } else {
+                this.inicializarCanvasFirmaConReintento();
+            }
+        }, 100);
     }
 
     private async cargarInicial(): Promise<void> {
         await Promise.all([this.cargarDatosDelReclamo(), this.cargarArchivos()]);
         this.lastSnapshot = this.obtenerSnapshot();
         this.loadingInitialData = false;
+
+        if (this.firmaVistaSrc) {
+            this.programarRestauracionFirma();
+        }
     }
 
     private obtenerSnapshot(): string {
@@ -196,7 +201,7 @@ export class ClosingReceiptComponent
                 ci: this.form.ci,
                 aclaracion: this.form.aclaracion,
                 observaciones: this.form.observaciones,
-                firmaBase64: this.firmaBase64, // solo si es nueva firma
+                firmaBase64: this.firmaBase64,
             };
 
             await firstValueFrom(
@@ -235,24 +240,38 @@ export class ClosingReceiptComponent
                 this.form.observaciones = data.closingReceipt.observations ?? '';
 
                 if (data.closingReceipt.signaturePath) {
-                    const firmaDataUrl = await this.cargarFirmaGuardadaComoDataUrl(
-                        data.closingReceipt.signaturePath
-                    );
-
-                    if (firmaDataUrl) {
-                        this.firmaVistaSrc = firmaDataUrl;
+                    if (this.cerrado) {
+                        this.firmaVistaSrc = `${this.fileBaseUrl}/${data.closingReceipt.signaturePath}`;
+                        this.firmaBase64 = null;
                         this.firmaBloqueada = true;
+                    } else {
+                        const firmaDataUrl = await this.cargarFirmaGuardadaComoDataUrl(
+                            data.closingReceipt.signaturePath
+                        );
 
-                        setTimeout(() => {
-                            this.inicializarCanvasFirmaConReintento();
-                        }, 50);
+                        if (firmaDataUrl) {
+                            this.firmaVistaSrc = firmaDataUrl;
+                            this.firmaBase64 = null;
+                            this.firmaBloqueada = true;
+                            this.programarRestauracionFirma();
+                        }
                     }
+                } else {
+                    this.firmaVistaSrc = null;
+                    this.firmaBase64 = null;
+                    this.firmaBloqueada = false;
                 }
             }
         } catch (error) {
             console.error('Error al cargar datos del reclamo:', error);
             alert('No se pudieron cargar los datos del reclamo.');
         }
+    }
+
+    private programarRestauracionFirma(): void {
+        setTimeout(() => {
+            this.inicializarCanvasFirmaConReintento(12);
+        }, 150);
     }
 
     private async cargarFirmaGuardadaComoDataUrl(
@@ -387,18 +406,16 @@ export class ClosingReceiptComponent
         this.modalCierreAbierto = true;
 
         setTimeout(() => {
-            this.inicializarCanvasFirmaConReintento();
+            if (this.firmaVistaSrc) {
+                this.programarRestauracionFirma();
+            } else {
+                this.inicializarCanvasFirmaConReintento();
+            }
         }, 100);
     }
 
     async confirmarCierre(): Promise<void> {
         if (this.cerrado) {
-            return;
-        }
-
-        const confirmacion = confirm('¿Está seguro de que desea confirmar el cierre?');
-
-        if (!confirmacion) {
             return;
         }
 
@@ -420,9 +437,10 @@ export class ClosingReceiptComponent
 
             this.modalCierreAbierto = false;
             this.cerrado = true;
-            alert('✔ Reclamo cerrado correctamente.');
 
-            this.router.navigate(['/claims/view', this.pir]);
+            this.router.navigate(['/baggage/claim/view', this.pir], {
+                state: { successMessage: '✔ Reclamo cerrado correctamente.' },
+            });
         } catch (error) {
             console.error('Error al cerrar reclamo:', error);
 
@@ -468,7 +486,7 @@ export class ClosingReceiptComponent
         return fileType === 'application/pdf' || fileName.endsWith('.pdf');
     }
 
-    private inicializarCanvasFirmaConReintento(intentos = 8): void {
+    private inicializarCanvasFirmaConReintento(intentos = 12): void {
         if (!this.signatureCanvasRef) {
             return;
         }
@@ -479,7 +497,7 @@ export class ClosingReceiptComponent
         if ((rect.width === 0 || rect.height === 0) && intentos > 0) {
             setTimeout(() => {
                 this.inicializarCanvasFirmaConReintento(intentos - 1);
-            }, 120);
+            }, 140);
             return;
         }
 
@@ -490,7 +508,7 @@ export class ClosingReceiptComponent
                 if (this.firmaVistaSrc) {
                     this.restaurarFirma(this.firmaVistaSrc);
                 }
-            }, 30);
+            }, 120);
         }
     }
 
@@ -507,10 +525,7 @@ export class ClosingReceiptComponent
         }
 
         const rect = this.signaturePadCanvas.getBoundingClientRect();
-        const width = Math.max(
-            Math.floor(rect.width),
-            this.signaturePadCanvas.parentElement?.clientWidth ?? 600
-        );
+        const width = Math.max(Math.floor(rect.width), 300);
         const height = Math.max(Math.floor(rect.height), 180);
 
         this.signaturePadCanvas.width = width;
@@ -538,8 +553,17 @@ export class ClosingReceiptComponent
         };
     }
 
+    private avisarFirmaBloqueada(): void {
+        alert('La firma ya existe. Limpie la firma y vuelva a firmar.');
+    }
+
     iniciarDibujoMouse(event: MouseEvent): void {
-        if (this.cerrado || this.firmaBloqueada || !this.signatureCtx) {
+        if (this.cerrado || !this.signatureCtx) {
+            return;
+        }
+
+        if (this.firmaBloqueada) {
+            this.avisarFirmaBloqueada();
             return;
         }
 
@@ -560,7 +584,12 @@ export class ClosingReceiptComponent
     }
 
     iniciarDibujoTouch(event: TouchEvent): void {
-        if (this.cerrado || this.firmaBloqueada || !this.signatureCtx) {
+        if (this.cerrado || !this.signatureCtx) {
+            return;
+        }
+
+        if (this.firmaBloqueada) {
+            this.avisarFirmaBloqueada();
             return;
         }
 
@@ -660,6 +689,10 @@ export class ClosingReceiptComponent
                 this.signaturePadCanvas.width,
                 this.signaturePadCanvas.height
             );
+        };
+
+        image.onerror = () => {
+            console.error('No se pudo restaurar la firma en el canvas.');
         };
 
         image.src = src;

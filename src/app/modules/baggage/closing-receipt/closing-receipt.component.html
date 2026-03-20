@@ -108,10 +108,17 @@
                 <div class="sig-label">Firma:</div>
 
                 <div class="signature-wrapper">
+                    <img
+                        *ngIf="cerrado && firmaVistaSrc"
+                        [src]="firmaVistaSrc"
+                        alt="Firma guardada"
+                        class="signature-image"
+                    />
+
                     <canvas
+                        *ngIf="!cerrado"
                         #signatureCanvas
                         class="signature-canvas"
-                        [class.disabled]="cerrado"
                     ></canvas>
                 </div>
 
