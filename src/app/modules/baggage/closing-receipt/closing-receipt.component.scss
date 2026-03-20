@@ -306,9 +306,89 @@
     background: #fff;
 }
 
+.sig-input {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #cfcfcf;
+    border-radius: 8px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
 .sig-textarea {
+    width: 100%;
     min-height: 110px;
+    padding: 10px 12px;
+    border: 1px solid #cfcfcf;
+    border-radius: 8px;
     resize: vertical;
+    box-sizing: border-box;
+}
+
+.signature-wrapper {
+    width: 100%;
+    max-width: 700px;
+    border: 1px solid #cfcfcf;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.signature-canvas {
+    display: block;
+    width: 100%;
+    height: 180px;
+    touch-action: none;
+    cursor: crosshair;
+    background: #fff;
+}
+
+.signature-canvas.disabled {
+    pointer-events: none;
+    opacity: 0.9;
+}
+
+.signature-actions {
+    margin-top: 2px;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-limpiar {
+    border: 1px solid #cfcfcf;
+    background: #6d7277;
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+/* aclaración + CI debajo de la firma */
+.aclaracion-ci-row {
+    grid-template-columns: 1fr 220px;
+    align-items: end;
+}
+
+.ci-cell {
+    max-width: 220px;
+}
+
+.sig-input-ci {
+    max-width: 220px;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+    .aclaracion-ci-row {
+        grid-template-columns: 1fr;
+    }
+
+    .ci-cell,
+    .sig-input-ci {
+        max-width: 100%;
+    }
 }
 
 /* ============================
@@ -445,4 +525,74 @@ button[disabled] {
 
 .modal-content button {
     margin: 10px;
+}
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.preview-card {
+    border: 1px solid #dcdcdc;
+    border-radius: 12px;
+    padding: 12px;
+    background: #fff;
+}
+
+.preview-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
+    word-break: break-word;
+}
+
+.preview-body {
+    width: 100%;
+    height: 220px;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-pdf {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.preview-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 14px;
+}
+
+.preview-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ver-link {
+    color: #1976d2;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.ver-link:hover {
+    text-decoration: underline;
 }
