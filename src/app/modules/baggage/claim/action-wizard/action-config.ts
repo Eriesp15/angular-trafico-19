@@ -121,10 +121,10 @@ export const PICKUP_REPAIRED = {
   title: 'Recoger Maleta de Reparación',
   
   fields: [
-    { name: 'pickupDate', label: 'Fecha de recogida', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
-    { name: 'actualCost', label: 'Costo real ($)', type: 'number' },
-    { name: 'condition', label: 'Estado después de reparación', type: 'select',
-      options: ['Excelente', 'Buena', 'Aceptable'] },
+    { name: 'pickupDate', label: 'Fecha de recogida', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required:true},
+    { name: 'actualCost', label: 'Costo real ($)', type: 'number', required:true},
+    { name: 'condition', label: 'Estado después de reparación', type: 'select', required:true,
+      options: ['Excelente', 'Buena', 'Aceptable']},
     { name: 'notes', label: 'Notas de reparación', type: 'textarea' }
   ],
   
