@@ -1,214 +1,317 @@
+// ── Page layout ───────────────────────────────────────────────────────────────
 .realizar-reclamo-container {
-  
   min-height: 100vh;
-  background-color: var( --bg-page);
+  background-color: var(--bg-page);
   padding: 2rem;
-  .btn-add {
-      margin-top: 0.5rem;
-    background-color: #003366;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 0.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;
-    height: 40px;
-    flex-shrink: 0;
+}
 
-    &:hover {
-      background-color: #002244;
-    }
-  }
-      .btn-remove {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 40px;
-            height: 40px;
-            flex-shrink: 0;
+.page-header {
+  margin-bottom: 1.25rem;
+}
 
-            &:hover {
-              background-color: #dc2626;
-            }
-          }
-      .btn-submit {
-        background-color: #003366;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 0.75rem 2rem;
-        cursor: pointer;
-        font-size: 0.875rem;
-        font-weight: 600;
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--header-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
 
-        &:hover {
-          background-color: #002244;
-        }
-      }
-
-  .form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
-    min-width: 250px;
-
-    label {
-      font-weight: 500;
-      color: var(--text-primary);
-      font-size: 14px;
-    }
-
-    input {
-      padding: 10px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 14px;
-      transition: border-color 0.3s;
-
-      &:focus {
-        outline: none;
-        border-color: var(--border-focus);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-      }
-
-      &::placeholder {
-        color: #9ca3af;
-      }
-    }
-  }
-    .form-field-large {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
-    min-width: 500px;
-
-    label {
-      font-weight: 500;
-      color: var(--text-primary);
-      font-size: 14px;
-    }
-
-    input {
-      padding: 10px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 14px;
-      transition: border-color 0.3s;
-
-      &:focus {
-        outline: none;
-        border-color: var(--border-focus);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-      }
-
-      &::placeholder {
-        color: #9ca3af;
-      }
-    }
-  }
-
-  // Grid para tipos de reclamo
-  .tipo-reclamo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-  }
-
-  // Tarjeta de tipo de reclamo
-  .tipo-card {
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    min-width: 150px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-
-    &:hover {
-      background-color: var(--bg-card-secondary);
-      border-color: var(--text-secondary);
-    }
-
-    &.selected {
-      background-color: rgba(37, 99, 235, 0.1);
-      border-color: var(--border-color);
-
-      .tipo-label {
-        color: var(--text-primary);
-        font-weight: 600;
-      }
-    }
-
-    input[type="radio"] {
-      margin-right: 10px;
-      cursor: pointer;
-    }
-
-    .tipo-label {
-      font-size: 14px;
-      color: var(--text-primary);
-      cursor: pointer;
-    }
-  }
-
-  h2 {
-      font-weight: 500;
-      color: var(--text-primary);
-      font-size: 14px;
-  }
-
-
-  // Sección (para agrupar varios campos)
-  .section {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: .5 rem;
-    margin-bottom: .5rem;
-  }
-
-  .form-group {
-    margin-top: .5rem;
-    margin-bottom: .5rem;
-  }
-    .form-group-border {
-    margin-top: .5rem;
-    margin-bottom: .5rem;
-    border: 2px solid var(--border-color);
-        border-radius: 8px;
-        padding: 1rem;
+  &::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 3px;
+    background: #1b4fad;
+    border-radius: 2px;
+    margin-top: 6px;
   }
 }
 
-
-
+// ── Form card ─────────────────────────────────────────────────────────────────
 .form-content {
   background-color: var(--bg-card);
   padding: 2rem;
-  border-radius: 8px;
+  border-radius: 10px;
   margin-bottom: 2rem;
   box-shadow: 0 1px 4px var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
+// ── Section (fila horizontal de campos) ───────────────────────────────────────
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+
+  &--submit {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+}
+
+// ── Form group (bloque con título, columna) ───────────────────────────────────
+.form-group {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+
+  h2 {
+    margin-bottom: 0.6rem;
+  }
+}
+
+.form-group-border {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  background: var(--bg-page);
+
+  h2 { margin-bottom: 0.6rem; }
+}
+
+// ── Headings ──────────────────────────────────────────────────────────────────
+h2 {
+  font-size: 11px;
+  font-weight: 700;
+  color: #1b4fad;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.5rem;
+}
+
+h3 {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0.75rem 0 0.4rem;
+}
+
+// ── Form fields ───────────────────────────────────────────────────────────────
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 4px;
+  min-width: 250px;
+
+  label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  input, select {
+    padding: 9px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #1b4fad;
+      box-shadow: 0 0 0 3px rgba(27, 79, 173, 0.1);
+    }
+
+    &::placeholder { color: #9ca3af; }
+  }
+
+  &.form-field--row {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.form-field-large {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 4px;
+  min-width: 500px;
+
+  label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  input {
+    padding: 9px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #1b4fad;
+      box-shadow: 0 0 0 3px rgba(27, 79, 173, 0.1);
+    }
+
+    &::placeholder { color: #9ca3af; }
+  }
+}
+
+.readonly-field {
+  background: var(--bg-page) !important;
+  color: var(--text-secondary) !important;
+  cursor: not-allowed;
+}
+
+// ── Tipo card (radio / checkbox) ──────────────────────────────────────────────
+.tipo-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  min-width: 120px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--bg-card);
+
+  &:hover {
+    background-color: #e8effc;
+    border-color: #c2d4f5;
+  }
+
+  &.selected {
+    background-color: #e8effc;
+    border-color: #1b4fad;
+
+    .tipo-label {
+      color: #1b4fad;
+      font-weight: 600;
+    }
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+    accent-color: #1b4fad;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .tipo-label {
+    font-size: 13px;
+    color: var(--text-primary);
+    cursor: pointer;
+    line-height: 1.3;
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.btn-add {
+  margin-top: 0.5rem;
+  background-color: #1b4fad;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  height: 36px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+
+  &:hover { background-color: #163d88; }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.btn-remove {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  height: 36px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+
+  &:hover {
+    background-color: #fee2e2;
+    border-color: #f87171;
+  }
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.btn-submit {
+  background-color: #1b4fad;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.65rem 2.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    background-color: #163d88;
+    box-shadow: 0 4px 12px rgba(27, 79, 173, 0.3);
+  }
+
+  &:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+}
+
+// ── Misc ──────────────────────────────────────────────────────────────────────
+.form-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 0.6rem;
+}
+
+.no-selection {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  background: var(--bg-page);
+  border: 1px dashed var(--border-color);
+  border-radius: 6px;
+  margin-top: 0.5rem;
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.45);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -216,34 +319,43 @@
 }
 
 .modal-content {
-  background-color: white;
-  border-radius: 8px;
+  background-color: var(--bg-card);
+  border-radius: 10px;
   width: 90%;
-  max-width: 400px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-color);
 
   h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1b4fad;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     margin: 0;
-    font-size: 18px;
   }
 
   .btn-close {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 18px;
     cursor: pointer;
-    color: #6b7280;
+    color: var(--text-secondary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
 
     &:hover {
-      color: #374151;
+      color: var(--text-primary);
+      background: var(--bg-page);
     }
   }
 }
@@ -252,40 +364,61 @@
   padding: 20px;
 
   .form-field {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
+    min-width: unset;
 
     label {
       display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      font-size: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
     }
 
     select {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #d1d5db;
+      padding: 9px 12px;
+      border: 1px solid var(--border-color);
       border-radius: 6px;
       font-size: 14px;
+      background: var(--bg-card);
+      color: var(--text-primary);
 
       &:focus {
         outline: none;
-        border-color: #3b82f6;
+        border-color: #1b4fad;
+        box-shadow: 0 0 0 3px rgba(27, 79, 173, 0.1);
       }
     }
   }
 
   .preview-box {
-    margin-top: 20px;
-    padding: 16px;
-    background-color: #f3f4f6;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: #e8effc;
+    border: 1px solid #c2d4f5;
     border-radius: 8px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    .preview-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #1b4fad;
+      opacity: 0.7;
+    }
 
     strong {
-      font-size: 20px;
-      color: #3b82f6;
+      font-size: 22px;
+      color: #1b4fad;
       font-family: monospace;
+      letter-spacing: 0.08em;
     }
   }
 }
@@ -293,38 +426,36 @@
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 20px;
-  border-top: 1px solid #e5e7eb;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-color);
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 9px 20px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s;
 }
 
 .btn-primary {
-  background-color: #3b82f6;
+  background-color: #1b4fad;
   color: white;
 
-  &:hover {
-    background-color: #2563eb;
-  }
-
-  &:disabled {
-    background-color: #d1d5db;
-    cursor: not-allowed;
-  }
+  &:hover { background-color: #163d88; }
+  &:disabled { background-color: #c2d4f5; color: #fff; cursor: not-allowed; }
 }
 
 .btn-secondary {
-  background-color: #6b7280;
-  color: white;
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
 
   &:hover {
-    background-color: #4b5563;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
   }
 }

@@ -1,67 +1,67 @@
 <form class="realizar-reclamo-container" [formGroup]="pIR" (ngSubmit)="onSubmit()">
 
   <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+
+
+
   <div class="form-content">
+    <div class="page-header">
+      <h1 class="page-title">Nuevo Reclamo</h1>
+    </div>
+    <!-- Rutas de Vuelo -->
     <div class="form-group" formArrayName="route">
       <h2>Rutas de Vuelo</h2>
       <div class="section">
-
-
-          <div *ngFor="let stop of route.controls; let i = index">
-            <div [formGroupName]="i" class="form-field">
-              <input type="text" formControlName="stop" placeholder="Ruta {{ i + 1 }}">              
-              <button type="button" 
-                      class="btn-remove"
-                      (click)="eliminarRuta(i)"
-                      [disabled]="route.length <= 2">
-                ✕ Eliminar
-              </button>
-            </div>
+        <div *ngFor="let stop of route.controls; let i = index">
+          <div [formGroupName]="i" class="form-field">
+            <input type="text" formControlName="stop" placeholder="Ruta {{ i + 1 }}" maxlength="7">
+            <button type="button" class="btn-remove" (click)="eliminarRuta(i)" [disabled]="route.length <= 2">
+              ✕ Eliminar
+            </button>
           </div>
+        </div>
       </div>
-      <button type="button" 
-          class="btn-add"
-          (click)="agregarRuta()" 
-          [disabled]="route.length >= 5">
+      <button type="button" class="btn-add" (click)="agregarRuta()" [disabled]="route.length >= 5">
         + Agregar Ruta
       </button>
     </div>
+
+    <!-- Originador + Tipo de reclamo -->
     <div class="section">
       <div class="form-field">
         <label>Originador</label>
-        <input type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="20">
+        <input type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="7">
       </div>
-
       <div class="form-group">
         <h2>Tipo de Reclamo *</h2>
         <div class="section">
-          <label *ngFor="let tipo of claimType" 
-                class="tipo-card" 
+          <label *ngFor="let tipo of claimType"
+                class="tipo-card"
                 [class.selected]="pIR.get('claimType')?.value === tipo.valor">
-            <input type="radio" 
-                  formControlName="claimType" 
-                  [value]="tipo.valor">
+            <input type="radio" formControlName="claimType" [value]="tipo.valor">
             <span class="tipo-label">{{ tipo.etiqueta }}</span>
           </label>
         </div>
       </div>
     </div>
 
+    <!-- Aeropuerto / Aerolínea / Referencia -->
     <div class="section">
       <div class="form-field">
         <label>Aeropuerto</label>
         <input type="text" formControlName="airportText" placeholder="Aeropuerto" maxlength="3">
       </div>
       <div class="form-field">
-        <label>Aerolinea</label>
-        <input type="text" formControlName="airline" placeholder="Aerolinea" maxlength="2">
+        <label>Aerolínea</label>
+        <input type="text" formControlName="airline" placeholder="Aerolínea" maxlength="2">
       </div>
       <div class="form-field">
         <label>Referencia</label>
         <input type="text" formControlName="reference" placeholder="Referencia" maxlength="5">
       </div>
     </div>
-    
+
+    <!-- Pasajero -->
     <div class="section">
       <div class="form-field-large">
         <label>Apellidos del pasajero</label>
@@ -79,518 +79,385 @@
       </div>
     </div>
 
-    <div class="form-group">
+    <!-- Bagtags -->
+    <div class="form-group" formArrayName="bagtags">
       <h2>Bagtags</h2>
-      
-      <div class="section" formArrayName="bagtags">
+      <div class="section">
         <div *ngFor="let bagtag of bagtags.controls; let i = index">
           <div [formGroupName]="i" class="form-field">
-            <input type="text" 
-                  formControlName="number" 
-                  placeholder="Ej: ABC123456"
-                  maxlength="20">
-            
-            <button type="button" 
-                    class="btn-remove"
-                    (click)="eliminarBagtag(i)"
-                    [disabled]="bagtags.length <= 1">
+            <input type="text" formControlName="number" placeholder="Ej: ABC123456" maxlength="20">
+            <button type="button" class="btn-remove" (click)="eliminarBagtag(i)" [disabled]="bagtags.length <= 1">
               ✕ Eliminar
             </button>
           </div>
         </div>
       </div>
-      
-      <button type="button" 
-              class="btn-add"
-              (click)="agregarBagtag()"
-              [disabled]="bagtags.length >= 5">
+      <button type="button" class="btn-add" (click)="agregarBagtag()" [disabled]="bagtags.length >= 5">
         + Agregar Bagtag
       </button>
     </div>
 
+    <!-- Color / tipo / descripción -->
     <div class="form-group">
-      <h2>Color/tipo/descripcion</h2>
-
+      <h2>Color / Tipo / Descripción</h2>
       <div class="section" formArrayName="bagDescription">
         <div *ngFor="let description of bagDescription.controls; let i = index" class="bagtag-item">
           <div [formGroupName]="i" class="form-field">
-            <input type="text"
-                  formControlName="description" 
-                  placeholder="Ej: WT01DBC"
-                  maxlength="7">
+            <input type="text" formControlName="description" placeholder="Ej: WT01DBC" maxlength="7">
             <button type="button" class="btn-add" (click)="indiceActual = i; modalIdentificacionAbierto = true">
               Llenar por interfaz
             </button>
-            
-            <button type="button" 
-                    class="btn-remove"
-                    (click)="eliminarBagDescription(i)"
-                    [disabled]="bagDescription.length <= 1">
+            <button type="button" class="btn-remove" (click)="eliminarBagDescription(i)" [disabled]="bagDescription.length <= 1">
               ✕ Eliminar
             </button>
           </div>
         </div>
       </div>
 
-            <!-- Modal de identificacion de equipaje -->
+      <!-- Modal identificación de equipaje -->
       <div class="modal-overlay" *ngIf="modalIdentificacionAbierto" (click)="modalIdentificacionAbierto = false">
         <div class="modal-content" (click)="$event.stopPropagation()">
-          
           <div class="modal-header">
             <h2>Identificación de Equipaje</h2>
             <button class="btn-close" (click)="modalIdentificacionAbierto = false">✕</button>
           </div>
-          
           <div class="modal-body">
             <div class="form-field">
               <label>Color</label>
               <select [(ngModel)]="color" [ngModelOptions]="{standalone: true}">
                 <option value="">Seleccionar...</option>
-                <option *ngFor="let color of colors" [value]="color.value">
-                  {{ color.description }}
-                </option>
+                <option *ngFor="let color of colors" [value]="color.value">{{ color.description }}</option>
               </select>
             </div>
-
             <div class="form-field">
               <label>Tipo</label>
               <select [(ngModel)]="type" [ngModelOptions]="{standalone: true}">
                 <option value="">Seleccionar...</option>
-                <option *ngFor="let type of types" [value]="type.value">
-                  {{ type.description }}
-                </option>
+                <option *ngFor="let type of types" [value]="type.value">{{ type.description }}</option>
               </select>
             </div>
-
             <div class="form-field">
               <label>Material</label>
               <select [(ngModel)]="material" [ngModelOptions]="{standalone: true}">
                 <option value="">Seleccionar...</option>
-                <option *ngFor="let material of materials" [value]="material.value">
-                  {{ material.description }}
-                </option>
+                <option *ngFor="let material of materials" [value]="material.value">{{ material.description }}</option>
               </select>
             </div>
-
             <div class="form-field">
-              <label>Elementos basicos</label>
+              <label>Elementos básicos</label>
               <select [(ngModel)]="basicElement" [ngModelOptions]="{standalone: true}">
                 <option value="">Seleccionar...</option>
-                <option *ngFor="let basicElement of basicElements" [value]="basicElement.value">
-                  {{ basicElement.description }}
-                </option>
+                <option *ngFor="let basicElement of basicElements" [value]="basicElement.value">{{ basicElement.description }}</option>
               </select>
             </div>
-
             <div class="form-field">
               <label>Elementos externos</label>
               <select [(ngModel)]="externalElement" [ngModelOptions]="{standalone: true}">
                 <option value="">Seleccionar...</option>
-                <option *ngFor="let externalElement of externalElements" [value]="externalElement.value">
-                  {{ externalElement.description }}
-                </option>
+                <option *ngFor="let externalElement of externalElements" [value]="externalElement.value">{{ externalElement.description }}</option>
               </select>
             </div>
-
             <div class="preview-box" *ngIf="type && color && material && basicElement && externalElement">
+              <span class="preview-label">Vista previa</span>
               <strong>{{ color + type + material + basicElement + externalElement }}</strong>
             </div>
-
           </div>
-          
           <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="modalIdentificacionAbierto = false">
-              Cancelar
-            </button>
-            <button class="btn btn-primary" 
-                    (click)="aplicarCodigo()"
-                    [disabled]="!type || !color || !material || !basicElement || !externalElement">
-              Aplicar
-            </button>
+            <button class="btn btn-secondary" (click)="modalIdentificacionAbierto = false">Cancelar</button>
+            <button class="btn btn-primary" (click)="aplicarCodigo()" [disabled]="!type || !color || !material || !basicElement || !externalElement">Aplicar</button>
           </div>
-          
         </div>
       </div>
-      
-      <button type="button" 
-              class="btn-add"
-              (click)="agregarBagDescription()"
-              [disabled]="bagDescription.length >= 5">
-        + Agregar descripcion de maleta
+
+      <button type="button" class="btn-add" (click)="agregarBagDescription()" [disabled]="bagDescription.length >= 5">
+        + Agregar descripción de maleta
       </button>
     </div>
 
+    <!-- Ruta a rastrear -->
     <div class="form-group" formArrayName="traceRoute">
-        <h2>Ruta a rastrear</h2>
+      <h2>Ruta a rastrear</h2>
       <div class="section">
         <div *ngFor="let stop of traceRoute.controls; let i = index">
-          <div [formGroupName]="i"class="form-field">
+          <div [formGroupName]="i" class="form-field">
             <input type="text" formControlName="traceRouteStop" placeholder="Ruta {{ i + 1 }}" maxlength="3">
-            
-            <button type="button" 
-                    class="btn-remove"
-                    (click)="eliminarRutaARastrear(i)"
-                    [disabled]="traceRoute.length <= 1">
+            <button type="button" class="btn-remove" (click)="eliminarRutaARastrear(i)" [disabled]="traceRoute.length <= 1">
               ✕ Eliminar
             </button>
-
           </div>
         </div>
       </div>
-      <button type="button" 
-          class="btn-add"
-          (click)="agregarRutaARastrear()" 
-          [disabled]="traceRoute.length >= 5">
+      <button type="button" class="btn-add" (click)="agregarRutaARastrear()" [disabled]="traceRoute.length >= 5">
         + Agregar Ruta a Rastrear
       </button>
     </div>
 
+    <!-- Número de vuelo -->
     <div class="form-group" formArrayName="flightNumber">
-        <h2>Numero de vuelo</h2>
+      <h2>Número de vuelo</h2>
       <div class="section">
         <div *ngFor="let flight of flightNumber.controls; let i = index">
-          <div [formGroupName]="i " class="form-field">
-              <input type="text" formControlName="flightNo" placeholder="Numero de vuelo {{ i + 1 }}" maxlength="10">
-
-              <input
-                type="datetime-local"
-                formControlName="flightDate"
-                placeholder="Fecha y hora de vuelo {{ i + 1 }}">
-            
-            <button type="button" 
-                    class="btn-remove"
-                    (click)="eliminarVuelo(i)"
-                    [disabled]="flightNumber.length <= 1">
+          <div [formGroupName]="i" class="form-field">
+            <input type="text" formControlName="flightNo" placeholder="Número de vuelo {{ i + 1 }}" maxlength="10">
+            <input type="datetime-local" formControlName="flightDate" placeholder="Fecha y hora de vuelo {{ i + 1 }}">
+            <button type="button" class="btn-remove" (click)="eliminarVuelo(i)" [disabled]="flightNumber.length <= 1">
               ✕ Eliminar
             </button>
           </div>
         </div>
       </div>
-      <button type="button" 
-          class="btn-add"
-          (click)="agregarVuelo()" 
-          [disabled]="flightNumber.length >= 5">
+      <button type="button" class="btn-add" (click)="agregarVuelo()" [disabled]="flightNumber.length >= 5">
         + Agregar Vuelo
       </button>
     </div>
 
+    <!-- Marca en la maleta -->
     <div class="form-group" formArrayName="bagIdentification">
       <h2>Marca en la maleta</h2>
       <div class="section">
         <div *ngFor="let identification of bagIdentification.controls; let i = index" class="ruta-item">
           <div [formGroupName]="i" class="form-field">
             <input type="text" formControlName="mark" placeholder="Marca {{ i + 1 }}" maxlength="200">
-            <button type="button" 
-                    class="btn-remove"
-                    (click)="eliminarIdentificacion(i)"
-                    [disabled]="bagIdentification.length <= 1">
+            <button type="button" class="btn-remove" (click)="eliminarIdentificacion(i)" [disabled]="bagIdentification.length <= 1">
               ✕ Eliminar
             </button>
           </div>
-
         </div>
-       </div>
-      <button type="button" 
-          class="btn-add"
-          (click)="agregarIdentificacion()" 
-          [disabled]="bagIdentification.length >= 5">
+      </div>
+      <button type="button" class="btn-add" (click)="agregarIdentificacion()" [disabled]="bagIdentification.length >= 5">
         + Agregar Identificación
       </button>
     </div>
 
+    <!-- Contenido -->
     <div class="form-group" formArrayName="contents">
       <h2>Contenido</h2>
       <div class="section">
         <div *ngFor="let description of contents.controls; let i = index" class="ruta-item">
           <div [formGroupName]="i" class="form-field">
-              <input type="text" formControlName="description" placeholder="Contenido {{ i + 1 }}" maxlength="100">
-            <button type="button" 
-                    class="btn-remove"
-                    (click)="eliminarContenido(i)"
-                    [disabled]="contents.length <= 1">
+            <input type="text" formControlName="description" placeholder="Contenido {{ i + 1 }}" maxlength="100">
+            <button type="button" class="btn-remove" (click)="eliminarContenido(i)" [disabled]="contents.length <= 1">
               ✕ Eliminar
             </button>
           </div>
         </div>
       </div>
-      <button type="button" 
-          class="btn-add"
-          (click)="agregarContenido()" 
-          [disabled]="contents.length >= 5">
+      <button type="button" class="btn-add" (click)="agregarContenido()" [disabled]="contents.length >= 5">
         + Agregar Contenido
       </button>
     </div>
 
+    <!-- Direcciones -->
     <div class="section">
       <div class="form-field-large">
-        <label>Direccion Permanente</label>
-        <input type="text" formControlName="permanentAddress" placeholder="Direccion Permanente" maxlength="200">
+        <label>Dirección Permanente</label>
+        <input type="text" formControlName="permanentAddress" placeholder="Dirección Permanente" maxlength="200">
+      </div>
+    </div>
+    <div class="section">
+      <div class="form-field-large">
+        <label>Dirección Temporal</label>
+        <input type="text" formControlName="temporaryAddress" placeholder="Dirección Temporal" maxlength="200">
       </div>
     </div>
 
-    <div class="section">
-      <div class="form-field-large">
-        <label>Direccion Temporal</label>
-        <input type="text" formControlName="temporaryAddress" placeholder="Direccion Temporal" maxlength="200">
-      </div>
-    </div>
-
+    <!-- Contacto -->
     <div class="section">
       <div class="form-field">
         <label>Correo electrónico</label>
         <input type="email" formControlName="email" placeholder="Email" maxlength="200">
       </div>
     </div>
-
     <div class="section">
       <div class="form-field">
-        <label>Telefono Permanente</label>
-        <input type="text" formControlName="permanentPhone" placeholder="Telefono Permanente" maxlength="20">
+        <label>Teléfono Permanente</label>
+        <input type="text" formControlName="permanentPhone" placeholder="Teléfono Permanente" maxlength="20">
       </div>
       <div class="form-field">
-        <label>Telefono Temporal</label>
-        <input type="text" formControlName="temporaryPhone" placeholder="Telefono Temporal" maxlength="20">
+        <label>Teléfono Temporal</label>
+        <input type="text" formControlName="temporaryPhone" placeholder="Teléfono Temporal" maxlength="20">
       </div>
     </div>
-
     <div class="section">
       <div class="form-field">
         <label>Instrucciones de entrega</label>
         <input type="text" formControlName="deliveryInstructions" placeholder="Instrucciones de entrega">
       </div>
     </div>
-
     <div class="section">
       <div class="form-field">
-        <label>Informacion adicional</label>
-        <input type="text" formControlName="additionalInfo" placeholder="Informacion adicional">
+        <label>Información adicional</label>
+        <input type="text" formControlName="additionalInfo" placeholder="Información adicional">
       </div>
     </div>
 
+    <!-- Datos adicionales equipaje -->
     <div class="section">
       <div class="form-field">
         <label>Peso del Equipaje Facturado</label>
         <input type="number" formControlName="checkedBaggageWeight" placeholder="Peso del Equipaje Facturado">
       </div>
-
       <div class="form-field">
         <label>Peso del Equipaje Entregado</label>
         <input type="number" formControlName="deliveredBaggageWeight" placeholder="Peso del Equipaje Entregado">
       </div>
-
       <div class="form-field">
         <label>Diferencia de Peso (kg)</label>
-        <input type="number" 
-              formControlName="weightDifference" 
-              placeholder="Se calcula automáticamente"
-              readonly
-              class="readonly-field">
+        <input type="number" formControlName="weightDifference" placeholder="Se calcula automáticamente" readonly class="readonly-field">
       </div>
-
       <div class="form-field">
         <label>Idioma</label>
         <input type="text" formControlName="language" placeholder="Idioma" maxlength="10">
       </div>
-
       <div class="form-field">
-        <label>Numero de Pasaporte</label>
-        <input type="text" formControlName="passportNumber" placeholder="Numero de Pasaporte">
+        <label>Número de Pasaporte</label>
+        <input type="text" formControlName="passportNumber" placeholder="Número de Pasaporte">
       </div>
     </div>
-
     <div class="section">
       <div class="form-field">
-        <label>Numero de Ticket</label>
-        <input type="text" formControlName="ticketNumber" placeholder="Numero de Ticket">
+        <label>Número de Ticket</label>
+        <input type="text" formControlName="ticketNumber" placeholder="Número de Ticket">
       </div>
-
       <div class="form-field">
-        <label>PNR grabar ubicador</label>
+        <label>PNR — Grabar ubicador</label>
         <input type="text" formControlName="pnr" placeholder="PNR">
       </div>
-
       <div class="form-field">
         <label>Identificador de viajero frecuente</label>
-        <input type="text" formControlName="frequentFlyerId" placeholder="frequent flyer id">
+        <input type="text" formControlName="frequentFlyerId" placeholder="Frequent Flyer ID">
       </div>
     </div>
-
     <div class="section">
       <div class="form-field">
-        <label>Razon de Perdida</label>
-        <input type="text" formControlName="lossReason" placeholder="Razon de Perdida">
+        <label>Razón de Pérdida</label>
+        <input type="text" formControlName="lossReason" placeholder="Razón de Pérdida">
       </div>
     </div>
-
     <div class="section">
       <div class="form-field">
-        <label>Estacion de Fallo</label>
-        <input type="text" formControlName="faultStation" placeholder="Estacion de Fallo">
+        <label>Estación de Fallo</label>
+        <input type="text" formControlName="faultStation" placeholder="Estación de Fallo">
       </div>
     </div>
 
+    <!-- Opciones booleanas -->
     <div class="section">
       <div class="form-group-border">
         <h2>¿Tiene seguro?</h2>
-
         <div class="section">
-          <label class="tipo-card" 
-                [class.selected]="pIR.get('hasInsurance')?.value === true">
-            <input type="radio" 
-                  formControlName="hasInsurance" 
-                  [value]="true">
+          <label class="tipo-card" [class.selected]="pIR.get('hasInsurance')?.value === true">
+            <input type="radio" formControlName="hasInsurance" [value]="true">
             <span class="tipo-label">Sí</span>
           </label>
-          
-          <label class="tipo-card" 
-                [class.selected]="pIR.get('hasInsurance')?.value === false">
-            <input type="radio" 
-                  formControlName="hasInsurance" 
-                  [value]="false">
+          <label class="tipo-card" [class.selected]="pIR.get('hasInsurance')?.value === false">
+            <input type="radio" formControlName="hasInsurance" [value]="false">
             <span class="tipo-label">No</span>
           </label>
         </div>
-        <button type="button" 
-                class="btn-remove" 
-                (click)="clearInsurance()"
-                *ngIf="pIR.get('hasInsurance')?.value !== null">
+        <button type="button" class="btn-remove" (click)="clearInsurance()" *ngIf="pIR.get('hasInsurance')?.value !== null">
           ✕ Limpiar
         </button>
       </div>
 
       <div class="form-group-border">
         <h2>¿Maletas cerradas necesitan llave y se adjuntan?</h2>
-        
         <div class="section">
-          <label class="tipo-card" 
-                [class.selected]="pIR.get('keysAttached')?.value === true">
-            <input type="radio" 
-                  formControlName="keysAttached" 
-                  [value]="true">
+          <label class="tipo-card" [class.selected]="pIR.get('keysAttached')?.value === true">
+            <input type="radio" formControlName="keysAttached" [value]="true">
             <span class="tipo-label">Sí</span>
           </label>
-          
-          <label class="tipo-card" 
-                [class.selected]="pIR.get('keysAttached')?.value === false">
-            <input type="radio" 
-                  formControlName="keysAttached" 
-                  [value]="false">
+          <label class="tipo-card" [class.selected]="pIR.get('keysAttached')?.value === false">
+            <input type="radio" formControlName="keysAttached" [value]="false">
             <span class="tipo-label">No</span>
           </label>
         </div>
-        <button type="button" 
-                class="btn-remove" 
-                (click)="clearKeysAttached()"
-                *ngIf="pIR.get('keysAttached')?.value !== null">
+        <button type="button" class="btn-remove" (click)="clearKeysAttached()" *ngIf="pIR.get('keysAttached')?.value !== null">
           ✕ Limpiar
         </button>
       </div>
 
       <div class="form-group-border">
         <div class="form-field">
-          <label>Combinacion de Cerradura</label>
-          <input type="text" formControlName="lockCombination" placeholder="Combinacion de Cerradura">
+          <label>Combinación de Cerradura</label>
+          <input type="text" formControlName="lockCombination" placeholder="Combinación de Cerradura">
         </div>
       </div>
 
       <div class="form-group-border">
-        <h2>Kit de noche hombre o mujer *</h2>
-        
+        <h2>Kit de noche — Hombre o Mujer *</h2>
         <div class="section">
-          <label class="tipo-card" 
-                [class.selected]="pIR.get('nightKit')?.value === true">
-            <input type="radio" 
-                  formControlName="nightKit" 
-                  [value]="true">
+          <label class="tipo-card" [class.selected]="pIR.get('nightKit')?.value === true">
+            <input type="radio" formControlName="nightKit" [value]="true">
             <span class="tipo-label">Hombre</span>
           </label>
-          
-          <label class="tipo-card" 
-                [class.selected]="pIR.get('nightKit')?.value === false">
-            <input type="radio" 
-                  formControlName="nightKit" 
-                  [value]="false">
+          <label class="tipo-card" [class.selected]="pIR.get('nightKit')?.value === false">
+            <input type="radio" formControlName="nightKit" [value]="false">
             <span class="tipo-label">Mujer</span>
           </label>
         </div>
-        <button type="button" 
-                class="btn-remove" 
-                (click)="pIR.get('nightKit')?.setValue(null)"
-                *ngIf="pIR.get('nightKit')?.value !== null">
+        <button type="button" class="btn-remove" (click)="pIR.get('nightKit')?.setValue(null)" *ngIf="pIR.get('nightKit')?.value !== null">
           ✕ Limpiar
         </button>
       </div>
     </div>
 
+    <!-- Daño -->
     <div class="section">
       <div class="form-group-border">
         <h2>Tipo de Daño *</h2>
         <div class="section">
-          <label *ngFor="let tipo of damageType" 
-                class="tipo-card" 
+          <label *ngFor="let tipo of damageType"
+                class="tipo-card"
                 [class.selected]="pIR.get('damageType')?.value === tipo.valor">
-            <input type="radio" 
-                  formControlName="damageType" 
-                  [value]="tipo.valor">
+            <input type="radio" formControlName="damageType" [value]="tipo.valor">
             <span class="tipo-label">{{ tipo.etiqueta }}</span>
           </label>
         </div>
-        <button type="button" 
-                class="btn-remove" 
-                (click)="pIR.get('damageType')?.setValue(null)"
-                *ngIf="pIR.get('damageType')?.value !== null">
+        <button type="button" class="btn-remove" (click)="pIR.get('damageType')?.setValue(null)" *ngIf="pIR.get('damageType')?.value !== null">
           ✕ Limpiar
         </button>
       </div>
 
       <div class="form-group-border">
-        <h2>Condicion del equipaje *</h2>
+        <h2>Condición del equipaje *</h2>
         <div class="section">
-          <label *ngFor="let condicion of condition" 
-                class="tipo-card" 
+          <label *ngFor="let condicion of condition"
+                class="tipo-card"
                 [class.selected]="pIR.get('condition')?.value === condicion.valor">
-            <input type="radio" 
-                  formControlName="condition" 
-                  [value]="condicion.valor">
+            <input type="radio" formControlName="condition" [value]="condicion.valor">
             <span class="tipo-label">{{ condicion.etiqueta }}</span>
           </label>
         </div>
-        <button type="button" 
-                class="btn-remove" 
-                (click)="clearCondition()"
-                *ngIf="pIR.get('condition')?.value !== null">
+        <button type="button" class="btn-remove" (click)="clearCondition()" *ngIf="pIR.get('condition')?.value !== null">
           ✕ Limpiar
         </button>
       </div>
     </div>
 
+    <!-- Ubicación del daño -->
     <div class="form-group-border">
       <h2>Ubicación del Daño</h2>
-      <p>Seleccione todas las ubicaciones con daño:</p>
-      
+      <p class="form-hint">Seleccione todas las ubicaciones con daño:</p>
       <div class="section">
-        <label *ngFor="let location of damageLocations" 
+        <label *ngFor="let location of damageLocations"
               class="tipo-card"
               [class.selected]="isUbicacionSelected(location.valor)">
-          <input type="checkbox"
-                [checked]="isUbicacionSelected(location.valor)"
-                (change)="onUbicacionChange($event, location.valor)">
+          <input type="checkbox" [checked]="isUbicacionSelected(location.valor)" (change)="onUbicacionChange($event, location.valor)">
           <span class="tipo-label">{{ location.etiqueta }}</span>
         </label>
       </div>
-
-      <div *ngIf="damageLocationsArray.length === 0" class="form-group-border">
+      <div *ngIf="damageLocationsArray.length === 0" class="no-selection">
         No se han seleccionado ubicaciones
       </div>
     </div>
 
-    <div class="section">
-      <button type="submit" 
-              class="btn-submit"
-              [disabled]="pIR.invalid">
+    <!-- Submit -->
+    <div class="section section--submit">
+      <button type="submit" class="btn-submit" [disabled]="pIR.invalid">
         Enviar
       </button>
     </div>
+
   </div>
 </form>
-
