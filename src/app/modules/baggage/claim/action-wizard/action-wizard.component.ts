@@ -127,7 +127,7 @@ export class ActionWizardComponent {
     console.log('Payload:', payload);
     
     try {
-      const response = await this.http.post('/api/pir/action', payload).toPromise();
+      const response = await this.http.post('http://localhost:3700/api/v1/pir/action',payload).toPromise();
       console.log('Respuesta:', response);
       
       if (this.onSuccessCallback) {

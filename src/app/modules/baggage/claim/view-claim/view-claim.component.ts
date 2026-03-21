@@ -90,7 +90,7 @@ export class ViewClaimComponent implements OnInit {
   }
 
   verHojaSeguimiento(): void {
-    this.router.navigate(["/baggage/claim/follow", this.claimId])
+    this.router.navigate(["/baggage/claim/trackingsheet", this.claimId])
   }
 
   verFormularioContenido(): void {
@@ -148,8 +148,14 @@ export class ViewClaimComponent implements OnInit {
     });
   }
 
-  cerrarReclamo(): void {
+  cerrarReclamoMal(): void {
     this.router.navigate([`/baggage/claim/closing-receipt/${this.claimId}`])
+  }
+
+  cerrarReclamo(): void {
+    this.actionWizard.open('CLOSE_CLAIM', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
   }
 
   verGastos(): void {

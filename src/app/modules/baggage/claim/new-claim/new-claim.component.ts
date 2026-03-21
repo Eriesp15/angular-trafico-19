@@ -211,6 +211,17 @@ export class NewClaimComponent implements OnInit {
     { valor: 'BOTTOM', etiqueta: 'Parte Inferior' }
   ];
 
+  locationImages: Record<string, string> = {
+    'COMBINATION_LOCK': 'images/claims/combination.png',
+    'HANDLE':           'images/claims/handle.png',
+    'STRAPS':           'images/claims/straps.png',
+    'WHEELS':           'images/claims/wheels.png',
+    'SIDE':             'images/claims/side.png',
+    'END':              'images/claims/end.png',
+    'TOP':              'images/claims/top.png',
+    'BOTTOM':           'images/claims/bottom.png',
+  };
+
 
   get route(): FormArray {
     return this.pIR.get('route') as FormArray;
