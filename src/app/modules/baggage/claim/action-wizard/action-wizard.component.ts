@@ -58,6 +58,14 @@ export class ActionWizardComponent {
       }
     }
 
+    if (this.config.fields) {
+      this.config.fields.forEach((field: any) => {
+        if (field.defaultValue !== undefined && data[field.name] === undefined) {
+          data[field.name] = field.defaultValue;  // ← Aquí se aplica
+        }
+      });
+    }
+
     if (this.config.calculate) {
       data = this.config.calculate(data);
     }
@@ -66,12 +74,43 @@ export class ActionWizardComponent {
   }
 
   nextStep() {
+    if (!this.validateForm()) {
+      return;  // No continuar si hay errores
+    }
     this.message = this.config.getMessage(this.formData);
     this.step = 2;
   }
 
   back() {
     this.step = 1;
+  }
+
+  validateForm(): boolean {
+    const errors: string[] = [];
+    
+    if (!this.config.fields) {
+      return true;
+    }
+    
+    // Revisar cada campo
+    this.config.fields.forEach((field: any) => {
+      if (field.required) {
+        const value = this.formData[field.name];
+        
+        // Verificar si está vacío
+        if (value === undefined || value === null || value === '') {
+          errors.push(field.label);
+        }
+      }
+    });
+    
+    // Si hay errores, mostrar alerta
+    if (errors.length > 0) {
+      alert(`Los siguientes campos son obligatorios:\n\n• ${errors.join('\n• ')}`);
+      return false;
+    }
+    
+    return true;
   }
 
   async save() {
@@ -88,7 +127,7 @@ export class ActionWizardComponent {
     console.log('Payload:', payload);
     
     try {
-      const response = await this.http.post('/api/pir/action', payload).toPromise();
+      const response = await this.http.post('http://localhost:3700/api/v1/pir/action',payload).toPromise();
       console.log('Respuesta:', response);
       
       if (this.onSuccessCallback) {
