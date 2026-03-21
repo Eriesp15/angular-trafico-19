@@ -1,5 +1,4 @@
 <div class="cerrado-container p-6" *ngIf="seguimiento">
-
     <!-- ENCABEZADO -->
     <div class="title-row">
         <div>
@@ -23,10 +22,12 @@
                 <span class="label">Número PIR:</span>
                 <span class="value">{{ seguimiento.numeroPir }}</span>
             </div>
+
             <div class="row">
                 <span class="label">Pasajero:</span>
                 <span class="value">{{ seguimiento.nombres }}</span>
             </div>
+
             <div class="row">
                 <span class="label">Fecha reclamo:</span>
                 <span class="value">{{ seguimiento.fechaReclamo | date }}</span>
@@ -38,107 +39,224 @@
     <div class="panel mt-6">
         <div class="panel-header">Detalles de entrega</div>
         <div class="panel-body">
-
             <div class="row">
                 <label class="label">Fecha entrega:</label>
-                <input type="date" class="input"
-                       [(ngModel)]="form.fechaEntrega"
-                       [disabled]="cerrado">
+                <input
+                    type="date"
+                    class="input"
+                    [(ngModel)]="form.fechaEntrega"
+                    [disabled]="cerrado"
+                />
             </div>
 
             <div class="row">
                 <label class="label">Cantidad entregada:</label>
-                <input type="number" class="input short"
-                       [(ngModel)]="form.cantidadEquipajes"
-                       [disabled]="cerrado">
+                <input
+                    type="number"
+                    class="input short"
+                    [(ngModel)]="form.cantidadEquipajes"
+                    [disabled]="cerrado"
+                />
             </div>
 
             <div class="radio-group">
                 <label>
-                    <input type="radio" name="entrega"
-                           value="aeropuerto"
-                           [(ngModel)]="form.entregaModo"
-                           [disabled]="cerrado">
+                    <input
+                        type="radio"
+                        name="entrega"
+                        value="aeropuerto"
+                        [(ngModel)]="form.entregaModo"
+                        [disabled]="cerrado"
+                    />
                     Entrega en aeropuerto
                 </label>
+
                 <label>
-                    <input type="radio" name="entrega"
-                           value="domicilio"
-                           [(ngModel)]="form.entregaModo"
-                           [disabled]="cerrado">
+                    <input
+                        type="radio"
+                        name="entrega"
+                        value="domicilio"
+                        [(ngModel)]="form.entregaModo"
+                        [disabled]="cerrado"
+                    />
                     Entrega a domicilio
                 </label>
             </div>
 
             <div *ngIf="form.entregaModo === 'domicilio'" class="direccion-group">
                 <label>Dirección de entrega:</label>
-                <input type="text" class="direccion-input"
-                       [(ngModel)]="form.direccion"
-                       [disabled]="cerrado">
-            </div>
-
-            <div class="botones-entrega no-print">
-
-                <!-- SUBIDA DE ARCHIVOS -->
-                <label class="btn btn-subir" *ngIf="!cerrado">
-                    Subir documentos (PDF o imágenes)
-                    <input type="file" accept="image/*,.pdf" multiple hidden
-                           (change)="seleccionarArchivos($event)">
-                </label>
-
-                <button class="btn btn-confirmar"
-                        *ngIf="!cerrado"
-                        (click)="abrirModalCierre()">
-                    Confirmar cierre
-                </button>
-            </div>
-
-            <div *ngIf="archivosSubidos.length > 0" class="archivo-info">
-                <p><b>Documentos cargados:</b></p>
-                <ul>
-                    <li *ngFor="let f of archivosSubidos">📄 {{ f.name }}</li>
-                </ul>
+                <input
+                    type="text"
+                    class="direccion-input"
+                    [(ngModel)]="form.direccion"
+                    [disabled]="cerrado"
+                />
             </div>
         </div>
     </div>
 
-    <div class="note">
-        Si usted llegó a un acuerdo con la empresa o si no desea continuar con el presente reclamo,
-        le solicitamos firmar en el siguiente recuadro.
+    <!-- NOTA -->
+    <div class="note mt-6">
+        Si usted llegó a un acuerdo con la empresa o si no desea continuar con el
+        presente reclamo, le solicitamos firmar en el siguiente recuadro.
     </div>
 
-    <!-- Caja de firma -->
+    <!-- FIRMA -->
     <div class="signature-card">
-        <div class="sig-row two-cols">
+        <div class="sig-row">
             <div class="sig-cell">
                 <div class="sig-label">Firma:</div>
-                <div class="sig-box"></div>
-            </div>
-            <div class="sig-cell">
-                <div class="sig-label">C.I.:</div>
-                <input class="sig-input"
-                       [(ngModel)]="form.ci"
-                       [disabled]="cerrado" />
+
+                <div class="signature-wrapper">
+                    <img
+                        *ngIf="cerrado && firmaVistaSrc"
+                        [src]="firmaVistaSrc"
+                        alt="Firma guardada"
+                        class="signature-image"
+                    />
+
+                    <canvas
+                        *ngIf="!cerrado"
+                        #signatureCanvas
+                        class="signature-canvas"
+                    ></canvas>
+                </div>
+
+                <div class="signature-actions no-print" *ngIf="!cerrado">
+                    <button
+                        type="button"
+                        class="btn btn-limpiar"
+                        (click)="limpiarFirma()"
+                    >
+                        Limpiar firma
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="sig-row">
-            <div class="sig-label">Aclaración de firma:</div>
-            <input class="sig-input"
-                   [(ngModel)]="form.aclaracion"
-                   [disabled]="cerrado" />
+        <div class="sig-row aclaracion-ci-row">
+            <div class="sig-cell">
+                <div class="sig-label">Aclaración de firma:</div>
+                <input
+                    class="sig-input"
+                    [(ngModel)]="form.aclaracion"
+                    [disabled]="cerrado"
+                />
+            </div>
+
+            <div class="sig-cell ci-cell">
+                <div class="sig-label">C.I.:</div>
+                <input
+                    class="sig-input sig-input-ci"
+                    [(ngModel)]="form.ci"
+                    [disabled]="cerrado"
+                />
+            </div>
         </div>
 
         <div class="sig-row">
             <div class="sig-label">Observaciones:</div>
-            <textarea class="sig-textarea"
-                      [(ngModel)]="form.observaciones"
-                      [disabled]="cerrado"></textarea>
+            <textarea
+                class="sig-textarea"
+                [(ngModel)]="form.observaciones"
+                [disabled]="cerrado"
+            ></textarea>
+        </div>
+    </div>
+
+    <!-- VISTA PREVIA -->
+    <div class="panel mt-6" *ngIf="archivosSubidos.length > 0">
+        <div class="panel-header">Vista previa de documentos cargados</div>
+        <div class="panel-body">
+            <div class="preview-grid">
+                <div class="preview-card" *ngFor="let archivo of archivosSubidos">
+                    <div class="preview-title">
+                        {{ archivo.fileName }}
+                    </div>
+
+                    <div class="preview-body">
+                        <img
+                            *ngIf="esImagen(archivo)"
+                            class="preview-image"
+                            [src]="getFileUrl(archivo)"
+                            [alt]="archivo.fileName"
+                        />
+
+                        <iframe
+                            *ngIf="esPdf(archivo)"
+                            class="preview-pdf"
+                            [src]="getPdfPreviewUrl(archivo)"
+                            title="Vista previa PDF"
+                        ></iframe>
+
+                        <div
+                            *ngIf="!esImagen(archivo) && !esPdf(archivo)"
+                            class="preview-fallback"
+                        >
+                            <mat-icon>insert_drive_file</mat-icon>
+                            <span>Vista previa no disponible</span>
+                        </div>
+                    </div>
+
+                    <div class="preview-actions">
+                        <a
+                            class="ver-link"
+                            [href]="getFileUrl(archivo)"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Ver
+                        </a>
+
+                        <button
+                            type="button"
+                            class="delete-btn no-print"
+                            *ngIf="!cerrado"
+                            (click)="eliminarArchivo(archivo.id)"
+                        >
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTONES FINALES -->
+    <div class="botones-entrega no-print mt-6" *ngIf="!cerrado">
+        <label class="btn btn-subir">
+            Subir documentos (PDF o imágenes)
+            <input
+                type="file"
+                accept="image/*,.pdf"
+                multiple
+                hidden
+                (change)="seleccionarArchivos($event)"
+            />
+        </label>
+
+        <button
+            class="btn btn-confirmar"
+            type="button"
+            (click)="abrirModalCierre()"
+        >
+            Confirmar cierre
+        </button>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal" *ngIf="modalCierreAbierto">
+        <div class="modal-content">
+            <p>¿Está seguro de que desea confirmar el cierre?</p>
+            <button type="button" (click)="confirmarCierre()">Confirmar</button>
+            <button type="button" (click)="modalCierreAbierto = false">
+                Cancelar
+            </button>
         </div>
     </div>
 </div>
 
-<!-- FAB imprimir -->
+<!-- FAB IMPRIMIR -->
 <button class="print-fab no-print" mat-fab (click)="print()">
     <mat-icon>print</mat-icon>
 </button>

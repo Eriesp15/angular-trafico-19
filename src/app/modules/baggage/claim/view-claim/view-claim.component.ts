@@ -8,11 +8,13 @@ import  { HttpClient } from "@angular/common/http"
 import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
 import { MatDialogModule, MatDialog } from "@angular/material/dialog"
 import { ClaimStatusService } from "app/services/claim-status/claim-status.service"
+import { ActionWizardService } from "../action-wizard/action-wizard.service"
+import { ActionWizardComponent } from "../action-wizard/action-wizard.component"
 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule, ActionWizardComponent],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
@@ -41,6 +43,7 @@ export class ViewClaimComponent implements OnInit {
     private http: HttpClient,
     private dialog: MatDialog,
     public claimStatusService: ClaimStatusService,
+    private actionWizard: ActionWizardService,
   ) {}
 
   ngOnInit(): void {
@@ -87,25 +90,72 @@ export class ViewClaimComponent implements OnInit {
   }
 
   verHojaSeguimiento(): void {
-    this.router.navigate(["/baggage/claim/follow", this.claimId])
+    this.router.navigate(["/baggage/claim/trackingsheet", this.claimId])
   }
 
   verFormularioContenido(): void {
     this.router.navigate([`/baggage/claim/content/${this.claimId}`])
   }
 
-  realizarEntrega(): void {
-    this.router.navigate([`/baggage/claim/make-delivery/${this.claimId}`])
+  realizarEntrega() {
+    this.actionWizard.open('DELIVER', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
   }
 
-  indemnizar(): void {
-    this.router.navigate(["/baggage/claim/add-expense", this.claimId], {
-      queryParams: { tipo: 'DPR' },
-    })
+  // Indemnizar (AHL, PILFERED, DPR)
+  indemnizar() {
+    this.actionWizard.open('COMPENSATE', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+  indicarBusquedaLocal() {
+    this.actionWizard.open('INDICATE_LOCAL_SEARCH', this.pirData, () => {
+      this.loadClaim(this.claimId); // Recargar datos después de guardar
+    });
+  }
+
+  indicarBusquedaWorldTracer() {
+    this.actionWizard.open('INDICATE_WT_SEARCH', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+    // AHL - Encontrado
+  indicarEncontrado() {
+    this.actionWizard.open('INDICATE_FOUND', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+  enviarAReparacion() {
+    this.actionWizard.open('SEND_TO_REPAIR', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+  recogerMaleta() {
+    this.actionWizard.open('PICKUP_REPAIRED', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+  // DPR - Transferencia
+  enviarACochabamba() {
+    this.actionWizard.open('TRANSFER_TO_CBB', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+  cerrarReclamoMal(): void {
+    this.router.navigate([`/baggage/claim/closing-receipt/${this.claimId}`])
   }
 
   cerrarReclamo(): void {
-    this.router.navigate([`/baggage/claim/closing-receipt/${this.claimId}`])
+    this.actionWizard.open('CLOSE_CLAIM', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
   }
 
   verGastos(): void {
@@ -129,18 +179,7 @@ export class ViewClaimComponent implements OnInit {
   isDPR(): boolean {
     return this.pirData?.claimType === 'DPR';
   }
-  enviarAReparacion(): void {
-    import("../send-to-repair/send-to-repair-dialog.component").then(({ SendToRepairDialogComponent }) => {
-      this.dialog.open(SendToRepairDialogComponent, {
-        width: "800px",
-        data: {
-          pirNumber: this.pirData?.informacionAdicional?.pirNumber,
-          pasajero: this.pirData?.pasajero,
-          equipaje: this.pirData?.equipaje,
-          reclamo: this.pirData?.reclamo,
-        },
-      })
-    })
-  }
+
+  
 
 }

@@ -3,7 +3,7 @@
 }
 
 /* ===========================
-   Variables (usa las globales)
+   Contenedor principal
    =========================== */
 .seguimiento-container {
     min-height: 100vh;
@@ -43,7 +43,7 @@
 }
 
 /* ===========================
-   Panel (Detalles)
+   Panel
    =========================== */
 .panel {
     background: var(--bg-card);
@@ -58,6 +58,7 @@
     font-weight: 700;
     padding: 0.85rem 1rem;
 }
+
 .label-title {
     background: var(--btn-primary-hover);
     color: #fff;
@@ -69,7 +70,9 @@
     padding: 1rem;
 }
 
-/* Detalles */
+/* ===========================
+   Detalles
+   =========================== */
 .row {
     display: grid;
     grid-template-columns: 220px 1fr;
@@ -94,32 +97,30 @@
    Tablas
    =========================== */
 .table-card {
-    margin: 1.25rem 1rem 1.25rem 1rem;
+    margin: 1.25rem 1rem;
     background: var(--bg-card);
     border-radius: 8px;
     border: 1px solid var(--border-color);
     overflow: hidden;
 }
 
-/* Header wrap: header + título Acciones */
 .table-header-wrap {
     display: grid;
-    grid-template-columns: 1fr 240px; /* misma columna de acciones que en filas */
+    grid-template-columns: 1fr 240px;
     align-items: stretch;
 }
 
 .table-header {
     display: grid;
-    grid-template-columns: 120px 80px 170px 1fr; /* Seguimientos */
+    grid-template-columns: 120px 80px 170px 1fr;
     background: var(--btn-primary);
     color: #fff;
     font-weight: 700;
-    padding: 0.9rem 0.9rem;
+    padding: 0.9rem;
     gap: 10px;
 }
 
 .table-header.five-cols {
-    /* Llamadas: A quien más chico, Observaciones más grande */
     grid-template-columns: 120px 80px 180px 140px 1fr;
 }
 
@@ -134,32 +135,31 @@
     letter-spacing: 0.3px;
 }
 
-/* Cuerpo */
 .table-body {
     background: var(--bg-card);
 }
 
-/* Fila Seguimiento: 4 columnas + acciones */
 .seguimiento-grid {
     display: grid;
-    grid-template-columns: 120px 80px 170px 1fr 240px; /* acciones al final */
+    grid-template-columns: 120px 80px 170px 1fr 240px;
     gap: 10px;
     padding: 0.75rem 0.9rem;
     border-top: 1px solid var(--border-color);
     align-items: start;
 }
 
-/* Fila Llamadas: 5 columnas + acciones */
 .llamadas-grid {
     display: grid;
-    grid-template-columns: 120px 80px 180px 140px 1fr 240px; /* acciones al final */
+    grid-template-columns: 120px 80px 180px 140px 1fr 240px;
     gap: 10px;
     padding: 0.75rem 0.9rem;
     border-top: 1px solid var(--border-color);
     align-items: start;
 }
 
-/* Inputs */
+/* ===========================
+   Inputs
+   =========================== */
 .cell-input,
 .cell-textarea {
     width: 100%;
@@ -179,17 +179,16 @@
     }
 }
 
-/* Textarea: que NO corte texto y crezca */
 .cell-textarea {
-    resize: none;            /* auto-grow por JS */
-    overflow: hidden;        /* evita scroll interno */
+    resize: none;
+    overflow: hidden;
     white-space: pre-wrap;
     word-break: break-word;
     min-height: 44px;
 }
 
 /* ===========================
-   Columna Acciones (sin sobreponer)
+   Columna acciones
    =========================== */
 .actions-col {
     display: flex;
@@ -201,41 +200,97 @@
     border-left: 1px solid var(--border-color);
 }
 
-/* Toggle:*/
-.canal-toggle {
+/* ===========================
+   Toggle de canales - limpio y grande
+   =========================== */
+.canal-toggle.solo-iconos {
     display: inline-flex;
-    background: #fff;
-    border: 1.5px solid var(--border-color);
-    border-radius: 6px;
-    padding: 2px;
-    gap: 4px;
+    gap: 8px;
+    background: transparent;
+    border: 0;
+    padding: 0;
 }
 
-.canal-toggle mat-button-toggle {
-    min-width: 34px;
-    width: 50px;
-    height: 34px;
-    border-radius: 6px;
-    border: 1px solid transparent;
-    background: #fff;
-    display: inline-flex;
+.icon-btn-wrap {
+    width: 42px;
+    height: 42px;
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.canal-toggle mat-button-toggle.mat-button-toggle-checked {
-    background: rgba(0, 51, 102, 0.12);
-    border-color: var(--btn-primary);
+.canal-icon {
+    display: block;
+    object-fit: contain;
 }
 
-.canal-toggle mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
+.canal-icon.grande {
+    width: 30px;
+    height: 30px;
 }
 
-/* Botón confirmar */
+.canal-mat-icon {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 30px;
+}
+
+.nota-icon {
+    transform: scale(1.1);
+}
+
+/* Angular Material por dentro */
+:host ::ng-deep .canal-toggle.solo-iconos .mat-button-toggle {
+    border: none !important;
+    background: transparent !important;
+    border-radius: 50% !important;
+    overflow: visible !important;
+}
+
+:host ::ng-deep .canal-toggle.solo-iconos .mat-button-toggle-appearance-standard {
+    border: none !important;
+}
+
+:host ::ng-deep .canal-toggle.solo-iconos .mat-button-toggle-button {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+}
+
+:host ::ng-deep .canal-toggle.solo-iconos .mat-button-toggle-label-content {
+    padding: 0 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+:host ::ng-deep .canal-toggle.solo-iconos .mat-button-toggle-focus-overlay,
+:host ::ng-deep .canal-toggle.solo-iconos .mat-ripple,
+:host ::ng-deep .canal-toggle.solo-iconos .mat-button-toggle-ripple {
+    border-radius: 50% !important;
+}
+
+:host ::ng-deep .canal-toggle.solo-iconos .mat-button-toggle-checked {
+    background: #eef3ff !important;
+    box-shadow: inset 0 0 0 1px #c7d2fe;
+    border-radius: 50% !important;
+}
+
+:host ::ng-deep .canal-toggle.solo-iconos .mat-button-toggle:hover {
+    background: #f5f7fb !important;
+    border-radius: 50% !important;
+}
+
+/* ===========================
+   Botón confirmar
+   =========================== */
 .confirm-btn {
     display: inline-flex;
     align-items: center;
@@ -255,9 +310,12 @@
     }
 }
 
-/* Trash siempre visible*/
+/* ===========================
+   Botón eliminar
+   =========================== */
 .trash-btn {
     color: #cc3344;
+
     mat-icon {
         font-size: 20px;
         width: 20px;
@@ -265,7 +323,9 @@
     }
 }
 
-/* Chips locked */
+/* ===========================
+   Chips
+   =========================== */
 mat-chip {
     font-weight: 700;
     white-space: nowrap;
@@ -292,7 +352,7 @@ mat-chip {
     font-weight: 700;
 }
 
-/* Locked: bloquea inputs */
+/* Locked */
 .locked-row .cell-input,
 .locked-row .cell-textarea {
     background: #f5f6f8 !important;
@@ -301,7 +361,7 @@ mat-chip {
 }
 
 /* ===========================
-   Botón + (derecha)
+   Acciones inferiores
    =========================== */
 .table-actions {
     display: flex;
@@ -311,14 +371,12 @@ mat-chip {
     padding: 0.9rem 0.9rem 1rem 0.9rem;
     border-top: 1px solid var(--border-color);
 
-    /* empuja el + a la derecha sí o sí */
     button:first-child {
         margin-left: auto;
         background: var(--btn-primary) !important;
     }
 }
 
-/* FAB imprimir (si lo quieres fijo como antes) */
 .print-fab {
     position: fixed;
     right: 24px;
@@ -342,11 +400,11 @@ mat-chip {
     }
 
     .seguimiento-grid {
-        grid-template-columns: 120px 80px 170px 1fr; /* sin acciones en grilla */
+        grid-template-columns: 120px 80px 170px 1fr;
     }
 
     .llamadas-grid {
-        grid-template-columns: 120px 80px 180px 140px 1fr; /* sin acciones */
+        grid-template-columns: 120px 80px 180px 140px 1fr;
     }
 
     .actions-col {
@@ -358,7 +416,6 @@ mat-chip {
     }
 }
 
-/* Móvil */
 @media (max-width: 768px) {
     .seguimiento-container {
         padding: 1rem;
@@ -369,11 +426,10 @@ mat-chip {
         align-items: flex-start;
     }
 
-    .row{
+    .row {
         grid-template-columns: 1fr;
     }
 
-    /* filas como cards */
     .seguimiento-grid,
     .llamadas-grid {
         grid-template-columns: 1fr;
@@ -387,6 +443,20 @@ mat-chip {
         justify-content: flex-end;
         border: none;
         padding: 0;
+    }
+
+    :host ::ng-deep .canal-toggle.solo-iconos .mat-button-toggle-button {
+        width: 46px !important;
+        height: 46px !important;
+        min-width: 46px !important;
+    }
+
+    .canal-icon.grande,
+    .canal-mat-icon {
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        font-size: 28px;
     }
 }
 
@@ -426,21 +496,25 @@ mat-chip {
         color: #fff !important;
     }
 }
+
 /* ===========================
-   FIX chips (Angular Material MDC pisa estilos)
+   Fix chips Angular Material MDC
    =========================== */
 :host ::ng-deep .mat-mdc-chip.chip-wa {
     background: #e7f7ee !important;
     border: 1px solid #b7e4c7 !important;
 }
+
 :host ::ng-deep .mat-mdc-chip.chip-mail {
     background: #eef4ff !important;
     border: 1px solid #b9dcff !important;
 }
+
 :host ::ng-deep .mat-mdc-chip.chip-nota {
     background: #fff7e6 !important;
     border: 1px solid #ffe0a3 !important;
 }
+
 :host ::ng-deep .mat-mdc-chip.chip-llamada {
     background: #fff3cd !important;
     border: 1px solid #ffe0a3 !important;
@@ -449,7 +523,19 @@ mat-chip {
 :host ::ng-deep .mat-mdc-chip .mdc-evolution-chip__text-label {
     font-weight: 800 !important;
 }
-:host ::ng-deep .mat-mdc-chip.chip-wa .mdc-evolution-chip__text-label { color: #0f5132 !important; }
-:host ::ng-deep .mat-mdc-chip.chip-mail .mdc-evolution-chip__text-label { color: #1a3e79 !important; }
-:host ::ng-deep .mat-mdc-chip.chip-nota .mdc-evolution-chip__text-label { color: #7a4a00 !important; }
-:host ::ng-deep .mat-mdc-chip.chip-llamada .mdc-evolution-chip__text-label { color: #7a4a00 !important; }
+
+:host ::ng-deep .mat-mdc-chip.chip-wa .mdc-evolution-chip__text-label {
+    color: #0f5132 !important;
+}
+
+:host ::ng-deep .mat-mdc-chip.chip-mail .mdc-evolution-chip__text-label {
+    color: #1a3e79 !important;
+}
+
+:host ::ng-deep .mat-mdc-chip.chip-nota .mdc-evolution-chip__text-label {
+    color: #7a4a00 !important;
+}
+
+:host ::ng-deep .mat-mdc-chip.chip-llamada .mdc-evolution-chip__text-label {
+    color: #7a4a00 !important;
+}

@@ -27,26 +27,49 @@ export class NewClaimComponent implements OnInit {
   basicElement = '';
 
   colors = [
+    { value: 'WT', description: 'Blanco (White)' },
     { value: 'BK', description: 'Negro (Black)' },
-    { value: 'BL', description: 'Azul (Blue)' },
-    { value: 'RD', description: 'Rojo (Red)' },
     { value: 'GY', description: 'Gris (Gray)' },
-    { value: 'GN', description: 'Verde (Green)' },
+    { value: 'BU', description: 'Azul (Blue)' },
+    { value: 'PU', description: 'Púrpura (Purple)' },
+    { value: 'RD', description: 'Rojo (Red)' },
     { value: 'YW', description: 'Amarillo (Yellow)' },
-    { value: 'WH', description: 'Blanco (White)' },
-    { value: 'BR', description: 'Marrón (Brown)' },
-    { value: 'OR', description: 'Naranja (Orange)' },
-    { value: 'PK', description: 'Rosa (Pink)' },
-    { value: 'PU', description: 'Púrpura (Purple)' }
+    { value: 'BE', description: 'Beige (Beige)' },
+    { value: 'BN', description: 'Café (Brown)' },
+    { value: 'GN', description: 'Verde (Green)' },
+    { value: 'MC', description: 'Multi-Color' },
+    { value: 'PR', description: 'Patron (Pattern)' },
   ];
   types = [
-    { value: 'SU', description: 'Maleta (Suitcase)' },
-    { value: 'BA', description: 'Bolso (Bag)' },
-    { value: 'BP', description: 'Mochila (Backpack)' },
-    { value: 'BX', description: 'Caja (Box)' },
-    { value: 'CA', description: 'Portafolio (Case)' },
-    { value: 'GB', description: 'Bolsa de ropa (Garment Bag)' },
-    { value: 'OT', description: 'Otro (Other)' }
+    { value: '01', description: '01' },
+    { value: '02', description: '02' },
+    { value: '03', description: '03' },
+    { value: '04', description: '04' },
+    { value: '05', description: '05' },
+    { value: '06', description: '06' },
+    { value: '07', description: '07' },
+    { value: '08', description: '08' },
+    { value: '09', description: '09' },
+    { value: '10', description: '10' },
+    { value: '11', description: '11' },
+    { value: '12', description: '12' },
+    { value: '13', description: '13' },
+    { value: '14', description: '14' },
+    { value: '15', description: '15' },
+    { value: '16', description: '16' },
+    { value: '17', description: '17' },
+    { value: '18', description: '18' },
+    { value: '19', description: '19' },
+    { value: '20', description: '20' },
+    { value: '21', description: '21' },
+    { value: '22', description: '22' },
+    { value: '23', description: '23' },
+    { value: '24', description: '24' },
+    { value: '25', description: '25' },
+    { value: '26', description: '26' },
+    { value: '27', description: '27' },
+    { value: '28', description: '28' },
+    { value: '29', description: '29' }
   ];
   materials = [
     { value: 'D', description: 'Dual / soft/hard' },
@@ -187,6 +210,17 @@ export class NewClaimComponent implements OnInit {
     { valor: 'TOP', etiqueta: 'Parte Superior' },
     { valor: 'BOTTOM', etiqueta: 'Parte Inferior' }
   ];
+
+  locationImages: Record<string, string> = {
+    'COMBINATION_LOCK': 'images/claims/combination.png',
+    'HANDLE':           'images/claims/handle.png',
+    'STRAPS':           'images/claims/straps.png',
+    'WHEELS':           'images/claims/wheels.png',
+    'SIDE':             'images/claims/side.png',
+    'END':              'images/claims/end.png',
+    'TOP':              'images/claims/top.png',
+    'BOTTOM':           'images/claims/bottom.png',
+  };
 
 
   get route(): FormArray {

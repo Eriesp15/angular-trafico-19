@@ -1,0 +1,152 @@
+
+.page {
+  background-color: var(--bg-card);
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 4px var(--shadow-card);
+}
+
+.main-container {
+min-height: 100vh;
+  background-color: var( --bg-page);
+  padding: 2rem;
+}
+
+.center { text-align: center; padding: 2rem; }
+.error  { color: #c00; }
+.muted  { color: #777; }
+.small  { font-size: 12px; }
+
+.header {
+  margin-bottom: 1.5rem;
+  h2 { margin: 0 0 4px; font-size: 20px; }
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0;
+
+  button {
+    padding: 6px 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+
+    &.active {
+      color: #1a56db;
+      border-bottom-color: #1a56db;
+      font-weight: 600;
+    }
+  }
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+
+  p { margin: 6px 0; }
+}
+
+.card-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.tag {
+  background: #e8f0fe;
+  color: #1a56db;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &--comm {
+    background: #e6f4ea;
+    color: #1e7e34;
+  }
+}
+
+.subject {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.eye-btn {
+  margin-left: auto;
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover { background: #f5f5f5; }
+}
+
+.page-header {
+  margin-bottom: 1.25rem;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--header-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 3px;
+    background: #1b4fad;
+    border-radius: 2px;
+    margin-top: 6px;
+  }
+}
+
+.meta-box {
+  margin-top: 10px;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.meta-row {
+  display: flex;
+  gap: 12px;
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+
+  &:last-child { border-bottom: none; }
+}
+
+.meta-key {
+  color: #777;
+  min-width: 120px;
+  font-weight: 500;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+}
