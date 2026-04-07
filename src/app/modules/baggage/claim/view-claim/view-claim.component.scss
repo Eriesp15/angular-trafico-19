@@ -121,9 +121,10 @@
   flex-direction: column;
 
   &--actions {
-    background-color: var(--bg-page);
-    border: 1px solid var(--border-color);
+    background: linear-gradient(135deg, #f0f5ff 0%, #f8faff 100%);
+    border: 1px solid #d0dff8;
     box-shadow: none;
+    gap: 0;
   }
 }
 
@@ -265,7 +266,7 @@ h3 {
 // ── Valor de campo readonly ───────────────────────────────────────────────────
 .field-value {
   padding: 9px 12px;
-  background-color: var(--bg-card);
+  background-color: var(--bg-card-secondary);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 14px;
@@ -335,7 +336,178 @@ h3 {
   }
 }
 
-// ── Buttons ───────────────────────────────────────────────────────────────────
+// ── Actions panel layout ──────────────────────────────────────────────────────
+.actions-section {
+  padding: 1.25rem 0;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+
+  &__icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: #1b4fad;
+    flex-shrink: 0;
+
+    &--secondary { color: var(--text-secondary); }
+  }
+
+  &__title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  &__sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 2px 0 0;
+  }
+}
+
+.actions-divider {
+  height: 1px;
+  background: #d0dff8;
+  margin: 0;
+}
+
+// ── Botones primarios grandes (siguiente movimiento) ──────────────────────────
+.btn-primary-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-action-primary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 140px;
+  padding: 1rem 1.25rem;
+  background: #1b4fad;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(27, 79, 173, 0.25);
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+
+  mat-icon {
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+    line-height: 1;
+  }
+
+  span {
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+  }
+
+  &__sub {
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    opacity: 0.8;
+    margin-top: -2px;
+  }
+
+  &:hover {
+    background: #163d88;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(27, 79, 173, 0.35);
+  }
+
+  &:active { transform: translateY(0); }
+
+  // Variante éxito (verde)
+  &--success {
+    background: #15803d;
+    box-shadow: 0 2px 8px rgba(21, 128, 61, 0.25);
+
+    &:hover {
+      background: #166534;
+      box-shadow: 0 6px 16px rgba(21, 128, 61, 0.35);
+    }
+  }
+
+  // Variante alerta (ámbar)
+  &--warn {
+    background: #b45309;
+    box-shadow: 0 2px 8px rgba(180, 83, 9, 0.25);
+
+    &:hover {
+      background: #92400e;
+      box-shadow: 0 6px 16px rgba(180, 83, 9, 0.35);
+    }
+  }
+
+  // Variante neutral (gris)
+  &--neutral {
+    background: #475569;
+    box-shadow: 0 2px 8px rgba(71, 85, 105, 0.2);
+
+    &:hover {
+      background: #334155;
+      box-shadow: 0 6px 16px rgba(71, 85, 105, 0.3);
+    }
+  }
+}
+
+// ── Botones secundarios (todas las acciones) ──────────────────────────────────
+.btn-secondary-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-action-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0.5rem 1rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid #c8d8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 1;
+    color: #1b4fad;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: #e8effc;
+    border-color: #1b4fad;
+    color: #1b4fad;
+
+    mat-icon { color: #1b4fad; }
+  }
+}
+
+// ── btn-add conservado para compatibilidad ────────────────────────────────────
 .btn-add {
   margin-top: 0;
   align-self: flex-start;
@@ -365,35 +537,6 @@ h3 {
   &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
-.btn-secondary-action {
-  background: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 0.45rem 0.9rem;
-  font-size: 13px;
-  font-weight: 500;
-  height: 36px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.15s;
-
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    line-height: 1;
-  }
-
-  &:hover {
-    background: #e8effc;
-    border-color: #c2d4f5;
-    color: #1b4fad;
-  }
-}
-
 // ── Misc ──────────────────────────────────────────────────────────────────────
 .form-hint {
   font-size: 12px;
@@ -413,4 +556,8 @@ h3 {
 
 .ruta-item {
   width: 100%;
+}
+
+mat-icon {
+  color: hsl(0, 0%, 80%);
 }

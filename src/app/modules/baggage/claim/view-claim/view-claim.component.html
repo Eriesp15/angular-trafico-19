@@ -33,89 +33,167 @@
 
     <!-- Acciones -->
     <div class="form-content form-content--actions">
-      <h2>Botones de acción</h2>
 
-      <div class="form-group">
-        <h3>Siguiente movimiento</h3>
-        <div class="row row--buttons">
+      <!-- Siguiente movimiento -->
+      <div class="actions-section">
+        <div class="actions-section__header">
+          <mat-icon class="actions-section__icon">arrow_circle_right</mat-icon>
+          <div>
+            <p class="actions-section__title">Siguiente movimiento</p>
+            <p class="actions-section__sub">Acción recomendada según el estado actual del reclamo</p>
+          </div>
+        </div>
+        <div class="btn-primary-grid">
+
           <ng-container *ngIf="isAHL()">
             <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING' || pirData.claim.claimStatus === 'IN_PROCESS'">
-              <button class="btn-add" (click)="indicarBusquedaLocal()">Indicar Búsqueda Local</button>
-              <button class="btn-add" (click)="indicarBusquedaWorldTracer()">Indicar Búsqueda World Tracer</button>
+              <button class="btn-action-primary" (click)="indicarBusquedaLocal()">
+                <mat-icon>manage_search</mat-icon>
+                <span>Indicar Búsqueda Local</span>
+              </button>
+              <button class="btn-action-primary" (click)="indicarBusquedaWorldTracer()">
+                <mat-icon>travel_explore</mat-icon>
+                <span>Búsqueda World Tracer</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'SEARCHING'">
-              <button class="btn-add" (click)="indicarEncontrado()">Indicar Encontrado</button>
-              <button class="btn-add" (click)="indemnizar()">Indemnizar (Equipaje perdido)</button>
+              <button class="btn-action-primary" (click)="indicarEncontrado()">
+                <mat-icon>check_circle</mat-icon>
+                <span>Indicar Encontrado</span>
+              </button>
+              <button class="btn-action-primary btn-action-primary--warn" (click)="indemnizar()">
+                <mat-icon>paid</mat-icon>
+                <span>Indemnizar</span>
+                <span class="btn-action-primary__sub">Equipaje perdido</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'FOUND'">
-              <button class="btn-add" (click)="realizarEntrega()">Realizar entrega</button>
+              <button class="btn-action-primary" (click)="realizarEntrega()">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Realizar Entrega</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-add" (click)="cerrarReclamo()">Cerrar reclamo</button>
-              <button class="btn-add" (click)="cerrarReclamoMal()">Cerrar reclamo Melvi</button>
+              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamo()">
+                <mat-icon>task_alt</mat-icon>
+                <span>Cerrar Reclamo</span>
+              </button>
+              <button class="btn-action-primary btn-action-primary--neutral" (click)="cerrarReclamoMal()">
+                <mat-icon>cancel</mat-icon>
+                <span>Cerrar Reclamo</span>
+                <span class="btn-action-primary__sub">Melvi</span>
+              </button>
             </ng-container>
           </ng-container>
 
           <ng-container *ngIf="isPILFERED()">
             <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
-              <button class="btn-add" (click)="indemnizar()">Indemnizar</button>
+              <button class="btn-action-primary btn-action-primary--warn" (click)="indemnizar()">
+                <mat-icon>paid</mat-icon>
+                <span>Indemnizar</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-add" (click)="cerrarReclamo()">Cerrar reclamo</button>
+              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamo()">
+                <mat-icon>task_alt</mat-icon>
+                <span>Cerrar Reclamo</span>
+              </button>
             </ng-container>
           </ng-container>
 
           <ng-container *ngIf="isDPR()">
             <ng-container *ngIf="pirData.claim.claimStatus === 'PENDING'">
-              <button class="btn-add" (click)="enviarAReparacion()">Enviar a Reparación</button>
-              <button class="btn-add" (click)="enviarACochabamba()">Enviar a Cochabamba</button>
-              <button class="btn-add" (click)="indemnizar()">Indemnizar (Compra de maleta)</button>
+              <button class="btn-action-primary" (click)="enviarAReparacion()">
+                <mat-icon>build</mat-icon>
+                <span>Enviar a Reparación</span>
+              </button>
+              <button class="btn-action-primary" (click)="enviarACochabamba()">
+                <mat-icon>flight_takeoff</mat-icon>
+                <span>Enviar a Cochabamba</span>
+              </button>
+              <button class="btn-action-primary btn-action-primary--warn" (click)="indemnizar()">
+                <mat-icon>shopping_bag</mat-icon>
+                <span>Indemnizar</span>
+                <span class="btn-action-primary__sub">Compra de maleta</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRING'">
-              <button class="btn-add" (click)="recogerMaleta()">Recoger maleta en reparación</button>
+              <button class="btn-action-primary" (click)="recogerMaleta()">
+                <mat-icon>inventory</mat-icon>
+                <span>Recoger Maleta</span>
+                <span class="btn-action-primary__sub">En reparación</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'TRANSFERRED'">
-              <button class="btn-add" (click)="enviarAReparacion()">Enviar a Reparación</button>
+              <button class="btn-action-primary" (click)="enviarAReparacion()">
+                <mat-icon>build</mat-icon>
+                <span>Enviar a Reparación</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRED'">
-              <button class="btn-add" (click)="realizarEntrega()">Realizar entrega</button>
+              <button class="btn-action-primary" (click)="realizarEntrega()">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Realizar Entrega</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-add" (click)="cerrarReclamo()">Cerrar reclamo</button>
+              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamo()">
+                <mat-icon>task_alt</mat-icon>
+                <span>Cerrar Reclamo</span>
+              </button>
             </ng-container>
           </ng-container>
+
         </div>
       </div>
 
-      <div class="form-group">
-        <h3>Todas las acciones de este reclamo</h3>
-        <div class="row row--buttons">
-          <button class="btn-secondary-action" (click)="verHojaSeguimiento()">
-            <mat-icon>description</mat-icon> Ver Hoja de Seguimiento
+      <div class="actions-divider"></div>
+
+      <!-- Todas las acciones -->
+      <div class="actions-section">
+        <div class="actions-section__header">
+          <mat-icon class="actions-section__icon actions-section__icon--secondary">tune</mat-icon>
+          <div>
+            <p class="actions-section__title">Todas las acciones</p>
+            <p class="actions-section__sub">Operaciones disponibles para este reclamo</p>
+          </div>
+        </div>
+        <div class="btn-secondary-grid">
+          <button class="btn-action-secondary" (click)="verHojaSeguimiento()">
+            <mat-icon>description</mat-icon>
+            <span>Ver Hoja de Seguimiento</span>
           </button>
-          <button *ngIf="isAHL()" class="btn-secondary-action" (click)="verFormularioContenido()">
-            <mat-icon>inventory_2</mat-icon> Ver Formulario de Contenido
+          <button *ngIf="isAHL()" class="btn-action-secondary" (click)="verFormularioContenido()">
+            <mat-icon>inventory_2</mat-icon>
+            <span>Ver Formulario de Contenido</span>
           </button>
-          <button *ngIf="isAHL() || isDPR()" class="btn-secondary-action" (click)="realizarEntrega()">
-            <mat-icon>local_shipping</mat-icon> Realizar entrega
+          <button *ngIf="isAHL() || isDPR()" class="btn-action-secondary" (click)="realizarEntrega()">
+            <mat-icon>local_shipping</mat-icon>
+            <span>Realizar Entrega</span>
           </button>
-          <button *ngIf="isDPR()" class="btn-secondary-action" (click)="enviarAReparacion()">
-            <mat-icon>build</mat-icon> Enviar a Reparación
+          <button *ngIf="isDPR()" class="btn-action-secondary" (click)="enviarAReparacion()">
+            <mat-icon>build</mat-icon>
+            <span>Enviar a Reparación</span>
           </button>
-          <button class="btn-secondary-action" (click)="indemnizar()">
-            <mat-icon>paid</mat-icon> Añadir gasto
+          <button class="btn-action-secondary" (click)="indemnizar()">
+            <mat-icon>paid</mat-icon>
+            <span>Añadir Gasto</span>
           </button>
-          <button class="btn-secondary-action" (click)="cerrarReclamo()">
-            <mat-icon>check_circle</mat-icon> Cerrar reclamo
+          <button class="btn-action-secondary" (click)="cerrarReclamo()">
+            <mat-icon>check_circle</mat-icon>
+            <span>Cerrar Reclamo</span>
           </button>
-          <button class="btn-secondary-action" (click)="verGastos()">
-            <mat-icon>receipt</mat-icon> Ver gastos
+          <button class="btn-action-secondary" (click)="verGastos()">
+            <mat-icon>receipt_long</mat-icon>
+            <span>Ver Gastos</span>
           </button>
-          <button *ngIf="isAHL()" class="btn-secondary-action" [routerLink]="['/baggage/search']">
-            <mat-icon>flight_takeoff</mat-icon> World Tracer
+          <button *ngIf="isAHL()" class="btn-action-secondary" [routerLink]="['/baggage/search']">
+            <mat-icon>travel_explore</mat-icon>
+            <span>World Tracer</span>
           </button>
         </div>
       </div>
+
     </div>
 
     <!-- PIR: misma estructura exacta que new-claim -->
