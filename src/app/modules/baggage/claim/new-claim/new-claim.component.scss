@@ -31,7 +31,7 @@
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--header-primary);
-  margin: 0;
+  margin: 1rem 0 0.25rem;
   letter-spacing: -0.02em;
 }
 
@@ -44,74 +44,6 @@
   box-shadow: 0 1px 4px var(--shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 0;
-}
-
-// ── Section (fila horizontal de campos) ───────────────────────────────────────
-.section {
-  display: flex;
-  flex-direction: row;
-    align-items: center;
-    gap: .5rem;
-}
-.section-column {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-    align-items: center;
-    gap: .5rem;
-}
-.section-multifield {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-    gap: .5rem;
-
-}
-  .input-label-multifield {
-    margin-left: 45px;
-  }
-.section-spaced {
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: .5rem;
-}
-.section-field {
-  display: flex;
-}
-
-// ── Form group (bloque con título, columna) ───────────────────────────────────
-.claim-type-container {
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-  display: flex;
-  flex-direction: column;
-
-
-}
-.form-group {
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-
-
-}
-
-
-.form-group-border {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  background: var(--bg-page);
-
-  h2 { margin-bottom: 0.6rem; }
 }
 
 // ── Headings ──────────────────────────────────────────────────────────────────
@@ -133,39 +65,136 @@ h3 {
   margin: 0.75rem 0 0.4rem;
 }
 
-// ── Form fields ───────────────────────────────────────────────────────────────
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 4px;
-  min-width: 250px;
-}
+// ── Rows ──────────────────────────────────────────────────────────────────────
 
-.form-field-short {
+// Fila estándar: ocupa todo el ancho, hijos .field y .field-grow crecen equitativamente
+.row {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 4px;
-  max-width: 100px;
-}
-
-.form-field-large {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 4px;
-  min-width: 500px;
+
+  > .field,
+  > .field-grow { flex: 1; }
 }
 
+// Fila con espacio entre extremos (ej: aeropuerto ↔ tipo de reclamo)
+.row-spaced {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+// Columna: hijos apilados, ocupa el ancho completo
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+// ── Form group ────────────────────────────────────────────────────────────────
+.form-group {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group-border {
+  margin-top: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  background: var(--bg-page);
+
+  h2 { margin-bottom: 0.6rem; }
+}
+
+// ── Fields ────────────────────────────────────────────────────────────────────
+
+// Campo genérico (no crece)
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+// Campo corto con ancho fijo
+.field-short {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100px;
+  flex-shrink: 0;
+}
+
+// Campo que ocupa todo el ancho disponible
+.field-grow {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+// ── Labels ────────────────────────────────────────────────────────────────────
 .input-label {
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+// ── Input con código prefix ───────────────────────────────────────────────────
+.input-prefixed {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #003366;
+  color: white;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  height: 36px;
+  min-width: 35px;
+  padding: 0 0.4rem;
+  flex-shrink: 0;
+}
+
+.input-field {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  height: 36px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #1b4fad;
+    box-shadow: 0 0 0 3px rgba(27, 79, 173, 0.1);
   }
+
+  &::placeholder { color: var(--text-secondary); opacity: 0.7; }
+}
 
 .readonly-field {
   background: var(--bg-page) !important;
@@ -175,38 +204,23 @@ h3 {
 
 // ── Tipo card (radio / checkbox) ──────────────────────────────────────────────
 .tipo-card {
-
   display: flex;
+  flex-direction: column;
   align-items: center;
+  gap: 4px;
   padding: 9px 14px;
-  min-width: 120px;
+  min-width: 90px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s;
   background: var(--bg-card);
-    flex-direction: column;
-  min-width: 90px;
 
   .location-img {
     width: 100px;
     height: 100px;
     object-fit: contain;
     pointer-events: none;
-  }
-  &:hover {
-    background-color: var(--bg-card-hover);
-    border-color: #c2d4f5;
-  }
-
-  &.selected {
-    background-color: var(--bg-card-selected);
-    border-color: #1b4fad;
-
-    .tipo-label {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
   }
 
   input[type="radio"],
@@ -224,13 +238,29 @@ h3 {
     color: var(--text-primary);
     cursor: pointer;
     line-height: 1.3;
+    text-align: center;
+  }
+
+  &:hover {
+    background-color: var(--bg-card-hover);
+    border-color: #c2d4f5;
+  }
+
+  &.selected {
+    background-color: var(--bg-card-selected);
+    border-color: #1b4fad;
+
+    .tipo-label {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
   }
 }
-
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
 .btn-add {
   margin-top: 0.5rem;
+  align-self: flex-start;
   background-color: #1b4fad;
   color: white;
   border: none;
@@ -245,7 +275,6 @@ h3 {
   height: 36px;
   flex-shrink: 0;
   transition: background 0.15s;
-  max-width: 250px;
 
   &:hover { background-color: #163d88; }
   &:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -260,17 +289,14 @@ h3 {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   font-size: 13px;
   font-weight: 600;
   height: 36px;
   flex-shrink: 0;
   transition: all 0.15s;
 
-  &:hover {
-    background-color: #fee2e2;
-    border-color: #f87171;
-  }
-
+  &:hover { background-color: #fee2e2; border-color: #f87171; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
@@ -294,6 +320,32 @@ h3 {
   &:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 }
 
+.btn {
+  padding: 9px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.btn-primary {
+  background-color: #1b4fad;
+  color: white;
+
+  &:hover { background-color: #163d88; }
+  &:disabled { background-color: #c2d4f5; color: #fff; cursor: not-allowed; }
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+
+  &:hover { background-color: var(--bg-page); color: var(--text-primary); }
+}
+
 // ── Misc ──────────────────────────────────────────────────────────────────────
 .form-hint {
   font-size: 12px;
@@ -314,10 +366,7 @@ h3 {
 // ── Modal ─────────────────────────────────────────────────────────────────────
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.45);
   display: flex;
   justify-content: center;
@@ -360,19 +409,15 @@ h3 {
     border-radius: 4px;
     line-height: 1;
 
-    &:hover {
-      color: var(--text-primary);
-      background: var(--bg-page);
-    }
+    &:hover { color: var(--text-primary); background: var(--bg-page); }
   }
 }
 
 .modal-body {
   padding: 20px;
 
-  .form-field {
+  .field {
     margin-bottom: 14px;
-    min-width: unset;
 
     label {
       display: block;
@@ -437,88 +482,3 @@ h3 {
   padding: 16px 20px;
   border-top: 1px solid var(--border-color);
 }
-
-.btn {
-  padding: 9px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  transition: all 0.15s;
-}
-
-.btn-primary {
-  background-color: #1b4fad;
-  color: white;
-
-  &:hover { background-color: #163d88; }
-  &:disabled { background-color: #c2d4f5; color: #fff; cursor: not-allowed; }
-}
-
-.btn-secondary {
-  background-color: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-
-  &:hover {
-    background-color: var(--bg-page);
-    color: var(--text-primary);
-  }
-}
-
-
-    .code {
-      display: flex;
-      background-color: #003366;
-      color: white;
-      padding: 0.5rem 0.5rem;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 0.75rem;
-      align-items: center;
-      justify-content: center;
-      height:35px ;
-      width:35px;
-    }
-
-    .input-field {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #111827;
-    background-color: hsl(0, 0%, 38%);
-    height: 100%;
-        
-        padding: 9px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: 14px;
-    color: var(--text-primary);
-    background: var(--bg-card);
-    transition: border-color 0.2s, box-shadow 0.2s;
-
-    &:focus {
-      border-color: #1b4fad;
-    }
-
-    &::placeholder { color: hsl(0, 0%, 60%); }
-  }
-
-  .input-container{
-    display:flex;
-    align-items: center;
-    gap: .5rem;
-    height: 25px;
-
-
-  }  
-  .code-form-group {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    gap: 8
-  }
