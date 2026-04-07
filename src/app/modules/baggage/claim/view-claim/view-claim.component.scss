@@ -121,7 +121,7 @@
   flex-direction: column;
 
   &--actions {
-    background: linear-gradient(135deg, #f0f5ff 0%, #f8faff 100%);
+    background: var(--bg-card-secondary);
     border: 1px solid #d0dff8;
     box-shadow: none;
     gap: 0;
