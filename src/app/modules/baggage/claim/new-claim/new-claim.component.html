@@ -10,16 +10,19 @@
     </div>
     <!-- Rutas de Vuelo -->
     <div class="form-group" formArrayName="route">
-      <h2>Rutas de Vuelo</h2>
-      <div class="section">
-        <div *ngFor="let stop of route.controls; let i = index">
-          <div [formGroupName]="i" class="form-field">
-            <input type="text" formControlName="stop" placeholder="Ruta {{ i + 1 }}" maxlength="7">
-            <button type="button" class="btn-remove" (click)="eliminarRuta(i)" [disabled]="route.length <= 2">
-              ✕ Eliminar
-            </button>
+      <h2 class="input-label-multifield">Introduzca las estaciones involucradas / Enter the stations involved</h2>
+      <div class="section-multifield">            
+          <span class="code">QD</span>
+          <div *ngFor="let stop of route.controls; let i = index">
+            <div [formGroupName]="i" class="form-field">
+
+                <input class="input-field" type="text" formControlName="stop" placeholder="Ruta {{ i + 1 }}" maxlength="7">
+            
+              <button type="button" class="btn-remove" (click)="eliminarRuta(i)" [disabled]="route.length <= 2">
+                ✕ Eliminar
+              </button>
+            </div>
           </div>
-        </div>
       </div>
       <button type="button" class="btn-add" (click)="agregarRuta()" [disabled]="route.length >= 5">
         + Agregar Ruta
@@ -27,14 +30,14 @@
     </div>
 
     <!-- Originador + Tipo de reclamo -->
-    <div class="section">
+    <div class="section-spaced">
       <div class="form-field">
-        <label>Originador</label>
-        <input type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="7">
+        <label class="input-label">Aeropuerto</label>
+        <input class="input-field" type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="7">
       </div>
-      <div class="form-group">
-        <h2>Tipo de Reclamo *</h2>
-        <div class="section">
+      <div class="claim-type-container">
+        <label class="input-label">Tipo de Reclamo *</label>
+        <div class="section-multifield">
           <label *ngFor="let tipo of claimType"
                 class="tipo-card"
                 [class.selected]="pIR.get('claimType')?.value === tipo.valor">
@@ -47,45 +50,54 @@
 
     <!-- Aeropuerto / Aerolínea / Referencia -->
     <div class="section">
-      <div class="form-field">
-        <label>Aeropuerto</label>
-        <input type="text" formControlName="airportText" placeholder="Aeropuerto" maxlength="3">
+      <div class="form-field-short">
+        <label class="input-label">Aeropuerto</label>
+        <input class="input-field" type="text" formControlName="airportText" placeholder="Aeropuerto" maxlength="3">
       </div>
-      <div class="form-field">
-        <label>Aerolínea</label>
-        <input type="text" formControlName="airline" placeholder="Aerolínea" maxlength="2">
+      <div class="form-field-short">
+        <label class="input-label">Aerolínea</label>
+        <input class="input-field" type="text" formControlName="airline" placeholder="Aerolínea" maxlength="2">
       </div>
-      <div class="form-field">
-        <label>Referencia</label>
-        <input type="text" formControlName="reference" placeholder="Referencia" maxlength="5">
+      <div class="form-field-short">
+        <label class="input-label">Referencia</label>
+        <input class="input-field" type="text" formControlName="reference" placeholder="Referencia" maxlength="5">
       </div>
     </div>
 
     <!-- Pasajero -->
     <div class="section">
-      <div class="form-field-large">
-        <label>Apellidos del pasajero</label>
-        <input type="text" formControlName="passengerLastName" placeholder="Apellidos del pasajero">
-      </div>
-      <div class="form-field-large">
-        <label>Nombres del pasajero</label>
-        <input type="text" formControlName="passengerName" placeholder="Nombres del pasajero">
-      </div>
+          <div class="form-field-large">
+            
+            <label class="input-label">Apellidos del pasajero</label>
+            <div class="input-container">
+              <span class="code">NM</span>
+              <input class="input-field" type="text" formControlName="passengerLastName" placeholder="Apellidos del pasajero">    
+            </div>
+
+          </div>
+          <div class="form-field-large">
+            <label class="input-label">Nombres del pasajero</label>
+            <input class="input-field" type="text" formControlName="passengerName" placeholder="Nombres del pasajero">
+          </div>
     </div>
     <div class="section">
+      <span class="code">IT</span>
       <div class="form-field">
-        <label>Iniciales en el equipaje</label>
-        <input type="text" formControlName="initials" placeholder="Iniciales en el equipaje" maxlength="4">
+        <label class="input-label">Iniciales en el equipaje</label>
+        <input class="input-field" type="text" formControlName="initials" placeholder="Iniciales en el equipaje" maxlength="4">
       </div>
     </div>
+      
 
     <!-- Bagtags -->
     <div class="form-group" formArrayName="bagtags">
-      <h2>Bagtags</h2>
-      <div class="section">
+
+      <label class="input-label">Bagtags</label>
+      <div class="section-multifield">
+        <span class="code">TN</span>
         <div *ngFor="let bagtag of bagtags.controls; let i = index">
           <div [formGroupName]="i" class="form-field">
-            <input type="text" formControlName="number" placeholder="Ej: ABC123456" maxlength="20">
+            <input class="input-field" type="text" formControlName="number" placeholder="Ej: ABC123456" maxlength="20">
             <button type="button" class="btn-remove" (click)="eliminarBagtag(i)" [disabled]="bagtags.length <= 1">
               ✕ Eliminar
             </button>
@@ -99,11 +111,12 @@
 
     <!-- Color / tipo / descripción -->
     <div class="form-group">
-      <h2>Color / Tipo / Descripción</h2>
-      <div class="section" formArrayName="bagDescription">
+      <label class="input-label">Color / Tipo / Descripción</label>
+      <div class="section-multifield" formArrayName="bagDescription">
+        <span class="code">CT</span>
         <div *ngFor="let description of bagDescription.controls; let i = index" class="bagtag-item">
           <div [formGroupName]="i" class="form-field">
-            <input type="text" formControlName="description" placeholder="Ej: WT01DBC" maxlength="7">
+            <input class="input-field" type="text" formControlName="description" placeholder="Ej: WT01DBC" maxlength="7">
             <button type="button" class="btn-add" (click)="indiceActual = i; modalIdentificacionAbierto = true">
               Llenar por interfaz
             </button>
@@ -176,11 +189,12 @@
 
     <!-- Ruta a rastrear -->
     <div class="form-group" formArrayName="traceRoute">
-      <h2>Ruta a rastrear</h2>
+      <label class="input-label">Ruta a rastrear</label>
       <div class="section">
+        <span class="code">RT</span>
         <div *ngFor="let stop of traceRoute.controls; let i = index">
           <div [formGroupName]="i" class="form-field">
-            <input type="text" formControlName="traceRouteStop" placeholder="Ruta {{ i + 1 }}" maxlength="3">
+            <input class="input-field" type="text" formControlName="traceRouteStop" placeholder="Ruta {{ i + 1 }}" maxlength="3">
             <button type="button" class="btn-remove" (click)="eliminarRutaARastrear(i)" [disabled]="traceRoute.length <= 1">
               ✕ Eliminar
             </button>
@@ -194,12 +208,13 @@
 
     <!-- Número de vuelo -->
     <div class="form-group" formArrayName="flightNumber">
-      <h2>Número de vuelo</h2>
-      <div class="section">
+      <label class="input-label">Número de vuelo</label>
+      <div class="section-multifield">
+        <span class="code">FD</span>
         <div *ngFor="let flight of flightNumber.controls; let i = index">
           <div [formGroupName]="i" class="form-field">
-            <input type="text" formControlName="flightNo" placeholder="Número de vuelo {{ i + 1 }}" maxlength="10">
-            <input type="datetime-local" formControlName="flightDate" placeholder="Fecha y hora de vuelo {{ i + 1 }}">
+            <input class="input-field" type="text" formControlName="flightNo" placeholder="Número de vuelo {{ i + 1 }}" maxlength="10">
+            <input class="input-field" type="datetime-local" formControlName="flightDate" placeholder="Fecha y hora de vuelo {{ i + 1 }}">
             <button type="button" class="btn-remove" (click)="eliminarVuelo(i)" [disabled]="flightNumber.length <= 1">
               ✕ Eliminar
             </button>
@@ -213,11 +228,12 @@
 
     <!-- Marca en la maleta -->
     <div class="form-group" formArrayName="bagIdentification">
-      <h2>Marca en la maleta</h2>
-      <div class="section">
+      <label class="input-label">Marca en la maleta</label>
+        <span class="code">BI</span>
+      <div class="section-column">
         <div *ngFor="let identification of bagIdentification.controls; let i = index" class="ruta-item">
           <div [formGroupName]="i" class="form-field">
-            <input type="text" formControlName="mark" placeholder="Marca {{ i + 1 }}" maxlength="200">
+            <input class="input-field" type="text" formControlName="mark" placeholder="Marca {{ i + 1 }}" maxlength="200">
             <button type="button" class="btn-remove" (click)="eliminarIdentificacion(i)" [disabled]="bagIdentification.length <= 1">
               ✕ Eliminar
             </button>
@@ -231,11 +247,12 @@
 
     <!-- Contenido -->
     <div class="form-group" formArrayName="contents">
-      <h2>Contenido</h2>
-      <div class="section">
+      <label class="input-label">Contenido</label>
+      <span class="code">BI</span>
+      <div class="section-column">
         <div *ngFor="let description of contents.controls; let i = index" class="ruta-item">
           <div [formGroupName]="i" class="form-field">
-            <input type="text" formControlName="description" placeholder="Contenido {{ i + 1 }}" maxlength="100">
+            <input type="text" class="input-field" formControlName="description" placeholder="Contenido {{ i + 1 }}" maxlength="100">
             <button type="button" class="btn-remove" (click)="eliminarContenido(i)" [disabled]="contents.length <= 1">
               ✕ Eliminar
             </button>
@@ -250,94 +267,144 @@
     <!-- Direcciones -->
     <div class="section">
       <div class="form-field-large">
-        <label>Dirección Permanente</label>
-        <input type="text" formControlName="permanentAddress" placeholder="Dirección Permanente" maxlength="200">
-      </div>
+        <label class="input-label">Dirección Permanente</label>
+        <div class="input-container">
+          <span class="code">PA</span>
+          <input class="input-field" type="text" formControlName="permanentAddress" placeholder="Dirección Permanente" maxlength="200">
+      
+        </div>
+ </div>
     </div>
     <div class="section">
       <div class="form-field-large">
-        <label>Dirección Temporal</label>
-        <input type="text" formControlName="temporaryAddress" placeholder="Dirección Temporal" maxlength="200">
+        <label class="input-label">Dirección Temporal</label>
+        <div class="input-container">
+          <span class="code">TA</span>
+          <input class="input-field" type="text" formControlName="temporaryAddress" placeholder="Dirección Temporal" maxlength="200">
+        </div>
       </div>
     </div>
 
     <!-- Contacto -->
     <div class="section">
-      <div class="form-field">
-        <label>Correo electrónico</label>
-        <input type="email" formControlName="email" placeholder="Email" maxlength="200">
+      <div class="form-field-large">
+        <label class="input-label">Correo electrónico</label>
+        <div class="input-container">
+          <span class="code">EM</span>
+          <input class="input-field" type="email" formControlName="email" placeholder="Email" maxlength="200">
+        </div>
       </div>
     </div>
     <div class="section">
-      <div class="form-field">
-        <label>Teléfono Permanente</label>
-        <input type="text" formControlName="permanentPhone" placeholder="Teléfono Permanente" maxlength="20">
+      <div class="form-field-large">
+        <label class="input-label">Teléfono Permanente</label>
+        <div class="input-container">
+          <span class="code">PN</span>
+          <input class="input-field" type="text" formControlName="permanentPhone" placeholder="Teléfono Permanente" maxlength="20">
+        </div>
       </div>
-      <div class="form-field">
-        <label>Teléfono Temporal</label>
-        <input type="text" formControlName="temporaryPhone" placeholder="Teléfono Temporal" maxlength="20">
+      <div class="form-field-large">
+        <label class="input-label">Teléfono Temporal</label>
+        <div class="input-container">
+          <span class="code">TP</span>
+          <input class="input-field" type="text" formControlName="temporaryPhone" placeholder="Teléfono Temporal" maxlength="20">
+        </div>
       </div>
     </div>
     <div class="section">
-      <div class="form-field">
-        <label>Instrucciones de entrega</label>
-        <input type="text" formControlName="deliveryInstructions" placeholder="Instrucciones de entrega">
+      <div class="form-field-large">
+        <label class="input-label">Instrucciones de entrega</label>
+        <div class="input-container">
+          <span class="code">LD</span>
+          <input class="input-field" type="text" formControlName="deliveryInstructions" placeholder="Instrucciones de entrega">
+        </div>
       </div>
     </div>
     <div class="section">
-      <div class="form-field">
-        <label>Información adicional</label>
-        <input type="text" formControlName="additionalInfo" placeholder="Información adicional">
+      <div class="form-field-large">
+        <label class="input-label">Texto libre</label>
+        <div class="input-container">
+          <span class="code">FF</span>
+          <input class="input-field" type="text" formControlName="additionalInfo" placeholder="Información adicional">
+        </div>
       </div>
     </div>
-
+    <h1 class="section-title">ELEMENTOS ADICIONALES / ADDITIONAL ELEMENTS</h1>
     <!-- Datos adicionales equipaje -->
     <div class="section">
       <div class="form-field">
-        <label>Peso del Equipaje Facturado</label>
-        <input type="number" formControlName="checkedBaggageWeight" placeholder="Peso del Equipaje Facturado">
+        <label class="input-label">Peso del Equipaje Facturado</label>
+        <div class="input-container">
+          <span class="code">BW</span>
+          <input class="input-field" type="number" formControlName="checkedBaggageWeight" placeholder="Peso del Equipaje Facturado">
+        </div>
       </div>
       <div class="form-field">
-        <label>Peso del Equipaje Entregado</label>
-        <input type="number" formControlName="deliveredBaggageWeight" placeholder="Peso del Equipaje Entregado">
+        <label class="input-label">Peso del Equipaje Entregado</label>
+        <div class="input-container">
+          <span class="code">DW</span>
+          <input class="input-field" type="number" formControlName="deliveredBaggageWeight" placeholder="Peso del Equipaje Entregado">
+        </div>
       </div>
       <div class="form-field">
-        <label>Diferencia de Peso (kg)</label>
-        <input type="number" formControlName="weightDifference" placeholder="Se calcula automáticamente" readonly class="readonly-field">
+        <label class="input-label">Diferencia de Peso (kg)/Missing weight</label>
+        <div class="input-container">
+          <span class="code">MW</span>
+          <input class="input-field" type="number" formControlName="weightDifference" placeholder="Se calcula automáticamente" readonly class="readonly-field">
+        </div>
       </div>
       <div class="form-field">
-        <label>Idioma</label>
-        <input type="text" formControlName="language" placeholder="Idioma" maxlength="10">
+        <label class="input-label">Idioma/language</label>
+        <div class="input-container">
+          <span class="code">LG</span>
+          <input class="input-field" type="text" formControlName="language" placeholder="Idioma" maxlength="10">
+        </div>
       </div>
       <div class="form-field">
-        <label>Número de Pasaporte</label>
-        <input type="text" formControlName="passportNumber" placeholder="Número de Pasaporte">
-      </div>
-    </div>
-    <div class="section">
-      <div class="form-field">
-        <label>Número de Ticket</label>
-        <input type="text" formControlName="ticketNumber" placeholder="Número de Ticket">
-      </div>
-      <div class="form-field">
-        <label>PNR — Grabar ubicador</label>
-        <input type="text" formControlName="pnr" placeholder="PNR">
-      </div>
-      <div class="form-field">
-        <label>Identificador de viajero frecuente</label>
-        <input type="text" formControlName="frequentFlyerId" placeholder="Frequent Flyer ID">
-      </div>
-    </div>
-    <div class="section">
-      <div class="form-field">
-        <label>Razón de Pérdida</label>
-        <input type="text" formControlName="lossReason" placeholder="Razón de Pérdida">
+        <label class="input-label">Número de Pasaporte</label>
+        <div class="input-container">
+          <span class="code">PP</span>
+          <input class="input-field" type="text" formControlName="passportNumber" placeholder="Número de Pasaporte">
+        </div>
       </div>
     </div>
     <div class="section">
       <div class="form-field">
-        <label>Estación de Fallo</label>
-        <input type="text" formControlName="faultStation" placeholder="Estación de Fallo">
+        <label class="input-label">Número de Ticket</label>
+        <div class="input-container">
+          <span class="code">TN</span>
+          <input class="input-field" type="text" formControlName="ticketNumber" placeholder="Número de Ticket">
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="input-label">PNR — Grabar ubicador</label>
+        <div class="input-container">
+          <span class="code">PN</span>
+          <input class="input-field" type="text" formControlName="pnr" placeholder="PNR">
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="input-label">Identificador de viajero frecuente</label>
+        <div class="input-container">
+          <span class="code">FF</span>
+          <input class="input-field" type="text" formControlName="frequentFlyerId" placeholder="Frequent Flyer ID">
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="form-field">
+        <label class="input-label">Razón de Pérdida</label>
+        <div class="input-container">
+          <span class="code">LR</span>
+          <input class="input-field" type="text" formControlName="lossReason" placeholder="Razón de Pérdida">
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="input-label">Estación de Fallo</label>
+        <div class="input-container">
+          <span class="code">FS</span>
+          <input class="input-field" type="text" formControlName="faultStation" placeholder="Estación de Fallo">
+        </div>
       </div>
     </div>
 
@@ -380,7 +447,7 @@
       <div class="form-group-border">
         <div class="form-field">
           <label>Combinación de Cerradura</label>
-          <input type="text" formControlName="lockCombination" placeholder="Combinación de Cerradura">
+          <input class="input-field" type="text" formControlName="lockCombination" placeholder="Combinación de Cerradura">
         </div>
       </div>
 
