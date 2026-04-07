@@ -1,13 +1,41 @@
 // ── Page layout ───────────────────────────────────────────────────────────────
-// Reutiliza las mismas clases base de new-claim
-
 .realizar-reclamo-container {
   min-height: 100vh;
   background-color: var(--bg-page);
   padding: 2rem;
 }
 
-// ── Page header del PIR ───────────────────────────────────────────────────────
+.page-header {
+  margin-bottom: 1.25rem;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--header-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 3px;
+    background: #1b4fad;
+    border-radius: 2px;
+    margin-top: 6px;
+  }
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--header-primary);
+  margin: 1rem 0 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+// ── PIR header (con badges a la derecha) ──────────────────────────────────────
 .pir-page-header {
   display: flex;
   justify-content: space-between;
@@ -38,151 +66,6 @@
   color: #92400e;
   font-size: 13px;
   font-weight: 500;
-}
-
-// ── Form card ─────────────────────────────────────────────────────────────────
-.form-content {
-  background-color: var(--bg-card);
-  padding: 2rem;
-  border-radius: 10px;
-  margin-bottom: 2rem;
-  box-shadow: 0 1px 4px var(--shadow-card);
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-
-  &--actions {
-    background-color: var(--bg-page);
-    border: 1px solid var(--border-color);
-  }
-}
-
-// ── Section (fila horizontal de campos) ───────────────────────────────────────
-.section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 0.5rem;
-  margin-bottom: 0.75rem;
-
-  &--buttons {
-    gap: 8px;
-  }
-}
-
-// ── Form group ────────────────────────────────────────────────────────────────
-.form-group {
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-  width: 100%;
-
-  h2 {
-    margin-bottom: 0.6rem;
-  }
-}
-
-.form-group-border {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  background: var(--bg-page);
-
-  h2 { margin-bottom: 0.6rem; }
-}
-
-// ── Headings ──────────────────────────────────────────────────────────────────
-h2 {
-  font-size: 11px;
-  font-weight: 700;
-  color: #1b4fad;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 0 0 0.5rem;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #e8effc;
-}
-
-h3 {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 0.75rem 0 0.4rem;
-}
-
-// ── Page title ────────────────────────────────────────────────────────────────
-.page-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--header-primary);
-  margin: 0;
-  letter-spacing: -0.02em;
-
-  &::after {
-    content: '';
-    display: block;
-    width: 32px;
-    height: 3px;
-    background: #1b4fad;
-    border-radius: 2px;
-    margin-top: 6px;
-  }
-}
-
-// ── Form fields (vista readonly) ──────────────────────────────────────────────
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 4px;
-  min-width: 250px;
-
-  label {
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-
-  &--view {
-    // Variante de sólo lectura: usa field-value en vez de input
-  }
-
-  &--large {
-    min-width: 500px;
-  }
-}
-
-.field-value {
-  padding: 9px 12px;
-  background-color: var(--bg-card-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 14px;
-  color: var(--text-primary);
-  font-weight: 500;
-  min-height: 38px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
-
-  &:empty::after {
-    content: '—';
-    color: var(--text-secondary);
-    font-weight: 400;
-  }
-}
-
-// ── Route display ─────────────────────────────────────────────────────────────
-.route-display {
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  span { white-space: nowrap; }
 }
 
 // ── Badges ────────────────────────────────────────────────────────────────────
@@ -227,52 +110,248 @@ h3 {
   }
 }
 
+// ── Form card ─────────────────────────────────────────────────────────────────
+.form-content {
+  background-color: var(--bg-card);
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 4px var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+
+  &--actions {
+    background-color: var(--bg-page);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+  }
+}
+
+// ── Headings ──────────────────────────────────────────────────────────────────
+h2 {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.5rem;
+}
+
+h3 {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0.75rem 0 0.4rem;
+}
+
+// ── Rows ──────────────────────────────────────────────────────────────────────
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  width: 100%;
+
+  > .field,
+  > .field-grow { flex: 1; }
+}
+
+// Fila de botones: no crecen, se envuelven
+.row--buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.75rem;
+  width: auto;
+}
+
+// Fila con espacio entre extremos
+.row-spaced {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+// Columna: hijos apilados
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+// ── Form group ────────────────────────────────────────────────────────────────
+.form-group {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-group-border {
+  margin-top: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  background: var(--bg-page);
+
+  h2 { margin-bottom: 0.6rem; }
+}
+
+// ── Fields ────────────────────────────────────────────────────────────────────
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field-short {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.field-grow {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+// ── Labels ────────────────────────────────────────────────────────────────────
+.input-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+// ── Input con código prefix ───────────────────────────────────────────────────
+.input-prefixed {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// ── Code badge ────────────────────────────────────────────────────────────────
+.code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #003366;
+  color: white;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  height: 36px;
+  min-width: 35px;
+  padding: 0 0.4rem;
+  flex-shrink: 0;
+}
+
+// ── Valor de campo readonly ───────────────────────────────────────────────────
+.field-value {
+  padding: 9px 12px;
+  background-color: var(--bg-card-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  min-height: 36px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  &:empty::after {
+    content: '—';
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  // Se estira dentro de .input-prefixed igual que un input-field
+  &--fill {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.readonly-field {
+  background: var(--bg-page) !important;
+  color: var(--text-secondary) !important;
+  cursor: default;
+}
+
+// ── Route display ─────────────────────────────────────────────────────────────
+.route-display {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  span { white-space: nowrap; }
+}
+
 // ── Tipo card (readonly — sin cursor, sin hover activo) ───────────────────────
 .tipo-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   padding: 9px 14px;
-  min-width: 100px;
+  min-width: 90px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: var(--bg-card);
   cursor: default;
-
-  &.selected {
-    background-color: #e8effc;
-    border-color: #1b4fad;
-
-    .tipo-label {
-      color: #1b4fad;
-      font-weight: 600;
-    }
-  }
+  background: var(--bg-card);
 
   .tipo-label {
     font-size: 13px;
     color: var(--text-primary);
     line-height: 1.3;
+    text-align: center;
+  }
+
+  &.selected {
+    background-color: var(--bg-card-selected);
+    border-color: #1b4fad;
+
+    .tipo-label {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
   }
 }
 
+// ── Buttons ───────────────────────────────────────────────────────────────────
 .btn-add {
   margin-top: 0;
+  align-self: flex-start;
   background-color: #1b4fad;
   color: white;
   border: none;
-  border-radius: 8px;
-
-  padding: 0.6rem 1.2rem; // más ancho y alto equilibrado
-  font-size: 16px; // ligeramente más grande
-  font-weight: 600;
-
-  height: auto; // 🔥 importante, quita la limitación
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px; // un poco más de espacio entre icono y texto
-
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  height: 36px;
+  flex-shrink: 0;
   transition: background 0.15s;
 
   mat-icon {
@@ -286,23 +365,19 @@ h3 {
   &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
-// ── Botones acción secundaria ─────────────────────────────────────────────────
 .btn-secondary-action {
   background: transparent;
   color: var(--text-primary);
-  border: 2px solid var(--text-primary);
-  border-radius: 8px;
-
-  padding: 0.6rem 1.2rem; // igual proporción que el primario
-  font-size: 16px; // mismo tamaño de texto
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
+  font-size: 13px;
   font-weight: 500;
-
-  height: auto; // 🔥 quitar restricción
+  height: 36px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px; // mismo espacio que el primario
-
+  gap: 4px;
   transition: all 0.15s;
 
   mat-icon {
@@ -318,7 +393,14 @@ h3 {
     color: #1b4fad;
   }
 }
-// ── No selection placeholder ──────────────────────────────────────────────────
+
+// ── Misc ──────────────────────────────────────────────────────────────────────
+.form-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 0.6rem;
+}
+
 .no-selection {
   font-size: 13px;
   color: var(--text-secondary);
@@ -327,4 +409,8 @@ h3 {
   border: 1px dashed var(--border-color);
   border-radius: 6px;
   margin-top: 0.5rem;
+}
+
+.ruta-item {
+  width: 100%;
 }
