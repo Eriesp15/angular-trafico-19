@@ -272,7 +272,7 @@
             <td class="cell-bagtag">{{ claim.bagTag }}</td>
             <td class="cell-status">
               <!-- Status badge con nuevos estados -->
-              <span [class]="'status-badge ' + getStatusClass(claim.status)">
+              <span [class]="'status-badge ' + getStatusBadgeClass(claim.status)">
                 {{ claimStatusService.getStatusLabel(claim.status) }}
               </span>
             </td>
