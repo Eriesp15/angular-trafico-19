@@ -221,7 +221,7 @@ export class BaggageComponent implements OnInit, OnDestroy {
       },
       {
         title: "Requieren atención (Más de 21 días)",
-        value: `${tiempoPromedio} días`,
+        value: tiempoPromedio,
         icon: "schedule",
         color: "#1976d2",
         type: "days",
