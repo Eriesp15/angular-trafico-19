@@ -201,14 +201,14 @@ export class NewClaimComponent implements OnInit {
   ];
 
   damageLocations = [
-    { valor: 'COMBINATION_LOCK', etiqueta: 'Menor' },
-    { valor: 'HANDLE', etiqueta: 'Mayor' },
-    { valor: 'STRAPS', etiqueta: 'Completo' },
-    { valor: 'WHEELS', etiqueta: 'Ruedas' },
-    { valor: 'SIDE', etiqueta: 'Lado' },
-    { valor: 'END', etiqueta: 'Extremo' },
-    { valor: 'TOP', etiqueta: 'Parte Superior' },
-    { valor: 'BOTTOM', etiqueta: 'Parte Inferior' }
+    { valor: 'COMBINATION_LOCK', etiqueta: 'Combinacion de cerradura / Combination lock' },
+    { valor: 'HANDLE', etiqueta: 'Jalador de mano / Retractable handles' },
+    { valor: 'STRAPS', etiqueta: 'Hebillas de seguro / Straps to close/secure' },
+    { valor: 'WHEELS', etiqueta: 'Ruedas / wheels rollers' },
+    { valor: 'SIDE', etiqueta: 'Lado / Side' },
+    { valor: 'END', etiqueta: 'Extremo / End' },
+    { valor: 'TOP', etiqueta: 'Arriba / Top' },
+    { valor: 'BOTTOM', etiqueta: 'Abajo / Bottom' }
   ];
 
   locationImages: Record<string, string> = {
