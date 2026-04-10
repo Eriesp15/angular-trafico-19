@@ -297,23 +297,23 @@ export class BaggageComponent implements OnInit, OnDestroy {
   getStatusBadgeClass(estado: string): string {
     switch (estado) {
       case "PENDING":
-        return "status-pending"
+        return "badge-warning"
       case "IN_PROCESS":
-        return "status-in-process"
+        return "badge-processing"
       case "PURCHASED":
-        return "status-purchased"
+        return "badge-registered"
       case "REPAIRED":
-        return "status-repaired"
+        return "badge-processing"
       case "LOST":
-        return "status-lost"
+        return "badge-warning"
       case "FOUND":
-        return "status-found"
+        return "badge-registered"
       case "COMPENSATED":
-        return "status-compensated"
+        return "badge-resolved"
       case "CLOSED":
-        return "status-closed"
+        return "badge-closed"
       default:
-        return "status-default"
+        return "badge-default"
     }
   }
 
