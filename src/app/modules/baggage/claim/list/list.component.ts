@@ -256,6 +256,29 @@ export class ListComponent implements OnInit, OnDestroy {
   getStatusClass(status: ClaimStatus): string {
     return `status-${status.toLowerCase()}`
   }
+    getStatusBadgeClass(estado: string): string {
+      console.log(estado);
+    switch (estado) {
+      case "PENDING":
+        return "badge-warning"
+      case "IN_PROCESS":
+        return "badge-processing"
+      case "PURCHASED":
+        return "badge-registered"
+      case "REPAIRED":
+        return "badge-processing"
+      case "LOST":
+        return "badge-warning"
+      case "FOUND":
+        return "badge-registered"
+      case "COMPENSATED":
+        return "badge-resolved"
+      case "CLOSED":
+        return "badge-closed"
+      default:
+        return "badge-default"
+    }
+  }
 
   tipoLabels: Record<string, string> = {
     AHL: "Equipaje Faltante",
