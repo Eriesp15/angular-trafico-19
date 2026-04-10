@@ -3,7 +3,7 @@
   <div class="list-header">
     <div class="header-top">
       
-      <h1>Reclamos de Equipaje</h1>
+      <h1>Expedientes de Equipaje</h1>
       <div class="header-actions">
         <!-- Nuevo botón para crear OHL -->
         <button class="btn btn-secondary" (click)="createOHL()">
@@ -12,7 +12,7 @@
         </button>
         <button class="btn btn-primary" (click)="createNewClaim()">
           <mat-icon>add</mat-icon>
-          Nuevo Reclamo
+          Nuevo Expediente
         </button>
       </div>
     </div>
@@ -39,7 +39,7 @@
       <div class="filter-group" [class.collapsed]="!showFilters">
         <!-- Filtro por Tipo de Reclamo actualizado con DPR y OHL -->
         <div class="filter-column">
-          <label class="filter-label">Tipo de Reclamo:</label>
+          <label class="filter-label">Tipo de Expediente:</label>
           <div class="filter-buttons">
             <button
               [class.active]="selectedType === 'ALL'"
@@ -139,13 +139,13 @@
 
         <!-- Nuevo filtro por Reclamos Derivados de Otras Regionales -->
         <div class="filter-column">
-          <label class="filter-label">Origen del Reclamo:</label>
+          <label class="filter-label">Origen del Expediente:</label>
           <div class="filter-buttons">
             <button
               [class.active]="selectedDerivedFilter === 'all'"
               (click)="filterByDerived('all')"
               class="filter-btn"
-              title="Mostrar todos los reclamos"
+              title="Mostrar todos los expedientes"
             >
               Todos
             </button>
@@ -153,7 +153,7 @@
               [class.active]="selectedDerivedFilter === 'original'"
               (click)="filterByDerived('original')"
               class="filter-btn filter-original"
-              title="Mostrar solo reclamos originales de esta regional"
+              title="Mostrar solo expedientes originales de esta regional"
             >
               Locales
             </button>
@@ -161,9 +161,9 @@
               [class.active]="selectedDerivedFilter === 'derived'"
               (click)="filterByDerived('derived')"
               class="filter-btn filter-derived"
-              title="Mostrar solo reclamos derivados de otras regionales"
+              title="Mostrar solo expedientes derivados de otras regionales"
             >
-              Derivados
+              Transferidos
             </button>
           </div>
         </div>
@@ -207,14 +207,14 @@
 
   <!-- Estado de Carga -->
   <div *ngIf="loading" class="loading">
-    <p>Cargando reclamos...</p>
+    <p>Cargando expedientes...</p>
   </div>
 
   <!-- Lista de Reclamos -->
   <div *ngIf="!loading" class="claims-section">
     <div *ngIf="filteredClaims.length === 0" class="empty-state">
       <mat-icon>search_off</mat-icon>
-      <p>No hay reclamos que coincidan con los filtros</p>
+      <p>No hay expedientes que coincidan con los filtros</p>
       <button class="btn btn-primary" (click)="clearSearch()">
         Limpiar Filtros
       </button>
@@ -225,7 +225,7 @@
         <thead>
           <tr>
             <th>PIR</th>
-            <th title="Indicador de derivación de otra regional">Derivado</th>
+            <th title="Indicador de derivación de otra regional">Transferido</th>
             <th>Tipo</th>
             <th>Pasajero</th>
             <th>Vuelo</th>
