@@ -1,8 +1,8 @@
-import { Component,  OnInit,  OnDestroy } from "@angular/core"
+import { Component, OnInit, OnDestroy } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import {  Router, RouterLink, RouterOutlet } from "@angular/router"
+import { Router, RouterLink, RouterOutlet } from "@angular/router"
 import { MatIconModule } from "@angular/material/icon"
-import  { HttpClient } from "@angular/common/http"
+import { HttpClient } from "@angular/common/http"
 import { Subject } from "rxjs"
 import { takeUntil } from "rxjs/operators"
 
@@ -35,6 +35,7 @@ interface RecentClaim {
   vuelo: string
   ruta: string
   diasTranscurridos?: number
+  derivedFromRegional?: string | null
 }
 
 @Component({
@@ -56,7 +57,7 @@ export class BaggageComponent implements OnInit, OnDestroy {
     COMPENSATED: 'Indemnizado',
     CLOSED: 'Cerrado',
     DELIVERED: 'Entregado',
-  };
+  }
 
   // Mapeo de tipos para mostrar etiquetas en español
   tipoLabels: Record<string, string> = {
@@ -154,11 +155,11 @@ export class BaggageComponent implements OnInit, OnDestroy {
               vuelo: item.Vuelo ?? "",
               ruta: item.Ruta,
               diasTranscurridos,
+              derivedFromRegional: item.derivedFromRegional ?? null,
             }
           })
 
           this.calcularMetricas(mappedClaims)
-
           this.calcularAlertas(mappedClaims)
 
           // Ordenar por fecha más reciente y obtener los últimos 5
@@ -294,23 +295,23 @@ export class BaggageComponent implements OnInit, OnDestroy {
   getStatusBadgeClass(estado: string): string {
     switch (estado) {
       case "PENDING":
-        return "badge-pending"
+        return "status-pending"
       case "IN_PROCESS":
-        return "badge-in-process"
+        return "status-in-process"
       case "PURCHASED":
-        return "badge-purchased"
+        return "status-purchased"
       case "REPAIRED":
-        return "badge-repaired"
+        return "status-repaired"
       case "LOST":
-        return "badge-lost"
+        return "status-lost"
       case "FOUND":
-        return "badge-found"
+        return "status-found"
       case "COMPENSATED":
-        return "badge-compensated"
+        return "status-compensated"
       case "CLOSED":
-        return "badge-closed"
+        return "status-closed"
       default:
-        return "badge-default"
+        return "status-default"
     }
   }
 
