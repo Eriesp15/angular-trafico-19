@@ -68,28 +68,28 @@ export class BaggageComponent implements OnInit, OnDestroy {
 
   metrics: MetricCard[] = [
     {
-      title: "Reclamos Activos",
+      title: "Total de Expedientes",
       value: 0,
       icon: "pending_actions",
       color: "#003366",
       type: "number",
     },
     {
-      title: "Requieren Atención",
+      title: "Expedientes en Proceso",
       value: 0,
       icon: "warning",
       color: "#f57c00",
       type: "number",
     },
     {
-      title: "Cerrados este Mes",
+      title: "Expedientes Resueltos",
       value: 0,
       icon: "check_circle",
       color: "#00a651",
       type: "number",
     },
     {
-      title: "Tiempo Promedio (días)",
+      title: "Requieren atención (Más de 21 días)",
       value: 0,
       icon: "schedule",
       color: "#1976d2",
@@ -199,28 +199,28 @@ export class BaggageComponent implements OnInit, OnDestroy {
 
     this.metrics = [
       {
-        title: "Reclamos Activos",
+        title: "Total de Expedientes",
         value: activos,
         icon: "pending_actions",
         color: "#003366",
         type: "number",
       },
       {
-        title: "Requieren Atención",
+        title: "Expedientes en Proceso",
         value: requierenAtencion,
         icon: "warning",
         color: "#f57c00",
         type: "number",
       },
       {
-        title: "Cerrados este Mes",
+        title: "Expedientes Resueltos",
         value: cerradosEsteMes,
         icon: "check_circle",
         color: "#00a651",
         type: "number",
       },
       {
-        title: "Tiempo Promedio",
+        title: "Requieren atención (Más de 21 días)",
         value: `${tiempoPromedio} días`,
         icon: "schedule",
         color: "#1976d2",
