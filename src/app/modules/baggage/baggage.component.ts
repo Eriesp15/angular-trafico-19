@@ -49,14 +49,16 @@ export class BaggageComponent implements OnInit, OnDestroy {
   // Mapeo de estados para mostrar etiquetas en español
   statusLabels: Record<string, string> = {
     PENDING: 'Pendiente',
-    IN_PROCESS: 'En proceso',
-    PURCHASED: 'Comprado',
-    REPAIRED: 'Reparado',
+    TRANSFERRED: 'Transferido',
+    SEARCHING: 'En búsqueda',
+    REPAIRING: 'En reparación',
+    COMPENSATED: 'Indemnizado',
     LOST: 'Perdido',
     FOUND: 'Encontrado',
-    COMPENSATED: 'Indemnizado',
-    CLOSED: 'Cerrado',
+    REPAIRED: 'Reparado',
+    RECEIVED: 'Recibido',
     DELIVERED: 'Entregado',
+    CLOSED: 'Cerrado',
   }
 
   // Mapeo de tipos para mostrar etiquetas en español
