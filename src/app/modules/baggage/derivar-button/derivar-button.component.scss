@@ -1,0 +1,29 @@
+:host {
+    display: contents;
+}
+
+button {
+    padding: 0.75rem 1.5rem;
+    background: var(--btn-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+button:hover {
+    background: var(--btn-primary-hover);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

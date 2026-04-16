@@ -116,11 +116,14 @@
 
       <h3>Todas las acciones de este reclamo:</h3>
       <div class="action-buttons">
-        <button 
+        <button
           (click)="verHojaSeguimiento()">
           Ver Hoja de Seguimiento
         </button>
-        <button 
+
+          <app-derivar-button [claim]="pirData"></app-derivar-button>
+
+          <button
           *ngIf="isAHL()"
           (click)="verFormularioContenido()">
           Ver Formulario de Contenido
@@ -137,6 +140,10 @@
           <mat-icon>paid</mat-icon>
           Añadir gasto
         </button>
+          <button class="action-btn" (click)="irAReparacion()">
+              <mat-icon>check_circle</mat-icon>
+              Enviar a Reparación
+          </button>
         <button class="action-btn" (click)="cerrarReclamo()">
           <mat-icon>check_circle</mat-icon>
           Cerrar reclamo
@@ -388,7 +395,7 @@
           </div>
           <div class="badge-wrapper">
             <span class="badge-label">Antigüedad</span>
-            <div class="badge-days" [class.alert-danger]="diasTranscurridos >= 21" 
+            <div class="badge-days" [class.alert-danger]="diasTranscurridos >= 21"
                  [class.alert-warning]="diasTranscurridos >= 3 && diasTranscurridos < 21"
                  [class.alert-info]="diasTranscurridos >= 1 && diasTranscurridos < 3">
               {{ diasTranscurridos }} días
@@ -413,7 +420,7 @@
         <mat-icon>description</mat-icon>
         Ver hoja seguimiento
       </button>
-      <button class="action-btn" (click)="verFormularioContenido()" 
+      <button class="action-btn" (click)="verFormularioContenido()"
               *ngIf="isActionAllowed('formularioContenido')">
         <mat-icon>assignment</mat-icon>
         Ver formulario contenido

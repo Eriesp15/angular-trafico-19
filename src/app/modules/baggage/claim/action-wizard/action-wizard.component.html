@@ -1,123 +1,174 @@
 <div class="modal-overlay" *ngIf="isOpen" (click)="wizardService.close()">
-  <div class="wizard-container" (click)="$event.stopPropagation()">
-    
-    <!-- Header -->
-    <div class="wizard-header">
-      <h2>{{ config?.title }}</h2>
-      
-      <!-- Stepper -->
-      <div class="stepper">
-        <div class="step" [class.active]="step === 1" [class.completed]="step > 1">
-          <span class="step-number">1</span>
-          <span class="step-label">Datos</span>
-        </div>
-        <div class="step-line" [class.completed]="step > 1"></div>
-        <div class="step" [class.active]="step === 2">
-          <span class="step-number">2</span>
-          <span class="step-label">Seguimiento</span>
-        </div>
-      </div>
-      
-      <button class="btn-close" (click)="wizardService.close()">✕</button>
-    </div>
+    <div class="wizard-container" (click)="$event.stopPropagation()">
 
-    <!-- Body -->
-    <div class="wizard-body">
-      
-      <!-- PASO 1: Formulario -->
-      <div *ngIf="step === 1" class="step-content">
-        <div *ngFor="let field of config?.fields" class="form-field">
-          <label>{{ field.label }}</label>
-          
-          <!-- Input texto -->
-          <input *ngIf="field.type === 'text'"
-                 type="text"
-                 [(ngModel)]="formData[field.name]"
-                 (ngModelChange)="onFieldChange(field.name, $event)"
-                 [readonly]="field.readonly"
-                 [placeholder]="field.placeholder || ''">
-          
-          <!-- Input número -->
-          <input *ngIf="field.type === 'number'"
-                 type="number"
-                 [(ngModel)]="formData[field.name]"
-                 (ngModelChange)="onFieldChange(field.name, $event)"
-                 [readonly]="field.readonly"
-                 [placeholder]="field.placeholder || ''">
-          
-          <!-- Textarea -->
-          <textarea *ngIf="field.type === 'textarea'"
-                    [(ngModel)]="formData[field.name]"
-                    (ngModelChange)="onFieldChange(field.name, $event)"
-                    [placeholder]="field.placeholder || ''"
-                    rows="3">
-          </textarea>
-          
-          <!-- Select -->
-          <select *ngIf="field.type === 'select'"
-                  [(ngModel)]="formData[field.name]"
-                  (ngModelChange)="onFieldChange(field.name, $event)">
-            <option value="">Seleccionar...</option>
-            <option *ngFor="let opt of field.options" [value]="opt">
-              {{ opt }}
-            </option>
-          </select>
-          
-          <!-- Date/Datetime -->
-          <input *ngIf="field.type === 'date' || field.type === 'datetime-local'"
-                 [type]="field.type"
-                 [(ngModel)]="formData[field.name]"
-                 (ngModelChange)="onFieldChange(field.name, $event)">
-        </div>
-      </div>
-      
-      <!-- PASO 2: Preview del mensaje -->
-      <div *ngIf="step === 2" class="step-content">
-        <div class="preview-section">
-          <h3>Resumen de Datos</h3>
-          <div class="data-summary">
-            <div *ngFor="let field of config?.fields" class="summary-item">
-              <span class="summary-label">{{ field.label }}:</span>
-              <span class="summary-value">{{ formData[field.name] || '-' }}</span>
+        <!-- Header -->
+        <div class="wizard-header">
+            <h2>{{ config?.title }}</h2>
+
+            <!-- Stepper -->
+            <div class="stepper">
+                <div class="step" [class.active]="step === 1" [class.completed]="step > 1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Datos</span>
+                </div>
+                <div class="step-line" [class.completed]="step > 1"></div>
+                <div class="step" [class.active]="step === 2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Seguimiento</span>
+                </div>
             </div>
-          </div>
+
+            <button class="btn-close" (click)="wizardService.close()">✕</button>
         </div>
-        
-        <div class="preview-section">
-          <h3>Mensaje de Seguimiento</h3>
-          <div class="message-box">
-            <small class="help-text">Puedes editar el mensaje si lo necesitas</small>
-            <textarea [(ngModel)]="message" rows="4" class="message-textarea"></textarea>
-          </div>
+
+        <!-- Body -->
+        <div class="wizard-body">
+
+            <!-- Error general -->
+            <div class="modal-error-box" *ngIf="generalError">
+                {{ generalError }}
+            </div>
+
+            <!-- PASO 1: Formulario -->
+            <div *ngIf="step === 1" class="step-content">
+                <div *ngFor="let field of config?.fields" class="form-field">
+
+                    <label>{{ field.label }}</label>
+
+                    <!-- Input texto -->
+                    <input *ngIf="field.type === 'text'"
+                           type="text"
+                           [(ngModel)]="formData[field.name]"
+                           (ngModelChange)="onFieldChange(field.name, $event)"
+                           [readonly]="field.readonly"
+                           [placeholder]="field.placeholder || ''">
+
+                    <!-- Error por campo -->
+                    <div class="error-text" *ngIf="fieldErrors?.[field.name] && field.type === 'text'">
+                        {{ fieldErrors[field.name] }}
+                    </div>
+
+                    <!-- Input número -->
+                    <input *ngIf="field.type === 'number'"
+                           type="number"
+                           [(ngModel)]="formData[field.name]"
+                           (ngModelChange)="onFieldChange(field.name, $event)"
+                           [readonly]="field.readonly"
+                           [placeholder]="field.placeholder || ''">
+
+                    <!-- Error por campo -->
+                    <div class="error-text" *ngIf="fieldErrors?.[field.name] && field.type === 'number'">
+                        {{ fieldErrors[field.name] }}
+                    </div>
+
+                    <!-- Textarea -->
+                    <textarea *ngIf="field.type === 'textarea'"
+                              [(ngModel)]="formData[field.name]"
+                              (ngModelChange)="onFieldChange(field.name, $event)"
+                              [placeholder]="field.placeholder || ''"
+                              rows="3">
+          </textarea>
+
+                    <!-- Error por campo -->
+                    <div class="error-text" *ngIf="fieldErrors?.[field.name] && field.type === 'textarea'">
+                        {{ fieldErrors[field.name] }}
+                    </div>
+
+                    <!-- Select -->
+                    <select *ngIf="field.type === 'select'"
+                            [(ngModel)]="formData[field.name]"
+                            (ngModelChange)="onFieldChange(field.name, $event)">
+                        <option value="">Seleccionar...</option>
+                        <option *ngFor="let opt of field.options" [value]="opt">
+                            {{ opt }}
+                        </option>
+                    </select>
+
+                    <!-- Error por campo -->
+                    <div class="error-text" *ngIf="fieldErrors?.[field.name] && field.type === 'select'">
+                        {{ fieldErrors[field.name] }}
+                    </div>
+
+                    <!-- Datalist (elegible + editable) -->
+                    <ng-container *ngIf="field.type === 'datalist'">
+                        <input type="text"
+                               [(ngModel)]="formData[field.name]"
+                               (ngModelChange)="onFieldChange(field.name, $event)"
+                               [attr.list]="'list-' + field.name"
+                               [readonly]="field.readonly"
+                               [placeholder]="field.placeholder || ''">
+
+                        <datalist [id]="'list-' + field.name">
+                            <option *ngFor="let opt of field.options" [value]="opt"></option>
+                        </datalist>
+                    </ng-container>
+
+                    <!-- Error por campo -->
+                    <div class="error-text" *ngIf="fieldErrors?.[field.name] && field.type === 'datalist'">
+                        {{ fieldErrors[field.name] }}
+                    </div>
+
+                    <!-- Date/Datetime -->
+                    <input *ngIf="field.type === 'date' || field.type === 'datetime-local'"
+                           [type]="field.type"
+                           [(ngModel)]="formData[field.name]"
+                           (ngModelChange)="onFieldChange(field.name, $event)"
+                           [readonly]="field.readonly">
+
+                    <!-- Error por campo -->
+                    <div class="error-text" *ngIf="fieldErrors?.[field.name] && (field.type === 'date' || field.type === 'datetime-local')">
+                        {{ fieldErrors[field.name] }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASO 2: Preview del mensaje -->
+            <div *ngIf="step === 2" class="step-content">
+                <div class="preview-section">
+                    <h3>Resumen de Datos</h3>
+                    <div class="data-summary">
+                        <div *ngFor="let field of config?.fields" class="summary-item">
+                            <span class="summary-label">{{ field.label }}:</span>
+                            <span class="summary-value">{{ formData[field.name] || '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-section">
+                    <h3>Mensaje de Seguimiento</h3>
+                    <div class="message-box">
+                        <small class="help-text">Puedes editar el mensaje si lo necesitas</small>
+                        <textarea [(ngModel)]="message" rows="4" class="message-textarea"></textarea>
+                    </div>
+                </div>
+            </div>
+
         </div>
-      </div>
+
+        <!-- Footer -->
+        <div class="wizard-footer">
+
+            <!-- Paso 1 -->
+            <ng-container *ngIf="step === 1">
+                <button class="btn btn-secondary" (click)="wizardService.close()">
+                    Cancelar
+                </button>
+                <button class="btn btn-primary" (click)="nextStep()">
+                    Siguiente →
+                </button>
+            </ng-container>
+
+            <!-- Paso 2 -->
+            <ng-container *ngIf="step === 2">
+                <button class="btn btn-secondary" (click)="back()">
+                    ← Atrás
+                </button>
+                <button class="btn btn-success" (click)="save()" [disabled]="saving">
+                    {{ saving ? 'Guardando...' : 'Confirmar y Guardar' }}
+                </button>
+            </ng-container>
+
+        </div>
 
     </div>
-
-    <!-- Footer -->
-    <div class="wizard-footer">
-      
-      <!-- Paso 1 -->
-      <ng-container *ngIf="step === 1">
-        <button class="btn btn-secondary" (click)="wizardService.close()">
-          Cancelar
-        </button>
-        <button class="btn btn-primary" (click)="nextStep()">
-          Siguiente →
-        </button>
-      </ng-container>
-
-      <!-- Paso 2 -->
-      <ng-container *ngIf="step === 2">
-        <button class="btn btn-secondary" (click)="back()">
-          ← Atrás
-        </button>
-        <button class="btn btn-success" (click)="save()" [disabled]="saving">
-          {{ saving ? 'Guardando...' : 'Confirmar y Guardar' }}
-        </button>
-      </ng-container>
-
-    </div>
-    
-  </div>
 </div>

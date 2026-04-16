@@ -10,11 +10,12 @@ import { MatDialogModule, MatDialog } from "@angular/material/dialog"
 import { ClaimStatusService } from "app/services/claim-status/claim-status.service"
 import { ActionWizardService } from "../action-wizard/action-wizard.service"
 import { ActionWizardComponent } from "../action-wizard/action-wizard.component"
+import { DerivarButtonComponent } from '../../derivar-button/derivar-button.component';
 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule, ActionWizardComponent],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule, ActionWizardComponent,DerivarButtonComponent],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
@@ -84,7 +85,7 @@ export class ViewClaimComponent implements OnInit {
     const fechaCreacion = new Date(this.pirData.createdAt);
     const ahora = new Date();
     const diferenciaMilisegundos = ahora.getTime() - fechaCreacion.getTime();
-    
+
     // Calcular días
     this.antiguedadDias = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
   }
@@ -174,6 +175,6 @@ export class ViewClaimComponent implements OnInit {
     return this.pirData?.claimType === 'DPR';
   }
 
-  
+
 
 }

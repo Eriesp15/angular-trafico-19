@@ -16,6 +16,8 @@ import { ReportsComponent } from "./reports/reports.component"
 import { NewOhlComponent } from "./ohl/new-ohl/new-ohl.component"
 import { SearchComponent } from "./search/search.component"
 import { SendToRepairDialogComponent } from "./claim/send-to-repair/send-to-repair-dialog.component"
+import { DerivationsComponent } from './derivations/derivations.component';
+import { RepairFlowComponent } from './repair-flow/repair-flow.component';
 
 export default [
   {
@@ -91,5 +93,16 @@ export default [
   {
     path: "repair",
     component: SendToRepairDialogComponent,
-  }
+  },
+    {
+        path: 'claim/derivations/:pirNumber',
+        loadComponent: () =>
+            import('./derivations/derivations.component').then(m => m.DerivationsComponent)
+    },
+    {
+        path: 'claim/repair-flow/:pirNumber',
+        loadComponent: () =>
+            import('./repair-flow/repair-flow.component').then(m => m.RepairFlowComponent)
+    }
+
 ] as Routes

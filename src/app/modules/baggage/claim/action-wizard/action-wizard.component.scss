@@ -308,3 +308,18 @@
     opacity: 1;
   }
 }
+.modal-error-box {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #b91c1c;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.error-text {
+    margin-top: 4px;
+    font-size: 0.82rem;
+    color: #b91c1c;
+}
