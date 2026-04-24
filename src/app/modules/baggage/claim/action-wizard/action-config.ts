@@ -169,11 +169,11 @@ export const CLOSE_CLAIM = {
 
 
 
-// ===== PROBANDO  DERIVACIONES MELVI =====
+// ===== PROBANDO  envios a otra estacion MELVI =====
 
 export const TRANSFER_BAG = {
     id: 'TRANSFER_BAG',
-    title: 'Derivar equipaje',
+    title: 'Enviar equipaje',
 
     autofill: {
         originStation: 'currentOffice',
@@ -269,7 +269,7 @@ export const TRANSFER_BAG = {
     ],
 
     getMessage: (data: any) =>
-        `Se derivó equipaje desde ${data.originStation} hacia ${data.destinationStation}. Motivo: ${data.reason}. BagTag: ${data.bagTag}. Vuelo: ${data.flightNumber}. Fecha de vuelo: ${data.flightDate}. Registrado por: ${data.registeredBy}. ${data.notes || ''}`,
+        `Se envio equipaje desde ${data.originStation} hacia ${data.destinationStation}. Motivo: ${data.reason}. BagTag: ${data.bagTag}. Vuelo: ${data.flightNumber}. Fecha de vuelo: ${data.flightDate}. Registrado por: ${data.registeredBy}. ${data.notes || ''}`,
 
     newStatus: 'IN_PROCESS'
 };

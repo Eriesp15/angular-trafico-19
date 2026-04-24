@@ -17,7 +17,7 @@
         <div class="summary-card">
             <div class="summary-header">
                 <h3>Resumen del reclamo</h3>
-                <span class="status-badge">{{ claim.claimStatus }}</span>
+                <span class="status-badge">{{ claim.claimStatus || '-' }}</span>
             </div>
 
             <div class="summary-grid">
@@ -41,7 +41,6 @@
                     <span class="value">{{ claim.claimStatus || '-' }}</span>
                 </div>
 
-
                 <div class="summary-item">
                     <span class="label">Daño / motivo</span>
                     <span class="value">{{ claim.lossReason || '-' }}</span>
@@ -49,7 +48,31 @@
             </div>
         </div>
 
-        <!-- TIMELINE VERSION 2 -->
+        <!-- UBICACIÓN -->
+        <div class="location-card" *ngIf="claim">
+            <div class="location-header">
+                <h3>Ubicación del equipaje</h3>
+            </div>
+
+            <div class="location-grid">
+                <div class="location-item">
+                    <span class="label">Origen del reclamo</span>
+                    <span class="value">{{ claim.openedStation || '-' }}</span>
+                </div>
+
+                <div class="location-item current">
+                    <span class="label">Ubicación actual</span>
+                    <span class="value">{{ claim.currentStation || '-' }}</span>
+                </div>
+
+                <div class="location-item responsible">
+                    <span class="label">Estación responsable</span>
+                    <span class="value">{{ claim.responsibleStation || '-' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIMELINE -->
         <div class="timeline-status-card">
             <h3>Estado actual del proceso</h3>
 
@@ -130,9 +153,13 @@
             </div>
         </div>
 
-        <!-- ACCIONES OPERATIVAS -->
+        <!-- ACCIONES -->
         <div class="actions-card">
             <h3>Acciones disponibles</h3>
+
+            <app-derivar-button
+                [claim]="claim"
+            ></app-derivar-button>
 
             <div class="actions-grid">
                 <button type="button" (click)="openAction('ASSIGN_REPAIR_COMPANY')">
@@ -177,7 +204,6 @@
                 No hay documento de reparación subido.
             </div>
 
-            <!-- preview local antes o mientras sube -->
             <div class="uploaded-document preview-box" *ngIf="localPreviewUrl && !repairDocument">
                 <div class="doc-name">
                     {{ localPreviewName }}
@@ -192,7 +218,6 @@
                 </div>
             </div>
 
-            <!-- documento real ya subido -->
             <div class="uploaded-document" *ngIf="repairDocument">
                 <div class="doc-name">
                     {{ repairDocument.fileName || 'Documento de reparación' }}
@@ -221,6 +246,7 @@
                 </div>
             </div>
         </div>
+
         <!-- RESULTADO FINAL -->
         <div class="actions-card">
             <h3>Definir resultado</h3>
@@ -229,7 +255,6 @@
                 <button
                     type="button"
                     class="success-btn"
-                    [disabled]="!repairDocument"
                     (click)="markAsRepaired()"
                 >
                     Marcar como reparado
@@ -238,8 +263,7 @@
                 <button
                     type="button"
                     class="warn-btn"
-                    [disabled]="!repairDocument"
-                    (click)="openAction('MARK_IRREPARABLE')"
+                    (click)="markAsIrreparable()"
                 >
                     Marcar como irreparable
                 </button>
@@ -247,7 +271,7 @@
         </div>
 
         <div class="blocked-box" *ngIf="!repairDocument">
-            Debes subir el informe de la reparadora antes de marcar el resultado final.
+            Si vas a marcar como irreparable, primero debes subir el informe de la reparadora.
         </div>
     </ng-container>
 </section>

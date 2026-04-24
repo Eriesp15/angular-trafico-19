@@ -443,7 +443,67 @@
     color: #6b7280;
     font-size: 0.9rem;
 }
+/* UBICACION ACTUAL DEL EQUIPAJE */
 
+.location-card {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.location-header h3 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.location-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.location-item {
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+}
+
+.location-item .label {
+    display: block;
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.location-item .value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.location-item.current {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.location-item.current .value {
+    color: #1d4ed8;
+}
+
+.location-item.responsible {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+
+.location-item.responsible .value {
+    color: #047857;
+}
 /* RESPONSIVE */
 @media (max-width: 768px) {
     .summary-header,
@@ -456,3 +516,5 @@
         transform: none;
     }
 }
+
+

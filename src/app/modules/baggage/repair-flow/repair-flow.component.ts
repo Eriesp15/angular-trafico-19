@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActionWizardComponent } from '../claim/action-wizard/action-wizard.component';
 import { ActionWizardService } from '../claim/action-wizard/action-wizard.service';
 import { ClaimFlowService } from '../services/claim-flow.service';
+import { DerivarButtonComponent } from '../derivar-button/derivar-button.component';
 
 @Component({
     selector: 'app-repair-flow',
     standalone: true,
-    imports: [CommonModule, ActionWizardComponent],
+    imports: [CommonModule, ActionWizardComponent, DerivarButtonComponent],
     templateUrl: './repair-flow.component.html',
-    styleUrls: ['./repair-flow.component.scss']
+    styleUrls: ['./repair-flow.component.scss'],
 })
 export class RepairFlowComponent implements OnInit {
     pirNumber = '';
@@ -26,25 +26,47 @@ export class RepairFlowComponent implements OnInit {
     uploadingDocument = false;
     deletingDocument = false;
 
-    // preview local
     localPreviewUrl: string | null = null;
     localPreviewType: 'image' | 'pdf' | null = null;
     localPreviewName = '';
 
     steps = [
-        { key: 'ASSIGNED', title: 'Asignado', desc: 'Se asignó a empresa reparadora' },
-        { key: 'DELIVERED', title: 'Entregado', desc: 'Equipaje entregado a reparadora' },
-        { key: 'IN_REPAIR', title: 'En reparadora', desc: 'La reparadora está trabajando el equipaje' },
-        { key: 'RETURNED', title: 'Devuelto', desc: 'La reparadora devolvió el equipaje a oficina' },
-        { key: 'DOCUMENT_UPLOADED', title: 'Informe subido', desc: 'Se cargó el documento de reparación' },
-        { key: 'RESOLVED', title: 'Resultado definido', desc: 'Se marcó reparado o irreparable' }
+        {
+            key: 'ASSIGNED',
+            title: 'Asignado',
+            desc: 'Se asignó a empresa reparadora',
+        },
+        {
+            key: 'DELIVERED',
+            title: 'Entregado',
+            desc: 'Equipaje entregado a reparadora',
+        },
+        {
+            key: 'IN_REPAIR',
+            title: 'En reparadora',
+            desc: 'La reparadora está trabajando el equipaje',
+        },
+        {
+            key: 'RETURNED',
+            title: 'Devuelto',
+            desc: 'La reparadora devolvió el equipaje a oficina',
+        },
+        {
+            key: 'DOCUMENT_UPLOADED',
+            title: 'Informe subido',
+            desc: 'Se cargó el documento de reparación',
+        },
+        {
+            key: 'RESOLVED',
+            title: 'Resultado definido',
+            desc: 'Se marcó reparado o irreparable',
+        },
     ];
 
     constructor(
         private route: ActivatedRoute,
         private wizardService: ActionWizardService,
-        private claimFlowService: ClaimFlowService,
-        private sanitizer: DomSanitizer
+        private claimFlowService: ClaimFlowService
     ) {}
 
     ngOnInit(): void {
@@ -72,7 +94,7 @@ export class RepairFlowComponent implements OnInit {
                 console.error('Error cargando claim:', error);
                 this.errorMessage = 'No se pudo cargar el reclamo.';
                 this.loading = false;
-            }
+            },
         });
     }
 
@@ -98,7 +120,7 @@ export class RepairFlowComponent implements OnInit {
                 this.detectRepairDocument();
                 this.calculateRepairStep();
                 this.loading = false;
-            }
+            },
         });
     }
 
@@ -113,32 +135,60 @@ export class RepairFlowComponent implements OnInit {
     openAction(actionKey: string): void {
         if (!this.claim) return;
 
-        this.wizardService.open(
-            actionKey,
-            this.claim,
-            () => this.loadClaim()
-        );
+        this.wizardService.open(actionKey, this.claim, () => this.loadClaim());
+    }
+
+    getPassengerFullName(): string {
+        const name = this.claim?.pir?.passengerName || '';
+        const lastName = this.claim?.pir?.passengerLastName || '';
+        const fullName = `${name} ${lastName}`.trim();
+
+        return fullName || '-';
+    }
+
+    getDamageOrReason(): string {
+        const lossReason = this.claim?.pir?.lossReason;
+        if (lossReason) return lossReason;
+
+        const damageDetails = this.claim?.pir?.damageDetails;
+        if (Array.isArray(damageDetails) && damageDetails.length > 0) {
+            const firstDetail = damageDetails[0];
+
+            if (typeof firstDetail === 'string') {
+                return firstDetail;
+            }
+
+            return (
+                firstDetail?.damageType ||
+                firstDetail?.description ||
+                firstDetail?.detail ||
+                '-'
+            );
+        }
+
+        return '-';
     }
 
     calculateRepairStep(): void {
-        const messages = this.timeline.map(item =>
+        const messages = this.timeline.map((item) =>
             String(item?.message || '').toLowerCase()
         );
 
-        const hasAssigned = messages.some(msg =>
+        const hasAssigned = messages.some((msg) =>
             msg.includes('asignó el equipaje a la empresa reparadora')
         );
 
-        const hasDelivered = messages.some(msg =>
+        const hasDelivered = messages.some((msg) =>
             msg.includes('se entregó el equipaje a la reparadora')
         );
 
-        const hasReceived = messages.some(msg =>
+        const hasReceived = messages.some((msg) =>
             msg.includes('se recibió el equipaje desde la reparadora')
         );
 
-        const hasIrreparable = messages.some(msg =>
-            msg.includes('irreparabilidad') || msg.includes('irreparable')
+        const hasIrreparable = messages.some(
+            (msg) =>
+                msg.includes('irreparabilidad') || msg.includes('irreparable')
         );
 
         const hasRepaired = this.claim?.claimStatus === 'REPAIRED';
@@ -178,7 +228,7 @@ export class RepairFlowComponent implements OnInit {
             'IN_REPAIR',
             'RETURNED',
             'DOCUMENT_UPLOADED',
-            'RESOLVED'
+            'RESOLVED',
         ];
 
         return order.indexOf(step) < order.indexOf(this.repairStep);
@@ -192,7 +242,10 @@ export class RepairFlowComponent implements OnInit {
     }
 
     triggerFileInput(fileInput: HTMLInputElement): void {
-        if (this.uploadingDocument || this.claim?.claimStatus === 'CLOSED') return;
+        if (this.uploadingDocument || this.claim?.claimStatus === 'CLOSED') {
+            return;
+        }
+
         fileInput.click();
     }
 
@@ -207,7 +260,7 @@ export class RepairFlowComponent implements OnInit {
             'image/jpeg',
             'image/jpg',
             'image/png',
-            'image/webp'
+            'image/webp',
         ];
 
         if (!allowedTypes.includes(file.type)) {
@@ -239,16 +292,13 @@ export class RepairFlowComponent implements OnInit {
         this.localPreviewType = null;
         this.localPreviewUrl = null;
     }
+
     uploadRepairDocument(file: File, input: HTMLInputElement): void {
         if (!this.pirNumber) return;
 
         const formData = new FormData();
-
-        // primero manda estos campos
         formData.append('documentType', 'REPAIR');
         formData.append('description', 'Informe de reparadora');
-
-        // al final manda el archivo
         formData.append('files', file);
 
         this.uploadingDocument = true;
@@ -262,14 +312,13 @@ export class RepairFlowComponent implements OnInit {
             },
             error: (error) => {
                 console.error('Error subiendo documento:', error);
-                console.log('error body:', error?.error);
-                this.errorMessage = error?.error?.message || 'No se pudo subir el documento.';
+                this.errorMessage =
+                    error?.error?.message || 'No se pudo subir el documento.';
                 this.uploadingDocument = false;
                 input.value = '';
-            }
+            },
         });
     }
-
 
     previewDocument(doc: any): void {
         const url = this.getDocumentUrl(doc);
@@ -309,7 +358,9 @@ export class RepairFlowComponent implements OnInit {
     removeDocument(doc: any): void {
         if (!doc?.id || this.claim?.claimStatus === 'CLOSED') return;
 
-        const confirmed = window.confirm('¿Seguro que deseas eliminar este documento?');
+        const confirmed = window.confirm(
+            '¿Seguro que deseas eliminar este documento?'
+        );
         if (!confirmed) return;
 
         this.deletingDocument = true;
@@ -328,16 +379,23 @@ export class RepairFlowComponent implements OnInit {
                 console.error('Error eliminando documento:', error);
                 this.errorMessage = 'No se pudo eliminar el documento.';
                 this.deletingDocument = false;
-            }
+            },
         });
     }
 
     markAsRepaired(): void {
+        this.errorMessage = '';
+        this.openAction('MARK_AS_REPAIRED');
+    }
+
+    markAsIrreparable(): void {
         if (!this.repairDocument) {
-            this.errorMessage = 'Primero debes subir el informe de la reparadora.';
+            this.errorMessage =
+                'Primero debes subir el informe de la reparadora para marcar como irreparable.';
             return;
         }
 
-        this.openAction('MARK_AS_REPAIRED');
+        this.errorMessage = '';
+        this.openAction('MARK_IRREPARABLE');
     }
 }
