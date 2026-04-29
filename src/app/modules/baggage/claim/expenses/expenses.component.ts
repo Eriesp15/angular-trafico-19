@@ -3,12 +3,12 @@ import { CommonModule } from "@angular/common"
 import {  ActivatedRoute,  Router, RouterModule } from "@angular/router"
 import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
+import { ExpenseItem, ExpenseService } from "../../services/expense.service"
 
-interface Gasto {
-  id: string
-  descripcion: string
-  concepto: string
-  monto: number
+interface ExpenseGroup {
+  title: string
+  total: number
+  items: ExpenseItem[]
 }
 
 @Component({
@@ -20,67 +20,61 @@ interface Gasto {
 })
 export class ExpensesComponent implements OnInit {
   claimId = ""
-
-  gastos: Gasto[] = [
-    {
-      id: "1",
-      descripcion: "Indemnización por daño en equipaje",
-      concepto: "Indemnización",
-      monto: 245.5,
-    },
-    {
-      id: "2",
-      descripcion: "Compra de maleta de reemplazo",
-      concepto: "Compra de Maleta",
-      monto: 189.99,
-    },
-    {
-      id: "3",
-      descripcion: "Gastos de envío de equipaje reparado",
-      concepto: "Gastos en Envío",
-      monto: 45.0,
-    },
-    {
-      id: "4",
-      descripcion: "Alojamiento pasajero extranjero (2 noches)",
-      concepto: "Gastos Extras",
-      monto: 300.0,
-    },
-    {
-      id: "5",
-      descripcion: "Alimentación durante la espera",
-      concepto: "Gastos Extras",
-      monto: 75.5,
-    },
-  ]
+  groups: ExpenseGroup[] = []
+  totalGastos = 0
+  cargando = false
+  error = ""
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private expenseService: ExpenseService,
   ) {}
 
   ngOnInit(): void {
     this.claimId = this.route.snapshot.params["id"]
+    if (this.claimId) {
+      this.cargarGastos()
+    }
   }
 
-  get totalIndemnizacion(): number {
-    return this.gastos.filter((g) => g.concepto === "Indemnización").reduce((sum, g) => sum + g.monto, 0)
+  cargarGastos(): void {
+    this.cargando = true
+    this.error = ""
+
+    this.expenseService.getByPir(this.claimId).subscribe({
+      next: (response) => {
+        this.cargando = false
+        this.totalGastos = response.total
+        this.groups = this.groupByTitle(response.items)
+      },
+      error: () => {
+        this.cargando = false
+        this.error = "No se pudo cargar el listado de gastos."
+        this.groups = []
+      },
+    })
   }
 
-  get totalCompramMaleta(): number {
-    return this.gastos.filter((g) => g.concepto === "Compra de Maleta").reduce((sum, g) => sum + g.monto, 0)
+  private groupByTitle(items: ExpenseItem[]): ExpenseGroup[] {
+    const grouped = items.reduce((acc, item) => {
+      if (!acc[item.title]) {
+        acc[item.title] = {
+          title: item.title,
+          total: 0,
+          items: [],
+        }
+      }
+      acc[item.title].items.push(item)
+      acc[item.title].total += item.cost
+      return acc
+    }, {} as Record<string, ExpenseGroup>)
+
+    return Object.values(grouped)
   }
 
-  get totalGastosEnvio(): number {
-    return this.gastos.filter((g) => g.concepto === "Gastos en Envío").reduce((sum, g) => sum + g.monto, 0)
-  }
-
-  get totalGastosExtras(): number {
-    return this.gastos.filter((g) => g.concepto === "Gastos Extras").reduce((sum, g) => sum + g.monto, 0)
-  }
-
-  get totalGastos(): number {
-    return this.gastos.reduce((sum, g) => sum + g.monto, 0)
+  agregarGasto(): void {
+    this.router.navigate(["/baggage/claim/add-expense", this.claimId])
   }
 
   volver(): void {

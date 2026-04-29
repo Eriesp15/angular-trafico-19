@@ -162,6 +162,15 @@ export class ViewClaimComponent implements OnInit {
     this.router.navigate(["/baggage/claim/expenses", this.claimId])
   }
 
+  anadirGasto(): void {
+    this.router.navigate(["/baggage/claim/add-expense", this.claimId], {
+      queryParams: {
+        tipo: this.pirData?.claimType,
+        fecha: this.pirData?.createdAt,
+      },
+    })
+  }
+
   follow(): void {
     this.router.navigate(["/baggage/claim/follow", this.claimId])
   }

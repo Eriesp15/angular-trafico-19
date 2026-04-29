@@ -230,14 +230,16 @@
         </div>
       </div>
 
+      <p class="error-message" *ngIf="error">{{ error }}</p>
+
       <div class="actions">
-        <button class="btn btn-cancel" (click)="cancelarConfirmacion()">
+        <button class="btn btn-cancel" [disabled]="guardando" (click)="cancelarConfirmacion()">
           <mat-icon>arrow_back</mat-icon>
           Volver
         </button>
-        <button class="btn btn-confirm" (click)="confirmarGasto()">
+        <button class="btn btn-confirm" [disabled]="guardando" (click)="confirmarGasto()">
           <mat-icon>check</mat-icon>
-          Confirmar Gasto
+          {{ guardando ? 'Guardando...' : 'Confirmar Gasto' }}
         </button>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { MatButtonModule } from "@angular/material/button"
 import { MatIconModule } from "@angular/material/icon"
 import { FormsModule } from "@angular/forms"
 import {  ClaimType, getClaimTypeConfig, isExpenseAllowed } from "../../models/claim-type-config.model"
+import { ExpenseService } from "../../services/expense.service"
 
 interface TipoGasto {
   id: string
@@ -109,10 +110,13 @@ export class AddExpenseComponent implements OnInit {
 
   // Estado de confirmación
   mostrarConfirmacion = false
+  guardando = false
+  error = ""
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private expenseService: ExpenseService,
   ) {}
 
   ngOnInit(): void {
@@ -252,23 +256,31 @@ export class AddExpenseComponent implements OnInit {
   }
 
   confirmarGasto(): void {
-    const gastoData = {
-      claimId: this.claimId,
-      tipoReclamo: this.tipoReclamo,
-      tipoGasto: this.gastoSeleccionado?.id,
-      nombreGasto: this.gastoSeleccionado?.nombre,
-      descripcion: this.gastoSeleccionado?.id === "otro" ? this.descripcionGasto : this.gastoSeleccionado?.descripcion,
-      monto: this.obtenerMontoTotal(),
-      ...(this.gastoSeleccionado?.id.startsWith("indemnizacion") && {
-        pesoRecibido: this.pesoRecibido,
-        pesoEntregado: this.pesoEntregado,
-        precioPorKilo: this.precioPorKilo,
-        diferenciaPeso: this.diferenciaPeso,
-      }),
+    if (!this.gastoSeleccionado) {
+      return
     }
 
-    console.log("[v0] Gasto registrado:", gastoData)
-    this.router.navigate([`/baggage/claim/view/${this.claimId}`])
+    this.guardando = true
+    this.error = ""
+
+    const description = this.gastoSeleccionado.id === "otro"
+      ? this.descripcionGasto.trim()
+      : this.gastoSeleccionado.descripcion
+
+    this.expenseService.createByPir(this.claimId, {
+      title: this.gastoSeleccionado.nombre,
+      cost: this.obtenerMontoTotal(),
+      description,
+    }).subscribe({
+      next: () => {
+        this.guardando = false
+        this.router.navigate([`/baggage/claim/expenses/${this.claimId}`])
+      },
+      error: () => {
+        this.guardando = false
+        this.error = "No se pudo registrar el gasto. Intente nuevamente."
+      },
+    })
   }
 
   cancelarConfirmacion(): void {
