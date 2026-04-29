@@ -17,11 +17,13 @@
         <div class="claim-badge">
           <div class="badge-item">
             <span class="badge-label">Tipo de reclamo</span>
-            <div class="badge-type">{{ pirData.claimType }}</div>
+            <div [class]="'badge-type badge-' + (pirData.claimType || '').toLowerCase()">{{ pirData.claimType }}</div>
           </div>
           <div class="badge-item">
             <span class="badge-label">Estado</span>
-            <div class="badge-type">{{ claimStatusService.getStatusLabel(pirData.claim.claimStatus) }}</div>
+            <div [class]="'badge-type status-badge ' + getStatusBadgeClass(pirData.claim.claimStatus)">
+              {{ claimStatusService.getStatusLabel(pirData.claim.claimStatus) }}
+            </div>
           </div>
           <div class="badge-item">
             <span class="badge-label">Antigüedad</span>

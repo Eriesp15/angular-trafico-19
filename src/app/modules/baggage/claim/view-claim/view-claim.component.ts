@@ -189,6 +189,28 @@ export class ViewClaimComponent implements OnInit {
     return this.pirData?.claimType === 'DPR';
   }
 
-  
+  getStatusBadgeClass(estado: string): string {
+    switch (estado) {
+      case "PENDING":
+        return "badge-warning"
+      case "IN_PROCESS":
+      case "REPAIRED":
+      case "REPAIRING":
+      case "SEARCHING":
+      case "TRANSFERRED":
+        return "badge-processing"
+      case "PURCHASED":
+      case "FOUND":
+      case "DELIVERED":
+        return "badge-registered"
+      case "COMPENSATED":
+        return "badge-resolved"
+      case "CLOSED":
+        return "badge-closed"
+      default:
+        return "badge-default"
+    }
+  }
+
 
 }

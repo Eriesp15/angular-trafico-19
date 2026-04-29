@@ -108,6 +108,68 @@
     color: #92400e;
     border-color: #fde68a;
   }
+
+  &.badge-ahl {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border-color: #bbdefb;
+  }
+
+  &.badge-pilfered {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border-color: #ffcdd2;
+  }
+
+  &.badge-ohl {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    border-color: #e1bee7;
+  }
+
+  &.badge-dpr {
+    background-color: #fff3e0;
+    color: #f57c00;
+    border-color: #ffe0b2;
+  }
+}
+
+.status-badge {
+  &.badge-registered {
+    background-color: #c8e6c9;
+    color: #2e7d32;
+    border-color: #a5d6a7;
+  }
+
+  &.badge-processing {
+    background-color: #bbdefb;
+    color: #1565c0;
+    border-color: #90caf9;
+  }
+
+  &.badge-resolved {
+    background-color: #a5d6a7;
+    color: #1b5e20;
+    border-color: #81c784;
+  }
+
+  &.badge-closed {
+    background-color: #f8bbd0;
+    color: #c2185b;
+    border-color: #f48fb1;
+  }
+
+  &.badge-warning {
+    background-color: #fff3e0;
+    color: #ff9800;
+    border-color: #ffe0b2;
+  }
+
+  &.badge-default {
+    background-color: #f5f5f5;
+    color: #666;
+    border-color: #e0e0e0;
+  }
 }
 
 // ── Form card ─────────────────────────────────────────────────────────────────
