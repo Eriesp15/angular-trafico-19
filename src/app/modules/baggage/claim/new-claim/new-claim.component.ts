@@ -485,21 +485,9 @@ export class NewClaimComponent implements OnInit {
   }
 
   private buildInternationalPhone(countryCode: string, phoneNumber: string): string {
-    const cleanNumber = (phoneNumber || '').replace(/\s+/g, ' ').trim();
+    const cleanNumber = (phoneNumber || '').replace(/[^\d]/g, '').trim();
     if (!cleanNumber) {
       return '';
-    }
-
-    // Permite ingreso directo por texto: "+591 69423256"
-    if (cleanNumber.startsWith('+')) {
-      const parsed = cleanNumber.match(/^(\+\d{1,4})\s*(.*)$/);
-      if (!parsed) {
-        return cleanNumber;
-      }
-
-      const directCode = parsed[1];
-      const directNumber = parsed[2]?.trim();
-      return directNumber ? `${directCode} ${directNumber}` : directCode;
     }
 
     const code = (countryCode || '+591').trim();

@@ -313,10 +313,10 @@
                  type="text"
                  [(ngModel)]="permanentPhoneNumber"
                  [ngModelOptions]="{standalone: true}"
-                 placeholder="Número o completo: +591 69423256"
+                 placeholder="Número (ej: 67385737)"
                  maxlength="30">
         </div>
-        <small class="phone-hint">Puedes escribir solo el número o pegar todo con código internacional.</small>
+        <small class="phone-hint">Ingresa aquí solo el número del teléfono.</small>
       </div>
       <div class="field-grow">
         <label class="input-label">Teléfono Temporal / Temporary Phone Number</label>
@@ -332,10 +332,10 @@
                  type="text"
                  [(ngModel)]="temporaryPhoneNumber"
                  [ngModelOptions]="{standalone: true}"
-                 placeholder="Número o completo: +591 71234567"
+                 placeholder="Número (ej: 71234567)"
                  maxlength="30">
         </div>
-        <small class="phone-hint">Si incluyes +código aquí, se prioriza ese valor.</small>
+        <small class="phone-hint">Ingresa aquí solo el número del teléfono.</small>
       </div>
     </div>
 
