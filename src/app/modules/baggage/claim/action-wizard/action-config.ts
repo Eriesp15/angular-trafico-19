@@ -46,9 +46,13 @@ export const INDICATE_LOCAL_SEARCH = {
 export const INDICATE_WT_SEARCH = {
   id: 'INDICATE_WT_SEARCH',
   title: 'Indicar Búsqueda World Tracer',
+
+  autofill: {
+    worldTracerCode: 'worldTracerCode'
+  },
   
   fields: [
-    { name: 'wtReference', label: 'Referencia World Tracer', type: 'text', placeholder: 'Ej: WT123456', required: true},
+    { name: 'worldTracerCode', label: 'Código World Tracer', type: 'text', placeholder: 'Ej: WT123456', required: true},
     { name: 'searchDate', label: 'Fecha de registro', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required:true},
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],

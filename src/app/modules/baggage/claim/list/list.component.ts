@@ -30,6 +30,7 @@ interface PIR {
   flight: string
   route: string
   bagTag: string
+  worldTracerCode: string
   tipo: string
   aeropuerto?: string
   derivedFromRegional?: string | null
@@ -126,6 +127,7 @@ export class ListComponent implements OnInit, OnDestroy {
               flight: item.Vuelo ?? "",
               route: item.Ruta,
               bagTag: item.BagTag ?? "",
+              worldTracerCode: item.WorldTracer ?? "",
               tipo: item.Tipo,
               aeropuerto: item.PIR.substring(0, 3), // Extraer código aeropuerto del PIR
             } as PIR
@@ -224,6 +226,7 @@ export class ListComponent implements OnInit, OnDestroy {
           c.flight.toLowerCase().includes(lower) ||
           c.route.toLowerCase().includes(lower) ||
           c.bagTag.toLowerCase().includes(lower) ||
+          c.worldTracerCode.toLowerCase().includes(lower) ||
           c.claimType.toLowerCase().includes(lower) ||
           c.status.toLowerCase().includes(lower),
       )
