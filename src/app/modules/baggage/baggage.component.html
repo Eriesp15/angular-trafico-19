@@ -81,11 +81,13 @@
         <thead>
           <tr>
             <th>PIR</th>
-            <th title="Indicador de derivación de otra regional">Transferido</th>
+            <th>World Tracer</th>
             <th>Tipo</th>
             <th>Pasajero</th>
+            <th>Contacto</th>
             <th>Vuelo</th>
             <th>Ruta</th>
+            <th>Antigüedad</th>
             <th>Fecha</th>
             <th>BagTag</th>
             <th>Estado</th>
@@ -94,17 +96,12 @@
         <tbody>
           <tr *ngFor="let claim of recentClaims" class="table-row clickable-row" (click)="navigateToClaim(claim.pir!)">
             <td class="cell-pir">{{ claim.pir }}</td>
-            <td class="cell-derived">
-              <span 
-                *ngIf="claim.derivedFromRegional" 
-                class="derived-badge"
-                [title]="'Derivado de: ' + claim.derivedFromRegional"
-              >
-                <mat-icon>forward</mat-icon>
-                {{ claim.derivedFromRegional }}
+            <td class="cell-world-tracer">
+              <span *ngIf="hasWorldTracer(claim)" class="wt-badge wt-badge--active" [title]="claim.worldTracerCode">
+                {{ claim.worldTracerCode }}
               </span>
-              <span *ngIf="!claim.derivedFromRegional" class="original-badge">
-                <span>NO</span>
+              <span *ngIf="!hasWorldTracer(claim)" class="wt-badge wt-badge--empty">
+                Sin WT
               </span>
             </td>
             <td class="cell-type">
@@ -113,8 +110,26 @@
               </span>
             </td>
             <td class="cell-passenger">{{ claim.pasajero }}</td>
+            <td class="cell-contact">
+              <div class="contact-lines">
+                <span *ngIf="claim.permanentPhone" class="contact-line">
+                  <strong>P:</strong> {{ claim.permanentPhone }}
+                </span>
+                <span *ngIf="claim.temporaryPhone" class="contact-line">
+                  <strong>T:</strong> {{ claim.temporaryPhone }}
+                </span>
+                <span *ngIf="!claim.permanentPhone && !claim.temporaryPhone" class="contact-line contact-line--empty">
+                  Sin teléfonos
+                </span>
+              </div>
+            </td>
             <td class="cell-flight">{{ claim.vuelo }}</td>
             <td class="cell-route">{{ claim.ruta }}</td>
+            <td class="cell-age">
+              <span [class]="getAgeBadgeClass(claim.createdAt)">
+                {{ getClaimAgeDays(claim.createdAt) }} días
+              </span>
+            </td>
             <td class="cell-date">{{ claim.fecha }}</td>
             <td class="cell-bagtag">{{ claim.bagTag }}</td>
             <td class="cell-status">

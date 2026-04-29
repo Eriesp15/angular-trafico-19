@@ -30,8 +30,12 @@ interface RecentClaim {
   pasajero: string
   tipo: "AHL" | "DPR" | "PILFERED" | "OHL"
   bagTag: string
+  worldTracerCode: string
+  permanentPhone: string
+  temporaryPhone: string
   estado: "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED"
   fecha: string
+  createdAt: Date
   vuelo: string
   ruta: string
   diasTranscurridos?: number
@@ -148,12 +152,16 @@ export class BaggageComponent implements OnInit, OnDestroy {
               pasajero: `${lastName}, ${firstName}`,
               tipo: item.Tipo,
               bagTag: item.BagTag ?? "",
+              worldTracerCode: item.WorldTracer ?? "",
+              permanentPhone: item.TelefonoPermanente ?? "",
+              temporaryPhone: item.TelefonoTemporal ?? "",
               estado: item.Estado,
               fecha: new Date(item.Fecha).toLocaleDateString("es-BO", {
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
               }),
+              createdAt: fechaReclamo,
               vuelo: item.Vuelo ?? "",
               ruta: item.Ruta,
               diasTranscurridos,
@@ -167,9 +175,7 @@ export class BaggageComponent implements OnInit, OnDestroy {
           // Ordenar por fecha más reciente y obtener los últimos 5
           this.recentClaims = mappedClaims
             .sort((a, b) => {
-              const dateA = new Date(a.fecha.split("/").reverse().join("-"))
-              const dateB = new Date(b.fecha.split("/").reverse().join("-"))
-              return dateB.getTime() - dateA.getTime()
+              return b.createdAt.getTime() - a.createdAt.getTime()
             })
             .slice(0, 5)
 
@@ -346,5 +352,22 @@ export class BaggageComponent implements OnInit, OnDestroy {
     if (dias >= 3) return "days-warning"
     if (dias >= 1) return "days-info"
     return ""
+  }
+
+  hasWorldTracer(claim: RecentClaim): boolean {
+    return !!claim.worldTracerCode?.trim()
+  }
+
+  getClaimAgeDays(createdAt: Date): number {
+    const now = new Date()
+    const diffMs = now.getTime() - createdAt.getTime()
+    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)))
+  }
+
+  getAgeBadgeClass(createdAt: Date): string {
+    const age = this.getClaimAgeDays(createdAt)
+    if (age > 30) return "age-badge age-badge--critical"
+    if (age > 21) return "age-badge age-badge--warn"
+    return "age-badge age-badge--ok"
   }
 }
