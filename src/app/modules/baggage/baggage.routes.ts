@@ -14,7 +14,6 @@ import { ContentComponent } from "./claim/content/content.component"
 import { StationContactComponent } from "./station-contact/station-contact.component"
 import { ReportsComponent } from "./reports/reports.component"
 import { NewOhlComponent } from "./ohl/new-ohl/new-ohl.component"
-import { SearchComponent } from "./search/search.component"
 import { SendToRepairDialogComponent } from "./claim/send-to-repair/send-to-repair-dialog.component"
 import { TrackingSheetComponent } from "./claim/tracking-sheet/tracking-sheet.component"
 
@@ -78,10 +77,6 @@ export default [
   {
     path: "ohl/new",
     component: NewOhlComponent,
-  },
-  {
-    path: "search",
-    component: SearchComponent,
   },
   {
     path: "repair",
