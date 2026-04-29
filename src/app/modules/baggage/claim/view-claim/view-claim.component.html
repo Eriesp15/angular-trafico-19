@@ -187,7 +187,7 @@
             <mat-icon>receipt_long</mat-icon>
             <span>Ver Gastos</span>
           </button>
-          <button *ngIf="isAHL()" class="btn-action-secondary" [routerLink]="['/baggage/search']">
+          <button *ngIf="isAHL()" class="btn-action-secondary" (click)="indicarBusquedaWorldTracer()">
             <mat-icon>travel_explore</mat-icon>
             <span>World Tracer</span>
           </button>
