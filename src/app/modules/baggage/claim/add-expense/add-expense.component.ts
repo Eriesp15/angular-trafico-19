@@ -66,8 +66,6 @@ export class AddExpenseComponent implements OnInit {
       descripcion: "Compensación por contenido faltante (15 USD/kg)",
       icon: "inventory_2",
       habilitado: true,
-      requiereCalculo: true,
-      requiereDias: 21,
     },
     {
       id: "indemnizacion_extravio_maleta",

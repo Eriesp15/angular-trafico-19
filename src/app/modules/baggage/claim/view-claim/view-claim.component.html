@@ -170,10 +170,6 @@
             <mat-icon>inventory_2</mat-icon>
             <span>Ver Formulario de Contenido</span>
           </button>
-          <button *ngIf="isAHL() || isDPR()" class="btn-action-secondary" (click)="realizarEntrega()">
-            <mat-icon>local_shipping</mat-icon>
-            <span>Realizar Entrega</span>
-          </button>
           <button *ngIf="isDPR()" class="btn-action-secondary" (click)="enviarAReparacion()">
             <mat-icon>build</mat-icon>
             <span>Enviar a Reparación</span>
