@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ClaimService } from '../../../../services/claim.service';
 import { Router } from '@angular/router';
 import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
+import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
 
 @Component({
   selector: 'app-new-claim',
@@ -89,6 +90,13 @@ export class NewClaimComponent implements OnInit {
     { value: 'W', description: 'Wheels'},
     { value: 'X', description: 'No external descriptive elements'}
   ];
+
+  phoneCountryCodes: Array<{ iso: string; name: string; dialCode: string; label: string }> = [];
+
+  permanentPhoneCountryCode = '+591';
+  permanentPhoneNumber = '';
+  temporaryPhoneCountryCode = '+591';
+  temporaryPhoneNumber = '';
   constructor(
     private fb: FormBuilder,
     private claimService: ClaimService,
@@ -96,6 +104,8 @@ export class NewClaimComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.initializePhoneCountryCodes();
+
     this.pIR = this.fb.group({
       //linea 1
       route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
@@ -445,6 +455,11 @@ export class NewClaimComponent implements OnInit {
 
   onSubmit(): void {
     if (this.pIR.valid) {
+      this.pIR.patchValue({
+        permanentPhone: this.buildInternationalPhone(this.permanentPhoneCountryCode, this.permanentPhoneNumber),
+        temporaryPhone: this.buildInternationalPhone(this.temporaryPhoneCountryCode, this.temporaryPhoneNumber),
+      });
+
       const datos = this.pIR.value;
       console.log('Datos del formulario:', datos);
       this.claimService.createClaim(datos).subscribe({
@@ -467,5 +482,47 @@ export class NewClaimComponent implements OnInit {
     } else {
       alert('Por favor completa todos los campos requeridos');
     }
+  }
+
+  private buildInternationalPhone(countryCode: string, phoneNumber: string): string {
+    const cleanNumber = (phoneNumber || '').replace(/\s+/g, ' ').trim();
+    if (!cleanNumber) {
+      return '';
+    }
+
+    // Permite ingreso directo por texto: "+591 69423256"
+    if (cleanNumber.startsWith('+')) {
+      const parsed = cleanNumber.match(/^(\+\d{1,4})\s*(.*)$/);
+      if (!parsed) {
+        return cleanNumber;
+      }
+
+      const directCode = parsed[1];
+      const directNumber = parsed[2]?.trim();
+      return directNumber ? `${directCode} ${directNumber}` : directCode;
+    }
+
+    const code = (countryCode || '+591').trim();
+    return `${code} ${cleanNumber}`;
+  }
+
+  private initializePhoneCountryCodes(): void {
+    const displayNames =
+      typeof Intl !== 'undefined' && typeof Intl.DisplayNames !== 'undefined'
+        ? new Intl.DisplayNames(['es'], { type: 'region' })
+        : null;
+
+    this.phoneCountryCodes = getCountries()
+      .map((iso) => {
+        const dialCode = `+${getCountryCallingCode(iso)}`;
+        const countryName = displayNames?.of(iso) || iso;
+        return {
+          iso,
+          name: countryName,
+          dialCode,
+          label: `${countryName} (${dialCode})`,
+        };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name, 'es'));
   }
 }

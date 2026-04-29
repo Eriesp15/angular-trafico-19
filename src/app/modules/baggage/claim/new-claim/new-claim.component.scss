@@ -152,6 +152,12 @@ h3 {
   letter-spacing: 0.4px;
 }
 
+.phone-hint {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
 // ── Input con código prefix ───────────────────────────────────────────────────
 .input-prefixed {
   display: flex;

@@ -303,17 +303,47 @@
         <label class="input-label">Teléfono Permanente del pasajero / Passenger's permanent phone number</label>
         <div class="input-prefixed">
           <span class="code">PN</span>
-          <input class="input-field" type="text" formControlName="permanentPhone" placeholder="Teléfono Permanente" maxlength="20">
+          <input class="input-field"
+                 type="text"
+                 list="country-codes-list"
+                 [(ngModel)]="permanentPhoneCountryCode"
+                 [ngModelOptions]="{standalone: true}"
+                 placeholder="Código (ej: +591)">
+          <input class="input-field"
+                 type="text"
+                 [(ngModel)]="permanentPhoneNumber"
+                 [ngModelOptions]="{standalone: true}"
+                 placeholder="Número o completo: +591 69423256"
+                 maxlength="30">
         </div>
+        <small class="phone-hint">Puedes escribir solo el número o pegar todo con código internacional.</small>
       </div>
       <div class="field-grow">
         <label class="input-label">Teléfono Temporal / Temporary Phone Number</label>
         <div class="input-prefixed">
           <span class="code">TP</span>
-          <input class="input-field" type="text" formControlName="temporaryPhone" placeholder="Teléfono Temporal" maxlength="20">
+          <input class="input-field"
+                 type="text"
+                 list="country-codes-list"
+                 [(ngModel)]="temporaryPhoneCountryCode"
+                 [ngModelOptions]="{standalone: true}"
+                 placeholder="Código (ej: +591)">
+          <input class="input-field"
+                 type="text"
+                 [(ngModel)]="temporaryPhoneNumber"
+                 [ngModelOptions]="{standalone: true}"
+                 placeholder="Número o completo: +591 71234567"
+                 maxlength="30">
         </div>
+        <small class="phone-hint">Si incluyes +código aquí, se prioriza ese valor.</small>
       </div>
     </div>
+
+    <datalist id="country-codes-list">
+      <option *ngFor="let country of phoneCountryCodes" [value]="country.dialCode">
+        {{ country.label }}
+      </option>
+    </datalist>
 
     <div class="row">
       <div class="field-grow">
