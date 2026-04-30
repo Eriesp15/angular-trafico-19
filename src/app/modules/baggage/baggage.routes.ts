@@ -43,6 +43,10 @@ export default [
     component: ViewClaimComponent,
   },
   {
+    path: "claim/follow/:pir",
+    component: FollowComponent,
+  },
+  {
     path: "claim/content/:id",
     component: ContentComponent,
   },
