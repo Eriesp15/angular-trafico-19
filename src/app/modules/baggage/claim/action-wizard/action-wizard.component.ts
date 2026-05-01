@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActionWizardService } from "./action-wizard.service";
+import { environment } from '../../../../../environments/environment';
 
 @Component({
     selector: 'app-action-wizard',
@@ -24,6 +25,7 @@ export class ActionWizardComponent {
     formData: any = {};
     message = '';
     onSuccessCallback?: () => void;
+    repairCompanyOptions: any[] = [];
 
     // Nuevos para validación y mensajes bonitos
     fieldErrors: Record<string, string> = {};
@@ -53,6 +55,10 @@ export class ActionWizardComponent {
 
                 // método de autocompletado
                 this.formData = this.autofillForm();
+
+                if (this.config?.id === 'ASSIGN_REPAIR_COMPANY') {
+                    this.loadRepairCompanies();
+                }
             }
         });
     }
@@ -82,7 +88,24 @@ export class ActionWizardComponent {
 
         return data;
     }
-
+    loadRepairCompanies() {
+        this.http
+            .get<any[]>(`${environment.protocol}//${environment.host}/api/v1/companies?active=true`)
+            .subscribe((companies) => {
+                this.repairCompanyOptions = companies
+                    .filter(c => c.serviceType?.name === 'Reparación')
+                    .map(c => ({
+                        value: c.id,
+                        label: c.name
+                    }));
+            });
+    }
+    getOptions(field: any) {
+        if (field.optionsFrom === 'repairCompanies') {
+            return this.repairCompanyOptions;
+        }
+        return field.options || [];
+    }
     validateFields(): boolean {
         this.fieldErrors = {};
         this.generalError = '';
@@ -143,7 +166,9 @@ export class ActionWizardComponent {
         console.log('Payload:', payload);
 
         try {
-            const response = await this.http.post('/api/pir/action', payload).toPromise();
+            const response = await this.http
+                .post(`${environment.protocol}//${environment.host}/api/v1/pir/action`, payload)
+                .toPromise();
             console.log('Respuesta:', response);
 
             if (this.onSuccessCallback) {

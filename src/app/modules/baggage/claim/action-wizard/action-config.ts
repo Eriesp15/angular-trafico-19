@@ -183,6 +183,15 @@ export const TRANSFER_BAG = {
 
     fields: [
         {
+            name: 'registeredBy',
+            label: 'Usuario que envia',
+            type: 'text',
+            readonly: true,
+            required: true,
+
+        },
+        {
+
             name: 'originStation',
             label: 'Estación origen',
             type: 'select',
@@ -252,14 +261,7 @@ export const TRANSFER_BAG = {
             required: true
 
         },
-        {
-            name: 'registeredBy',
-            label: 'Usuario que registra',
-            type: 'text',
-            readonly: true,
-            required: true,
 
-        },
         {
             name: 'notes',
             label: 'Observaciones',
@@ -270,8 +272,8 @@ export const TRANSFER_BAG = {
 
     getMessage: (data: any) =>
         `Se envio equipaje desde ${data.originStation} hacia ${data.destinationStation}. Motivo: ${data.reason}. BagTag: ${data.bagTag}. Vuelo: ${data.flightNumber}. Fecha de vuelo: ${data.flightDate}. Registrado por: ${data.registeredBy}. ${data.notes || ''}`,
-
-    newStatus: 'IN_PROCESS'
+    //talvez deberia haber otro estado como enviado? o que se quede en reparacion ?
+    //newStatus: 'REPAIRING'
 };
 
 // ===== PROBANDO REPARACIÓN melvi=====
@@ -280,34 +282,73 @@ export const ASSIGN_REPAIR_COMPANY = {
     id: 'ASSIGN_REPAIR_COMPANY',
     title: 'Asignar a empresa reparadora',
 
+    autofill: {
+        registeredBy: 'loggedUserName',
+        assignmentDate: 'todayFlightDate',
+        sendWhatsapp: 'sendWhatsappDefault'
+    },
+
     fields: [
-        { name: 'repairCompany', label: 'Empresa reparadora', type: 'text', placeholder: 'Nombre de la empresa' },
-        { name: 'assignmentDate', label: 'Fecha de asignación', type: 'datetime-local' },
-        { name: 'sendWhatsapp', label: 'Notificar por WhatsApp', type: 'select',
-            options: ['Sí', 'No'] },
-        { name: 'notes', label: 'Observaciones', type: 'textarea' }
+        {
+            name: 'registeredBy',
+            label: 'Usuario que asigna',
+            type: 'text',
+            readonly: true,
+            required: true
+        },
+        {
+            name: 'assignmentDate',
+            label: 'Fecha de asignación',
+            type: 'datetime-local',
+            readonly: true,
+            required: true
+        },
+        {
+            name: 'repairCompanyId',
+            label: 'Empresa reparadora',
+            type: 'select',
+            required: true,
+            optionsFrom: 'repairCompanies'
+        },
+        {
+            name: 'sendWhatsapp',
+            label: 'Notificar por WhatsApp',
+            type: 'select',
+            required: true,
+            options: ['Sí', 'No']
+        },
+        {
+            name: 'notes',
+            label: 'Observaciones',
+            type: 'textarea'
+        }
     ],
 
     getMessage: (data: any) =>
-        `Se asignó el equipaje a la empresa reparadora ${data.repairCompany}. Notificación por WhatsApp: ${data.sendWhatsapp}. ${data.notes || ''}`,
+        `Se asignó el equipaje a la empresa reparadora seleccionada. Fecha: ${data.assignmentDate}. Registrado por: ${data.registeredBy}. Notificación por WhatsApp: ${data.sendWhatsapp}. ${data.notes || ''}`,
 
-    newStatus: 'IN_PROCESS'
+    newStatus: 'REPAIRING'
 };
 
 export const DELIVER_TO_REPAIR_COMPANY = {
     id: 'DELIVER_TO_REPAIR_COMPANY',
     title: 'Entregar a reparadora',
 
+    autofill: {
+        registeredBy: 'loggedUserName',
+        deliveryDate: 'todayFlightDate',
+        estimatedReturnDate: 'estimatedReturnDateDefault'
+    },
+
     fields: [
-        { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local' },
-        { name: 'deliveredTo', label: 'Nombre de quien recoge', type: 'text', placeholder: 'Representante de la reparadora' },
-        { name: 'estimatedReturnDate', label: 'Fecha estimada de devolución', type: 'date' },
-        { name: 'damageDescription', label: 'Descripción del daño', type: 'textarea' },
+        { name: 'registeredBy', label: 'Usuario que entrega', type: 'text', readonly: true, required: true },
+        { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local', required: true },
+        { name: 'estimatedReturnDate', label: 'Fecha estimada de devolución', type: 'date', required: true },
         { name: 'notes', label: 'Observaciones', type: 'textarea' }
     ],
 
     getMessage: (data: any) =>
-        `Se entregó el equipaje a la reparadora el ${data.deliveryDate}. Recibió: ${data.deliveredTo}. Fecha estimada de devolución: ${data.estimatedReturnDate}. ${data.notes || ''}`,
+        `Se entregó el equipaje a la reparadora el ${data.deliveryDate}. Usuario que entrega: ${data.registeredBy}. Fecha estimada de devolución: ${data.estimatedReturnDate}. ${data.notes || ''}`,
 
     newStatus: 'REPAIRING'
 };
@@ -316,16 +357,26 @@ export const RECEIVE_FROM_REPAIR_COMPANY = {
     id: 'RECEIVE_FROM_REPAIR_COMPANY',
     title: 'Recibir desde reparadora',
 
+    autofill: {
+        registeredBy: 'loggedUserName',
+        receivedDate: 'todayFlightDate'
+    },
+
     fields: [
-        { name: 'receivedDate', label: 'Fecha de recepción', type: 'datetime-local' },
-        { name: 'repairResult', label: 'Resultado', type: 'select',
-            options: ['REPAIRED', 'IRREPARABLE'] },
-        { name: 'reportNumber', label: 'Número de informe', type: 'text', placeholder: 'Opcional' },
+        { name: 'registeredBy', label: 'Usuario que recibe', type: 'text', readonly: true, required: true },
+        { name: 'receivedDate', label: 'Fecha de recepción', type: 'datetime-local', required: true },
+        {
+            name: 'repairResult',
+            label: 'Resultado',
+            type: 'select',
+            required: true,
+            options: ['REPAIRED', 'IRREPARABLE']
+        },
         { name: 'notes', label: 'Observaciones', type: 'textarea' }
     ],
 
     getMessage: (data: any) =>
-        `Se recibió el equipaje desde la reparadora el ${data.receivedDate}. Resultado: ${data.repairResult}. Informe: ${data.reportNumber || 'Sin número'}. ${data.notes || ''}`,
+        `Se recibió el equipaje desde la reparadora el ${data.receivedDate}. Usuario que recibe: ${data.registeredBy}. Resultado: ${data.repairResult}. ${data.notes || ''}`,
 
     newStatus: 'REPAIRED'
 };
@@ -351,8 +402,7 @@ export const MARK_IRREPARABLE = {
 
     getMessage: (data: any) =>
         `La empresa reparadora emitió informe de irreparabilidad con fecha ${data.reportDate}. Motivo: ${data.reason}. Se procede con compra del equipaje.`,
-
-    newStatus: 'PURCHASED'
+    newStatus: 'PURCHASE'
 };
 // ===== EXPORTAR TODAS LAS ACCIONES =====
 export const ACTIONS: Record<string, any> = {

@@ -79,8 +79,8 @@
                             [(ngModel)]="formData[field.name]"
                             (ngModelChange)="onFieldChange(field.name, $event)">
                         <option value="">Seleccionar...</option>
-                        <option *ngFor="let opt of field.options" [value]="opt">
-                            {{ opt }}
+                        <option *ngFor="let opt of getOptions(field)" [value]="opt.value || opt">
+                            {{ opt.label || opt }}
                         </option>
                     </select>
 

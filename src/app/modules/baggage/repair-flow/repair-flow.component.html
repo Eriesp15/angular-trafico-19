@@ -1,7 +1,7 @@
 <section class="flow-page">
     <header class="page-header">
         <h2>Flujo de reparación</h2>
-        <p>Control de asignación, entrega, devolución y resultado de la reparación.</p>
+        <p>Control de asignación, entrega, devolución e informe de reparación.</p>
     </header>
 
     <div class="loading-box" *ngIf="loading">
@@ -17,7 +17,7 @@
         <div class="summary-card">
             <div class="summary-header">
                 <h3>Resumen del reclamo</h3>
-                <span class="status-badge">{{ claim.claimStatus || '-' }}</span>
+                <span class="status-badge">{{ claim.claim?.claimStatus || claim.claimStatus || '-' }}</span>
             </div>
 
             <div class="summary-grid">
@@ -28,158 +28,128 @@
 
                 <div class="summary-item">
                     <span class="label">PIR</span>
-                    <span class="value">{{ claim.pirNumber || '-' }}</span>
+                    <span class="value">{{ claim.pirNumber || pirNumber || '-' }}</span>
                 </div>
 
                 <div class="summary-item">
                     <span class="label">Pasajero</span>
-                    <span class="value">{{ claim.pasajero || '-' }}</span>
+                    <span class="value">{{ getPassengerFullName() }}</span>
                 </div>
 
                 <div class="summary-item">
                     <span class="label">Estado actual</span>
-                    <span class="value">{{ claim.claimStatus || '-' }}</span>
+                    <span class="value">{{ getClaimStatus() }}</span>
                 </div>
 
                 <div class="summary-item">
                     <span class="label">Daño / motivo</span>
-                    <span class="value">{{ claim.lossReason || '-' }}</span>
+                    <span class="value">{{ getDamageOrReason() }}</span>
                 </div>
             </div>
         </div>
 
         <!-- UBICACIÓN -->
-        <div class="location-card" *ngIf="claim">
+        <div class="location-card">
             <div class="location-header">
                 <h3>Ubicación del equipaje</h3>
             </div>
 
             <div class="location-grid">
                 <div class="location-item">
-                    <span class="label">Origen del reclamo</span>
-                    <span class="value">{{ claim.openedStation || '-' }}</span>
+                    <span class="label">Origen donde se abrió reclamo</span>
+                    <span class="value">{{ getOpenedStation() }}</span>
                 </div>
 
                 <div class="location-item current">
-                    <span class="label">Ubicación actual</span>
-                    <span class="value">{{ claim.currentStation || '-' }}</span>
+                    <span class="label">Ubicación actual del equipaje</span>
+                    <span class="value">{{ getCurrentStation() }}</span>
                 </div>
 
                 <div class="location-item responsible">
                     <span class="label">Estación responsable</span>
-                    <span class="value">{{ claim.responsibleStation || '-' }}</span>
+                    <span class="value">{{ getResponsibleStation() }}</span>
                 </div>
             </div>
         </div>
 
-        <!-- TIMELINE -->
+        <!-- ENVÍO OPCIONAL -->
+        <div class="optional-action-card">
+            <div>
+                <h3>Envío opcional a otra estación</h3>
+                <p>Úsalo solo si el equipaje debe moverse físicamente a otra estación. No cambia la estación responsable.</p>
+            </div>
+
+            <app-derivar-button [claim]="claim"></app-derivar-button>
+        </div>
+        <div class="repair-company-card" *ngIf="repairStep !== 'PENDING'">
+            <h3>Empresa reparadora</h3>
+            <p>{{ getAssignedRepairCompanyText() }}</p>
+        </div>
+        <!-- ESTADO ACTUAL DEL PROCESO -->
         <div class="timeline-status-card">
-            <h3>Estado actual del proceso</h3>
+            <div class="timeline-header">
+                <div>
+                    <h3>Estado actual del proceso</h3>
+                    <p>Presiona un estado para registrar esa acción.</p>
+                </div>
+            </div>
 
             <div class="repair-timeline-modern">
-                <div class="timeline-line"></div>
+                <ng-container *ngFor="let step of steps; let i = index">
+                    <div
+                        class="modern-step"
+                        [class.active]="repairStep === step.key"
+                        [class.completed]="isStepCompleted(step.key)"
+                        [class.clickable]="step.action || step.key === 'DOCUMENT_UPLOADED'"
+                        (click)="step.key === 'DOCUMENT_UPLOADED' ? onUploadStepClick(fileInput) : onStepClick(step)"
+                    >
+                        <div class="modern-node">{{ i }}</div>
 
-                <div
-                    class="modern-step"
-                    [class.active]="repairStep === 'ASSIGNED'"
-                    [class.completed]="isStepCompleted('ASSIGNED')"
-                >
-                    <div class="modern-node">1</div>
-                    <div class="modern-card">
-                        <div class="modern-title">Asignado</div>
-                        <div class="modern-text">Se asignó a empresa reparadora</div>
+                        <div class="modern-card">
+                            <div class="modern-title">{{ step.title }}</div>
+                            <div class="modern-text">{{ step.desc }}</div>
+
+                            <div class="step-hint done-hint" *ngIf="isStepCompleted(step.key)">
+                                ✓ Hecho
+                            </div>
+
+                            <div class="step-hint current-hint" *ngIf="repairStep === step.key && !isStepCompleted(step.key)">
+                                Estado actual
+                            </div>
+
+                            <div class="step-hint action-hint" *ngIf="canExecuteStep(step)">
+                                Registrar acción
+                            </div>
+
+                            <div
+                                class="step-hint pending-hint"
+                                *ngIf="!isStepCompleted(step.key) && repairStep !== step.key && !canExecuteStep(step)"
+                            >
+                                Pendiente
+                            </div>
+
+                        </div>
                     </div>
-                </div>
 
-                <div
-                    class="modern-step"
-                    [class.active]="repairStep === 'DELIVERED'"
-                    [class.completed]="isStepCompleted('DELIVERED')"
-                >
-                    <div class="modern-node">2</div>
-                    <div class="modern-card">
-                        <div class="modern-title">Entregado</div>
-                        <div class="modern-text">Equipaje entregado a reparadora</div>
+                    <div class="step-arrow" *ngIf="i < steps.length - 1">
+                        →
                     </div>
-                </div>
-
-                <div
-                    class="modern-step"
-                    [class.active]="repairStep === 'IN_REPAIR'"
-                    [class.completed]="isStepCompleted('IN_REPAIR')"
-                >
-                    <div class="modern-node">3</div>
-                    <div class="modern-card">
-                        <div class="modern-title">En reparadora</div>
-                        <div class="modern-text">La reparadora está trabajando el equipaje</div>
-                    </div>
-                </div>
-
-                <div
-                    class="modern-step"
-                    [class.active]="repairStep === 'RETURNED'"
-                    [class.completed]="isStepCompleted('RETURNED')"
-                >
-                    <div class="modern-node">4</div>
-                    <div class="modern-card">
-                        <div class="modern-title">Devuelto</div>
-                        <div class="modern-text">La reparadora devolvió el equipaje a oficina</div>
-                    </div>
-                </div>
-
-                <div
-                    class="modern-step"
-                    [class.active]="repairStep === 'DOCUMENT_UPLOADED'"
-                    [class.completed]="isStepCompleted('DOCUMENT_UPLOADED')"
-                >
-                    <div class="modern-node">5</div>
-                    <div class="modern-card">
-                        <div class="modern-title">Informe subido</div>
-                        <div class="modern-text">Se cargó el documento de reparación</div>
-                    </div>
-                </div>
-
-                <div
-                    class="modern-step"
-                    [class.active]="repairStep === 'RESOLVED'"
-                    [class.completed]="isStepCompleted('RESOLVED')"
-                >
-                    <div class="modern-node">6</div>
-                    <div class="modern-card">
-                        <div class="modern-title">Resultado definido</div>
-                        <div class="modern-text">Se marcó reparado o irreparable</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ACCIONES -->
-        <div class="actions-card">
-            <h3>Acciones disponibles</h3>
-
-            <app-derivar-button
-                [claim]="claim"
-            ></app-derivar-button>
-
-            <div class="actions-grid">
-                <button type="button" (click)="openAction('ASSIGN_REPAIR_COMPANY')">
-                    Asignar reparadora
-                </button>
-
-                <button type="button" (click)="openAction('DELIVER_TO_REPAIR_COMPANY')">
-                    Entregar a reparadora
-                </button>
-
-                <button type="button" (click)="openAction('RECEIVE_FROM_REPAIR_COMPANY')">
-                    Recibir desde reparadora
-                </button>
+                </ng-container>
             </div>
         </div>
 
         <!-- DOCUMENTO -->
         <div class="document-card">
             <div class="document-header">
-                <h3>Informe de reparadora</h3>
+                <div>
+                    <h3>Informe de reparadora</h3>
+                    <p *ngIf="!repairDocument">
+                        Sube el informe emitido por la reparadora.
+                    </p>
+                    <p *ngIf="repairDocument">
+                        Informe de reparación cargado correctamente.
+                    </p>
+                </div>
 
                 <button
                     type="button"
@@ -228,7 +198,9 @@
                 </div>
 
                 <div class="mini-preview pdf-preview" *ngIf="isPdfDocument(repairDocument)">
-                    <span>PDF cargado</span>
+                    <button (click)="previewDocument(repairDocument)">
+                        Ver PDF
+                    </button>
                 </div>
 
                 <div class="doc-actions">
@@ -245,33 +217,6 @@
                     </button>
                 </div>
             </div>
-        </div>
-
-        <!-- RESULTADO FINAL -->
-        <div class="actions-card">
-            <h3>Definir resultado</h3>
-
-            <div class="actions-grid">
-                <button
-                    type="button"
-                    class="success-btn"
-                    (click)="markAsRepaired()"
-                >
-                    Marcar como reparado
-                </button>
-
-                <button
-                    type="button"
-                    class="warn-btn"
-                    (click)="markAsIrreparable()"
-                >
-                    Marcar como irreparable
-                </button>
-            </div>
-        </div>
-
-        <div class="blocked-box" *ngIf="!repairDocument">
-            Si vas a marcar como irreparable, primero debes subir el informe de la reparadora.
         </div>
     </ng-container>
 </section>

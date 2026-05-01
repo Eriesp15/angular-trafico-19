@@ -1,10 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+
 import { ActionWizardComponent } from '../claim/action-wizard/action-wizard.component';
 import { ActionWizardService } from '../claim/action-wizard/action-wizard.service';
 import { ClaimFlowService } from '../services/claim-flow.service';
 import { DerivarButtonComponent } from '../derivar-button/derivar-button.component';
+
+import { UserService } from 'app/core/user/user.service';
+import { User } from 'app/core/user/user.types';
 
 @Component({
     selector: 'app-repair-flow',
@@ -13,15 +18,16 @@ import { DerivarButtonComponent } from '../derivar-button/derivar-button.compone
     templateUrl: './repair-flow.component.html',
     styleUrls: ['./repair-flow.component.scss'],
 })
-export class RepairFlowComponent implements OnInit {
+export class RepairFlowComponent implements OnInit, OnDestroy {
     pirNumber = '';
     claim: any = null;
     timeline: any[] = [];
     loading = false;
     errorMessage = '';
 
-    repairStep = 'ASSIGNED';
+    repairStep = 'PENDING';
     repairDocument: any = null;
+
 
     uploadingDocument = false;
     deletingDocument = false;
@@ -30,46 +36,59 @@ export class RepairFlowComponent implements OnInit {
     localPreviewType: 'image' | 'pdf' | null = null;
     localPreviewName = '';
 
+    currentUserName = '';
+    private destroy$ = new Subject<void>();
+
     steps = [
+        {
+            key: 'PENDING',
+            title: 'Pendiente',
+            desc: 'Aún no se asignó a una empresa reparadora',
+            action: null,
+        },
         {
             key: 'ASSIGNED',
             title: 'Asignado',
-            desc: 'Se asignó a empresa reparadora',
+            desc: 'Asignar empresa reparadora',
+            action: 'ASSIGN_REPAIR_COMPANY',
         },
         {
             key: 'DELIVERED',
             title: 'Entregado',
-            desc: 'Equipaje entregado a reparadora',
-        },
-        {
-            key: 'IN_REPAIR',
-            title: 'En reparadora',
-            desc: 'La reparadora está trabajando el equipaje',
+            desc: 'Entregar equipaje a reparadora',
+            action: 'DELIVER_TO_REPAIR_COMPANY',
         },
         {
             key: 'RETURNED',
             title: 'Devuelto',
-            desc: 'La reparadora devolvió el equipaje a oficina',
+            desc: 'Recibir equipaje desde reparadora',
+            action: 'RECEIVE_FROM_REPAIR_COMPANY',
         },
         {
             key: 'DOCUMENT_UPLOADED',
             title: 'Informe subido',
-            desc: 'Se cargó el documento de reparación',
-        },
-        {
-            key: 'RESOLVED',
-            title: 'Resultado definido',
-            desc: 'Se marcó reparado o irreparable',
+            desc: 'Subir informe de reparación',
+            action: null,
         },
     ];
 
     constructor(
         private route: ActivatedRoute,
         private wizardService: ActionWizardService,
-        private claimFlowService: ClaimFlowService
+        private claimFlowService: ClaimFlowService,
+        private userService: UserService
     ) {}
 
     ngOnInit(): void {
+        this.userService.user$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((user: User) => {
+                this.currentUserName =
+                    (user as any)?.name ||
+                    (user as any)?.email ||
+                    '';
+            });
+
         this.pirNumber = this.route.snapshot.paramMap.get('pirNumber') || '';
 
         if (this.pirNumber) {
@@ -77,6 +96,12 @@ export class RepairFlowComponent implements OnInit {
         } else {
             this.errorMessage = 'No se recibió el número de PIR.';
         }
+
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     loadClaim(): void {
@@ -135,22 +160,50 @@ export class RepairFlowComponent implements OnInit {
     openAction(actionKey: string): void {
         if (!this.claim) return;
 
-        this.wizardService.open(actionKey, this.claim, () => this.loadClaim());
+        const enrichedPirData = {
+            ...this.claim,
+            loggedUserName: this.currentUserName,
+            registeredBy: this.currentUserName,
+            todayFlightDate: this.getTodayDateTimeLocal(),
+            estimatedReturnDateDefault: this.getDatePlusDaysLocal(5),
+            sendWhatsappDefault: 'Sí',
+        };
+
+        this.wizardService.open(actionKey, enrichedPirData, () => this.loadClaim());
+    }
+
+
+
+    getTodayDateTimeLocal(): string {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const localDate = new Date(now.getTime() - offset * 60000);
+        return localDate.toISOString().slice(0, 16);
+    }
+
+    getDatePlusDaysLocal(days: number): string {
+        const date = new Date();
+        date.setDate(date.getDate() + days);
+
+        const offset = date.getTimezoneOffset();
+        const localDate = new Date(date.getTime() - offset * 60000);
+
+        return localDate.toISOString().slice(0, 10);
     }
 
     getPassengerFullName(): string {
-        const name = this.claim?.pir?.passengerName || '';
-        const lastName = this.claim?.pir?.passengerLastName || '';
+        const name = this.claim?.pir?.passengerName || this.claim?.passengerName || '';
+        const lastName = this.claim?.pir?.passengerLastName || this.claim?.passengerLastName || '';
         const fullName = `${name} ${lastName}`.trim();
 
-        return fullName || '-';
+        return fullName || this.claim?.pasajero || '-';
     }
 
     getDamageOrReason(): string {
-        const lossReason = this.claim?.pir?.lossReason;
+        const lossReason = this.claim?.pir?.lossReason || this.claim?.lossReason;
         if (lossReason) return lossReason;
 
-        const damageDetails = this.claim?.pir?.damageDetails;
+        const damageDetails = this.claim?.pir?.damageDetails || this.claim?.damageDetails;
         if (Array.isArray(damageDetails) && damageDetails.length > 0) {
             const firstDetail = damageDetails[0];
 
@@ -168,67 +221,59 @@ export class RepairFlowComponent implements OnInit {
 
         return '-';
     }
+    getClaimStatus(): string {
+        return this.claim?.claim?.claimStatus || this.claim?.claimStatus || '-';
+    }
+
+    getOpenedStation(): string {
+        return this.claim?.claim?.openedStation || this.claim?.originatorAirport || this.claim?.airportText || '-';
+    }
+
+    getCurrentStation(): string {
+        return this.claim?.claim?.currentStation || this.claim?.claim?.openedStation || this.claim?.airportText || '-';
+    }
+
+    getResponsibleStation(): string {
+        return this.claim?.claim?.responsibleStation || this.claim?.claim?.openedStation || this.claim?.airportText || '-';
+    }
 
     calculateRepairStep(): void {
-        const messages = this.timeline.map((item) =>
-            String(item?.message || '').toLowerCase()
-        );
-
-        const hasAssigned = messages.some((msg) =>
-            msg.includes('asignó el equipaje a la empresa reparadora')
-        );
-
-        const hasDelivered = messages.some((msg) =>
-            msg.includes('se entregó el equipaje a la reparadora')
-        );
-
-        const hasReceived = messages.some((msg) =>
-            msg.includes('se recibió el equipaje desde la reparadora')
-        );
-
-        const hasIrreparable = messages.some(
-            (msg) =>
-                msg.includes('irreparabilidad') || msg.includes('irreparable')
-        );
-
-        const hasRepaired = this.claim?.claimStatus === 'REPAIRED';
-
-        if (hasIrreparable || hasRepaired) {
-            this.repairStep = 'RESOLVED';
-            return;
-        }
-
-        if (this.repairDocument && hasReceived) {
-            this.repairStep = 'DOCUMENT_UPLOADED';
-            return;
-        }
-
-        if (hasReceived) {
-            this.repairStep = 'RETURNED';
-            return;
-        }
-
-        if (hasDelivered) {
-            this.repairStep = 'IN_REPAIR';
-            return;
-        }
-
-        if (hasAssigned) {
+        const repairStatus = this.claim?.claim?.repairStatus || this.claim?.repairStatus;
+        if (repairStatus === 'ASSIGNED') {
             this.repairStep = 'ASSIGNED';
             return;
         }
 
-        this.repairStep = 'ASSIGNED';
+        if (repairStatus === 'DELIVERED') {
+            this.repairStep = 'DELIVERED';
+            return;
+        }
+
+        if (repairStatus === 'RETURNED') {
+            this.repairStep = 'RETURNED';
+            return;
+        }
+
+        if (repairStatus === 'REPORT_UPLOADED') {
+            this.repairStep = 'DOCUMENT_UPLOADED';
+            return;
+        }
+
+        if (repairStatus === 'REPAIRED' || repairStatus === 'IRREPARABLE') {
+            this.repairStep = 'DOCUMENT_UPLOADED';
+            return;
+        }
+
+        this.repairStep = 'PENDING';
     }
 
     isStepCompleted(step: string): boolean {
         const order = [
+            'PENDING',
             'ASSIGNED',
             'DELIVERED',
-            'IN_REPAIR',
             'RETURNED',
             'DOCUMENT_UPLOADED',
-            'RESOLVED',
         ];
 
         return order.indexOf(step) < order.indexOf(this.repairStep);
@@ -381,21 +426,32 @@ export class RepairFlowComponent implements OnInit {
                 this.deletingDocument = false;
             },
         });
+
+    }
+    getRepairOrder(): string[] {
+        return ['PENDING', 'ASSIGNED', 'DELIVERED', 'RETURNED', 'DOCUMENT_UPLOADED'];
     }
 
-    markAsRepaired(): void {
-        this.errorMessage = '';
-        this.openAction('MARK_AS_REPAIRED');
+    isNextStep(step: string): boolean {
+        const order = this.getRepairOrder();
+        const currentIndex = order.indexOf(this.repairStep);
+
+        return order[currentIndex + 1] === step;
+    }
+    canExecuteStep(step: any): boolean {
+        return this.isNextStep(step.key);
     }
 
-    markAsIrreparable(): void {
-        if (!this.repairDocument) {
-            this.errorMessage =
-                'Primero debes subir el informe de la reparadora para marcar como irreparable.';
-            return;
-        }
+    onStepClick(step: any): void {
+        if (!this.canExecuteStep(step)) return;
+        if (!step?.action) return;
 
-        this.errorMessage = '';
-        this.openAction('MARK_IRREPARABLE');
+        this.openAction(step.action);
+    }
+
+    onUploadStepClick(fileInput: HTMLInputElement): void {
+        if (!this.canExecuteStep({ key: 'DOCUMENT_UPLOADED' })) return;
+
+        this.triggerFileInput(fileInput);
     }
 }
