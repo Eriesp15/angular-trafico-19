@@ -439,6 +439,103 @@ h3 {
   margin: 0;
 }
 
+// ── Flow diagram ───────────────────────────────────────────────────────────────
+.flow-diagram {
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid #d6e1f5;
+  border-radius: 10px;
+  background: #f7faff;
+
+  &__header {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #1b4fad;
+    margin-bottom: 0.75rem;
+  }
+
+  &__steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &__dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #a9bfdc;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #607b9e;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    min-width: 125px;
+  }
+
+  &__title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  &__status {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  &__connector {
+    width: 28px;
+    height: 2px;
+    background: #c5d4ea;
+    border-radius: 999px;
+  }
+
+  &--done {
+    .flow-step__dot {
+      border-color: #3e9a62;
+      background: #e8f8ef;
+      mat-icon { color: #1f7a45; }
+    }
+    .flow-step__status { color: #1f7a45; }
+    .flow-step__connector { background: #8cc7a2; }
+  }
+
+  &--current {
+    .flow-step__dot {
+      border-color: #1b4fad;
+      background: #e8effc;
+      mat-icon { color: #1b4fad; }
+    }
+    .flow-step__title { color: #1b4fad; }
+    .flow-step__status { color: #1b4fad; font-weight: 600; }
+  }
+
+  &--upcoming {
+    opacity: 0.95;
+  }
+}
+
 // ── Botones primarios grandes (siguiente movimiento) ──────────────────────────
 .btn-primary-grid {
   display: flex;

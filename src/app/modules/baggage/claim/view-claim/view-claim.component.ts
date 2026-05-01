@@ -11,6 +11,14 @@ import { ClaimStatusService } from "app/services/claim-status/claim-status.servi
 import { ActionWizardService } from "../action-wizard/action-wizard.service"
 import { ActionWizardComponent } from "../action-wizard/action-wizard.component"
 
+type FlowState = 'done' | 'current' | 'upcoming';
+
+type FlowStep = {
+  key: string;
+  label: string;
+  statuses: string[];
+};
+
 @Component({
   selector: "app-view-claim",
   standalone: true,
@@ -31,6 +39,7 @@ export class ViewClaimComponent implements OnInit {
   worldTracerCodigo = ""
   worldTracerEstado = ""
   worldTracerDescripcion = ""
+  flowSteps: FlowStep[] = [];
 
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view";
@@ -68,6 +77,7 @@ export class ViewClaimComponent implements OnInit {
 
         console.log("PIR cargado:", this.pirData)
         console.log("tipo de reclamo:", this.pirData.claimType)
+        this.flowSteps = this.getFlowByClaimType(this.pirData?.claimType);
       },
       error: (err) => {
         console.error("Error cargando PIR:", err)
@@ -187,6 +197,65 @@ export class ViewClaimComponent implements OnInit {
   }
   isDPR(): boolean {
     return this.pirData?.claimType === 'DPR';
+  }
+
+  getFlowState(step: FlowStep): FlowState {
+    const status = this.pirData?.claim?.claimStatus;
+    if (!status) return 'upcoming';
+
+    const index = this.flowSteps.findIndex((item) => item.statuses.includes(status));
+    const stepIndex = this.flowSteps.findIndex((item) => item.key === step.key);
+
+    if (index < 0) return 'upcoming';
+    if (stepIndex < index) return 'done';
+    if (stepIndex === index) return 'current';
+    return 'upcoming';
+  }
+
+  getFlowStateLabel(step: FlowStep): string {
+    const state = this.getFlowState(step);
+    if (state === 'done') return 'Completado';
+    if (state === 'current') return 'Actual';
+    return 'Pendiente';
+  }
+
+  getFlowStateIcon(step: FlowStep): string {
+    const state = this.getFlowState(step);
+    if (state === 'done') return 'check_circle';
+    if (state === 'current') return 'radio_button_checked';
+    return 'radio_button_unchecked';
+  }
+
+  private getFlowByClaimType(claimType?: string): FlowStep[] {
+    if (claimType === 'AHL') {
+      return [
+        { key: 'pending', label: 'Pendiente de gestión', statuses: ['PENDING', 'IN_PROCESS'] },
+        { key: 'searching', label: 'En búsqueda', statuses: ['SEARCHING'] },
+        { key: 'found-or-compensated', label: 'Encontrado o indemnizado', statuses: ['FOUND', 'COMPENSATED'] },
+        { key: 'delivered', label: 'Entrega realizada', statuses: ['DELIVERED'] },
+        { key: 'closed', label: 'Reclamo cerrado', statuses: ['CLOSED'] },
+      ];
+    }
+
+    if (claimType === 'DPR') {
+      return [
+        { key: 'pending', label: 'Pendiente de gestión', statuses: ['PENDING'] },
+        { key: 'repaired-route', label: 'Reparación / transferencia', statuses: ['REPAIRING', 'TRANSFERRED'] },
+        { key: 'compensated', label: 'Indemnizado/Reparado', statuses: ['COMPENSATED', 'REPAIRED'] },
+        { key: 'delivered', label: 'Entrega realizada', statuses: ['DELIVERED'] },
+        { key: 'closed', label: 'Reclamo cerrado', statuses: ['CLOSED'] },
+      ];
+    }
+
+    if (claimType === 'PILFERED') {
+      return [
+        { key: 'pending', label: 'Pendiente de gestión', statuses: ['PENDING'] },
+        { key: 'compensated', label: 'Indemnizado', statuses: ['COMPENSATED'] },
+        { key: 'closed', label: 'Reclamo cerrado', statuses: ['CLOSED'] },
+      ];
+    }
+
+    return [];
   }
 
   getStatusBadgeClass(estado: string): string {
