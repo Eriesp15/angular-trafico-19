@@ -13,14 +13,14 @@
       <h2 class="input-label">Introduzca las estaciones involucradas / Enter the stations involved</h2>
       <div class="row">
         <span class="code">QD</span>
-        <div *ngFor="let stop of route.controls; let i = index">
+        <div *ngFor="let stop of route.controls; let i = index" class="array-item">
           <div [formGroupName]="i" class="field">
             <input class="input-field" type="text" formControlName="stop" placeholder="Direccion/Address {{ i + 1 }}" maxlength="7">
-            <button type="button" class="btn-remove" (click)="eliminarRuta(i)" [disabled]="route.length <= 2">
-              ✕ Eliminar
-            </button>
           </div>
         </div>
+        <button type="button" class="btn-remove" (click)="eliminarRuta(route.length - 1)" [disabled]="route.length <= 2">
+          ✕
+        </button>
       </div>
       <button type="button" class="btn-add" (click)="agregarRuta()" [disabled]="route.length >= 5">
         + Agregar Ruta
@@ -90,14 +90,14 @@
       <label class="input-label">Aerolinea - Numero de ticket / Carrier Bag - Tag Number </label>
       <div class="row">
         <span class="code">TN</span>
-        <div *ngFor="let bagtag of bagtags.controls; let i = index">
+        <div *ngFor="let bagtag of bagtags.controls; let i = index" class="array-item">
           <div [formGroupName]="i" class="field">
             <input class="input-field" type="text" formControlName="number" placeholder="Ej: ABC123456" maxlength="20">
-            <button type="button" class="btn-remove" (click)="eliminarBagtag(i)" [disabled]="bagtags.length <= 1">
-              ✕ Eliminar
-            </button>
           </div>
         </div>
+        <button type="button" class="btn-remove" (click)="eliminarBagtag(bagtags.length - 1)" [disabled]="bagtags.length <= 1">
+          ✕
+        </button>
       </div>
       <button type="button" class="btn-add" (click)="agregarBagtag()" [disabled]="bagtags.length >= 5">
         + Agregar Bagtag
@@ -115,11 +115,11 @@
             <button type="button" class="btn-add" (click)="indiceActual = i; modalIdentificacionAbierto = true">
               Llenar por interfaz
             </button>
-            <button type="button" class="btn-remove" (click)="eliminarBagDescription(i)" [disabled]="bagDescription.length <= 1">
-              ✕ Eliminar
-            </button>
           </div>
         </div>
+        <button type="button" class="btn-remove" (click)="eliminarBagDescription(bagDescription.length - 1)" [disabled]="bagDescription.length <= 1">
+          ✕
+        </button>
       </div>
 
       <!-- Modal identificación de equipaje -->
@@ -187,14 +187,14 @@
       <label class="input-label">Ruta y/o lugar para hacer rastreo / Routing and/or location to be traced</label>
       <div class="row">
         <span class="code">RT</span>
-        <div *ngFor="let stop of traceRoute.controls; let i = index">
+        <div *ngFor="let stop of traceRoute.controls; let i = index" class="array-item">
           <div [formGroupName]="i" class="field">
             <input class="input-field" type="text" formControlName="traceRouteStop" placeholder="Ruta {{ i + 1 }}" maxlength="3">
-            <button type="button" class="btn-remove" (click)="eliminarRutaARastrear(i)" [disabled]="traceRoute.length <= 1">
-              ✕ Eliminar
-            </button>
           </div>
         </div>
+        <button type="button" class="btn-remove" (click)="eliminarRutaARastrear(traceRoute.length - 1)" [disabled]="traceRoute.length <= 1">
+          ✕
+        </button>
       </div>
       <button type="button" class="btn-add" (click)="agregarRutaARastrear()" [disabled]="traceRoute.length >= 5">
         + Agregar Ruta a Rastrear
@@ -206,15 +206,15 @@
       <label class="input-label">Número de vuelo / Carrier flight number</label>
       <div class="row">
         <span class="code">FD</span>
-        <div *ngFor="let flight of flightNumber.controls; let i = index">
+        <div *ngFor="let flight of flightNumber.controls; let i = index" class="array-item">
           <div [formGroupName]="i" class="field">
             <input class="input-field" type="text" formControlName="flightNo" placeholder="Número de vuelo {{ i + 1 }}" maxlength="10">
             <input class="input-field" type="datetime-local" formControlName="flightDate" placeholder="Fecha y hora de vuelo {{ i + 1 }}">
-            <button type="button" class="btn-remove" (click)="eliminarVuelo(i)" [disabled]="flightNumber.length <= 1">
-              ✕ Eliminar
-            </button>
           </div>
         </div>
+        <button type="button" class="btn-remove" (click)="eliminarVuelo(flightNumber.length - 1)" [disabled]="flightNumber.length <= 1">
+          ✕
+        </button>
       </div>
       <button type="button" class="btn-add" (click)="agregarVuelo()" [disabled]="flightNumber.length >= 5">
         + Agregar Vuelo
@@ -227,16 +227,16 @@
       <label class="input-label">Brand Name of Bag / Distinctive outside Identification / Other markings/hotel stickers on bag</label>
       <div class="row">
         <span class="code">BI</span>
-        <div class="col">
+          <div class="col">
           <div *ngFor="let identification of bagIdentification.controls; let i = index" class="ruta-item">
             <div [formGroupName]="i" class="field">
               <input class="input-field" type="text" formControlName="mark" placeholder="Marca {{ i + 1 }}" maxlength="200">
-              <button type="button" class="btn-remove" (click)="eliminarIdentificacion(i)" [disabled]="bagIdentification.length <= 1">
-                ✕ Eliminar
-              </button>
             </div>
           </div>
-        </div>
+          </div>
+          <button type="button" class="btn-remove" (click)="eliminarIdentificacion(bagIdentification.length - 1)" [disabled]="bagIdentification.length <= 1">
+            ✕
+          </button>
       </div>
 
       <button type="button" class="btn-add" (click)="agregarIdentificacion()" [disabled]="bagIdentification.length >= 5">
@@ -253,12 +253,12 @@
           <div *ngFor="let description of contents.controls; let i = index" class="ruta-item">
             <div [formGroupName]="i" class="field">
               <input type="text" class="input-field" formControlName="description" placeholder="Contenido {{ i + 1 }}" maxlength="100">
-              <button type="button" class="btn-remove" (click)="eliminarContenido(i)" [disabled]="contents.length <= 1">
-                ✕ Eliminar
-              </button>
             </div>
           </div>
         </div>
+          <button type="button" class="btn-remove" (click)="eliminarContenido(contents.length - 1)" [disabled]="contents.length <= 1">
+            ✕
+          </button>
       </div>
 
       <button type="button" class="btn-add" (click)="agregarContenido()" [disabled]="contents.length >= 5">
@@ -467,7 +467,7 @@
           </label>
         </div>
         <button type="button" class="btn-remove" (click)="clearInsurance()" *ngIf="pIR.get('hasInsurance')?.value !== null">
-          ✕ Limpiar
+          ✕
         </button>
       </div>
 
@@ -484,7 +484,7 @@
           </label>
         </div>
         <button type="button" class="btn-remove" (click)="clearKeysAttached()" *ngIf="pIR.get('keysAttached')?.value !== null">
-          ✕ Limpiar
+          ✕
         </button>
       </div>
 
@@ -508,7 +508,7 @@
           </label>
         </div>
         <button type="button" class="btn-remove" (click)="pIR.get('nightKit')?.setValue(null)" *ngIf="pIR.get('nightKit')?.value !== null">
-          ✕ Limpiar
+          ✕
         </button>
       </div>
     </div>
@@ -526,7 +526,7 @@
           </label>
         </div>
         <button type="button" class="btn-remove" (click)="pIR.get('damageType')?.setValue(null)" *ngIf="pIR.get('damageType')?.value !== null">
-          ✕ Limpiar
+          ✕
         </button>
       </div>
 
@@ -541,7 +541,7 @@
           </label>
         </div>
         <button type="button" class="btn-remove" (click)="clearCondition()" *ngIf="pIR.get('condition')?.value !== null">
-          ✕ Limpiar
+          ✕
         </button>
       </div>
     </div>
