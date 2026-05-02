@@ -28,7 +28,7 @@ interface RecentClaim {
   id?: string
   pir: string
   pasajero: string
-  tipo: "AHL" | "DPR" | "PILFERED" | "OHL"
+  tipo: "AHL" | "DPR" | "PILFERED" | "OHD"
   bagTag: string
   worldTracerCode: string
   permanentPhone: string
@@ -70,7 +70,7 @@ export class BaggageComponent implements OnInit, OnDestroy {
     AHL: "Equipaje Faltante",
     DPR: "Equipaje Dañado",
     PILFERED: "Equipaje Saqueado",
-    OHL: "Equipaje Sobrante",
+    OHD: "Equipaje Sobrante",
   }
 
   metrics: MetricCard[] = [
@@ -331,8 +331,8 @@ export class BaggageComponent implements OnInit, OnDestroy {
         return "badge-dpr"
       case "PILFERED":
         return "badge-pilfered"
-      case "OHL":
-        return "badge-ohl"
+      case "OHD":
+        return "badge-ohd"
       default:
         return "badge-default"
     }

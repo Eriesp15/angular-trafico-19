@@ -279,7 +279,7 @@ export class ListComponent implements OnInit, OnDestroy {
     AHL: "Equipaje Faltante",
     DPR: "Equipaje Dañado",
     PILFERED: "Equipaje Saqueado",
-    OHL: "Equipaje Sobrante",
+    OHD: "Equipaje Sobrante",
   }
 
   getTipoLabel(tipo: string): string {
@@ -325,7 +325,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.router.navigate(["/baggage/claim/new"])
   }
 
-  createOHL(): void {
-    this.router.navigate(["/baggage/ohl/new"])
+  createOHD(): void {
+    this.router.navigate(["/baggage/ohd/new"])
   }
 }
