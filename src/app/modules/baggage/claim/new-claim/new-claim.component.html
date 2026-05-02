@@ -456,7 +456,7 @@
     <div class="row">
       <div class="form-group-border">
         <h2>¿Tiene seguro? / Has insurance?</h2>
-        <div class="row">
+        <div class="damage-row">
           <label class="tipo-card" [class.selected]="pIR.get('hasInsurance')?.value === true">
             <input type="radio" formControlName="hasInsurance" [value]="true">
             <span class="tipo-label">Sí</span>
@@ -473,7 +473,7 @@
 
       <div class="form-group-border">
         <h2>¿Maletas cerradas necesitan llave y se adjuntan?/ If bag(s) locked ask for key(s) and attach to pir</h2>
-        <div class="row">
+        <div class="damage-row">
           <label class="tipo-card" [class.selected]="pIR.get('keysAttached')?.value === true">
             <input type="radio" formControlName="keysAttached" [value]="true">
             <span class="tipo-label">Sí</span>
@@ -497,7 +497,7 @@
 
       <div class="form-group-border">
         <h2>Kit de noche / Overnight kit *</h2>
-        <div class="row">
+        <div class="damage-row">
           <label class="tipo-card" [class.selected]="pIR.get('nightKit')?.value === true">
             <input type="radio" formControlName="nightKit" [value]="true">
             <span class="tipo-label">Hombre</span>
@@ -517,7 +517,7 @@
     <div class="row">
       <div class="form-group-border">
         <h2>Tipo de Daño / Damage Type *</h2>
-        <div class="row">
+        <div class="damage-row">
           <label *ngFor="let tipo of damageType"
                 class="tipo-card"
                 [class.selected]="pIR.get('damageType')?.value === tipo.valor">
@@ -532,7 +532,7 @@
 
       <div class="form-group-border">
         <h2>Condición / Condition *</h2>
-        <div class="row">
+        <div class="damage-row">
           <label *ngFor="let condicion of condition"
                 class="tipo-card"
                 [class.selected]="pIR.get('condition')?.value === condicion.valor">
@@ -547,7 +547,7 @@
     </div>
 
     <!-- Ubicación del daño -->
-    <div class="form-group-border">
+    <div class="damage-location">
       <h2>Ubicación del Daño / Damage Location</h2>
       <p class="form-hint">Seleccione todas las ubicaciones con daño:</p>
       <div class="row">

@@ -81,6 +81,18 @@ h3 {
   > .field-grow { flex: 1; }
 }
 
+.damage-row{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  width: 100%;
+
+  > .field,
+  > .field-grow { flex: 1; }
+}
+
 // Fila con espacio entre extremos (ej: aeropuerto ↔ tipo de reclamo)
 .row-spaced {
   display: flex;
@@ -109,6 +121,16 @@ h3 {
 }
 
 .form-group-border {
+  margin-top: 0.5rem;
+  max-width: 400px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  background: var(--bg-page);
+
+  h2 { margin-bottom: 0.6rem; }
+}
+.damage-location {
   margin-top: 0.5rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -222,6 +244,7 @@ h3 {
 .tipo-card {
   display: flex;
   flex-direction: column;
+  max-width: 200px;
   flex: 0 1 auto;
   align-items: center;
   gap: 4px;
