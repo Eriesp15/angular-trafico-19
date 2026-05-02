@@ -1,4 +1,4 @@
-export type ClaimType = "AHL" | "DPR" | "PILFERED" | "OHL"
+export type ClaimType = "AHL" | "DPR" | "PILFERED" | "OHD"
 
 export type IndemnizacionTipo = "FALTANTE_CONTENIDO" | "EXTRAVIO_MALETA"
 
@@ -31,7 +31,7 @@ export interface ClaimTypeConfig {
     formularioContenido: boolean
     realizarEntrega: boolean
     cerrarReclamo: boolean
-    enviarCentral: boolean // Para OHL
+    enviarCentral: boolean // Para OHD
   }
   // Tiempos de seguimiento en días
   tiemposSeguimiento: {
@@ -130,9 +130,9 @@ export const CLAIM_TYPE_CONFIGS: Record<ClaimType, ClaimTypeConfig> = {
     },
   },
 
-  // OHL - Equipaje Sobrante No Reclamado
-  OHL: {
-    tipo: "OHL",
+  // OHD - Equipaje Sobrante No Reclamado
+  OHD: {
+    tipo: "OHD",
     nombre: "Equipaje Sobrante",
     descripcion: "Equipaje encontrado sin reclamar - Enviar a Central CBB",
     color: "#7b1fa2",
