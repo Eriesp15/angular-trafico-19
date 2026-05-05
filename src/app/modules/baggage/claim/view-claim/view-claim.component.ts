@@ -140,11 +140,16 @@ export class ViewClaimComponent implements OnInit {
     });
   }
 
-  enviarAReparacion() {
-    this.actionWizard.open('SEND_TO_REPAIR', this.pirData, () => {
-      this.loadClaim(this.claimId);
-    });
+  enviarAReparacion(): void {
+  const pirNumber = this.pirData?.pirNumber;
+
+  if (!pirNumber) {
+    console.error('No se encontró pirNumber en pirData');
+    return;
   }
+
+  this.router.navigate(['/baggage/claim/repair-flow', pirNumber]);
+}
 
   recogerMaleta() {
     this.actionWizard.open('PICKUP_REPAIRED', this.pirData, () => {
