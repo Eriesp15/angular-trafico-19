@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActionWizardService } from "./action-wizard.service";
+import { ExpenseService } from "../../services/expense.service";
+
 import { environment } from '../../../../../environments/environment';
 
 @Component({
@@ -72,15 +74,17 @@ export class ActionWizardComponent {
         this.formData = {};
     }
 
-    // Función que llena los campos automáticamente
-    autofillForm() {
-        let data: any = {};
-
-        if (this.config?.autofill) {
-            for (const [formField, pirField] of Object.entries(this.config.autofill)) {
-                data[formField] = this.pirData?.[pirField as string];
-            }
-        }
+  // Función que llena los campos automáticamente
+  autofillForm() {
+    let data: any = {};
+    
+    if (this.config.autofill) {
+      // Para cada campo que tiene autofill
+      for (const [formField, pirField] of Object.entries(this.config.autofill)) {
+        // Copiar valor del PIR al formulario
+        data[formField] = this.pirData[pirField as string];
+      }
+    }
 
         if (this.config?.calculate) {
             data = this.config.calculate(data);
@@ -167,9 +171,17 @@ export class ActionWizardComponent {
 
         try {
             const response = await this.http
-                .post(`${environment.protocol}//${environment.host}/api/v1/pir/action`, payload)
+                .post(`${environment.protocol}//${environment.host}http://localhost:3700/api/v1/v1/pir/action`,payload)
                 .toPromise();
             console.log('Respuesta:', response);
+
+      if (this.config?.id === "COMPENSATE") {
+        try {
+          await this.registerCompensationExpense();
+        } catch (expenseError) {
+          console.error("No se pudo registrar el gasto de indemnización", expenseError);
+        }
+      }
 
             if (this.onSuccessCallback) {
                 this.onSuccessCallback();
@@ -203,4 +215,30 @@ export class ActionWizardComponent {
             this.formData = this.config.calculate(this.formData);
         }
     }
+
+  private async registerCompensationExpense(): Promise<void> {
+    const total = Number(this.formData?.total);
+    if (!Number.isFinite(total) || total <= 0) {
+      return;
+    }
+
+    const claimId = this.pirData?.pirNumber || this.pirData?.id;
+    if (!claimId) {
+      return;
+    }
+
+    const description = `Indemnización registrada desde acción del expediente. ` +
+      `Diferencia: ${this.formData?.weightDifference ?? 0}kg, ` +
+      `Precio por kg: $${this.formData?.pricePerKg ?? 0}.`;
+
+    const title = this.pirData?.claimType === "AHL"
+      ? "Indemnización - Extravío de Maleta"
+      : "Indemnización - Faltante de Contenido";
+
+    await this.expenseService.createByPir(claimId, {
+      title,
+      cost: total,
+      description,
+    }).toPromise();
+  }
 }

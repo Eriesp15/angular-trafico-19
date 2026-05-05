@@ -269,7 +269,7 @@
     border-color: #d32f2f !important;
   }
 
-  &.filter-ohl.active {
+  &.filter-ohd.active {
     background-color: #7b1fa2 !important;
     border-color: #7b1fa2 !important;
   }
@@ -322,7 +322,7 @@
 }
 
 .loading {
-  background-color: white;
+  background-color: var(--bg-card);
   padding: 2rem;
   border-radius: 8px;
   text-align: center;
@@ -330,7 +330,7 @@
 
   p {
     font-size: 1.1rem;
-    color: #666;
+    color: var(--text-primary);
     margin: 0;
   }
 }
@@ -400,7 +400,7 @@
       cursor: pointer;
 
       &:hover {
-        background-color: #e8f4fd;
+        background-color: var(--bg-card-secondary);
         box-shadow: inset 0 0 0 1px #b3d9f2;
       }
 
@@ -452,7 +452,7 @@
       color: #d32f2f;
     }
 
-    &.badge-ohl {
+    &.badge-ohd {
       background-color: #f3e5f5;
       color: #7b1fa2;
     }
@@ -464,62 +464,126 @@
   }
 }
 
-.cell-status {
-  .status-badge {
-    display: inline-block;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-align: center;
+  .cell-status {
+    .status-badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
 
-    &.status-draft {
-      background-color: #e0e0e0;
-      color: #616161;
-    }
+      &.badge-draft {
+        background-color: #e0e0e0;
+        color: #616161;
+      }
 
-    &.status-registered {
-      background-color: #c8e6c9;
-      color: #2e7d32;
-    }
+      &.badge-registered {
+        background-color: #c8e6c9;
+        color: #2e7d32;
+      }
 
-    &.status-processing {
-      background-color: #bbdefb;
-      color: #1565c0;
-    }
+      &.badge-processing {
+        background-color: #bbdefb;
+        color: #1565c0;
+      }
 
-    &.status-resolved {
-      background-color: #a5d6a7;
-      color: #1b5e20;
-    }
+      &.badge-resolved {
+        background-color: #a5d6a7;
+        color: #1b5e20;
+      }
 
-    &.status-closed {
-      background-color: #f8bbd0;
-      color: #c2185b;
-    }
+      &.badge-closed {
+        background-color: #f8bbd0;
+        color: #c2185b;
+      }
 
-    &.status-abierto {
-      background-color: #c8e6c9;
-      color: #2e7d32;
-    }
+      &.badge-warning {
+        background-color: #fff3e0;
+        color: #ff9800;
+      }
 
-    &.status-cerrado {
-      background-color: #bbdefb;
-      color: #1565c0;
-    }
-
-    &.status-anulado {
-      background-color: #ffcdd2;
-      color: #c62828;
+      &.badge-default {
+        background-color: #f5f5f5;
+        color: #666;
+      }
     }
   }
-}
 
 .cell-flight,
 .cell-route,
-.cell-bagtag {
+.cell-bagtag,
+.cell-contact {
   font-weight: 500;
   color: #333;
+}
+
+.contact-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.contact-line {
+  font-size: 0.84rem;
+  line-height: 1.2;
+}
+
+.contact-line--empty {
+  color: #8a8a8a;
+}
+
+.cell-world-tracer {
+  .wt-badge {
+    display: inline-block;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    max-width: 170px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wt-badge--active {
+    background-color: #e8f3ff;
+    color: #0b5cab;
+    border: 1px solid #bfdcff;
+  }
+
+  .wt-badge--empty {
+    background-color: #f5f5f5;
+    color: #777;
+    border: 1px solid #e0e0e0;
+  }
+}
+
+.cell-age {
+  .age-badge {
+    display: inline-block;
+    min-width: 74px;
+    text-align: center;
+    padding: 0.3rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .age-badge--ok {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .age-badge--warn {
+    background-color: #fff3e0;
+    color: #ef6c00;
+  }
+
+  .age-badge--critical {
+    background-color: #ffebee;
+    color: #c62828;
+  }
 }
 
 .cell-actions {

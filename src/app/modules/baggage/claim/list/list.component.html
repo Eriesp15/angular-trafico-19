@@ -3,16 +3,16 @@
   <div class="list-header">
     <div class="header-top">
       
-      <h1>Reclamos de Equipaje</h1>
+      <h1>Expedientes de Equipaje</h1>
       <div class="header-actions">
-        <!-- Nuevo botón para crear OHL -->
-        <button class="btn btn-secondary" (click)="createOHL()">
+        <!-- Nuevo botón para crear OHD -->
+        <button class="btn btn-secondary" (click)="createOHD()">
           <mat-icon>add_circle_outline</mat-icon>
-          Equipaje Sobrante (OHL)
+          Equipaje Sobrante (OHD)
         </button>
         <button class="btn btn-primary" (click)="createNewClaim()">
           <mat-icon>add</mat-icon>
-          Nuevo Reclamo
+          Nuevo Expediente
         </button>
       </div>
     </div>
@@ -24,7 +24,7 @@
           type="text"
           formControlName="query"
           class="search-input"
-          placeholder="Buscar por PIR, pasajero, vuelo, ruta, BagTag..."
+          placeholder="Buscar por PIR, World Tracer, pasajero, vuelo, ruta, BagTag..."
         />
         <button type="button" class="btn-search" (click)="clearSearch()">
           Limpiar Todo
@@ -37,9 +37,9 @@
 
       <!-- Filtros Desplegables -->
       <div class="filter-group" [class.collapsed]="!showFilters">
-        <!-- Filtro por Tipo de Reclamo actualizado con DPR y OHL -->
+        <!-- Filtro por Tipo de Reclamo actualizado con DPR y OHD -->
         <div class="filter-column">
-          <label class="filter-label">Tipo de Reclamo:</label>
+          <label class="filter-label">Tipo de Expediente:</label>
           <div class="filter-buttons">
             <button
               [class.active]="selectedType === 'ALL'"
@@ -70,11 +70,11 @@
               PILFERED
             </button>
             <button
-              [class.active]="selectedType === 'OHL'"
-              (click)="filterByType('OHL')"
-              class="filter-btn filter-ohl"
+              [class.active]="selectedType === 'OHD'"
+              (click)="filterByType('OHD')"
+              class="filter-btn filter-ohd"
             >
-              OHL
+              OHD
             </button>
           </div>
         </div>
@@ -137,37 +137,6 @@
           </div>
         </div>
 
-        <!-- Nuevo filtro por Reclamos Derivados de Otras Regionales -->
-        <div class="filter-column">
-          <label class="filter-label">Origen del Reclamo:</label>
-          <div class="filter-buttons">
-            <button
-              [class.active]="selectedDerivedFilter === 'all'"
-              (click)="filterByDerived('all')"
-              class="filter-btn"
-              title="Mostrar todos los reclamos"
-            >
-              Todos
-            </button>
-            <button
-              [class.active]="selectedDerivedFilter === 'original'"
-              (click)="filterByDerived('original')"
-              class="filter-btn filter-original"
-              title="Mostrar solo reclamos originales de esta regional"
-            >
-              Locales
-            </button>
-            <button
-              [class.active]="selectedDerivedFilter === 'derived'"
-              (click)="filterByDerived('derived')"
-              class="filter-btn filter-derived"
-              title="Mostrar solo reclamos derivados de otras regionales"
-            >
-              Derivados
-            </button>
-          </div>
-        </div>
-
         <div class="filter-column">
           <label class="filter-label">Por Fecha:</label>
           <div class="filter-buttons">
@@ -207,14 +176,14 @@
 
   <!-- Estado de Carga -->
   <div *ngIf="loading" class="loading">
-    <p>Cargando reclamos...</p>
+    <p>Cargando expedientes...</p>
   </div>
 
   <!-- Lista de Reclamos -->
   <div *ngIf="!loading" class="claims-section">
     <div *ngIf="filteredClaims.length === 0" class="empty-state">
       <mat-icon>search_off</mat-icon>
-      <p>No hay reclamos que coincidan con los filtros</p>
+      <p>No hay expedientes que coincidan con los filtros</p>
       <button class="btn btn-primary" (click)="clearSearch()">
         Limpiar Filtros
       </button>
@@ -225,11 +194,13 @@
         <thead>
           <tr>
             <th>PIR</th>
-            <th title="Indicador de derivación de otra regional">Derivado</th>
+            <th>World Tracer</th>
             <th>Tipo</th>
             <th>Pasajero</th>
+            <th>Contacto</th>
             <th>Vuelo</th>
             <th>Ruta</th>
+            <th>Antigüedad</th>
             <th>Fecha</th>
             <th>BagTag</th>
             <th>Estado</th>
@@ -242,21 +213,16 @@
             (click)="navigateToClaim(claim.id)"
           >
             <td class="cell-id">{{ claim.id }}</td>
-            <td class="cell-derived">
-              <span 
-                *ngIf="claim.derivedFromRegional" 
-                class="derived-badge"
-                [title]="'Derivado de: ' + claim.derivedFromRegional"
-              >
-                <mat-icon>forward</mat-icon>
-                {{ claim.derivedFromRegional }}
+            <td class="cell-world-tracer">
+              <span *ngIf="hasWorldTracer(claim)" class="wt-badge wt-badge--active" [title]="claim.worldTracerCode">
+                {{ claim.worldTracerCode }}
               </span>
-              <span *ngIf="!claim.derivedFromRegional" class="original-badge">
-                <p>NO</p>
+              <span *ngIf="!hasWorldTracer(claim)" class="wt-badge wt-badge--empty">
+                Sin WT
               </span>
             </td>
             <td class="cell-type">
-              <!-- Badge con colores por tipo incluyendo OHL -->
+              <!-- Badge con colores por tipo incluyendo OHD -->
               <span [class]="'badge badge-' + claim.claimType.toLowerCase()">
                 {{ claim.claimType }}
               </span>
@@ -264,15 +230,33 @@
             <td class="cell-passenger">
               {{ claim.passenger.lastName }}, {{ claim.passenger.firstName }}
             </td>
+            <td class="cell-contact">
+              <div class="contact-lines">
+                <span *ngIf="claim.permanentPhone" class="contact-line">
+                  <strong>P:</strong> {{ claim.permanentPhone }}
+                </span>
+                <span *ngIf="claim.temporaryPhone" class="contact-line">
+                  <strong>T:</strong> {{ claim.temporaryPhone }}
+                </span>
+                <span *ngIf="!claim.permanentPhone && !claim.temporaryPhone" class="contact-line contact-line--empty">
+                  Sin teléfonos
+                </span>
+              </div>
+            </td>
             <td class="cell-flight">{{ claim.flight }}</td>
             <td class="cell-route">{{ claim.route }}</td>
+            <td class="cell-age">
+              <span [class]="getAgeBadgeClass(claim.createdAt)">
+                {{ getClaimAgeDays(claim.createdAt) }} días
+              </span>
+            </td>
             <td class="cell-date">
               {{ claim.createdAt | date:'dd/MM/yyyy' }}
             </td>
             <td class="cell-bagtag">{{ claim.bagTag }}</td>
             <td class="cell-status">
               <!-- Status badge con nuevos estados -->
-              <span [class]="'status-badge ' + getStatusClass(claim.status)">
+              <span [class]="'status-badge ' + getStatusBadgeClass(claim.status)">
                 {{ claimStatusService.getStatusLabel(claim.status) }}
               </span>
             </td>

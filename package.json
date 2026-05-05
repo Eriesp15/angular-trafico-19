@@ -29,6 +29,7 @@
     "apexcharts": "3.49.1",
     "crypto-js": "4.2.0",
     "highlight.js": "11.9.0",
+    "libphonenumber-js": "^1.12.42",
     "lodash-es": "4.17.21",
     "luxon": "3.4.4",
     "ngx-quill": "26.0.1",

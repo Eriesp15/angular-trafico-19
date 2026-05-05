@@ -10,8 +10,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
  /* Fondos */
   --bg-page: #f5f6f8;
   --bg-card: #ffffff;
-  --bg-card-secondary: #e0e0e0;
-  
+  --bg-card-secondary: #E6F1FB;
+  --bg-card-hover: #6fbaff;
+    --bg-card-selected: #99ceff;
     /* Botones */
   --btn-primary: #003366;
   --btn-text: #ffffff;
@@ -36,11 +37,12 @@ body.dark {
       /* Fondos */
   --bg-page: #0f172a;
   --bg-card: #182442;
-  --bg-card-secondary: #192b55;
+  --bg-card-secondary: hsl(212, 78%, 18%);
     --btn-primary: #002c89;
      --btn-text: #ffffff;
        --btn-primary-hover: #284ea4;
-  
+  --bg-card-hover: #20598e;
+    --bg-card-selected: #2269ab;
     /* Textos */
   --header-primary: #e1e1e1;
   --text-primary: #f1f1f1;

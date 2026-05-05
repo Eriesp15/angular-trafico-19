@@ -13,11 +13,11 @@ import { ClosingReceiptComponent } from "./closing-receipt/closing-receipt.compo
 import { ContentComponent } from "./claim/content/content.component"
 import { StationContactComponent } from "./station-contact/station-contact.component"
 import { ReportsComponent } from "./reports/reports.component"
-import { NewOhlComponent } from "./ohl/new-ohl/new-ohl.component"
-import { SearchComponent } from "./search/search.component"
+import { NewOhdComponent } from "./ohd/new-ohd/new-ohd.component"
 import { SendToRepairDialogComponent } from "./claim/send-to-repair/send-to-repair-dialog.component"
 import { DerivationsComponent } from './derivations/derivations.component';
 import { RepairFlowComponent } from './repair-flow/repair-flow.component';
+import { TrackingSheetComponent } from "./claim/tracking-sheet/tracking-sheet.component"
 
 export default [
   {
@@ -25,14 +25,8 @@ export default [
     component: BaggageComponent,
   },
   {
-    path: "claim/follow/:pir",
-    component: FollowComponent,
-    children: [
-      {
-        path: ":id",
-        component: FollowComponent,
-      },
-    ],
+    path: "claim/trackingsheet/:id",
+    component: TrackingSheetComponent,
   },
   {
     path: "claim/list",
@@ -49,6 +43,10 @@ export default [
   {
     path: "claim/view/:id",
     component: ViewClaimComponent,
+  },
+  {
+    path: "claim/follow/:pir",
+    component: FollowComponent,
   },
   {
     path: "claim/content/:id",
@@ -83,12 +81,8 @@ export default [
     component: ReportsComponent,
   },
   {
-    path: "ohl/new",
-    component: NewOhlComponent,
-  },
-  {
-    path: "search",
-    component: SearchComponent,
+    path: "ohd/new",
+    component: NewOhdComponent,
   },
   {
     path: "repair",
