@@ -35,7 +35,8 @@ export class ActionWizardComponent {
 
     constructor(
         public wizardService: ActionWizardService,
-        private http: HttpClient
+        private http: HttpClient,
+        private expenseService: ExpenseService
     ) {
         wizardService.show$.subscribe(show => {
             this.isOpen = show;
@@ -77,7 +78,7 @@ export class ActionWizardComponent {
   // Función que llena los campos automáticamente
   autofillForm() {
     let data: any = {};
-    
+
     if (this.config.autofill) {
       // Para cada campo que tiene autofill
       for (const [formField, pirField] of Object.entries(this.config.autofill)) {
@@ -171,8 +172,7 @@ export class ActionWizardComponent {
 
         try {
             const response = await this.http
-                .post(`${environment.protocol}//${environment.host}http://localhost:3700/api/v1/v1/pir/action`,payload)
-                .toPromise();
+                .post(`${environment.protocol}//${environment.host}/api/v1/pir/action`, payload)                .toPromise();
             console.log('Respuesta:', response);
 
       if (this.config?.id === "COMPENSATE") {
