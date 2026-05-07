@@ -214,9 +214,9 @@ export class ViewClaimComponent implements OnInit {
 
   getFlowStateLabel(step: FlowStep): string {
     const state = this.getFlowState(step);
-    if (state === 'done') return 'Completado';
-    if (state === 'current') return 'Actual';
-    return 'Pendiente';
+    if (state === 'done') return 'Realizado';
+    if (state === 'current') return 'Paso actual';
+    return 'Por hacer';
   }
 
   getFlowStateIcon(step: FlowStep): string {
