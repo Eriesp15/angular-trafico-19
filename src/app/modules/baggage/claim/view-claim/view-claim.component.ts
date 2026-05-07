@@ -139,6 +139,18 @@ export class ViewClaimComponent implements OnInit {
     });
   }
 
+  indicarRecibido() {
+    this.actionWizard.open('INDICATE_RECEIVED', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+  asignarTransporte() {
+    this.actionWizard.open('ASSIGN_TRANSPORT', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
   enviarAReparacion() {
     this.actionWizard.open('SEND_TO_REPAIR', this.pirData, () => {
       this.loadClaim(this.claimId);
@@ -231,8 +243,10 @@ export class ViewClaimComponent implements OnInit {
       return [
         { key: 'pending', label: 'Pendiente de gestión', statuses: ['PENDING', 'IN_PROCESS'] },
         { key: 'searching', label: 'En búsqueda', statuses: ['SEARCHING'] },
-        { key: 'found-or-compensated', label: 'Encontrado o indemnizado', statuses: ['FOUND', 'COMPENSATED'] },
-        { key: 'delivered', label: 'Entrega realizada', statuses: ['DELIVERED'] },
+        { key: 'found', label: 'Encontrado', statuses: ['FOUND'] },
+        { key: 'received', label: 'Recibido', statuses: ['RECEIVED'] },
+        { key: 'assigned', label: 'Asignado a transporte', statuses: ['ASSIGNED'] },
+        { key: 'delivered', label: 'Entregado', statuses: ['DELIVERED'] },
         { key: 'closed', label: 'Reclamo cerrado', statuses: ['CLOSED'] },
       ];
     }
@@ -267,6 +281,8 @@ export class ViewClaimComponent implements OnInit {
       case "REPAIRING":
       case "SEARCHING":
       case "TRANSFERRED":
+      case "RECEIVED":
+      case "ASSIGNED":
         return "badge-processing"
       case "PURCHASED":
       case "FOUND":

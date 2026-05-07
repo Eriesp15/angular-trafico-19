@@ -105,6 +105,18 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'FOUND'">
+              <button class="btn-action-primary" (click)="indicarRecibido()">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Recibido</span>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'RECEIVED'">
+              <button class="btn-action-primary" (click)="asignarTransporte()">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Asignar empresa de Transporte</span>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'ASSIGNED'">
               <button class="btn-action-primary" (click)="realizarEntrega()">
                 <mat-icon>local_shipping</mat-icon>
                 <span>Realizar Entrega</span>
