@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActionWizardService } from "./action-wizard.service";
+import { ExpenseService } from "../../services/expense.service";
 
 
 @Component({
@@ -29,7 +30,8 @@ export class ActionWizardComponent {
 
   constructor(
     public wizardService: ActionWizardService,
-    private http: HttpClient
+    private http: HttpClient,
+    private expenseService: ExpenseService,
   ) {
     wizardService.show$.subscribe(show => this.isOpen = show);
     wizardService.action$.subscribe(data => {
@@ -129,6 +131,14 @@ export class ActionWizardComponent {
     try {
       const response = await this.http.post('http://localhost:3700/api/v1/pir/action',payload).toPromise();
       console.log('Respuesta:', response);
+
+      if (this.config?.id === "COMPENSATE") {
+        try {
+          await this.registerCompensationExpense();
+        } catch (expenseError) {
+          console.error("No se pudo registrar el gasto de indemnización", expenseError);
+        }
+      }
       
       if (this.onSuccessCallback) {
         this.onSuccessCallback();
@@ -152,5 +162,31 @@ export class ActionWizardComponent {
       this.formData = this.config.calculate(this.formData);
       // Ahora: formData.total = 5 * 50 = 250
     }
+  }
+
+  private async registerCompensationExpense(): Promise<void> {
+    const total = Number(this.formData?.total);
+    if (!Number.isFinite(total) || total <= 0) {
+      return;
+    }
+
+    const claimId = this.pirData?.pirNumber || this.pirData?.id;
+    if (!claimId) {
+      return;
+    }
+
+    const description = `Indemnización registrada desde acción del expediente. ` +
+      `Diferencia: ${this.formData?.weightDifference ?? 0}kg, ` +
+      `Precio por kg: $${this.formData?.pricePerKg ?? 0}.`;
+
+    const title = this.pirData?.claimType === "AHL"
+      ? "Indemnización - Extravío de Maleta"
+      : "Indemnización - Faltante de Contenido";
+
+    await this.expenseService.createByPir(claimId, {
+      title,
+      cost: total,
+      description,
+    }).toPromise();
   }
 }

@@ -4,7 +4,6 @@ import { FollowComponent } from "./follow/follow.component"
 import { ListComponent } from "./claim/list/list.component"
 import { NewClaimComponent } from "./claim/new-claim/new-claim.component"
 import { ViewClaimComponent } from "./claim/view-claim/view-claim.component"
-import { MakeDeliveryComponent } from "./claim/make-delivery/make-delivery.component"
 import { AddExpenseComponent } from "./claim/add-expense/add-expense.component"
 import { ExpensesComponent } from "./claim/expenses/expenses.component"
 import { SupplierComponent } from "./supplier/supplier.component"
@@ -13,8 +12,7 @@ import { ClosingReceiptComponent } from "./closing-receipt/closing-receipt.compo
 import { ContentComponent } from "./claim/content/content.component"
 import { StationContactComponent } from "./station-contact/station-contact.component"
 import { ReportsComponent } from "./reports/reports.component"
-import { NewOhlComponent } from "./ohl/new-ohl/new-ohl.component"
-import { SendToRepairDialogComponent } from "./claim/send-to-repair/send-to-repair-dialog.component"
+import { NewOhdComponent } from "./ohd/new-ohd/new-ohd.component"
 import { TrackingSheetComponent } from "./claim/tracking-sheet/tracking-sheet.component"
 
 export default [
@@ -43,16 +41,16 @@ export default [
     component: ViewClaimComponent,
   },
   {
+    path: "claim/follow/:pir",
+    component: FollowComponent,
+  },
+  {
     path: "claim/content/:id",
     component: ContentComponent,
   },
   {
     path: "claim/expenses/:id",
     component: ExpensesComponent,
-  },
-  {
-    path: "claim/make-delivery/:id",
-    component: MakeDeliveryComponent,
   },
   {
     path: "claim/station-contact/:id",
@@ -75,11 +73,7 @@ export default [
     component: ReportsComponent,
   },
   {
-    path: "ohl/new",
-    component: NewOhlComponent,
-  },
-  {
-    path: "repair",
-    component: SendToRepairDialogComponent,
+    path: "ohd/new",
+    component: NewOhdComponent,
   }
 ] as Routes

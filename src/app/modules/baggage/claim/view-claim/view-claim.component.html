@@ -17,11 +17,13 @@
         <div class="claim-badge">
           <div class="badge-item">
             <span class="badge-label">Tipo de reclamo</span>
-            <div class="badge-type">{{ pirData.claimType }}</div>
+            <div [class]="'badge-type badge-' + (pirData.claimType || '').toLowerCase()">{{ pirData.claimType }}</div>
           </div>
           <div class="badge-item">
             <span class="badge-label">Estado</span>
-            <div class="badge-type">{{ claimStatusService.getStatusLabel(pirData.claim.claimStatus) }}</div>
+            <div [class]="'badge-type status-badge ' + getStatusBadgeClass(pirData.claim.claimStatus)">
+              {{ claimStatusService.getStatusLabel(pirData.claim.claimStatus) }}
+            </div>
           </div>
           <div class="badge-item">
             <span class="badge-label">Antigüedad</span>
@@ -46,6 +48,38 @@
             <p class="actions-section__sub">Acción recomendada según el estado actual del reclamo</p>
           </div>
         </div>
+
+        <div class="flow-diagram" *ngIf="flowSteps.length">
+          <div class="flow-diagram__header">
+            <div>
+              <span class="flow-diagram__eyebrow">Flujo de atención</span>
+              <strong>{{ pirData.claimType }}</strong>
+            </div>
+            <span class="flow-diagram__count">{{ flowSteps.length }} pasos</span>
+          </div>
+          <div class="flow-diagram__steps">
+            <div
+              class="flow-step"
+              *ngFor="let step of flowSteps; let i = index"
+              [class.flow-step--done]="getFlowState(step) === 'done'"
+              [class.flow-step--current]="getFlowState(step) === 'current'"
+              [class.flow-step--upcoming]="getFlowState(step) === 'upcoming'"
+            >
+              <div class="flow-step__number">Paso {{ i + 1 }}</div>
+              <div class="flow-step__dot">
+                <mat-icon>{{ getFlowStateIcon(step) }}</mat-icon>
+              </div>
+              <div class="flow-step__content">
+                <div class="flow-step__title">{{ step.label }}</div>
+                <div class="flow-step__status">{{ getFlowStateLabel(step) }}</div>
+              </div>
+              <div class="flow-step__connector" *ngIf="i < flowSteps.length - 1">
+                <mat-icon>arrow_forward</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="btn-primary-grid">
 
           <ng-container *ngIf="isAHL()">
@@ -71,6 +105,18 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'FOUND'">
+              <button class="btn-action-primary" (click)="indicarRecibido()">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Recibido</span>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'RECEIVED'">
+              <button class="btn-action-primary" (click)="asignarTransporte()">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Asignar empresa de Transporte</span>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'ASSIGNED'">
               <button class="btn-action-primary" (click)="realizarEntrega()">
                 <mat-icon>local_shipping</mat-icon>
                 <span>Realizar Entrega</span>
@@ -114,17 +160,17 @@
                 <mat-icon>flight_takeoff</mat-icon>
                 <span>Enviar a Cochabamba</span>
               </button>
-              <button class="btn-action-primary btn-action-primary--warn" (click)="indemnizar()">
-                <mat-icon>shopping_bag</mat-icon>
-                <span>Indemnizar</span>
-                <span class="btn-action-primary__sub">Compra de maleta</span>
-              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRING'">
               <button class="btn-action-primary" (click)="recogerMaleta()">
                 <mat-icon>inventory</mat-icon>
                 <span>Recoger Maleta</span>
                 <span class="btn-action-primary__sub">En reparación</span>
+              </button>
+              <button class="btn-action-primary btn-action-primary--warn" (click)="indemnizar()">
+                <mat-icon>shopping_bag</mat-icon>
+                <span>Indemnizar</span>
+                <span class="btn-action-primary__sub">Compra de maleta</span>
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'TRANSFERRED'">
@@ -185,6 +231,10 @@
           <button class="btn-action-secondary" (click)="verGastos()">
             <mat-icon>receipt_long</mat-icon>
             <span>Ver Gastos</span>
+          </button>
+          <button class="btn-action-secondary" (click)="follow()">
+            <mat-icon>timeline</mat-icon>
+            <span>Ir a Follow</span>
           </button>
           <button *ngIf="isAHL()" class="btn-action-secondary" (click)="indicarBusquedaWorldTracer()">
             <mat-icon>travel_explore</mat-icon>

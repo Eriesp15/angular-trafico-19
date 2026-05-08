@@ -355,8 +355,9 @@ mat-chip {
 /* Locked */
 .locked-row .cell-input,
 .locked-row .cell-textarea {
-    background: #f5f6f8 !important;
-    color: var(--text-muted) !important;
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border-color: #cbd5e1 !important;
     pointer-events: none;
 }
 

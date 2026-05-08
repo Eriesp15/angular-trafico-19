@@ -184,7 +184,7 @@ export class AddExpenseComponent implements OnInit {
         indemnizacion_faltante_contenido: "Indemnización por diferencia de peso (15 USD/kg)",
         otro: "Otros gastos relacionados al reclamo",
       },
-      OHL: {
+      OHD: {
         transporte: "Gastos de envío del equipaje a Central CBB",
         otro: "Otros gastos relacionados",
       },
