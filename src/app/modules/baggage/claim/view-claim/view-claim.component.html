@@ -50,7 +50,13 @@
         </div>
 
         <div class="flow-diagram" *ngIf="flowSteps.length">
-          <div class="flow-diagram__header">Flujo de atención ({{ pirData.claimType }})</div>
+          <div class="flow-diagram__header">
+            <div>
+              <span class="flow-diagram__eyebrow">Flujo de atención</span>
+              <strong>{{ pirData.claimType }}</strong>
+            </div>
+            <span class="flow-diagram__count">{{ flowSteps.length }} pasos</span>
+          </div>
           <div class="flow-diagram__steps">
             <div
               class="flow-step"
@@ -59,6 +65,7 @@
               [class.flow-step--current]="getFlowState(step) === 'current'"
               [class.flow-step--upcoming]="getFlowState(step) === 'upcoming'"
             >
+              <div class="flow-step__number">Paso {{ i + 1 }}</div>
               <div class="flow-step__dot">
                 <mat-icon>{{ getFlowStateIcon(step) }}</mat-icon>
               </div>
@@ -66,7 +73,9 @@
                 <div class="flow-step__title">{{ step.label }}</div>
                 <div class="flow-step__status">{{ getFlowStateLabel(step) }}</div>
               </div>
-              <div class="flow-step__connector" *ngIf="i < flowSteps.length - 1"></div>
+              <div class="flow-step__connector" *ngIf="i < flowSteps.length - 1">
+                <mat-icon>arrow_forward</mat-icon>
+              </div>
             </div>
           </div>
         </div>
@@ -96,6 +105,18 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'FOUND'">
+              <button class="btn-action-primary" (click)="indicarRecibido()">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Recibido</span>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'RECEIVED'">
+              <button class="btn-action-primary" (click)="asignarTransporte()">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Asignar empresa de Transporte</span>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'ASSIGNED'">
               <button class="btn-action-primary" (click)="realizarEntrega()">
                 <mat-icon>local_shipping</mat-icon>
                 <span>Realizar Entrega</span>

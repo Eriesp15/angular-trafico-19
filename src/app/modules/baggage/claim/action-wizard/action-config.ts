@@ -81,6 +81,40 @@ export const INDICATE_FOUND = {
   newStatus: 'FOUND'
 };
 
+export const INDICATE_RECEIVED = {
+  id: 'INDICATE_RECEIVED',
+  title: 'Indicar Equipaje Recibido',
+
+  fields: [
+    { name: 'receivedLocation', label: 'Lugar de recepción', type: 'text', placeholder: 'Ej: Oficina de equipajes CBB', required: true },
+    { name: 'receivedDate', label: 'Fecha de recepción', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true },
+    { name: 'receivedBy', label: 'Recibido por', type: 'text', placeholder: 'Nombre del responsable', required: true },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' }
+  ],
+
+  getMessage: (data: any) =>
+    `Equipaje recibido en ${data.receivedLocation}. Fecha: ${data.receivedDate}. Responsable: ${data.receivedBy}. ${data.notes || ''}`,
+
+  newStatus: 'RECEIVED'
+};
+
+export const ASSIGN_TRANSPORT = {
+  id: 'ASSIGN_TRANSPORT',
+  title: 'Asignar Empresa de Transporte',
+
+  fields: [
+    { name: 'transportCompany', label: 'Empresa de transporte', type: 'text', placeholder: 'Nombre de la empresa', required: true },
+    { name: 'assignedDate', label: 'Fecha de asignación', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true },
+    { name: 'responsiblePerson', label: 'Responsable', type: 'text', placeholder: 'Nombre del responsable', required: true },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' }
+  ],
+
+  getMessage: (data: any) =>
+    `Equipaje asignado a la empresa de transporte ${data.transportCompany}. Responsable: ${data.responsiblePerson}. Fecha: ${data.assignedDate}. ${data.notes || ''}`,
+
+  newStatus: 'ASSIGNED'
+};
+
 export const DELIVER = {
   id: 'DELIVER',
   title: 'Realizar Entrega',
@@ -403,6 +437,8 @@ export const ACTIONS: Record<string, any> = {
   INDICATE_LOCAL_SEARCH,
   INDICATE_WT_SEARCH,
   INDICATE_FOUND,
+  INDICATE_RECEIVED,
+  ASSIGN_TRANSPORT,
   DELIVER,
   SEND_TO_REPAIR,
   PICKUP_REPAIRED,
@@ -415,3 +451,4 @@ export const ACTIONS: Record<string, any> = {
     RECEIVE_FROM_REPAIR_COMPANY,
     MARK_IRREPARABLE
 };
+

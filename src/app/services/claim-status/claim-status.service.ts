@@ -15,6 +15,7 @@ export class ClaimStatusService {
     FOUND: 'Encontrado',
     REPAIRED: 'Reparado',
     RECEIVED: 'Recibido',
+    ASSIGNED: 'Asignado a transporte',
     DELIVERED: 'Entregado',
     CLOSED: 'Cerrado',
   };
