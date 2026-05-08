@@ -212,6 +212,9 @@
             <mat-icon>description</mat-icon>
             <span>Ver Hoja de Seguimiento</span>
           </button>
+
+          <app-derivar-button [claim]="pirData"></app-derivar-button>
+
           <button *ngIf="isAHL()" class="btn-action-secondary" (click)="verFormularioContenido()">
             <mat-icon>inventory_2</mat-icon>
             <span>Ver Formulario de Contenido</span>

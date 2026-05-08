@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { Empresa, Asignacion, EstadoAsignacion } from '../supplier.component';
+import { Asignacion, EstadoAsignacion } from '../supplier.component';
+import { Company } from '../../services/api-companies.service';
 
 @Component({
     selector: 'app-list-supplier',
@@ -21,8 +22,7 @@ import { Empresa, Asignacion, EstadoAsignacion } from '../supplier.component';
     styleUrls: ['./list-supplier.component.scss'],
 })
 export class ListSupplierComponent {
-
-    @Input() empresa!: Empresa;
+    @Input() empresa!: Company;
     @Input() asignaciones: Asignacion[] = [];
 
     @Output() volver = new EventEmitter<void>();
@@ -36,26 +36,27 @@ export class ListSupplierComponent {
     backup: { [id: string]: Asignacion } = {};
 
     // ============================
-    //   FILTRAR SOLO DEL EMPRESA
+    // FILTRAR SOLO DE LA EMPRESA
     // ============================
     get asignacionesEmpresa(): Asignacion[] {
         if (!this.empresa) return [];
-        return this.asignaciones.filter(a => a.empresaId === this.empresa.id);
+        return this.asignaciones.filter((a) => a.empresaId === this.empresa.id);
     }
 
     // ============================
-    //  CAMBIAR ESTADO HACIENDO CLICK
+    // CAMBIAR ESTADO HACIENDO CLICK
     // ============================
-    cambiarEstadoDirecto(a: Asignacion) {
-        a.estado = a.estado === EstadoAsignacion.Pendiente
-            ? EstadoAsignacion.Entregado
-            : EstadoAsignacion.Pendiente;
+    cambiarEstadoDirecto(a: Asignacion): void {
+        a.estado =
+            a.estado === EstadoAsignacion.Pendiente
+                ? EstadoAsignacion.Entregado
+                : EstadoAsignacion.Pendiente;
     }
 
     // ============================
-    //  ENTRAR EN MODO EDICIÓN
+    // ENTRAR EN MODO EDICIÓN
     // ============================
-    editarFila(a: Asignacion) {
+    editarFila(a: Asignacion): void {
         this.editando[a.id] = true;
 
         // guardar copia exacta para restablecer
@@ -63,10 +64,11 @@ export class ListSupplierComponent {
     }
 
     // ============================
-    //  CANCELAR EDICIÓN
+    // CANCELAR EDICIÓN
     // ============================
-    cancelarEdicion(a: Asignacion) {
+    cancelarEdicion(a: Asignacion): void {
         const b = this.backup[a.id];
+
         if (b) {
             a.fechaAsignacion = b.fechaAsignacion;
             a.fechaEntrega = b.fechaEntrega;
@@ -77,72 +79,74 @@ export class ListSupplierComponent {
     }
 
     // ============================
-    //  GUARDAR EDICIÓN
+    // GUARDAR EDICIÓN
     // ============================
-    guardarFila(a: Asignacion) {
+    guardarFila(a: Asignacion): void {
         this.editando[a.id] = false;
         delete this.backup[a.id];
     }
 
     // ============================
-    //  ELIMINAR REGISTRO
+    // ELIMINAR REGISTRO
     // ============================
-    eliminar(a: Asignacion) {
+    eliminar(a: Asignacion): void {
         if (!confirm(`¿Eliminar asignación ${a.pir}?`)) return;
 
-        this.asignaciones = this.asignaciones.filter(x => x.id !== a.id);
+        this.asignaciones = this.asignaciones.filter((x) => x.id !== a.id);
     }
 
     // ============================
-    //  IMPRIMIR
+    // IMPRIMIR
     // ============================
-    imprimir() {
+    imprimir(): void {
         window.print();
     }
 
     // ============================
-    //  DESCARGAR PDF (simple)
+    // DESCARGAR PDF / IMPRIMIR VENTANA
     // ============================
-    descargarPDF() {
-        const contenido = document.querySelector('.detalle-container')?.innerHTML;
+    descargarPDF(): void {
+        const contenido =
+            document.querySelector('.detalle-container')?.innerHTML ?? '';
 
         const ventana = window.open('', '_blank', 'width=800,height=600');
 
-        ventana!.document.write(`
-        <html>
-        <head>
-            <title>Asignaciones - ${this.empresa.nombre}</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    padding: 20px;
-                }
+        if (!ventana) return;
 
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
+        ventana.document.write(`
+      <html>
+      <head>
+        <title>Asignaciones - ${this.empresa.name}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+          }
 
-                th, td {
-                    border: 1px solid black;
-                    padding: 6px;
-                    text-align: center;
-                }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
 
-                h2 {
-                    margin-bottom: 15px;
-                }
-            </style>
-        </head>
-        <body>
-            <h2>Asignaciones — ${this.empresa.nombre}</h2>
-            ${contenido}
-        </body>
-        </html>
+          th, td {
+            border: 1px solid black;
+            padding: 6px;
+            text-align: center;
+          }
+
+          h2 {
+            margin-bottom: 15px;
+          }
+        </style>
+      </head>
+      <body>
+        <h2>Asignaciones — ${this.empresa.name}</h2>
+        ${contenido}
+      </body>
+      </html>
     `);
 
-        ventana!.document.close();
-        ventana!.print();
+        ventana.document.close();
+        ventana.print();
     }
-
 }

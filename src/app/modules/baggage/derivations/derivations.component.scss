@@ -1,0 +1,160 @@
+.flow-page {
+    display: grid;
+    gap: 18px;
+    padding: 16px;
+}
+
+.page-header h2 {
+    margin: 0 0 4px;
+    color: #1f2937;
+}
+
+.page-header p {
+    margin: 0;
+    color: #4b5563;
+}
+
+.summary-card,
+.actions-card,
+.timeline-card,
+.loading-box,
+.error-box {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 18px;
+}
+
+.loading-box {
+    color: #374151;
+}
+
+.error-box {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.summary-header h3,
+.actions-card h3,
+.timeline-card h3 {
+    margin: 0;
+    color: #111827;
+}
+
+.status-badge {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+.summary-item {
+    display: grid;
+    gap: 4px;
+}
+
+.summary-item .label {
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+.summary-item .value {
+    color: #111827;
+    word-break: break-word;
+}
+
+.actions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.actions-grid button {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font: inherit;
+}
+
+.actions-grid button:hover {
+    background: #1d4ed8;
+}
+
+.empty-state {
+    color: #6b7280;
+}
+
+.timeline-item {
+    border-top: 1px solid #f1f5f9;
+    padding: 14px 0;
+    display: grid;
+    gap: 8px;
+}
+
+.timeline-item:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.timeline-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.timeline-top span {
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.kind {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.channel {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.timeline-message {
+    color: #111827;
+    line-height: 1.45;
+}
+
+.timeline-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: #6b7280;
+    font-size: 0.9rem;
+}

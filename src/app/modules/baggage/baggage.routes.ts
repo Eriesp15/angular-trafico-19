@@ -13,6 +13,8 @@ import { ContentComponent } from "./claim/content/content.component"
 import { StationContactComponent } from "./station-contact/station-contact.component"
 import { ReportsComponent } from "./reports/reports.component"
 import { NewOhdComponent } from "./ohd/new-ohd/new-ohd.component"
+import { DerivationsComponent } from './derivations/derivations.component';
+import { RepairFlowComponent } from './repair-flow/repair-flow.component';
 import { TrackingSheetComponent } from "./claim/tracking-sheet/tracking-sheet.component"
 
 export default [
@@ -75,5 +77,20 @@ export default [
   {
     path: "ohd/new",
     component: NewOhdComponent,
-  }
+  },
+  {
+    path: "repair",
+    component: SendToRepairDialogComponent,
+  },
+    {
+        path: 'claim/derivations/:pirNumber',
+        loadComponent: () =>
+            import('./derivations/derivations.component').then(m => m.DerivationsComponent)
+    },
+    {
+        path: 'claim/repair-flow/:pirNumber',
+        loadComponent: () =>
+            import('./repair-flow/repair-flow.component').then(m => m.RepairFlowComponent)
+    }
+
 ] as Routes

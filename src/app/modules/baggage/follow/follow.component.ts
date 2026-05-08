@@ -260,6 +260,7 @@ export class FollowComponent implements OnInit, OnDestroy {
             );
         } finally {
             this.loading = false;
+            this.resizeAllTextareas();
         }
     }
 
@@ -295,7 +296,7 @@ export class FollowComponent implements OnInit, OnDestroy {
             fecha,
             hora,
             celularCorreo: e.contact ?? '',
-            aQuien: '',
+            aQuien: (e as any).title ?? '',
             observaciones: e.message ?? '',
             locked,
             createdAt: e.createdAt,
@@ -330,7 +331,11 @@ export class FollowComponent implements OnInit, OnDestroy {
     }
 
     print(): void {
-        window.print();
+        this.resizeAllTextareas();
+
+        setTimeout(() => {
+            window.print();
+        }, 100);
     }
 
     private clamp(n: number, min: number, max: number): number {
@@ -400,7 +405,7 @@ export class FollowComponent implements OnInit, OnDestroy {
             eventAt: iso,
             performedByName: this.currentUserName,
             contact: (c.celularCorreo || '').trim() || undefined,
-            title: null as any,
+            title: ((c.aQuien || '').trim() || null) as any,
             followUpAt: undefined,
         };
     }
@@ -799,6 +804,7 @@ export class FollowComponent implements OnInit, OnDestroy {
         c.autoObs = auto;
 
         this.onLlamadaChange(c);
+        this.resizeAllTextareas();
     }
 
     onObservacionesInput(c: LlamadaRow): void {
@@ -818,9 +824,21 @@ export class FollowComponent implements OnInit, OnDestroy {
 
     autoGrow(ev: Event): void {
         const el = ev.target as HTMLTextAreaElement;
+        this.resizeTextarea(el);
+    }
+    private resizeTextarea(el: HTMLTextAreaElement): void {
         if (!el) return;
+
         el.style.height = 'auto';
         el.style.height = `${el.scrollHeight}px`;
+    }
+
+    resizeAllTextareas(): void {
+        setTimeout(() => {
+            document
+                .querySelectorAll<HTMLTextAreaElement>('textarea.auto-grow')
+                .forEach((textarea) => this.resizeTextarea(textarea));
+        }, 0);
     }
 
     formatIso(iso?: string): string {
