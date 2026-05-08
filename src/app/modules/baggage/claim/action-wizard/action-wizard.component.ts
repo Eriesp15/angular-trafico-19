@@ -148,6 +148,18 @@ export class ActionWizardComponent {
         }
 
         this.generalError = '';
+
+        if (this.config?.id === 'ASSIGN_REPAIR_COMPANY') {
+            const company = this.repairCompanyOptions.find((item: any) =>
+                String(item.value) === String(this.formData?.repairCompanyId)
+            );
+
+            this.formData = {
+                ...this.formData,
+                repairCompanyName: company?.label || this.formData?.repairCompanyId
+            };
+        }
+
         this.message = this.config.getMessage(this.formData);
         this.step = 2;
     }
@@ -215,7 +227,25 @@ export class ActionWizardComponent {
             this.formData = this.config.calculate(this.formData);
         }
     }
+    //funcion que devuelve nombre del la empresa
+    // función que devuelve el texto visible de un campo en el resumen
+    getDisplayValue(field: any): string {
+        const value = this.formData?.[field.name];
 
+        if (!value) return '-';
+
+        if (field.optionsFrom === 'repairCompanies') {
+            const company = this.repairCompanyOptions.find((item: any) =>
+                String(item.value) === String(value)
+            );
+
+            return company?.label || value;
+        }
+
+        return value;
+    }
+
+    //------------------
   private async registerCompensationExpense(): Promise<void> {
     const total = Number(this.formData?.total);
     if (!Number.isFinite(total) || total <= 0) {

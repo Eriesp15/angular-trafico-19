@@ -40,14 +40,24 @@ export class DerivarButtonComponent implements OnInit, OnDestroy {
     openDerivar(): void {
         if (!this.claim) return;
 
+        const currentOffice =
+            this.claim?.claim?.currentStation ||
+            this.claim?.currentStation ||
+            this.claim?.claim?.openedStation ||
+            this.claim?.openedStation ||
+            this.claim?.originatorAirport ||
+            this.claim?.airportText ||
+            '-';
+
         const enrichedPirData = {
             ...this.claim,
             pirId:
                 this.claim?.pirId ||
                 this.claim?.traceRoute?.pirId ||
                 this.claim?.bagDescriptions?.[0]?.pirId ||
+                this.claim?.id ||
                 null,
-            currentOffice: 'CBB - Cochabamba',
+            currentOffice,
             loggedUserName: this.currentUserName,
             registeredBy: this.currentUserName,
             todayFlightDate: this.getTodayDateTimeLocal()

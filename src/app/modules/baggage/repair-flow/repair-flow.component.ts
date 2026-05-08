@@ -42,36 +42,90 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
     steps = [
         {
             key: 'PENDING',
-            title: 'Pendiente',
+            pendingTitle: 'Pendiente',
+            currentTitle: 'Pendiente de asignación',
+            completedTitle: 'Pendiente',
             desc: 'Aún no se asignó a una empresa reparadora',
             action: null,
         },
         {
             key: 'ASSIGNED',
-            title: 'Asignado',
-            desc: 'Asignar empresa reparadora',
+            pendingTitle: 'Asignar equipaje a empresa reparadora',
+            currentTitle: 'Equipaje asignado a empresa reparadora',
+            completedTitle: 'Equipaje asignado a empresa reparadora',
+            desc: 'Seleccionar la empresa que realizará la reparación',
             action: 'ASSIGN_REPAIR_COMPANY',
         },
         {
             key: 'DELIVERED',
-            title: 'Entregado',
-            desc: 'Entregar equipaje a reparadora',
+            pendingTitle: 'Entregar equipaje a empresa reparadora',
+            currentTitle: 'Equipaje entregado a empresa reparadora',
+            completedTitle: 'Equipaje entregado a empresa reparadora',
+            desc: 'Registrar entrega física del equipaje a la reparadora asinada',
             action: 'DELIVER_TO_REPAIR_COMPANY',
         },
         {
             key: 'RETURNED',
-            title: 'Devuelto',
-            desc: 'Recibir equipaje desde reparadora',
+            pendingTitle: 'Recibir equipaje desde reparadora',
+            currentTitle: 'Equipaje recibido desde reparadora',
+            completedTitle: 'Equipaje recibido desde reparadora',
+            desc: 'Registrar recepción del equipaje reparado o irreparable',
             action: 'RECEIVE_FROM_REPAIR_COMPANY',
         },
         {
-            key: 'DOCUMENT_UPLOADED',
-            title: 'Informe subido',
-            desc: 'Subir informe de reparación',
-            action: null,
+            key: 'RESOLVED',
+            pendingTitle: 'Resultado final',
+            currentTitle: 'Resultado final registrado',
+            completedTitle: 'Resultado final registrado',
+            desc: 'El resultado se define al recibir el equipaje desde la reparadora',
+            action: 'RECEIVE_FROM_REPAIR_COMPANY',
         },
     ];
+    shouldShowStepDesc(step: any): boolean {
+        // Si el paso ya fue completado, no mostrar descripción
+        if (this.isStepCompleted(step.key)) {
+            return false;
+        }
 
+        // Si es el estado actual, tampoco mostrar descripción
+        if (this.repairStep === step.key) {
+            return false;
+        }
+
+        // Los pasos pendientes/siguientes sí muestran descripción
+        return !!step.desc;
+    }
+    getFinalResultText(): string {
+        const repairStatus = this.claim?.claim?.repairStatus || this.claim?.repairStatus;
+
+        if (repairStatus === 'REPAIRED') {
+            return 'Equipaje marcado como REPARADO';
+        }
+
+        if (repairStatus === 'IRREPARABLE') {
+            return 'Equipaje marcado como IRREPARABLE';
+        }
+
+        return 'Resultado final';
+    }
+    getStepTitle(step: any): string {
+        if (step.key === 'RESOLVED' && this.repairStep === 'RESOLVED') {
+            return this.getFinalResultText();
+        }
+        if (this.isStepCompleted(step.key)) {
+            return step.completedTitle || step.title;
+        }
+
+        if (this.repairStep === step.key) {
+            return step.currentTitle || step.title;
+        }
+
+        if (this.isNextStep(step.key)) {
+            return step.pendingTitle || step.title;
+        }
+
+        return step.pendingTitle || step.title;
+    }
     constructor(
         private route: ActivatedRoute,
         private wizardService: ActionWizardService,
@@ -236,7 +290,171 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
     getResponsibleStation(): string {
         return this.claim?.claim?.responsibleStation || this.claim?.claim?.openedStation || this.claim?.airportText || '-';
     }
+    private getFollowEntries(): any[] {
+        const entriesFromRoot = this.claim?.follow?.entries || [];
+        const entriesFromClaim = this.claim?.claim?.follow?.entries || [];
+        const entriesFromTimeline = this.timeline || [];
 
+        return [
+            ...entriesFromRoot,
+            ...entriesFromClaim,
+            ...entriesFromTimeline,
+        ];
+    }
+
+    private getEntryMetadata(entry: any): any {
+        if (!entry?.metadata) return {};
+
+        if (typeof entry.metadata === 'string') {
+            try {
+                return JSON.parse(entry.metadata);
+            } catch {
+                return {};
+            }
+        }
+
+        return entry.metadata;
+    }
+
+    private getEntryFormData(entry: any): any {
+        const metadata = this.getEntryMetadata(entry);
+        return metadata?.formData || metadata?.data || metadata || {};
+    }
+
+    private findRepairEntryByAction(actionName: string): any {
+        return this.getFollowEntries().find((entry: any) => {
+            const formData = this.getEntryFormData(entry);
+            const message = String(entry?.message || entry?.description || '').toLowerCase();
+
+            if (actionName === 'ASSIGN_REPAIR_COMPANY') {
+                return (
+                    formData?.repairCompanyName ||
+                    formData?.repairCompanyId ||
+                    message.includes('se asignó el equipaje a la empresa reparadora')
+                );
+            }
+
+            if (actionName === 'DELIVER_TO_REPAIR_COMPANY') {
+                return (
+                    formData?.deliveryDate ||
+                    formData?.estimatedReturnDate ||
+                    message.includes('se entregó el equipaje a la reparadora')
+                );
+            }
+
+            if (actionName === 'RECEIVE_FROM_REPAIR_COMPANY') {
+                return (
+                    formData?.receivedDate ||
+                    formData?.repairResult ||
+                    message.includes('se recibió el equipaje desde la reparadora')
+                );
+            }
+
+            return false;
+        });
+    }
+
+    getAssignedRepairCompanyText(): string {
+        const entry = this.findRepairEntryByAction('ASSIGN_REPAIR_COMPANY');
+        const formData = this.getEntryFormData(entry);
+
+        return (
+            formData?.repairCompanyName ||
+            formData?.repairCompanyText ||
+            formData?.companyName ||
+            formData?.repairCompany?.name ||
+            formData?.repairCompany?.businessName ||
+            (formData?.repairCompanyId ? `ID: ${formData.repairCompanyId}` : 'Sin empresa asignada')
+        );
+    }
+
+    getRepairDeliveryDate(): string {
+        const entry = this.findRepairEntryByAction('DELIVER_TO_REPAIR_COMPANY');
+        const formData = this.getEntryFormData(entry);
+
+        return this.formatRepairDateTime(formData?.deliveryDate);
+    }
+
+    getEstimatedReturnDate(): string {
+        const entry = this.findRepairEntryByAction('DELIVER_TO_REPAIR_COMPANY');
+        const formData = this.getEntryFormData(entry);
+
+        return this.formatRepairDateTime(formData?.estimatedReturnDate);
+    }
+
+    getRepairReceivedDate(): string {
+        const entry = this.findRepairEntryByAction('RECEIVE_FROM_REPAIR_COMPANY');
+        const formData = this.getEntryFormData(entry);
+
+        return this.formatRepairDateTime(formData?.receivedDate);
+    }
+
+    getStepDetails(step: any): { label: string; value: string }[] {
+        if (step.key === 'ASSIGNED') {
+            const companyName = this.getAssignedRepairCompanyText();
+
+            if (companyName && companyName !== 'Sin empresa asignada') {
+                return [
+                    { label: 'Empresa', value: companyName },
+                ];
+            }
+        }
+
+        if (step.key === 'DELIVERED') {
+            const deliveryDate = this.getRepairDeliveryDate();
+            const estimatedReturnDate = this.getEstimatedReturnDate();
+
+            const details: { label: string; value: string }[] = [];
+
+            if (deliveryDate !== '-') {
+                details.push({ label: 'Fecha de entrega', value: deliveryDate });
+            }
+
+            if (estimatedReturnDate !== '-') {
+                details.push({ label: 'Fecha estimada de devolución', value: estimatedReturnDate });
+            }
+
+            return details;
+        }
+
+        if (step.key === 'RETURNED') {
+            const receivedDate = this.getRepairReceivedDate();
+
+            if (receivedDate !== '-') {
+                return [
+                    { label: 'Fecha de recepción', value: receivedDate },
+                ];
+            }
+        }
+
+        return [];
+    }
+
+    private formatRepairDateTime(value: any): string {
+        if (!value) return '-';
+
+        const textValue = String(value);
+
+        // Si viene solo fecha: 2026-05-12
+        if (/^\d{4}-\d{2}-\d{2}$/.test(textValue)) {
+            const [year, month, day] = textValue.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        const date = new Date(value);
+
+        if (isNaN(date.getTime())) {
+            return textValue.replace('T', ' ');
+        }
+
+        return date.toLocaleString('es-BO', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    }
     calculateRepairStep(): void {
         const repairStatus = this.claim?.claim?.repairStatus || this.claim?.repairStatus;
         if (repairStatus === 'ASSIGNED') {
@@ -255,12 +473,12 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
         }
 
         if (repairStatus === 'REPORT_UPLOADED') {
-            this.repairStep = 'DOCUMENT_UPLOADED';
+            this.repairStep = 'RETURNED';
             return;
         }
 
         if (repairStatus === 'REPAIRED' || repairStatus === 'IRREPARABLE') {
-            this.repairStep = 'DOCUMENT_UPLOADED';
+            this.repairStep = 'RESOLVED';
             return;
         }
 
@@ -273,7 +491,7 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
             'ASSIGNED',
             'DELIVERED',
             'RETURNED',
-            'DOCUMENT_UPLOADED',
+            'RESOLVED',
         ];
 
         return order.indexOf(step) < order.indexOf(this.repairStep);
@@ -429,7 +647,7 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
 
     }
     getRepairOrder(): string[] {
-        return ['PENDING', 'ASSIGNED', 'DELIVERED', 'RETURNED', 'DOCUMENT_UPLOADED'];
+        return ['PENDING', 'ASSIGNED', 'DELIVERED', 'RETURNED', 'RESOLVED'];
     }
 
     isNextStep(step: string): boolean {
@@ -439,7 +657,21 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
         return order[currentIndex + 1] === step;
     }
     canExecuteStep(step: any): boolean {
-        return this.isNextStep(step.key);
+        // Flujo normal: solo el siguiente paso abre modal
+        if (step?.action && this.isNextStep(step.key)) {
+            return true;
+        }
+
+        // Permitir corregir resultado final
+        if (
+            step?.key === 'RESOLVED' &&
+            this.repairStep === 'RESOLVED' &&
+            step?.action === 'RECEIVE_FROM_REPAIR_COMPANY'
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     onStepClick(step: any): void {

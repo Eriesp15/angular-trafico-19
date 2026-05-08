@@ -129,7 +129,7 @@
                     <div class="data-summary">
                         <div *ngFor="let field of config?.fields" class="summary-item">
                             <span class="summary-label">{{ field.label }}:</span>
-                            <span class="summary-value">{{ formData[field.name] || '-' }}</span>
+                            <span class="summary-value">{{ getDisplayValue(field) || '-' }}</span>
                         </div>
                     </div>
                 </div>

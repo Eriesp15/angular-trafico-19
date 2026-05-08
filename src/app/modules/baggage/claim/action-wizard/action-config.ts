@@ -36,10 +36,10 @@ export const INDICATE_LOCAL_SEARCH = {
   fields: [
     { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Detalles adicionales...' }
   ],
-  
-  getMessage: (data: any) => 
+
+  getMessage: (data: any) =>
     `Se inició la búsqueda local. ${data.notes || ''}`,
-  
+
   newStatus: 'SEARCHING'
 };
 
@@ -50,16 +50,16 @@ export const INDICATE_WT_SEARCH = {
   autofill: {
     worldTracerCode: 'worldTracerCode'
   },
-  
+
   fields: [
     { name: 'worldTracerCode', label: 'Código World Tracer', type: 'text', placeholder: 'Ej: WT123456', required: true},
     { name: 'searchDate', label: 'Fecha de registro', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required:true},
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
-  
-  getMessage: (data: any) => 
+
+  getMessage: (data: any) =>
     `Se registró en World Tracer en fecha: ${data.searchDate}. ${data.notes || ''}`,
-  
+
   newStatus: 'SEARCHING'
 };
 
@@ -74,10 +74,10 @@ export const INDICATE_FOUND = {
       options: ['Buena', 'Regular', 'Dañada'] },
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
-  
-  getMessage: (data: any) => 
+
+  getMessage: (data: any) =>
     `Equipaje encontrado en ${data.foundLocation || ''} Fecha: ${data.foundDate}. Condición: ${data.condition}. ${data.notes || ''}`,
-  
+
   newStatus: 'FOUND'
 };
 
@@ -97,10 +97,10 @@ export const DELIVER = {
       options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'] },
     { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Condición del equipaje, notas...' }
   ],
-  
-  getMessage: (data: any) => 
+
+  getMessage: (data: any) =>
     `Equipaje entregado a ${data.recipientName}, siendo ${data.relationship}. ${data.notes || ''}`,
-  
+
   newStatus: 'DELIVERED'
 };
 
@@ -114,10 +114,10 @@ export const SEND_TO_REPAIR = {
     { name: 'damageDescription', label: 'Descripción del daño', type: 'textarea', required: true},
     { name: 'estimatedCost', label: 'Costo estimado ($)', type: 'number' }
   ],
-  
-  getMessage: (data: any) => 
+
+  getMessage: (data: any) =>
     `Enviado a reparación en ${data.repairShop}. Retorno estimado: ${data.estimatedDate}.`,
-  
+
   newStatus: 'REPAIRING'
 };
 
@@ -196,22 +196,11 @@ export const TRANSFER_BAG = {
 
         },
         {
-
             name: 'originStation',
-            label: 'Estación origen',
-            type: 'select',
-            required: true,
-            options: [
-                'CBB - Cochabamba',
-                'VVI - Santa Cruz',
-                'LPB - La Paz',
-                'SRE - Sucre',
-                'TJA - Tarija',
-                'POI - Potosí',
-                'ORU - Oruro',
-                'TDD - Trinidad',
-                'CIJ - Cobija'
-            ]
+            label: 'Estación donde se encuentra actualmente la maleta',
+            type: 'text',
+            readonly: true,
+            required: true
         },
         {
             name: 'destinationStation',
@@ -276,7 +265,7 @@ export const TRANSFER_BAG = {
     ],
 
     getMessage: (data: any) =>
-        `Se envio equipaje desde ${data.originStation} hacia ${data.destinationStation}. Motivo: ${data.reason}. BagTag: ${data.bagTag}. Vuelo: ${data.flightNumber}. Fecha de vuelo: ${data.flightDate}. Registrado por: ${data.registeredBy}. ${data.notes || ''}`,
+        `Se envio equipaje desde ${data.originStation} hacia ${data.destinationStation}. Motivo: ${data.reason}. BagTag: ${data.bagTag}. Vuelo: ${data.flightNumber}. Fecha de vuelo: ${data.flightDate}. ${data.notes || ''}`,
     //talvez deberia haber otro estado como enviado? o que se quede en reparacion ?
     //newStatus: 'REPAIRING'
 };
@@ -330,8 +319,7 @@ export const ASSIGN_REPAIR_COMPANY = {
     ],
 
     getMessage: (data: any) =>
-        `Se asignó el equipaje a la empresa reparadora seleccionada. Fecha: ${data.assignmentDate}. Registrado por: ${data.registeredBy}. Notificación por WhatsApp: ${data.sendWhatsapp}. ${data.notes || ''}`,
-
+        `Se asignó el equipaje a la empresa reparadora ${data.repairCompanyName || 'seleccionada'}. Fecha: ${data.assignmentDate}. Notificación por WhatsApp: ${data.sendWhatsapp}. ${data.notes || ''}`,
     newStatus: 'REPAIRING'
 };
 
@@ -353,7 +341,7 @@ export const DELIVER_TO_REPAIR_COMPANY = {
     ],
 
     getMessage: (data: any) =>
-        `Se entregó el equipaje a la reparadora el ${data.deliveryDate}. Usuario que entrega: ${data.registeredBy}. Fecha estimada de devolución: ${data.estimatedReturnDate}. ${data.notes || ''}`,
+        `Se entregó el equipaje a la reparadora el ${data.deliveryDate}. Fecha estimada de devolución: ${data.estimatedReturnDate}. ${data.notes || ''}`,
 
     newStatus: 'REPAIRING'
 };
@@ -381,7 +369,7 @@ export const RECEIVE_FROM_REPAIR_COMPANY = {
     ],
 
     getMessage: (data: any) =>
-        `Se recibió el equipaje desde la reparadora el ${data.receivedDate}. Usuario que recibe: ${data.registeredBy}. Resultado: ${data.repairResult}. ${data.notes || ''}`,
+        `Se recibió el equipaje desde la reparadora el ${data.receivedDate}. Resultado: ${data.repairResult}. ${data.notes || ''}`,
 
     newStatus: 'REPAIRED'
 };
