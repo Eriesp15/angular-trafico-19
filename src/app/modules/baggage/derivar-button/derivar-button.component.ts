@@ -45,8 +45,6 @@ export class DerivarButtonComponent implements OnInit, OnDestroy {
             this.claim?.currentStation ||
             this.claim?.claim?.openedStation ||
             this.claim?.openedStation ||
-            this.claim?.originatorAirport ||
-            this.claim?.airportText ||
             '-';
 
         const enrichedPirData = {

@@ -78,10 +78,7 @@ export default [
     path: "ohd/new",
     component: NewOhdComponent,
   },
-  {
-    path: "repair",
-    component: SendToRepairDialogComponent,
-  },
+
     {
         path: 'claim/derivations/:pirNumber',
         loadComponent: () =>

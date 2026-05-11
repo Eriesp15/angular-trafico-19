@@ -291,12 +291,23 @@ export class FollowComponent implements OnInit, OnDestroy {
         const locked = e.status !== 'PENDING';
         const confirmedAt = e.confirmedAt ?? (locked ? (e.updatedAt ?? e.createdAt) : undefined);
 
+        let metadata: any = {};
+
+        try {
+            metadata =
+                typeof (e as any).metadata === 'string'
+                    ? JSON.parse((e as any).metadata || '{}')
+                    : ((e as any).metadata || {});
+        } catch {
+            metadata = {};
+        }
+
         return {
             id: e.id,
             fecha,
             hora,
             celularCorreo: e.contact ?? '',
-            aQuien: (e as any).title ?? '',
+            aQuien: metadata?.aQuien ?? '',
             observaciones: e.message ?? '',
             locked,
             createdAt: e.createdAt,
