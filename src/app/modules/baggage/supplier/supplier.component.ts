@@ -439,7 +439,17 @@ export class SupplierComponent implements OnInit {
         this.empresaAsignar = company;
         this.pirSeleccionados = [];
         this.pirBuscar = '';
-        this.fechaEntrega = '';
+
+        const nombreTipo =
+            company.serviceType?.name?.toLowerCase() || '';
+
+        // SOLO para empresas de reparación
+        if (nombreTipo.includes('repar')) {
+            this.fechaEntrega = this.getFechaHabilMas5();
+        } else {
+            this.fechaEntrega = '';
+        }
+
         this.modalAsignar = true;
     }
 
@@ -449,6 +459,24 @@ export class SupplierComponent implements OnInit {
         this.pirBuscar = '';
         this.fechaEntrega = '';
         this.empresaAsignar = null;
+    }
+
+    getFechaHabilMas5(): string {
+        const fecha = new Date();
+        let dias = 0;
+
+        while (dias < 5) {
+            fecha.setDate(fecha.getDate() + 1);
+
+            const dia = fecha.getDay();
+
+            // 0 domingo, 6 sábado
+            if (dia !== 0 && dia !== 6) {
+                dias++;
+            }
+        }
+
+        return fecha.toISOString().slice(0, 10);
     }
 
     addPIR(pir: string): void {
