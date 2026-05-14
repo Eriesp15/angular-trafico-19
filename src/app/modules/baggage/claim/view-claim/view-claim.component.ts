@@ -100,10 +100,6 @@ export class ViewClaimComponent implements OnInit {
     this.antiguedadDias = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
   }
 
-  verHojaSeguimiento(): void {
-    this.router.navigate(["/baggage/claim/trackingsheet", this.claimId])
-  }
-
   verFormularioContenido(): void {
     this.router.navigate([`/baggage/claim/content/${this.claimId}`])
   }
