@@ -208,7 +208,7 @@
           </div>
         </div>
         <div class="btn-secondary-grid">
-          <button class="btn-action-secondary" (click)="verHojaSeguimiento()">
+          <button class="btn-action-secondary" (click)="follow()">
             <mat-icon>description</mat-icon>
             <span>Ver Hoja de Seguimiento</span>
           </button>
@@ -234,10 +234,6 @@
           <button class="btn-action-secondary" (click)="verGastos()">
             <mat-icon>receipt_long</mat-icon>
             <span>Ver Gastos</span>
-          </button>
-          <button class="btn-action-secondary" (click)="follow()">
-            <mat-icon>timeline</mat-icon>
-            <span>Ir a Follow</span>
           </button>
           <button *ngIf="isAHL()" class="btn-action-secondary" (click)="indicarBusquedaWorldTracer()">
             <mat-icon>travel_explore</mat-icon>

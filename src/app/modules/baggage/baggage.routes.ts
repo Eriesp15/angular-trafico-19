@@ -15,16 +15,11 @@ import { ReportsComponent } from "./reports/reports.component"
 import { NewOhdComponent } from "./ohd/new-ohd/new-ohd.component"
 import { DerivationsComponent } from './derivations/derivations.component';
 import { RepairFlowComponent } from './repair-flow/repair-flow.component';
-import { TrackingSheetComponent } from "./claim/tracking-sheet/tracking-sheet.component"
 
 export default [
   {
     path: "",
     component: BaggageComponent,
-  },
-  {
-    path: "claim/trackingsheet/:id",
-    component: TrackingSheetComponent,
   },
   {
     path: "claim/list",
