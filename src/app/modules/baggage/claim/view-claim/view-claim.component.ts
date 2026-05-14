@@ -10,6 +10,7 @@ import { MatDialogModule, MatDialog } from "@angular/material/dialog"
 import { ClaimStatusService } from "app/services/claim-status/claim-status.service"
 import { ActionWizardService } from "../action-wizard/action-wizard.service"
 import { ActionWizardComponent } from "../action-wizard/action-wizard.component"
+import { DerivarButtonComponent } from '../../derivar-button/derivar-button.component';
 
 type FlowState = 'done' | 'current' | 'upcoming';
 
@@ -22,7 +23,7 @@ type FlowStep = {
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule, ActionWizardComponent],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule, ActionWizardComponent,DerivarButtonComponent],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
@@ -94,13 +95,9 @@ export class ViewClaimComponent implements OnInit {
     const fechaCreacion = new Date(this.pirData.createdAt);
     const ahora = new Date();
     const diferenciaMilisegundos = ahora.getTime() - fechaCreacion.getTime();
-    
+
     // Calcular días
     this.antiguedadDias = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
-  }
-
-  verHojaSeguimiento(): void {
-    this.router.navigate(["/baggage/claim/trackingsheet", this.claimId])
   }
 
   verFormularioContenido(): void {
@@ -151,11 +148,16 @@ export class ViewClaimComponent implements OnInit {
     });
   }
 
-  enviarAReparacion() {
-    this.actionWizard.open('SEND_TO_REPAIR', this.pirData, () => {
-      this.loadClaim(this.claimId);
-    });
+  enviarAReparacion(): void {
+  const pirNumber = this.pirData?.pirNumber;
+
+  if (!pirNumber) {
+    console.error('No se encontró pirNumber en pirData');
+    return;
   }
+
+  this.router.navigate(['/baggage/claim/repair-flow', pirNumber]);
+}
 
   recogerMaleta() {
     this.actionWizard.open('PICKUP_REPAIRED', this.pirData, () => {
