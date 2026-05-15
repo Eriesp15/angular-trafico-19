@@ -79,7 +79,10 @@
                 <p>Úsalo solo si el equipaje debe moverse físicamente a otra estación. No cambia la estación responsable.</p>
             </div>
 
-            <app-derivar-button [claim]="claim"></app-derivar-button>
+            <app-derivar-button
+                [claim]="claim"
+                buttonLabel="Envio de maleta a otra estación"
+            ></app-derivar-button>
         </div>
 
         <!-- ESTADO ACTUAL DEL PROCESO -->
@@ -141,7 +144,34 @@
                         →
                     </div>
                 </ng-container>
+                <ng-container *ngIf="isRepairFinishedAsRepaired()">
+                    <div class="step-arrow">
+                        →
+                    </div>
+
+                    <div class="modern-step clickable return-station-step">
+                        <div class="modern-node">✈</div>
+
+                        <div class="modern-card return-station-card">
+                            <div class="modern-title">
+                                Devolución de equipaje
+                            </div>
+
+                            <div class="modern-text">
+                                Registrar el envío físico del equipaje reparado a otra estación.
+                            </div>
+
+                            <div class="return-station-action">
+                                <app-derivar-button
+                                    [claim]="claim"
+                                    buttonLabel="Devolución de equipaje a estación responsable"
+                                ></app-derivar-button>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
             </div>
+
         </div>
 
         <!-- DOCUMENTO -->

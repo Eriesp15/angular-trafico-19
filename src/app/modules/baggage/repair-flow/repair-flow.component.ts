@@ -108,6 +108,13 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
 
         return 'Resultado final';
     }
+    isRepairFinishedAsRepaired(): boolean {
+        const repairStatus =
+            this.claim?.claim?.repairStatus ||
+            this.claim?.repairStatus;
+
+        return repairStatus === 'REPAIRED';
+    }
     getStepTitle(step: any): string {
         if (step.key === 'RESOLVED' && this.repairStep === 'RESOLVED') {
             return this.getFinalResultText();

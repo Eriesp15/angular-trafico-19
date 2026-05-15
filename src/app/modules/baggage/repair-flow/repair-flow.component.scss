@@ -348,7 +348,7 @@
 
 .repair-timeline-modern {
     display: grid;
-    grid-template-columns: repeat(9, auto);
+    grid-template-columns: repeat(11, auto);
     align-items: stretch;
     gap: 10px;
     margin-top: 1.25rem;
@@ -742,3 +742,51 @@
         width: 100%;
     }
 }
+.return-station-step {
+    min-width: 180px;
+}
+
+.return-station-step .modern-node {
+    background: #fff9e6;
+    border-color: #f6c343;
+    color: #7a4a00;
+    box-shadow: 0 0 0 7px rgba(246, 195, 67, 0.12);
+}
+
+.return-station-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fff9e6 100%);
+    border-color: rgba(246, 195, 67, 0.55);
+    border-left: 5px solid #f6c343;
+}
+
+.return-station-card .modern-title {
+    color: #1b4fad;
+}
+
+.return-station-card .modern-text {
+    color: var(--text-secondary);
+}
+
+.return-station-action {
+    margin-top: 0.75rem;
+}
+
+/* Botón dentro del paso visual */
+:host ::ng-deep .return-station-action app-derivar-button button {
+    width: 100%;
+    background: #f6c343 !important;
+    color: #3a2b00 !important;
+    border: 1px solid rgba(58, 43, 0, 0.18) !important;
+    border-radius: 8px !important;
+    padding: 0.65rem 0.8rem !important;
+    font-size: 0.78rem !important;
+    font-weight: 900 !important;
+    box-shadow: 0 3px 10px rgba(246, 195, 67, 0.25) !important;
+}
+
+:host ::ng-deep .return-station-action app-derivar-button button:hover {
+    background: #ebb62f !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(246, 195, 67, 0.35) !important;
+}
+

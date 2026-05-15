@@ -15,6 +15,7 @@ import { User } from 'app/core/user/user.types';
 })
 export class DerivarButtonComponent implements OnInit, OnDestroy {
     @Input() claim: any;
+    @Input() buttonLabel = 'Enviar para Reparación';
     currentUserName = '';
 
     private destroy$ = new Subject<void>();
