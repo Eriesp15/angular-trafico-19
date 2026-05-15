@@ -36,12 +36,12 @@
         <div class="card-items">
           <div class="item" *ngFor="let item of group.items">
             <span class="item-desc">{{ item.description || "Sin descripcion" }}</span>
-            <span class="item-amount">${{ item.cost.toFixed(2) }}</span>
+            <span class="item-amount">Bs. {{ item.cost.toFixed(2) }}</span>
           </div>
         </div>
         <div class="card-total">
           <span>Total {{ group.title }}:</span>
-          <span class="amount">${{ group.total.toFixed(2) }}</span>
+          <span class="amount">Bs. {{ group.total.toFixed(2) }}</span>
         </div>
       </div>
     </div>
@@ -56,11 +56,11 @@
       <div class="summary-breakdown">
         <div class="summary-row" *ngFor="let group of groups">
           <span>{{ group.title }}:</span>
-          <span>${{ group.total.toFixed(2) }}</span>
+          <span>Bs. {{ group.total.toFixed(2) }}</span>
         </div>
         <div class="summary-row total">
           <span>Total General:</span>
-          <span>${{ totalGastos.toFixed(2) }}</span>
+          <span>Bs. {{ totalGastos.toFixed(2) }}</span>
         </div>
       </div>
     </div>

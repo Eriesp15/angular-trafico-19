@@ -19,12 +19,12 @@ export const COMPENSATE = {
     { name: 'checkedWeight', label: 'Peso facturado (kg)', type: 'number', readonly: true },
     { name: 'deliveredWeight', label: 'Peso entregado (kg)', type: 'number', readonly: true },
     { name: 'weightDifference', label: 'Diferencia (kg)', type: 'number', readonly: true },
-    { name: 'pricePerKg', label: 'Precio por kg ($)', type: 'number', placeholder: 'Ej: 50', required: true },
-    { name: 'total', label: 'Total a pagar ($)', type: 'number', readonly: true }
+    { name: 'pricePerKg', label: 'Precio por kg (Bs.)', type: 'number', placeholder: 'Ej: 104.4', required: true },
+    { name: 'total', label: 'Total a pagar (Bs.)', type: 'number', readonly: true }
   ],
 
   getMessage: (data: any) =>
-    `Se procedió con la indemnización por ${data.weightDifference}kg de equipaje perdido. Total pagado: $${data.total}`,
+    `Se procedió con la indemnización por ${data.weightDifference}kg de equipaje perdido. Total pagado: Bs. ${data.total}`,
 
   newStatus: 'COMPENSATED'
 };

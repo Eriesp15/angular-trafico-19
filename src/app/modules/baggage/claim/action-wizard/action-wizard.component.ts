@@ -393,7 +393,7 @@ export class ActionWizardComponent {
 
     const description = `Indemnización registrada desde acción del expediente. ` +
       `Diferencia: ${this.formData?.weightDifference ?? 0}kg, ` +
-      `Precio por kg: $${this.formData?.pricePerKg ?? 0}.`;
+      `Precio por kg: Bs. ${this.formData?.pricePerKg ?? 0}.`;
 
     const title = this.pirData?.claimType === "AHL"
       ? "Indemnización - Extravío de Maleta"
