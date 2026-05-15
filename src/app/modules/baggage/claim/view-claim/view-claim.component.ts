@@ -257,8 +257,10 @@ export class ViewClaimComponent implements OnInit {
       return [
         { key: 'pending', label: 'Pendiente de gestión', statuses: ['PENDING'] },
         { key: 'repaired-route', label: 'Reparación / transferencia', statuses: ['REPAIRING', 'TRANSFERRED'] },
-        { key: 'compensated', label: 'Indemnizado/Reparado', statuses: ['COMPENSATED', 'REPAIRED'] },
-        { key: 'delivered', label: 'Entrega realizada', statuses: ['DELIVERED'] },
+        { key: 'received', label: 'Recibido de reparación', statuses: ['REPAIRED'] },
+        { key: 'assigned', label: 'Asignado a transporte', statuses: ['ASSIGNED'] },
+        { key: 'compensated', label: 'Compra/indemnización', statuses: ['COMPENSATED'] },
+        { key: 'delivered', label: 'Entregado', statuses: ['DELIVERED'] },
         { key: 'closed', label: 'Reclamo cerrado', statuses: ['CLOSED'] },
       ];
     }

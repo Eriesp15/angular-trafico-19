@@ -103,14 +103,14 @@ export const ASSIGN_TRANSPORT = {
   title: 'Asignar Empresa de Transporte',
 
   fields: [
-    { name: 'transportCompany', label: 'Empresa de transporte', type: 'text', placeholder: 'Nombre de la empresa', required: true },
+    { name: 'transportCompanyId', label: 'Empresa de transporte', type: 'select', required: true, optionsFrom: 'transportCompanies' },
     { name: 'assignedDate', label: 'Fecha de asignación', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true },
     { name: 'responsiblePerson', label: 'Responsable', type: 'text', placeholder: 'Nombre del responsable', required: true },
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
 
   getMessage: (data: any) =>
-    `Equipaje asignado a la empresa de transporte ${data.transportCompany}. Responsable: ${data.responsiblePerson}. Fecha: ${data.assignedDate}. ${data.notes || ''}`,
+    `Equipaje asignado a la empresa de transporte ${data.transportCompanyName || 'seleccionada'}. Responsable: ${data.responsiblePerson}. Fecha: ${data.assignedDate}. ${data.notes || ''}`,
 
   newStatus: 'ASSIGNED'
 };
@@ -120,12 +120,21 @@ export const DELIVER = {
   title: 'Realizar Entrega',
 
   autofill: {
-    recipientName: 'passengerName'
+    recipientName: 'passengerName',
+    deliveryAddress: 'permanentAddress'
   },
 
   fields: [
-    { name: 'deliveryCompany', label: 'Empresa de envio', type: 'text', required: true},
-    { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
+    { name: 'deliveryCompanyId', label: 'Empresa de envio', type: 'select', required: true, optionsFrom: 'transportCompanies'},
+    { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true},
+    { name: 'deliveryAddressType', label: 'Dirección de entrega', type: 'select', required: true,
+      defaultValue: 'PERMANENT',
+      options: [
+        { value: 'PERMANENT', label: 'Dirección permanente' },
+        { value: 'TEMPORARY', label: 'Dirección temporal' },
+        { value: 'OTHER', label: 'Otros' }
+      ] },
+    { name: 'deliveryAddress', label: 'Dirección a la cual dejar', type: 'textarea', required: true, placeholder: 'Ingrese la dirección de entrega' },
     { name: 'recipientName', label: 'Nombre de quien recibe', type: 'text', required: true},
     { name: 'relationship', label: 'Relación con el pasajero', type: 'select', required: true,
       options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'] },
@@ -133,7 +142,7 @@ export const DELIVER = {
   ],
 
   getMessage: (data: any) =>
-    `Equipaje entregado a ${data.recipientName}, siendo ${data.relationship}. ${data.notes || ''}`,
+    `Equipaje entregado por ${data.deliveryCompanyName || 'empresa de transporte'} en ${data.deliveryAddress}. Recibe ${data.recipientName}, siendo ${data.relationship}. ${data.notes || ''}`,
 
   newStatus: 'DELIVERED'
 };
