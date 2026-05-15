@@ -10,6 +10,12 @@
         <div>
           <h1 class="page-title">Visualizar PIR</h1>
           <p class="pir-sub">Número de PIR: <span class="pir-num">{{ pirData.pirNumber }}</span></p>
+          <p class="pir-sub pir-passenger">
+            Pasajero:
+            <span class="pir-passenger__name">
+              {{ (pirData.passengerName || '') + ' ' + (pirData.passengerLastName || '') }}
+            </span>
+          </p>
           <p class="pir-sub" *ngIf="pirData.worldTracerCode">
             Código World Tracer: <span class="pir-num">{{ pirData.worldTracerCode }}</span>
           </p>
