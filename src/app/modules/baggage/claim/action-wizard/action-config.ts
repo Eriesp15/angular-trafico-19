@@ -125,7 +125,6 @@ export const DELIVER = {
   },
 
   fields: [
-    { name: 'deliveryCompanyId', label: 'Empresa de envio', type: 'select', required: true, optionsFrom: 'transportCompanies'},
     { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true},
     { name: 'deliveryAddressType', label: 'Dirección de entrega', type: 'select', required: true,
       defaultValue: 'PERMANENT',
@@ -136,8 +135,7 @@ export const DELIVER = {
       ] },
     { name: 'deliveryAddress', label: 'Dirección a la cual dejar', type: 'textarea', required: true, placeholder: 'Ingrese la dirección de entrega' },
     { name: 'recipientName', label: 'Nombre de quien recibe', type: 'text', required: true},
-    { name: 'relationship', label: 'Relación con el pasajero', type: 'select', required: true,
-      options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'] },
+
     { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Condición del equipaje, notas...' }
   ],
 
@@ -166,18 +164,17 @@ export const SEND_TO_REPAIR = {
 
 export const PICKUP_REPAIRED = {
   id: 'PICKUP_REPAIRED',
-  title: 'Recoger Maleta de Reparación',
+  title: 'Recibido de Reparación',
 
   fields: [
-    { name: 'pickupDate', label: 'Fecha de recogida', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required:true},
-    { name: 'actualCost', label: 'Costo real ($)', type: 'number', required:true},
-    { name: 'condition', label: 'Estado después de reparación', type: 'select', required:true,
-      options: ['Excelente', 'Buena', 'Aceptable']},
-    { name: 'notes', label: 'Notas de reparación', type: 'textarea' }
+    { name: 'pickupDate', label: 'Fecha de recepción de reparación', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required:true},
+    { name: 'pickupDay', label: 'Día de recepción', type: 'text', readonly: true },
+    { name: 'receivedBy', label: 'Recibido por', type: 'text', placeholder: 'Nombre del responsable', required: true },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
 
   getMessage: (data: any) =>
-    `Recogido de reparación. Costo: $${data.actualCost}. Estado: ${data.condition}. ${data.notes || ''}`,
+    `Equipaje recibido de reparación el ${data.pickupDate}. Día: ${data.pickupDay}. Recibido por: ${data.receivedBy}. ${data.notes || ''}`,
 
   newStatus: 'REPAIRED'
 };

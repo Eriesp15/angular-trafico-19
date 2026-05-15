@@ -107,6 +107,10 @@ export class ActionWizardComponent {
             data.deliveryAddress = this.getDeliveryAddress(data.deliveryAddressType);
         }
 
+        if (this.config?.id === 'PICKUP_REPAIRED') {
+            data.pickupDay = this.getDayName(data.pickupDate);
+        }
+
         if (this.config?.calculate) {
             data = this.config.calculate(data);
         }
@@ -296,6 +300,10 @@ export class ActionWizardComponent {
                 ? ''
                 : this.getDeliveryAddress(value);
         }
+
+        if (this.config?.id === 'PICKUP_REPAIRED' && fieldName === 'pickupDate') {
+            this.formData.pickupDay = this.getDayName(value);
+        }
     }
     //funcion que devuelve nombre del la empresa
     // función que devuelve el texto visible de un campo en el resumen
@@ -355,6 +363,20 @@ export class ActionWizardComponent {
             .replace(/[\u0300-\u036f]/g, '')
             .trim()
             .toLowerCase();
+    }
+
+    private getDayName(value: any): string {
+        if (!value) {
+            return '';
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        return date.toLocaleDateString('es-BO', { weekday: 'long' });
     }
 
     //------------------
