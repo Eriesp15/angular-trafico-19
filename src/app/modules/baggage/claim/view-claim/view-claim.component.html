@@ -123,13 +123,7 @@
                 <span>Realizar Entrega</span>
               </button>
             </ng-container>
-            <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-action-primary" (click)="realizarEntrega()">
-                <mat-icon>local_shipping</mat-icon>
-                <span>Realizar Entrega</span>
-              </button>
-            </ng-container>
-            <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED'">
+            <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
               <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamo()">
                 <mat-icon>task_alt</mat-icon>
                 <span>Cerrar Reclamo</span>
