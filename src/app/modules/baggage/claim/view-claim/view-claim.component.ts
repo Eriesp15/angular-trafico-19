@@ -148,6 +148,12 @@ export class ViewClaimComponent implements OnInit {
     });
   }
 
+  recojoEnAeropuerto() {
+    this.actionWizard.open('AIRPORT_PICKUP', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
   enviarAReparacion(): void {
   const pirNumber = this.pirData?.pirNumber;
 
