@@ -173,6 +173,7 @@
             [empresa]="empresaSel"
             [asignaciones]="asignaciones"
             (volver)="volver()"
+            (refrescar)="empresaSel && cargarAsignacionesEmpresa(empresaSel.id)"
         >
         </app-list-supplier>
     </ng-container>
@@ -257,16 +258,9 @@
     ></div>
 
     <div class="modal" *ngIf="modalAsignar">
-        <h2 class="modal-title">Asignar PIR → {{ empresaAsignar?.name }}</h2>
+        <h2 class="modal-title">Asignar Expediente→ {{ empresaAsignar?.name }}</h2>
 
-        <label class="modal-label">Fecha de entrega</label>
-        <input
-            class="input"
-            type="date"
-            [(ngModel)]="fechaEntrega"
-        />
-
-        <label class="modal-label">Buscar PIR</label>
+        <label class="modal-label">Buscar por PIR</label>
         <input
             class="input"
             type="text"
@@ -275,14 +269,33 @@
         />
 
         <!-- SUGERENCIAS -->
+        <!-- RESULTADOS DE BÚSQUEDA -->
+        <div class="pir-results-title">
+            Expedientes disponibles / resultados de busqueda:
+        </div>
+
         <div class="pir-suggestions" *ngIf="pirFiltrado.length > 0">
             <div
                 class="pir-item"
                 *ngFor="let p of pirFiltrado"
                 (click)="addPIR(p)"
             >
-                {{ p }}
+                {{ getPirLabel(p) }}
             </div>
+        </div>
+
+        <div
+            class="pir-empty"
+            *ngIf="!cargandoPirs && pirBuscar.trim() && pirFiltrado.length === 0"
+        >
+            No se encontraron coincidencias para la búsqueda.
+        </div>
+
+        <div
+            class="pir-empty"
+            *ngIf="!cargandoPirs && !pirBuscar.trim() && pirFiltrado.length === 0"
+        >
+            No hay Expedientes disponibles para asignar.
         </div>
 
         <!-- PIR seleccionados -->

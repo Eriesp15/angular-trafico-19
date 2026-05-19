@@ -7,6 +7,7 @@ import { ActionWizardComponent } from '../claim/action-wizard/action-wizard.comp
 import { ActionWizardService } from '../claim/action-wizard/action-wizard.service';
 import { ClaimFlowService } from '../services/claim-flow.service';
 import { DerivarButtonComponent } from '../derivar-button/derivar-button.component';
+import { ApiCompaniesService, CompanyAssignment, } from '../services/api-companies.service';
 
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
@@ -27,7 +28,7 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
 
     repairStep = 'PENDING';
     repairDocument: any = null;
-
+    repairAssignment: CompanyAssignment | null = null;
 
     uploadingDocument = false;
     deletingDocument = false;
@@ -137,7 +138,8 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private wizardService: ActionWizardService,
         private claimFlowService: ClaimFlowService,
-        private userService: UserService
+        private userService: UserService,
+        private companiesApi: ApiCompaniesService
     ) {}
 
     ngOnInit(): void {
@@ -174,6 +176,7 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
                 this.claim = response;
                 this.timeline = response?.follow?.entries || [];
                 this.sortTimeline();
+                this.loadRepairAssignment();
                 this.loadRepairDocuments();
             },
             error: (error) => {
@@ -183,7 +186,19 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
             },
         });
     }
+    loadRepairAssignment(): void {
+        if (!this.pirNumber) return;
 
+        this.companiesApi.getRepairAssignmentByPir(this.pirNumber).subscribe({
+            next: (assignment) => {
+                this.repairAssignment = assignment;
+            },
+            error: (err) => {
+                console.error('Error cargando asignación de reparación', err);
+                this.repairAssignment = null;
+            },
+        });
+    }
     loadRepairDocuments(): void {
         this.claimFlowService.getDocumentsByPir(this.pirNumber).subscribe({
             next: (response) => {
@@ -362,6 +377,14 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
     }
 
     getAssignedRepairCompanyText(): string {
+        if (this.repairAssignment?.company?.name) {
+            return this.repairAssignment.company.name;
+        }
+
+        if (this.repairAssignment?.company?.businessName) {
+            return this.repairAssignment.company.businessName;
+        }
+
         const entry = this.findRepairEntryByAction('ASSIGN_REPAIR_COMPANY');
         const formData = this.getEntryFormData(entry);
 
@@ -376,6 +399,10 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
     }
 
     getRepairDeliveryDate(): string {
+        if (this.repairAssignment?.deliveryDate) {
+            return this.formatRepairDateTime(this.repairAssignment.deliveryDate);
+        }
+
         const entry = this.findRepairEntryByAction('DELIVER_TO_REPAIR_COMPANY');
         const formData = this.getEntryFormData(entry);
 
@@ -390,6 +417,10 @@ export class RepairFlowComponent implements OnInit, OnDestroy {
     }
 
     getRepairReceivedDate(): string {
+        if (this.repairAssignment?.returnDate) {
+            return this.formatRepairDateTime(this.repairAssignment.returnDate);
+        }
+
         const entry = this.findRepairEntryByAction('RECEIVE_FROM_REPAIR_COMPANY');
         const formData = this.getEntryFormData(entry);
 

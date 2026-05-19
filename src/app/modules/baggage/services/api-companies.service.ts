@@ -19,7 +19,47 @@ export interface Company {
     serviceTypeId: string;
     serviceType?: ServiceType;
 }
+export interface AvailableClaim {
+    id: string;
+    claimStatus: string;
+    repairStatus?: string;
+    createdAt: string;
+    currentStation?: string;
+    pir?: {
+        id: string;
+        pirNumber: string;
+        claimType: string;
+        passengerName?: string;
+        passengerLastName?: string;
+    };
+}
+export interface CompanyAssignment {
+    id: string;
+    companyId: string;
+    claimId: string;
+    serviceTypeId: string;
+    assignmentDate: string;
+    deliveryDate?: string | null;
+    status: string;
+    notes?: string | null;
+    returnDate?: string | null;
 
+    company?: Company;
+    serviceType?: ServiceType;
+    claim?: {
+        id: string;
+        claimStatus: string;
+        repairStatus?: string;
+        currentStation?: string;
+        pir?: {
+            id: string;
+            pirNumber: string;
+            claimType: string;
+            passengerName?: string;
+            passengerLastName?: string;
+        };
+    };
+}
 @Injectable({
     providedIn: 'root',
 })
@@ -103,4 +143,54 @@ export class ApiCompaniesService {
     updateCompanyStatus(id: string, isActive: boolean): Observable<Company> {
         return this.http.patch<Company>(`${this.baseUrl}/${id}/status`, { isActive });
     }
+    getAvailableClaimsForCompany(serviceTypeId: string): Observable<AvailableClaim[]> {
+        return this.http.get<AvailableClaim[]>(
+            `${this.baseUrl}/available-claims/${serviceTypeId}`
+        );
+    }
+    createCompanyAssignment(body: {
+        companyId: string;
+        claimId: string;
+        deliveryDate?: string | null;
+        notes?: string;
+    }): Observable<CompanyAssignment> {
+        return this.http.post<CompanyAssignment>(
+            `${this.baseUrl}/assignments`,
+            body
+        );
+    }
+    getAssignmentsByCompany(companyId: string): Observable<CompanyAssignment[]> {
+        return this.http.get<CompanyAssignment[]>(
+            `${this.baseUrl}/${companyId}/assignments`
+        );
+    }
+    deliverToRepairCompany(
+        assignmentId: string,
+        deliveryDate?: string
+    ): Observable<CompanyAssignment> {
+        return this.http.patch<CompanyAssignment>(
+            `${this.baseUrl}/assignments/${assignmentId}/deliver-to-repair`,
+            { deliveryDate }
+        );
+    }
+    deleteCompanyAssignment(assignmentId: string): Observable<{ message: string; assignmentId: string }> {
+        return this.http.delete<{ message: string; assignmentId: string }>(
+            `${this.baseUrl}/assignments/${assignmentId}`
+        );
+    }
+    receiveFromRepairCompany(
+        assignmentId: string,
+        returnDate?: string
+    ): Observable<CompanyAssignment> {
+        return this.http.patch<CompanyAssignment>(
+            `${this.baseUrl}/assignments/${assignmentId}/receive-from-repair`,
+            { returnDate }
+        );
+    }
+    getRepairAssignmentByPir(pirNumber: string): Observable<CompanyAssignment | null> {
+        return this.http.get<CompanyAssignment | null>(
+            `${this.baseUrl}/assignments/by-pir/${pirNumber}`
+        );
+    }
 }
+

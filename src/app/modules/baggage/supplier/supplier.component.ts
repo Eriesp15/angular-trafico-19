@@ -1,24 +1,33 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { ListSupplierComponent } from './list-supplier/list-supplier.component';
 import {
     ApiCompaniesService,
     Company,
     ServiceType,
+    AvailableClaim,
+    CompanyAssignment,
 } from '../services/api-companies.service';
 
 export enum EstadoAsignacion {
     Pendiente = 'Pendiente',
     Entregado = 'Entregado',
+    Recibido = 'Recibido',
 }
 
 export interface Asignacion {
     id: string;
     empresaId: string;
     pir: string;
+    pasajero?: string;
+    pirId?: string;
+    claimId?: string;
+    claimData?: any;
     fechaAsignacion: string;
     fechaEntrega: string | null;
+    fechaRecepcion: string | null;
     estado: EstadoAsignacion;
 }
 
@@ -81,14 +90,9 @@ export class SupplierComponent implements OnInit {
     pirSeleccionados: string[] = [];
     fechaEntrega = '';
 
-    pirLista: string[] = [
-        'CBBO1315449',
-        'CBBO1315450',
-        'CBBO1315451',
-        'LPZ778899',
-        'VVI112233',
-        'VVI889900',
-    ];
+    pirLista: string[] = [];
+    reclamosDisponibles: AvailableClaim[] = [];
+    cargandoPirs = false;
 
     tipoError = '';
 
@@ -388,8 +392,41 @@ export class SupplierComponent implements OnInit {
     verDetalle(company: Company): void {
         this.empresaSel = company;
         this.vista = 'detalle';
+        this.cargarAsignacionesEmpresa(company.id);
     }
-
+    cargarAsignacionesEmpresa(companyId: string): void {
+        this.companiesApi.getAssignmentsByCompany(companyId).subscribe({
+            next: (assignments: CompanyAssignment[]) => {
+                this.asignaciones = assignments.map((a) => ({
+                    id: a.id,
+                    empresaId: a.companyId,
+                    pir: a.claim?.pir?.pirNumber ?? '',
+                    pasajero: [
+                        a.claim?.pir?.passengerName,
+                        a.claim?.pir?.passengerLastName,
+                    ]
+                        .filter(Boolean)
+                        .join(' '),
+                    pirId: a.claim?.pir?.id,
+                    claimId: a.claim?.id,
+                    claimData: a.claim,
+                    fechaAsignacion: a.assignmentDate?.slice(0, 10),
+                    fechaEntrega: a.deliveryDate ? a.deliveryDate.slice(0, 10) : null,
+                    fechaRecepcion: a.returnDate ? a.returnDate.slice(0, 10) : null,
+                    estado:
+                        a.status === 'RECEIVED'
+                            ? EstadoAsignacion.Recibido
+                            : a.status === 'DELIVERED'
+                                ? EstadoAsignacion.Entregado
+                                : EstadoAsignacion.Pendiente,
+                }));
+            },
+            error: (err) => {
+                console.error('Error cargando asignaciones de empresa', err);
+                this.asignaciones = [];
+            },
+        });
+    }
     volver(): void {
         this.empresaSel = null;
         this.vista = 'lista';
@@ -439,20 +476,60 @@ export class SupplierComponent implements OnInit {
         this.empresaAsignar = company;
         this.pirSeleccionados = [];
         this.pirBuscar = '';
-
-        const nombreTipo =
-            company.serviceType?.name?.toLowerCase() || '';
-
-        // SOLO para empresas de reparación
-        if (nombreTipo.includes('repar')) {
-            this.fechaEntrega = this.getFechaHabilMas5();
-        } else {
-            this.fechaEntrega = '';
-        }
+        this.pirLista = [];
+        this.reclamosDisponibles = [];
+        this.fechaEntrega = '';
 
         this.modalAsignar = true;
+        this.cargarPirsDisponibles(company.serviceTypeId);
+    }
+    cargarPirsDisponibles(serviceTypeId: string): void {
+        this.cargandoPirs = true;
+
+        this.companiesApi.getAvailableClaimsForCompany(serviceTypeId).subscribe({
+            next: (claims) => {
+                this.reclamosDisponibles = claims;
+
+                this.pirLista = claims
+                    .map((claim) => claim.pir?.pirNumber)
+                    .filter((pir): pir is string => !!pir);
+
+                this.cargandoPirs = false;
+            },
+            error: (err) => {
+                console.error('Error cargando PIR disponibles', err);
+                this.pirLista = [];
+                this.reclamosDisponibles = [];
+                this.cargandoPirs = false;
+            },
+        });
+    }
+    getClaimByPir(pir: string): AvailableClaim | undefined {
+        return this.reclamosDisponibles.find(
+            (claim) => claim.pir?.pirNumber === pir
+        );
     }
 
+    getPirLabel(pir: string): string {
+        const claim = this.getClaimByPir(pir);
+        const datosPir = claim?.pir;
+
+        const pasajero = [
+            datosPir?.passengerName,
+            datosPir?.passengerLastName,
+        ]
+            .filter(Boolean)
+            .join(' ');
+
+        return [
+            pir,
+            pasajero,
+            datosPir?.claimType,
+            claim?.claimStatus,
+        ]
+            .filter(Boolean)
+            .join(' — ');
+    }
     cerrarAsignar(): void {
         this.modalAsignar = false;
         this.pirSeleccionados = [];
@@ -492,16 +569,49 @@ export class SupplierComponent implements OnInit {
     guardarAsignaciones(): void {
         if (!this.empresaAsignar) return;
 
-        const nuevas: Asignacion[] = this.pirSeleccionados.map((pir) => ({
-            id: Date.now().toString() + Math.random().toString(36).slice(2),
-            pir,
-            empresaId: this.empresaAsignar!.id,
-            fechaAsignacion: new Date().toISOString().slice(0, 10),
-            fechaEntrega: this.fechaEntrega || null,
-            estado: EstadoAsignacion.Pendiente,
-        }));
+        if (this.pirSeleccionados.length === 0) {
+            return;
+        }
 
-        this.asignaciones.push(...nuevas);
-        this.cerrarAsignar();
+        const claimsSeleccionados = this.pirSeleccionados
+            .map((pir) => this.getClaimByPir(pir))
+            .filter((claim): claim is AvailableClaim => !!claim);
+
+        const requests = claimsSeleccionados.map((claim) =>
+            this.companiesApi.createCompanyAssignment({
+                companyId: this.empresaAsignar!.id,
+                claimId: claim.id,
+                deliveryDate: null,
+                notes: 'Asignación desde módulo empresas',
+            })
+        );
+
+        forkJoin(requests).subscribe({
+            next: () => {
+                const nuevas: Asignacion[] = claimsSeleccionados.map((claim) => ({
+                    id: claim.id,
+                    pir: claim.pir?.pirNumber ?? '',
+                    empresaId: this.empresaAsignar!.id,
+                    fechaAsignacion: new Date().toISOString().slice(0, 10),
+                    fechaEntrega: null,
+                    fechaRecepcion: null,
+                    estado: EstadoAsignacion.Pendiente,
+                }));
+
+                this.asignaciones.push(...nuevas);
+
+                this.cerrarAsignar();
+            },
+            error: (err) => {
+                console.error('Error guardando asignaciones', err);
+
+                if (err.status === 409) {
+                    alert('Uno de los PIR ya fue asignado a una empresa de este mismo tipo.');
+                    return;
+                }
+
+                alert('No se pudo guardar la asignación.');
+            },
+        });
     }
 }

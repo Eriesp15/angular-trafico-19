@@ -1,7 +1,4 @@
 <div class="detalle-container">
-    <!-- ============================
-         BARRA SUPERIOR
-    ============================ -->
     <div class="top-actions">
         <button mat-button class="volver-btn" (click)="volver.emit()">
             ← Volver
@@ -18,7 +15,6 @@
         </button>
     </div>
 
-    <!-- TITULO PRINCIPAL -->
     <div class="header">
         <h2 class="titulo-empresa">{{ empresa.name }}</h2>
         <p class="tipo">{{ empresa.serviceType?.name }}</p>
@@ -26,12 +22,18 @@
 
     <h3 class="subtitulo">Asignaciones registradas</h3>
 
-    <table>
+    <div *ngIf="asignacionesEmpresa.length === 0" class="empty-state">
+        No hay asignaciones registradas para esta empresa.
+    </div>
+
+    <table *ngIf="asignacionesEmpresa.length > 0">
         <thead>
         <tr>
             <th>PIR</th>
+            <th>Pasajero</th>
             <th>Fecha asignación</th>
-            <th>Fecha entrega</th>
+            <th>Fecha entrega a reparadora</th>
+            <th>Fecha recepción desde reparadora</th>
             <th>Estado</th>
             <th>Acciones</th>
         </tr>
@@ -39,55 +41,82 @@
 
         <tbody>
         <tr *ngFor="let a of asignacionesEmpresa">
-            <!-- PIR -->
-            <td>{{ a.pir }}</td>
-
-            <!-- FECHA ASIGNACIÓN -->
             <td>
-                <ng-container *ngIf="!editando[a.id]; else editFA">
-                    {{ a.fechaAsignacion ? (a.fechaAsignacion | date:'dd/MM/yyyy') : '—' }}
+                <b>{{ a.pir }}</b>
+            </td>
+
+            <td>
+                {{ a.pasajero || '—' }}
+            </td>
+
+            <td>
+                {{ a.fechaAsignacion ? (a.fechaAsignacion | date:'dd/MM/yyyy') : '—' }}
+            </td>
+
+            <td>
+                <ng-container *ngIf="a.fechaEntrega; else pendienteEntrega">
+                    {{ a.fechaEntrega | date:'dd/MM/yyyy' }}
                 </ng-container>
 
-                <ng-template #editFA>
-                    <input class="input" type="date" [(ngModel)]="a.fechaAsignacion" />
+                <ng-template #pendienteEntrega>
+                    <button
+                        class="btn btn-blue"
+                        (click)="abrirWizardEntrega(a)"
+                    >
+                        Entregar a reparadora
+                    </button>
                 </ng-template>
             </td>
 
-            <!-- FECHA ENTREGA -->
             <td>
-                <ng-container *ngIf="!editando[a.id]; else editFE">
-                    {{ a.fechaEntrega ? (a.fechaEntrega | date:'dd/MM/yyyy') : '—' }}
+                <ng-container *ngIf="a.fechaRecepcion; else pendienteRecepcion">
+                    {{ a.fechaRecepcion | date:'dd/MM/yyyy' }}
                 </ng-container>
 
-                <ng-template #editFE>
-                    <input class="input" type="date" [(ngModel)]="a.fechaEntrega" />
+                <ng-template #pendienteRecepcion>
+                    <button
+                        class="btn btn-blue"
+                        *ngIf="a.fechaEntrega"
+                        (click)="abrirWizardRecepcion(a)"
+                    >
+                        Recibir de reparadora
+                    </button>
+
+                    <span class="text-muted" *ngIf="!a.fechaEntrega">
+                            Primero entregar
+                        </span>
                 </ng-template>
             </td>
 
-            <!-- ESTADO CLICKABLE -->
             <td>
-          <span
-              class="badge clickable"
-              [class.badge-ok]="a.estado === EstadoAsignacion.Entregado"
-              (click)="cambiarEstadoDirecto(a)"
-          >
-            {{ a.estado }}
-          </span>
+                    <span
+                        class="badge"
+                        [class.badge-ok]="a.estado === EstadoAsignacion.Entregado || a.estado === EstadoAsignacion.Recibido"
+                    >
+                        {{ a.estado }}
+                    </span>
             </td>
 
-            <!-- ACCIONES -->
             <td class="acciones">
-                <ng-container *ngIf="!editando[a.id]">
-                    <button class="btn btn-light" (click)="editarFila(a)">Editar</button>
-                    <button class="btn btn-borrar" (click)="eliminar(a)">🗑️</button>
-                </ng-container>
+                <button class="btn btn-light" (click)="editarFila(a)">
+                    Editar
+                </button>
 
-                <ng-container *ngIf="editando[a.id]">
-                    <button class="btn btn-guardar" (click)="guardarFila(a)">Guardar</button>
-                    <button class="btn btn-cancelar" (click)="cancelarEdicion(a)">Cancelar</button>
-                </ng-container>
+                <button
+                    class="btn btn-borrar"
+                    *ngIf="!a.fechaEntrega"
+                    (click)="eliminar(a)"
+                >
+                    🗑️
+                </button>
+
+                <span class="text-muted" *ngIf="a.fechaEntrega">
+                        No eliminable
+                    </span>
             </td>
         </tr>
         </tbody>
     </table>
+
+    <app-action-wizard></app-action-wizard>
 </div>
