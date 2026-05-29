@@ -74,7 +74,7 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamo()">
+              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamoMal()">
                 <mat-icon>task_alt</mat-icon>
                 <span>Cerrar Reclamo</span>
               </button>
@@ -94,7 +94,7 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamo()">
+              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamoMal()">
                 <mat-icon>task_alt</mat-icon>
                 <span>Cerrar Reclamo</span>
               </button>
@@ -137,7 +137,7 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamo()">
+              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamoMal()">
                 <mat-icon>task_alt</mat-icon>
                 <span>Cerrar Reclamo</span>
               </button>
@@ -179,7 +179,7 @@
             <mat-icon>paid</mat-icon>
             <span>Añadir Gasto</span>
           </button>
-          <button class="btn-action-secondary" (click)="cerrarReclamo()">
+          <button class="btn-action-secondary" (click)="cerrarReclamoMal()">
             <mat-icon>check_circle</mat-icon>
             <span>Cerrar Reclamo</span>
           </button>

@@ -2,6 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ListSupplierComponent } from './list-supplier/list-supplier.component';
+import {
+    ApiCompaniesService,
+    Company,
+    CompanyUser,
+    ServiceType,
+} from '../services/api-companies.service';
 
 export enum EstadoAsignacion {
     Pendiente = 'Pendiente',
@@ -38,7 +44,6 @@ export interface Asignacion {
 export class SupplierComponent {
     constructor() {
         document.addEventListener('click', () => {
-            this.menuEmpresaAbierto = null;
             this.menuTipoAbierto = null;
         });
     }
@@ -66,29 +71,139 @@ export class SupplierComponent {
     // =============================================
 
     menuTipoAbierto: string | null = null;
-    menuEmpresaAbierto: Empresa | null = null;
-
-    toggleMenuTipo(tipo: string) {
-        this.menuTipoAbierto = this.menuTipoAbierto === tipo ? null : tipo;
-    }
-
-    toggleMenuEmpresa(e: Empresa) {
-        this.menuEmpresaAbierto = this.menuEmpresaAbierto === e ? null : e;
-    }
-
-
-    // =============================================
-    //              CREAR / EDITAR TIPO
-    // =============================================
 
     modalTipo = false;
     nuevoTipo = '';
-    editarTipoSeleccionado: string | null = null;
+    editarTipoSeleccionado: ServiceType | null = null;
 
-    agregarTipo() {
-        if (!this.nuevoTipo.trim()) return;
+    modalCrear = false;
 
-        // Si se está editando
+    formEmpresa = {
+        serviceTypeId: '',
+        name: '',
+        phone: '',
+        email: '',
+        address: '',
+        businessName: '',
+    };
+
+    editarEmpresaData: Company | null = null;
+
+    // User management
+    modalUsers = false;
+    modalUsersEmpresa: Company | null = null;
+    companyUsers: CompanyUser[] = [];
+    availableUsers: { id: string; name: string; email: string; role: string; phone?: string }[] = [];
+    selectedUserId = '';
+    userLoading = false;
+    userSearch = '';
+
+    // New user form
+    newUserName = '';
+    newUserEmail = '';
+    newUserPhone = '';
+    userCreateError = '';
+
+    modalAsignar = false;
+    empresaAsignar: Company | null = null;
+
+    pirBuscar = '';
+    pirSeleccionados: string[] = [];
+    fechaEntrega = '';
+
+    pirLista: string[] = [
+        'CBBO1315449',
+        'CBBO1315450',
+        'CBBO1315451',
+        'LPZ778899',
+        'VVI112233',
+        'VVI889900',
+    ];
+
+    tipoError = '';
+
+    empresaError = '';
+    empresaFieldErrors = {
+        serviceTypeId: '',
+        name: '',
+        businessName: '',
+        phone: '',
+        email: '',
+        address: '',
+    };
+
+    ngOnInit(): void {
+        this.cargarTodo();
+    }
+
+    cargarTodo(): void {
+        this.loading = true;
+
+        this.companiesApi.getServiceTypes().subscribe({
+            next: (types: ServiceType[]) => {
+                this.serviceTypes = types;
+
+                this.companiesApi.getCompanies().subscribe({
+                    next: (companies: Company[]) => {
+                        this.companies = companies;
+                        this.loading = false;
+                    },
+                    error: (err) => {
+                        console.error('Error cargando companies', err);
+                        this.loading = false;
+                    },
+                });
+            },
+            error: (err) => {
+                console.error('Error cargando service types', err);
+                this.loading = false;
+            },
+        });
+    }
+
+    toggleMenuTipo(tipoId: string): void {
+        this.menuTipoAbierto = this.menuTipoAbierto === tipoId ? null : tipoId;
+    }
+
+    limpiarErroresTipo(): void {
+        this.tipoError = '';
+    }
+
+    limpiarErroresEmpresa(): void {
+        this.empresaError = '';
+        this.empresaFieldErrors = {
+            serviceTypeId: '',
+            name: '',
+            businessName: '',
+            phone: '',
+            email: '',
+            address: '',
+        };
+    }
+
+    // =========================
+    // TIPOS DE SERVICIO
+    // =========================
+    agregarTipo(): void {
+        const nombre = this.nuevoTipo.trim();
+        this.limpiarErroresTipo();
+
+        if (!nombre) {
+            this.tipoError = 'Debes ingresar un nombre para el tipo.';
+            return;
+        }
+
+        const yaExiste = this.serviceTypes.some(
+            (t) =>
+                t.name.trim().toLowerCase() === nombre.toLowerCase() &&
+                (!this.editarTipoSeleccionado || t.id !== this.editarTipoSeleccionado.id)
+        );
+
+        if (yaExiste) {
+            this.tipoError = 'Ya existe un tipo de servicio con ese nombre.';
+            return;
+        }
+
         if (this.editarTipoSeleccionado) {
             const index = this.tiposEmpresa.indexOf(this.editarTipoSeleccionado);
             if (index >= 0) {
@@ -164,31 +279,9 @@ export class SupplierComponent {
         };
 
         this.modalCrear = true;
-        this.menuEmpresaAbierto = null;
     }
 
-    guardarEmpresa() {
-        if (this.editarEmpresaData) {
-            // EDITAR
-            this.editarEmpresaData.nombre = this.formEmpresa.nombre;
-            this.editarEmpresaData.telefono = this.formEmpresa.telefono;
-            this.editarEmpresaData.email = this.formEmpresa.email;
-            this.editarEmpresaData.direccion = this.formEmpresa.direccion;
-            this.editarEmpresaData.razon = this.formEmpresa.razon;
-
-            this.editarEmpresaData = null;
-        } else {
-            // CREAR
-            const nueva: Empresa = {
-                id: Date.now().toString(),
-                activo: true,
-                ...this.formEmpresa
-            };
-
-            this.empresas.push(nueva);
-        }
-
-        // Reiniciar
+    resetFormEmpresa(): void {
         this.formEmpresa = {
             tipo: '',
             nombre: '',
@@ -197,17 +290,145 @@ export class SupplierComponent {
             direccion: '',
             razon: ''
         };
-
+        this.editarEmpresaData = null;
         this.modalCrear = false;
+        this.limpiarErroresEmpresa();
     }
 
+    abrirModalUsuarios(company: Company): void {
+        this.modalUsersEmpresa = company;
+        this.modalUsers = true;
+        this.companyUsers = [];
+        this.availableUsers = [];
+        this.selectedUserId = '';
+        this.userSearch = '';
+        this.newUserName = '';
+        this.newUserEmail = '';
+        this.newUserPhone = '';
+        this.userCreateError = '';
+        this.cargarUsuariosEmpresa(company.id);
+        this.cargarUsuariosDisponibles(company.id);
+    }
 
-    // =============================================
-    //              NAVEGAR ENTRE VISTAS
-    // =============================================
+    cerrarModalUsuarios(): void {
+        this.modalUsers = false;
+        this.modalUsersEmpresa = null;
+        this.cargarTodo();
+    }
 
-    verDetalle(e: Empresa) {
-        this.empresaSel = e;
+    cargarUsuariosEmpresa(companyId: string): void {
+        this.userLoading = true;
+
+        this.companiesApi.getCompanyUsers(companyId).subscribe({
+            next: (users) => {
+                this.companyUsers = users;
+                this.userLoading = false;
+            },
+            error: (err) => {
+                console.error('Error cargando usuarios', err);
+                this.userLoading = false;
+            },
+        });
+    }
+
+    cargarUsuariosDisponibles(companyId: string): void {
+        this.companiesApi.getAvailableUsers(companyId).subscribe({
+            next: (users) => {
+                this.availableUsers = users;
+            },
+            error: (err) => {
+                console.error('Error cargando usuarios disponibles', err);
+            },
+        });
+    }
+
+    get filteredAvailableUsers() {
+        if (!this.userSearch.trim()) return this.availableUsers;
+        const term = this.userSearch.toLowerCase();
+        return this.availableUsers.filter(
+            (u) =>
+                u.name.toLowerCase().includes(term) ||
+                u.email.toLowerCase().includes(term)
+        );
+    }
+
+    agregarUsuario(): void {
+        if (!this.modalUsersEmpresa || !this.selectedUserId) return;
+
+        this.companiesApi.addCompanyUser(this.modalUsersEmpresa.id, this.selectedUserId).subscribe({
+            next: () => {
+                this.selectedUserId = '';
+                this.userSearch = '';
+                this.cargarUsuariosEmpresa(this.modalUsersEmpresa!.id);
+                this.cargarUsuariosDisponibles(this.modalUsersEmpresa!.id);
+            },
+            error: (err) => {
+                console.error('Error agregando usuario', err);
+            },
+        });
+    }
+
+    eliminarUsuario(userId: string): void {
+        if (!this.modalUsersEmpresa) return;
+
+        this.companiesApi.removeCompanyUser(this.modalUsersEmpresa.id, userId).subscribe({
+            next: () => {
+                this.cargarUsuariosEmpresa(this.modalUsersEmpresa!.id);
+                this.cargarUsuariosDisponibles(this.modalUsersEmpresa!.id);
+            },
+            error: (err) => {
+                console.error('Error eliminando usuario', err);
+            },
+        });
+    }
+
+    crearUsuario(): void {
+        this.userCreateError = '';
+
+        const name = this.newUserName.trim();
+        const email = this.newUserEmail.trim();
+        const phone = this.newUserPhone.trim();
+
+        if (!name || !email) {
+            this.userCreateError = 'Nombre y correo son obligatorios.';
+            return;
+        }
+
+        if (!this.modalUsersEmpresa) return;
+
+        this.companiesApi.createCompanyUser(this.modalUsersEmpresa.id, {
+            name,
+            email,
+            phone: phone || undefined,
+        }).subscribe({
+            next: () => {
+                this.newUserName = '';
+                this.newUserEmail = '';
+                this.newUserPhone = '';
+                this.cargarUsuariosEmpresa(this.modalUsersEmpresa!.id);
+                this.cargarUsuariosDisponibles(this.modalUsersEmpresa!.id);
+            },
+            error: (err) => {
+                if (err.status === 400 || err.status === 409) {
+                    const msg = err.error?.message || 'Error al crear usuario.';
+                    this.userCreateError = Array.isArray(msg) ? msg[0] : msg;
+                } else {
+                    this.userCreateError = 'No se pudo crear el usuario.';
+                }
+            },
+        });
+    }
+
+    getNombreTipoSeleccionado(): string {
+        const tipo = this.serviceTypes.find(
+            (t) => t.id === this.formEmpresa.serviceTypeId
+        );
+
+        return tipo?.name ?? '';
+    }
+
+    verDetalle(company: Company): void {
+        this.empresaSel = company;
         this.vista = 'detalle';
     }
 

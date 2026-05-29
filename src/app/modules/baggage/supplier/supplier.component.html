@@ -5,7 +5,6 @@
     ============================================= -->
     <div class="header" *ngIf="vista === 'lista'">
         <h1 class="title">Empresas / Proveedores</h1>
-        <button class="btn btn-yellow" (click)="modalTipo = true">+ Agregar Tipo de Empresa</button>
     </div>
 
     <!-- ============================================
@@ -74,26 +73,9 @@
             <div class="cards">
 
                 <!-- Empresa dentro del grupo -->
-                <div class="card" *ngFor="let e of getEmpresasPorTipo(tipo)">
-
-                    <div class="card-head-row" (click)="detenerPropagacion($event)">
-
-                        <h3 class="card-title">{{ e.nombre }}</h3>
-
-                        <!-- 3 puntitos de la empresa -->
-                        <button class="btn-dots"
-                                (click)="toggleMenuEmpresa(e); detenerPropagacion($event)">
-                            ⋮
-                        </button>
-
-                        <!-- dropdown -->
-                        <div class="dropdown"
-                             *ngIf="menuEmpresaAbierto === e"
-                             (click)="detenerPropagacion($event)">
-                            <div class="item" (click)="editarEmpresa(e)">Editar</div>
-                            <div class="item" (click)="verDetalle(e)">Ver lista</div>
-                        </div>
-
+                <div class="card" *ngFor="let e of getEmpresasPorTipo(tipo.id)">
+                    <div class="card-head-row">
+                        <h3 class="card-title">{{ e.name }}</h3>
                     </div>
 
                     <div class="estado">
@@ -116,10 +98,12 @@
 
                     <div class="card-actions">
                         <button class="btn btn-light" (click)="verDetalle(e)">Ver Lista</button>
-
-                        <button class="btn btn-blue"
-                                [disabled]="!e.activo"
-                                (click)="abrirAsignar(e)">
+                        <button class="btn btn-yellow" (click)="abrirModalUsuarios(e)">Gestión de Usuarios</button>
+                        <button
+                            class="btn btn-blue"
+                            [disabled]="!e.isActive"
+                            (click)="abrirAsignar(e)"
+                        >
                             Asignar
                         </button>
                     </div>
@@ -183,10 +167,71 @@
 
 
     <!-- ============================================
-                MODAL — ASIGNAR PIR
+                MODAL — GESTIÓN DE USUARIOS
     ============================================= -->
+    <div
+        class="modal-backdrop"
+        *ngIf="modalUsers"
+        (click)="cerrarModalUsuarios()"
+    ></div>
 
-    <div class="modal-backdrop" *ngIf="modalAsignar" (click)="cerrarAsignar()"></div>
+    <div class="modal modal-users" *ngIf="modalUsers">
+        <h2 class="modal-title">Gestión de Usuarios — {{ modalUsersEmpresa?.name }}</h2>
+
+        <!-- REGISTRAR NUEVO USUARIO -->
+        <h3 class="users-title">Registrar nuevo usuario</h3>
+        <div class="user-create-error" *ngIf="userCreateError">{{ userCreateError }}</div>
+
+        <div class="user-create-form">
+            <label>Nombre</label>
+            <input type="text" [(ngModel)]="newUserName" name="newUserName" placeholder="Nombre completo" />
+
+            <label>Correo</label>
+            <input type="email" [(ngModel)]="newUserEmail" name="newUserEmail" placeholder="correo@ejemplo.com" />
+
+            <label>Celular</label>
+            <input type="text" [(ngModel)]="newUserPhone" name="newUserPhone" placeholder="Número de celular" />
+
+            <button class="btn btn-yellow" (click)="crearUsuario()">Crear y asignar</button>
+        </div>
+
+        <hr class="users-divider" />
+
+        <!-- USUARIOS ASIGNADOS -->
+        <h3 class="users-title">Usuarios asignados</h3>
+
+        <div *ngIf="userLoading" class="users-loading">Cargando usuarios...</div>
+
+        <div class="users-list" *ngIf="!userLoading">
+            <div class="user-row" *ngFor="let cu of companyUsers">
+                <div class="user-info">
+                    <span class="user-name">{{ cu.user.name }}</span>
+                    <span class="user-email">{{ cu.user.email }}</span>
+                    <span class="user-phone" *ngIf="cu.user.phone">{{ cu.user.phone }}</span>
+                </div>
+                <button class="btn btn-danger small" (click)="eliminarUsuario(cu.user.id)">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+
+        <div class="users-empty" *ngIf="!userLoading && companyUsers.length === 0">
+            No hay usuarios asignados a esta empresa.
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-light" (click)="cerrarModalUsuarios()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+                MODAL — GESTIÓN DE USUARIOS
+    ============================================= -->
+    <div
+        class="modal-backdrop"
+        *ngIf="modalAsignar"
+        (click)="cerrarAsignar()"
+    ></div>
 
     <div class="modal" *ngIf="modalAsignar">
         <h2 class="modal-title">Asignar PIR → {{ empresaAsignar?.nombre }}</h2>
