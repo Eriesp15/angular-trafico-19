@@ -1,0 +1,230 @@
+<section class="flow-page">
+    <header class="page-header">
+        <h2>Flujo de reparación</h2>
+        <p>Control de asignación, entrega, devolución e informe de reparación.</p>
+    </header>
+
+    <div class="loading-box" *ngIf="loading">
+        Cargando información del reclamo...
+    </div>
+
+    <div class="error-box" *ngIf="errorMessage">
+        {{ errorMessage }}
+    </div>
+
+    <ng-container *ngIf="claim && !loading">
+        <!-- RESUMEN -->
+        <div class="summary-card">
+            <div class="summary-header">
+                <h3>Resumen del reclamo</h3>
+                <span class="status-badge">{{ claim.claim?.claimStatus || claim.claimStatus || '-' }}</span>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="label">Tipo de reclamo</span>
+                    <span class="value">{{ claim.claimType || '-' }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">PIR</span>
+                    <span class="value">{{ claim.pirNumber || pirNumber || '-' }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Pasajero</span>
+                    <span class="value">{{ getPassengerFullName() }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Estado actual</span>
+                    <span class="value">{{ getClaimStatus() }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Daño / motivo</span>
+                    <span class="value">{{ getDamageOrReason() }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- UBICACIÓN -->
+        <div class="location-card">
+            <div class="location-header">
+                <h3>Ubicación del equipaje</h3>
+            </div>
+
+            <div class="location-grid">
+                <div class="location-item">
+                    <span class="label">Origen donde se abrió reclamo</span>
+                    <span class="value">{{ getOpenedStation() }}</span>
+                </div>
+
+                <div class="location-item current">
+                    <span class="label">Ubicación actual del equipaje</span>
+                    <span class="value">{{ getCurrentStation() }}</span>
+                </div>
+
+                <div class="location-item responsible">
+                    <span class="label">Estación responsable</span>
+                    <span class="value">{{ getResponsibleStation() }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENVÍO OPCIONAL -->
+        <div class="optional-action-card">
+            <div>
+                <h3>Envío opcional a otra estación</h3>
+                <p>Úsalo solo si el equipaje debe moverse físicamente a otra estación. No cambia la estación responsable.</p>
+            </div>
+
+            <app-derivar-button [claim]="claim"></app-derivar-button>
+        </div>
+
+        <!-- ESTADO ACTUAL DEL PROCESO -->
+        <div class="timeline-status-card">
+            <div class="timeline-header">
+                <div>
+                    <h3>Estado actual del proceso</h3>
+                    <p>Presiona un estado para registrar esa acción.</p>
+                </div>
+            </div>
+
+            <div class="repair-timeline-modern">
+                <ng-container *ngFor="let step of steps; let i = index">
+                    <div
+                        class="modern-step"
+                        [class.active]="repairStep === step.key"
+                        [class.completed]="isStepCompleted(step.key)"
+                        [class.clickable]="canExecuteStep(step)"
+                        (click)="onStepClick(step)"
+                    >
+                        <div class="modern-node">{{ i }}</div>
+
+                        <div class="modern-card">
+                            <div class="modern-title">{{ getStepTitle(step) }}</div>
+                            <div class="step-hint done-hint" *ngIf="isStepCompleted(step.key)">
+                                ✓ Hecho
+                            </div>
+                            <div class="step-details" *ngIf="getStepDetails(step).length > 0">
+                                <div class="step-detail-row" *ngFor="let detail of getStepDetails(step)">
+                                    <span class="step-detail-label">{{ detail.label }}:</span>
+                                    <span class="step-detail-value">{{ detail.value }}</span>
+                                </div>
+                            </div>
+
+                            <div class="modern-text" *ngIf="shouldShowStepDesc(step)">
+                                {{ step.desc }}
+                            </div>
+
+
+                            <div class="step-hint current-hint" *ngIf="repairStep === step.key && !isStepCompleted(step.key)">
+                                Estado actual
+                            </div>
+
+                            <div class="step-hint action-hint" *ngIf="canExecuteStep(step)">
+                                Registrar acción
+                            </div>
+
+                            <div
+                                class="step-hint pending-hint"
+                                *ngIf="!isStepCompleted(step.key) && repairStep !== step.key && !canExecuteStep(step)"
+                            >
+                                Pendiente
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="step-arrow" *ngIf="i < steps.length - 1">
+                        →
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <!-- DOCUMENTO -->
+        <div class="document-card">
+            <div class="document-header">
+                <div>
+                    <h3>Informe de reparadora</h3>
+                    <p *ngIf="!repairDocument">
+                        Sube el informe emitido por la reparadora.
+                    </p>
+                    <p *ngIf="repairDocument">
+                        Informe de reparación cargado correctamente.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="upload-btn"
+                    (click)="triggerFileInput(fileInput)"
+                    [disabled]="uploadingDocument || claim.claimStatus === 'CLOSED'"
+                >
+                    {{ uploadingDocument ? 'Subiendo...' : 'Subir documento' }}
+                </button>
+
+                <input
+                    #fileInput
+                    type="file"
+                    hidden
+                    accept=".pdf,image/*"
+                    capture="environment"
+                    (change)="onFileSelected($event)"
+                />
+            </div>
+
+            <div class="empty-state" *ngIf="!repairDocument && !localPreviewUrl">
+                No hay documento de reparación subido.
+            </div>
+
+            <div class="uploaded-document preview-box" *ngIf="localPreviewUrl && !repairDocument">
+                <div class="doc-name">
+                    {{ localPreviewName }}
+                </div>
+
+                <div class="mini-preview" *ngIf="localPreviewType === 'image'">
+                    <img [src]="localPreviewUrl" alt="Vista previa" />
+                </div>
+
+                <div class="mini-preview pdf-preview" *ngIf="localPreviewType === 'pdf'">
+                    <span>PDF seleccionado</span>
+                </div>
+            </div>
+
+            <div class="uploaded-document" *ngIf="repairDocument">
+                <div class="doc-name">
+                    {{ repairDocument.fileName || 'Documento de reparación' }}
+                </div>
+
+                <div class="mini-preview" *ngIf="isImageDocument(repairDocument)">
+                    <img [src]="getDocumentUrl(repairDocument)" alt="Vista previa documento" />
+                </div>
+
+                <div class="mini-preview pdf-preview" *ngIf="isPdfDocument(repairDocument)">
+                    <button (click)="previewDocument(repairDocument)">
+                        Ver PDF
+                    </button>
+                </div>
+
+                <div class="doc-actions">
+                    <button type="button" (click)="previewDocument(repairDocument)">
+                        Ver documento
+                    </button>
+
+                    <button
+                        type="button"
+                        (click)="removeDocument(repairDocument)"
+                        [disabled]="deletingDocument || claim.claimStatus === 'CLOSED'"
+                    >
+                        {{ deletingDocument ? 'Eliminando...' : 'Eliminar' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</section>
+
+<app-action-wizard></app-action-wizard>

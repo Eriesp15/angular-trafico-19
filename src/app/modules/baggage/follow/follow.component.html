@@ -1,4 +1,7 @@
 <div class="seguimiento-container">
+    <!-- Breadcrumb -->
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+
     <!-- Encabezado con acción -->
     <div class="title-row">
         <h1 class="title">Hoja de seguimiento</h1>
@@ -254,23 +257,23 @@
                     </div>
 
                     <div>
-                        <input
-                            class="cell-input"
+                        <textarea
+                            class="cell-textarea auto-grow"
                             [readonly]="c.locked"
                             [(ngModel)]="c.aQuien"
                             placeholder="Nombre"
-                            (input)="onAQuienInput(c)"
-                        />
+                            (input)="autoGrow($event); onAQuienInput(c)"
+                        ></textarea>
                     </div>
 
                     <div>
-                        <input
-                            class="cell-input"
+                        <textarea
+                            class="cell-textarea auto-grow"
                             [readonly]="c.locked"
                             [(ngModel)]="c.observaciones"
                             placeholder="Observaciones"
-                            (input)="onObservacionesInput(c)"
-                        />
+                            (input)="autoGrow($event); onObservacionesInput(c)"
+                        ></textarea>
                     </div>
 
                     <div class="actions-col no-print">

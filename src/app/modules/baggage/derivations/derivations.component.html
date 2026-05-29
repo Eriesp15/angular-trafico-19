@@ -1,0 +1,103 @@
+<section class="flow-page">
+    <header class="page-header">
+        <h2>Derivaciones</h2>
+        <p>Control de traslado entre estaciones y recepción del equipaje.</p>
+    </header>
+
+    <div class="loading-box" *ngIf="loading">
+        Cargando información del reclamo...
+    </div>
+
+    <div class="error-box" *ngIf="errorMessage">
+        {{ errorMessage }}
+    </div>
+
+    <ng-container *ngIf="claim && !loading">
+        <div class="summary-card">
+            <div class="summary-header">
+                <h3>Resumen del reclamo</h3>
+                <span class="status-badge">{{ claim.claimStatus }}</span>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="label">PIR</span>
+                    <span class="value">{{ claim.pirNumber }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Tipo</span>
+                    <span class="value">{{ claim.claimType }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Pasajero</span>
+                    <span class="value">{{ claim.pasajero }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Aeropuerto</span>
+                    <span class="value">{{ claim.airport?.code }} - {{ claim.airport?.name }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Ruta</span>
+                    <span class="value">{{ claim.ruta }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">Vuelos</span>
+                    <span class="value">{{ claim.vuelos?.join(', ') }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">BagTags</span>
+                    <span class="value">{{ claim.bagtags?.join(', ') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-card">
+            <h3>Acciones disponibles</h3>
+
+            <div class="actions-grid">
+                <button class="flow-btn" type="button" (click)="openAction('TRANSFER_BAG')">
+                    Derivar
+                </button>
+            </div>
+        </div>
+
+        <div class="timeline-card">
+            <h3>Historial</h3>
+
+            <div class="empty-state" *ngIf="!timeline.length">
+                No hay historial registrado todavía.
+            </div>
+
+            <div *ngFor="let item of timeline" class="timeline-item">
+                <div class="timeline-top">
+                    <span class="kind">{{ getKindLabel(item.kind) }}</span>
+                    <span class="channel">{{ getChannelLabel(item.channel) }}</span>
+                    <span class="status">{{ getStatusLabel(item.status) }}</span>
+                </div>
+
+                <div class="timeline-message">
+                    {{ item.message }}
+                </div>
+
+                <div class="timeline-meta">
+          <span>
+            Fecha evento:
+              {{ (item.eventAt || item.createdAt) | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+
+                    <span *ngIf="item.contact">
+            Contacto: {{ item.contact }}
+          </span>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</section>
+
+<app-action-wizard></app-action-wizard>

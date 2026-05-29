@@ -1,5 +1,4 @@
 <div class="supplier-container">
-
     <!-- ============================================
                 HEADER PRINCIPAL
     ============================================= -->
@@ -8,13 +7,18 @@
     </div>
 
     <!-- ============================================
-                MODAL — CREAR TIPO DE EMPRESA
-============================================= -->
-
-    <div class="modal-backdrop" *ngIf="modalTipo" (click)="modalTipo = false"></div>
+                MODAL — CREAR / EDITAR TIPO DE EMPRESA
+    ============================================= -->
+    <div
+        class="modal-backdrop"
+        *ngIf="modalTipo"
+        (click)="modalTipo = false; editarTipoSeleccionado = null; nuevoTipo = ''"
+    ></div>
 
     <div class="modal" *ngIf="modalTipo">
-        <h2 class="modal-title">Nuevo Tipo de Empresa</h2>
+        <h2 class="modal-title">
+            {{ editarTipoSeleccionado ? 'Editar Tipo de Empresa' : 'Nuevo Tipo de Empresa' }}
+        </h2>
 
         <form class="modal-form">
             <label>Nombre del tipo</label>
@@ -24,10 +28,19 @@
                 name="nuevoTipo"
                 placeholder="Ej: Transporte, Reparación, Limpieza..."
             />
+
+            <small class="error-text" *ngIf="tipoError">
+                {{ tipoError }}
+            </small>
         </form>
 
         <div class="modal-actions">
-            <button class="btn btn-light" (click)="modalTipo = false">Cancelar</button>
+            <button
+                class="btn btn-light"
+                (click)="modalTipo = false; editarTipoSeleccionado = null; nuevoTipo = ''"
+            >
+                Cancelar
+            </button>
             <button class="btn btn-yellow" (click)="agregarTipo()">Guardar</button>
         </div>
     </div>
@@ -36,42 +49,53 @@
                 VISTA 1 — LISTA AGRUPADA POR TIPO
     ============================================= -->
     <ng-container *ngIf="vista === 'lista'">
-
-        <div *ngFor="let tipo of tiposEmpresa" class="grupo">
-
+        <div *ngFor="let tipo of serviceTypes" class="grupo">
             <div class="grupo-header" (click)="detenerPropagacion($event)">
-
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span>Tipo de Empresa:</span>
-                    <b>{{ tipo }}</b>
+                    <b>{{ tipo.name }}</b>
+
+                    <span
+                        [class.activo]="tipo.isActive"
+                        [class.inactivo]="!tipo.isActive"
+                        style="margin-left: 10px;"
+                    >
+            {{ tipo.isActive ? 'Activo' : 'Inactivo' }}
+          </span>
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <button class="btn btn-yellow small"
-                            (click)="abrirCrearEmpresa(tipo); detenerPropagacion($event)">
+                    <button
+                        class="btn btn-yellow small"
+                        [disabled]="!tipo.isActive"
+                        (click)="abrirCrearEmpresa(tipo.id); detenerPropagacion($event)"
+                    >
                         + Empresa
                     </button>
 
                     <!-- 3 puntitos del tipo -->
-                    <button class="btn-dots"
-                            (click)="toggleMenuTipo(tipo); detenerPropagacion($event)">
+                    <button
+                        class="btn-dots"
+                        (click)="toggleMenuTipo(tipo.id); detenerPropagacion($event)"
+                    >
                         ⋮
                     </button>
 
                     <!-- dropdown -->
-                    <div class="dropdown"
-                         *ngIf="menuTipoAbierto === tipo"
-                         (click)="detenerPropagacion($event)">
+                    <div
+                        class="dropdown"
+                        *ngIf="menuTipoAbierto === tipo.id"
+                        (click)="detenerPropagacion($event)"
+                    >
                         <div class="item" (click)="editarTipo(tipo)">Editar</div>
-                        <div class="item" (click)="eliminarTipo(tipo)">Eliminar</div>
+                        <div class="item" (click)="cambiarEstadoTipo(tipo)">
+                            {{ tipo.isActive ? 'Desactivar' : 'Activar' }}
+                        </div>
                     </div>
                 </div>
-
             </div>
 
-
             <div class="cards">
-
                 <!-- Empresa dentro del grupo -->
                 <div class="card" *ngFor="let e of getEmpresasPorTipo(tipo.id)">
                     <div class="card-head-row">
@@ -79,21 +103,25 @@
                     </div>
 
                     <div class="estado">
-        <span [class.activo]="e.activo" [class.inactivo]="!e.activo">
-            {{ e.activo ? 'Activo' : 'Inactivo' }}
-        </span>
+            <span [class.activo]="e.isActive" [class.inactivo]="!e.isActive">
+              {{ e.isActive ? 'Activo' : 'Inactivo' }}
+            </span>
 
                         <label class="switch">
-                            <input type="checkbox" [checked]="e.activo" (change)="cambiarEstado(e)" />
+                            <input
+                                type="checkbox"
+                                [checked]="e.isActive"
+                                (change)="cambiarEstado(e)"
+                            />
                             <span class="slider"></span>
                         </label>
                     </div>
 
                     <div class="card-body">
-                        <p><b>Teléfono:</b> {{ e.telefono }}</p>
+                        <p><b>Teléfono:</b> {{ e.phone }}</p>
                         <p><b>Email:</b> {{ e.email }}</p>
-                        <p><b>Razón social:</b> {{ e.razon }}</p>
-                        <p><b>Dirección:</b> {{ e.direccion }}</p>
+                        <p><b>Razón social:</b> {{ e.businessName }}</p>
+                        <p><b>Dirección:</b> {{ e.address }}</p>
                     </div>
 
                     <div class="card-actions">
@@ -107,17 +135,14 @@
                             Asignar
                         </button>
                     </div>
-
                 </div>
 
-
+                <div class="card card-empty" *ngIf="getEmpresasPorTipo(tipo.id).length === 0">
+                    <p>No hay empresas registradas para este tipo.</p>
+                </div>
             </div>
-
         </div>
-
     </ng-container>
-
-
 
     <!-- ============================================
                 VISTA 2 — DETALLE EN PANTALLA COMPLETA
@@ -126,45 +151,80 @@
         <app-list-supplier
             [empresa]="empresaSel"
             [asignaciones]="asignaciones"
-            (volver)="volver()">
+            (volver)="volver()"
+        >
         </app-list-supplier>
     </ng-container>
 
-
-
     <!-- ============================================
-                MODAL — CREAR EMPRESA
+                MODAL — CREAR / EDITAR EMPRESA
     ============================================= -->
-
-    <div class="modal-backdrop" *ngIf="modalCrear" (click)="modalCrear = false"></div>
+    <div
+        class="modal-backdrop"
+        *ngIf="modalCrear"
+        (click)="resetFormEmpresa()"
+    ></div>
 
     <div class="modal" *ngIf="modalCrear">
-        <h2 class="modal-title">Registrar nueva empresa</h2>
+        <h2 class="modal-title">
+            {{ editarEmpresaData ? 'Editar empresa' : 'Registrar nueva empresa' }}
+        </h2>
+        <div class="modal-error-box" *ngIf="empresaError">
+            {{ empresaError }}
+        </div>
 
         <form class="modal-form">
             <label>Tipo</label>
-            <input type="text" [value]="formEmpresa.tipo" name="tipo" disabled />
+            <input
+                type="text"
+                [value]="getNombreTipoSeleccionado()"
+                name="tipoVisible"
+                disabled
+            />
+            <small class="error-text" *ngIf="empresaFieldErrors.serviceTypeId">
+                {{ empresaFieldErrors.serviceTypeId }}
+            </small>
 
             <label>Nombre</label>
-            <input type="text" [(ngModel)]="formEmpresa.nombre" name="nombre" />
+            <input type="text" [(ngModel)]="formEmpresa.name" name="name" />
+            <small class="error-text" *ngIf="empresaFieldErrors.name">
+                {{ empresaFieldErrors.name }}
+            </small>
+
+            <label>Razón social</label>
+            <input
+                type="text"
+                [(ngModel)]="formEmpresa.businessName"
+                name="businessName"
+            />
+            <small class="error-text" *ngIf="empresaFieldErrors.businessName">
+                {{ empresaFieldErrors.businessName }}
+            </small>
 
             <label>Teléfono</label>
-            <input type="text" [(ngModel)]="formEmpresa.telefono" name="telefono" />
+            <input type="text" [(ngModel)]="formEmpresa.phone" name="phone" />
+            <small class="error-text" *ngIf="empresaFieldErrors.phone">
+                {{ empresaFieldErrors.phone }}
+            </small>
 
             <label>Email</label>
             <input type="email" [(ngModel)]="formEmpresa.email" name="email" />
+            <small class="error-text" *ngIf="empresaFieldErrors.email">
+                {{ empresaFieldErrors.email }}
+            </small>
 
             <label>Dirección</label>
-            <input type="text" [(ngModel)]="formEmpresa.direccion" name="direccion" />
+            <input type="text" [(ngModel)]="formEmpresa.address" name="address" />
+            <small class="error-text" *ngIf="empresaFieldErrors.address">
+                {{ empresaFieldErrors.address }}
+            </small>
         </form>
 
         <div class="modal-actions">
-            <button class="btn btn-light" (click)="modalCrear = false">Cancelar</button>
+            <button class="btn btn-light" (click)="resetFormEmpresa()">Cancelar</button>
             <button class="btn btn-yellow" (click)="guardarEmpresa()">Guardar</button>
         </div>
     </div>
-
-
 
     <!-- ============================================
                 MODAL — GESTIÓN DE USUARIOS
@@ -234,7 +294,7 @@
     ></div>
 
     <div class="modal" *ngIf="modalAsignar">
-        <h2 class="modal-title">Asignar PIR → {{ empresaAsignar?.nombre }}</h2>
+        <h2 class="modal-title">Asignar PIR → {{ empresaAsignar?.name }}</h2>
 
         <label class="modal-label">Fecha de entrega</label>
         <input
@@ -248,14 +308,16 @@
             class="input"
             type="text"
             [(ngModel)]="pirBuscar"
-            placeholder="Escribe para buscar..." />
+            placeholder="Escribe para buscar..."
+        />
 
         <!-- SUGERENCIAS -->
         <div class="pir-suggestions" *ngIf="pirFiltrado.length > 0">
             <div
                 class="pir-item"
                 *ngFor="let p of pirFiltrado"
-                (click)="addPIR(p)">
+                (click)="addPIR(p)"
+            >
                 {{ p }}
             </div>
         </div>
@@ -273,5 +335,4 @@
             <button class="btn btn-yellow" (click)="guardarAsignaciones()">Guardar</button>
         </div>
     </div>
-
 </div>
