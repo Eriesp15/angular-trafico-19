@@ -7,6 +7,7 @@ export interface ExpenseItem {
   title: string;
   description: string | null;
   cost: number;
+  receiptPath: string | null;
   claimId: string;
   createdAt: string;
   updatedAt: string;
@@ -36,5 +37,16 @@ export class ExpenseService {
 
   createByPir(pirNumber: string, payload: CreateExpensePayload): Observable<ExpenseItem> {
     return this.http.post<ExpenseItem>(`${this.apiUrl}/claim/${pirNumber}`, payload);
+  }
+
+  createByPirWithReceipt(pirNumber: string, payload: CreateExpensePayload, receiptFile: File): Observable<ExpenseItem> {
+    const formData = new FormData()
+    formData.append('title', payload.title)
+    formData.append('cost', payload.cost.toString())
+    if (payload.description) {
+      formData.append('description', payload.description)
+    }
+    formData.append('receipt', receiptFile)
+    return this.http.post<ExpenseItem>(`${this.apiUrl}/claim/${pirNumber}`, formData)
   }
 }

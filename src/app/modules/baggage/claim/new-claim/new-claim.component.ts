@@ -107,10 +107,6 @@ export class NewClaimComponent implements OnInit {
     this.initializePhoneCountryCodes();
 
     this.pIR = this.fb.group({
-      //linea 1
-      route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
-      //linea 2
-      originatorAirport: [''],
       //linea 2.1
       claimType: ['', Validators.required],
       //linea 3
@@ -182,9 +178,6 @@ export class NewClaimComponent implements OnInit {
     });
   
     
-    // Inicializar con 2 rutas por defecto
-    this.agregarRuta();
-    this.agregarRuta();
     this.agregarBagtag();
     this.agregarBagDescription();
     this.agregarRutaARastrear();
@@ -265,10 +258,6 @@ export class NewClaimComponent implements OnInit {
   };
 
 
-  get route(): FormArray {
-    return this.pIR.get('route') as FormArray;
-  }
-
   get bagtags(): FormArray {
     return this.pIR.get('bagtags') as FormArray;
   }
@@ -314,24 +303,6 @@ export class NewClaimComponent implements OnInit {
   }
 
 
-
-  crearRuta(): FormGroup {
-    return this.fb.group({
-      stop: ['', Validators.required],
-    });
-  }
-
-  agregarRuta(): void {
-    if (this.route.length < 5) {
-      this.route.push(this.crearRuta());
-    }
-  }
-
-  eliminarRuta(index: number): void {
-    if (this.route.length > 2) {
-      this.route.removeAt(index);
-    }
-  }
 
   crearRutaARastrear(): FormGroup {
     return this.fb.group({
