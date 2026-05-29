@@ -176,6 +176,12 @@ export class NewClaimComponent implements OnInit {
     this.pIR.get('deliveredBaggageWeight')?.valueChanges.subscribe(() => {
       this.calcularDiferenciaPeso();
     });
+
+    this.pIR.get('claimType')?.valueChanges.subscribe((claimType) => {
+      if (claimType !== 'DPR') {
+        this.clearDamageInfo();
+      }
+    });
   
     
     this.agregarBagtag();
@@ -300,6 +306,20 @@ export class NewClaimComponent implements OnInit {
 
   clearCondition(): void {
     this.pIR.get('condition')?.setValue(null);
+  }
+
+  isDprClaim(): boolean {
+    return this.pIR.get('claimType')?.value === 'DPR';
+  }
+
+  clearDamageInfo(): void {
+    this.clearInsurance();
+    this.clearKeysAttached();
+    this.clearNightKit();
+    this.clearDamageType();
+    this.clearCondition();
+    this.pIR.get('lockCombination')?.setValue('');
+    this.damageLocationsArray.clear();
   }
 
 
@@ -465,7 +485,16 @@ export class NewClaimComponent implements OnInit {
         temporaryPhone: this.buildInternationalPhone(this.temporaryPhoneCountryCode, this.temporaryPhoneNumber),
       });
 
-      const datos = this.pIR.value;
+      const datos = { ...this.pIR.value };
+      if (datos.claimType !== 'DPR') {
+        datos.hasInsurance = null;
+        datos.keysAttached = null;
+        datos.lockCombination = '';
+        datos.nightKit = null;
+        datos.damageType = null;
+        datos.condition = null;
+        datos.damageLocations = [];
+      }
       console.log('Datos del formulario:', datos);
       this.claimService.createClaim(datos).subscribe({
         next: (response) => {
