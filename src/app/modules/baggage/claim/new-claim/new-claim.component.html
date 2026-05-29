@@ -10,12 +10,13 @@
 
     <!-- Rutas de Vuelo -->
     <div class="form-group" formArrayName="route">
-      <h2 class="input-label">Introduzca las estaciones involucradas / Enter the stations involved</h2>
+      <h2 class="input-label">Introduzca las estaciones involucradas / Enter the stations involved <span class="required-marker">*</span></h2>
       <div class="row">
         <span class="code">QD</span>
         <div *ngFor="let stop of route.controls; let i = index" class="array-item">
           <div [formGroupName]="i" class="field">
-            <input class="input-field" type="text" formControlName="stop" placeholder="Direccion/Address {{ i + 1 }}" maxlength="7">
+            <input class="input-field" [class.input-field-error]="isNestedFieldInvalid(stop, 'stop')" type="text" formControlName="stop" placeholder="Direccion/Address {{ i + 1 }}" maxlength="7">
+            <span *ngIf="isNestedFieldInvalid(stop, 'stop')" class="field-error">{{ getRequiredFieldMessage() }}</span>
           </div>
         </div>
         <button type="button" class="btn-remove" (click)="eliminarRuta(route.length - 1)" [disabled]="route.length <= 2">
@@ -34,15 +35,17 @@
         <input class="input-field" type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="7">
       </div>
       <div class="field">
-        <label class="input-label">Tipo de Reclamo *</label>
+        <label class="input-label">Tipo de Reclamo <span class="required-marker">*</span></label>
         <div class="row">
           <label *ngFor="let tipo of claimType"
                 class="tipo-card"
+                [class.tipo-card-error]="isFieldInvalid('claimType')"
                 [class.selected]="pIR.get('claimType')?.value === tipo.valor">
             <input type="radio" formControlName="claimType" [value]="tipo.valor">
             <span class="tipo-label">{{ tipo.etiqueta }}</span>
           </label>
         </div>
+        <span *ngIf="isFieldInvalid('claimType')" class="field-error">{{ getRequiredFieldMessage() }}</span>
       </div>
     </div>
 
@@ -65,15 +68,17 @@
     <!-- Pasajero -->
     <div class="row">
       <div class="field-grow">
-        <label class="input-label">Apellidos del pasajero / Passenger's family name</label>
+        <label class="input-label">Apellidos del pasajero / Passenger's family name <span class="required-marker">*</span></label>
         <div class="input-prefixed">
           <span class="code">NM</span>
-          <input class="input-field" type="text" formControlName="passengerLastName" placeholder="Apellidos del pasajero">
+          <input class="input-field" [class.input-field-error]="isFieldInvalid('passengerLastName')" type="text" formControlName="passengerLastName" placeholder="Apellidos del pasajero">
         </div>
+        <span *ngIf="isFieldInvalid('passengerLastName')" class="field-error">{{ getRequiredFieldMessage() }}</span>
       </div>
       <div class="field-grow">
-        <label class="input-label">Nombres del pasajero / Passenger's name on the bag</label>
-        <input class="input-field" type="text" formControlName="passengerName" placeholder="Nombres del pasajero">
+        <label class="input-label">Nombres del pasajero / Passenger's name on the bag <span class="required-marker">*</span></label>
+        <input class="input-field" [class.input-field-error]="isFieldInvalid('passengerName')" type="text" formControlName="passengerName" placeholder="Nombres del pasajero">
+        <span *ngIf="isFieldInvalid('passengerName')" class="field-error">{{ getRequiredFieldMessage() }}</span>
       </div>
     </div>
 
@@ -87,12 +92,13 @@
 
     <!-- Bagtags -->
     <div class="form-group" formArrayName="bagtags">
-      <label class="input-label">Aerolinea - Numero de ticket / Carrier Bag - Tag Number </label>
+      <label class="input-label">Aerolinea - Numero de ticket / Carrier Bag - Tag Number <span class="required-marker">*</span></label>
       <div class="row">
         <span class="code">TN</span>
         <div *ngFor="let bagtag of bagtags.controls; let i = index" class="array-item">
           <div [formGroupName]="i" class="field">
-            <input class="input-field" type="text" formControlName="number" placeholder="Ej: ABC123456" maxlength="20">
+            <input class="input-field" [class.input-field-error]="isNestedFieldInvalid(bagtag, 'number')" type="text" formControlName="number" placeholder="Ej: ABC123456" maxlength="20">
+            <span *ngIf="isNestedFieldInvalid(bagtag, 'number')" class="field-error">{{ getRequiredFieldMessage() }}</span>
           </div>
         </div>
         <button type="button" class="btn-remove" (click)="eliminarBagtag(bagtags.length - 1)" [disabled]="bagtags.length <= 1">
@@ -106,12 +112,13 @@
 
     <!-- Color / tipo / descripción -->
     <div class="form-group">
-      <label class="input-label">Color Tipo Descripción / Colour Type Description</label>
+      <label class="input-label">Color Tipo Descripción / Colour Type Description <span class="required-marker">*</span></label>
       <div class="row" formArrayName="bagDescription">
         <span class="code">CT</span>
         <div *ngFor="let description of bagDescription.controls; let i = index" class="bagtag-item">
           <div [formGroupName]="i" class="field">
-            <input class="input-field" type="text" formControlName="description" placeholder="Ej: WT01DBC" maxlength="7">
+            <input class="input-field" [class.input-field-error]="isNestedFieldInvalid(description, 'description')" type="text" formControlName="description" placeholder="Ej: WT01DBC" maxlength="7">
+            <span *ngIf="isNestedFieldInvalid(description, 'description')" class="field-error">{{ getRequiredFieldMessage() }}</span>
             <button type="button" class="btn-add" (click)="indiceActual = i; modalIdentificacionAbierto = true">
               Llenar por interfaz
             </button>
@@ -184,12 +191,13 @@
 
     <!-- Ruta a rastrear -->
     <div class="form-group" formArrayName="traceRoute">
-      <label class="input-label">Ruta y/o lugar para hacer rastreo / Routing and/or location to be traced</label>
+      <label class="input-label">Ruta y/o lugar para hacer rastreo / Routing and/or location to be traced <span class="required-marker">*</span></label>
       <div class="row">
         <span class="code">RT</span>
         <div *ngFor="let stop of traceRoute.controls; let i = index" class="array-item">
           <div [formGroupName]="i" class="field">
-            <input class="input-field" type="text" formControlName="traceRouteStop" placeholder="Ruta {{ i + 1 }}" maxlength="3">
+            <input class="input-field" [class.input-field-error]="isNestedFieldInvalid(stop, 'traceRouteStop')" type="text" formControlName="traceRouteStop" placeholder="Ruta {{ i + 1 }}" maxlength="3">
+            <span *ngIf="isNestedFieldInvalid(stop, 'traceRouteStop')" class="field-error">{{ getRequiredFieldMessage() }}</span>
           </div>
         </div>
         <button type="button" class="btn-remove" (click)="eliminarRutaARastrear(traceRoute.length - 1)" [disabled]="traceRoute.length <= 1">
@@ -203,13 +211,15 @@
 
     <!-- Número de vuelo -->
     <div class="form-group" formArrayName="flightNumber">
-      <label class="input-label">Número de vuelo / Carrier flight number</label>
+      <label class="input-label">Número de vuelo y fecha / Carrier flight number and date <span class="required-marker">*</span></label>
       <div class="row">
         <span class="code">FD</span>
         <div *ngFor="let flight of flightNumber.controls; let i = index" class="array-item">
           <div [formGroupName]="i" class="field">
-            <input class="input-field" type="text" formControlName="flightNo" placeholder="Número de vuelo {{ i + 1 }}" maxlength="10">
-            <input class="input-field" type="datetime-local" formControlName="flightDate" placeholder="Fecha y hora de vuelo {{ i + 1 }}">
+            <input class="input-field" [class.input-field-error]="isNestedFieldInvalid(flight, 'flightNo')" type="text" formControlName="flightNo" placeholder="Número de vuelo {{ i + 1 }}" maxlength="10">
+            <span *ngIf="isNestedFieldInvalid(flight, 'flightNo')" class="field-error">{{ getRequiredFieldMessage() }}</span>
+            <input class="input-field" [class.input-field-error]="isNestedFieldInvalid(flight, 'flightDate')" type="datetime-local" formControlName="flightDate" placeholder="Fecha y hora de vuelo {{ i + 1 }}">
+            <span *ngIf="isNestedFieldInvalid(flight, 'flightDate')" class="field-error">{{ getRequiredFieldMessage() }}</span>
           </div>
         </div>
         <button type="button" class="btn-remove" (click)="eliminarVuelo(flightNumber.length - 1)" [disabled]="flightNumber.length <= 1">
@@ -269,38 +279,41 @@
     <!-- Direcciones -->
     <div class="row">
       <div class="field-grow">
-        <label class="input-label">Dirección Permanente del Pasajero / Passenger's Permanent Address</label>
+        <label class="input-label">Dirección Permanente del Pasajero / Passenger's Permanent Address <span class="required-marker">*</span></label>
         <div class="input-prefixed">
           <span class="code">PA</span>
-          <input class="input-field" type="text" formControlName="permanentAddress" placeholder="Dirección Permanente" maxlength="200">
+          <input class="input-field" [class.input-field-error]="isGroupRequirementInvalid('addressRequired')" type="text" formControlName="permanentAddress" placeholder="Dirección Permanente" maxlength="200">
         </div>
       </div>
     </div>
 
     <div class="row">
       <div class="field-grow">
-        <label class="input-label">Dirección Temporal / Temporary Address</label>
+        <label class="input-label">Dirección Temporal / Temporary Address <span class="required-marker">*</span></label>
         <div class="input-prefixed">
           <span class="code">TA</span>
-          <input class="input-field" type="text" formControlName="temporaryAddress" placeholder="Dirección Temporal" maxlength="200">
+          <input class="input-field" [class.input-field-error]="isGroupRequirementInvalid('addressRequired')" type="text" formControlName="temporaryAddress" placeholder="Dirección Temporal" maxlength="200">
         </div>
+        <span *ngIf="isGroupRequirementInvalid('addressRequired')" class="field-error">El campo es obligatorio. Ingresa una dirección permanente o temporal.</span>
       </div>
     </div>
 
     <!-- Contacto -->
     <div class="row">
       <div class="field-grow">
-        <label class="input-label">Correo electrónico / E-mail</label>
+        <label class="input-label">Correo electrónico / E-mail <span class="required-marker">*</span></label>
         <div class="input-prefixed">
           <span class="code">EM</span>
-          <input class="input-field" type="email" formControlName="email" placeholder="Email" maxlength="200">
+          <input class="input-field" [class.input-field-error]="isFieldInvalid('email')" type="email" formControlName="email" placeholder="Email" maxlength="200">
         </div>
+        <span *ngIf="isFieldInvalid('email') && pIR.get('email')?.hasError('required')" class="field-error">{{ getRequiredFieldMessage() }}</span>
+        <span *ngIf="isFieldInvalid('email') && pIR.get('email')?.hasError('email')" class="field-error">Ingresa un correo electrónico válido</span>
       </div>
     </div>
 
     <div class="row">
       <div class="field-grow">
-        <label class="input-label">Teléfono Permanente del pasajero / Passenger's permanent phone number</label>
+        <label class="input-label">Teléfono Permanente del pasajero / Passenger's permanent phone number <span class="required-marker">*</span></label>
         <div class="input-prefixed">
           <span class="code">PN</span>
           <input class="input-field"
@@ -311,15 +324,17 @@
                  placeholder="Código (ej: +591)">
           <input class="input-field"
                  type="text"
-                 [(ngModel)]="permanentPhoneNumber"
+                 [ngModel]="permanentPhoneNumber"
+                 (ngModelChange)="onPhoneNumberChange('permanentPhone', $event)"
                  [ngModelOptions]="{standalone: true}"
                  placeholder="Número (ej: 67385737)"
-                 maxlength="30">
+                 maxlength="30"
+                 [class.input-field-error]="isGroupRequirementInvalid('phoneRequired')">
         </div>
         <small class="phone-hint">Ingresa aquí solo el número del teléfono.</small>
       </div>
       <div class="field-grow">
-        <label class="input-label">Teléfono Temporal / Temporary Phone Number</label>
+        <label class="input-label">Teléfono Temporal / Temporary Phone Number <span class="required-marker">*</span></label>
         <div class="input-prefixed">
           <span class="code">TP</span>
           <input class="input-field"
@@ -330,12 +345,15 @@
                  placeholder="Código (ej: +591)">
           <input class="input-field"
                  type="text"
-                 [(ngModel)]="temporaryPhoneNumber"
+                 [ngModel]="temporaryPhoneNumber"
+                 (ngModelChange)="onPhoneNumberChange('temporaryPhone', $event)"
                  [ngModelOptions]="{standalone: true}"
                  placeholder="Número (ej: 71234567)"
-                 maxlength="30">
+                 maxlength="30"
+                 [class.input-field-error]="isGroupRequirementInvalid('phoneRequired')">
         </div>
         <small class="phone-hint">Ingresa aquí solo el número del teléfono.</small>
+        <span *ngIf="isGroupRequirementInvalid('phoneRequired')" class="field-error">El campo es obligatorio. Ingresa un número permanente o temporal.</span>
       </div>
     </div>
 
@@ -370,20 +388,22 @@
     <!-- Datos adicionales equipaje -->
     <div class="row">
       <div class="field">
-        <label class="input-label">Peso del Equipaje Facturado /</label>
+        <label class="input-label">Peso del Equipaje Facturado / <span class="required-marker">*</span></label>
         <label class="input-label">Weight of checked bags</label>
         <div class="input-prefixed">
           <span class="code">BW</span>
-          <input class="input-field" type="number" formControlName="checkedBaggageWeight" placeholder="Peso del Equipaje Facturado">
+          <input class="input-field" [class.input-field-error]="isFieldInvalid('checkedBaggageWeight')" type="number" formControlName="checkedBaggageWeight" placeholder="Peso del Equipaje Facturado">
         </div>
+        <span *ngIf="isFieldInvalid('checkedBaggageWeight')" class="field-error">{{ getRequiredFieldMessage() }}</span>
       </div>
       <div class="field">
-        <label class="input-label">Peso del Equipaje Entregado /</label>
+        <label class="input-label">Peso del Equipaje Entregado / <span class="required-marker">*</span></label>
         <label class="input-label">Delivered Weight</label>
         <div class="input-prefixed">
           <span class="code">DW</span>
-          <input class="input-field" type="number" formControlName="deliveredBaggageWeight" placeholder="Peso del Equipaje Entregado">
+          <input class="input-field" [class.input-field-error]="isFieldInvalid('deliveredBaggageWeight')" type="number" formControlName="deliveredBaggageWeight" placeholder="Peso del Equipaje Entregado">
         </div>
+        <span *ngIf="isFieldInvalid('deliveredBaggageWeight')" class="field-error">{{ getRequiredFieldMessage() }}</span>
       </div>
       <div class="field">
         <label class="input-label">Diferencia de Peso (kg) /</label>
@@ -411,18 +431,20 @@
 
     <div class="row">
       <div class="field">
-        <label class="input-label">Número de boleto / Ticket number</label>
+        <label class="input-label">Número de boleto / Ticket number <span class="required-marker">*</span></label>
         <div class="input-prefixed">
           <span class="code">TK</span>
-          <input class="input-field" type="text" formControlName="ticketNumber" placeholder="Número de Ticket">
+          <input class="input-field" [class.input-field-error]="isFieldInvalid('ticketNumber')" type="text" formControlName="ticketNumber" placeholder="Número de Ticket">
         </div>
+        <span *ngIf="isFieldInvalid('ticketNumber')" class="field-error">{{ getRequiredFieldMessage() }}</span>
       </div>
       <div class="field">
-        <label class="input-label">PNR — Grabar ubicador / PNR Record Locater</label>
+        <label class="input-label">PNR — Grabar ubicador / PNR Record Locater <span class="required-marker">*</span></label>
         <div class="input-prefixed">
           <span class="code">PR</span>
-          <input class="input-field" type="text" formControlName="pnr" placeholder="PNR">
+          <input class="input-field" [class.input-field-error]="isFieldInvalid('pnr')" type="text" formControlName="pnr" placeholder="PNR">
         </div>
+        <span *ngIf="isFieldInvalid('pnr')" class="field-error">{{ getRequiredFieldMessage() }}</span>
       </div>
       <div class="field">
         <label class="input-label">Identificador de viajero frecuente / Frequent Flyer ID</label>
@@ -566,7 +588,7 @@
 
     <!-- Submit -->
     <div class="row">
-      <button type="submit" class="btn-submit" [disabled]="pIR.invalid">
+      <button type="submit" class="btn-submit">
         Enviar
       </button>
     </div>

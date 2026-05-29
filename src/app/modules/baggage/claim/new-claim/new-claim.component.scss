@@ -177,6 +177,19 @@ h3 {
   letter-spacing: 0.4px;
 }
 
+.required-marker {
+  color: #dc2626;
+  font-weight: 800;
+}
+
+.field-error {
+  display: block;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
 .phone-hint {
   margin-top: 0.35rem;
   font-size: 0.75rem;
@@ -232,6 +245,15 @@ h3 {
   }
 
   &::placeholder { color: var(--text-secondary); opacity: 0.7; }
+}
+
+.input-field-error {
+  border-color: #dc2626 !important;
+
+  &:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+  }
 }
 
 .readonly-field {
@@ -295,6 +317,10 @@ h3 {
       font-weight: 600;
     }
   }
+}
+
+.tipo-card-error {
+  border-color: #dc2626;
 }
 
 // ── Buttons ───────────────────────────────────────────────────────────────────

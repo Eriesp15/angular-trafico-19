@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ClaimService } from '../../../../services/claim.service';
 import { Router } from '@angular/router';
@@ -110,7 +110,7 @@ export class NewClaimComponent implements OnInit {
       //linea 1
       route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
       //linea 2
-      originatorAirport: ['', Validators.required],
+      originatorAirport: [''],
       //linea 2.1
       claimType: ['', Validators.required],
       //linea 3
@@ -121,7 +121,7 @@ export class NewClaimComponent implements OnInit {
       passengerName: ['', Validators.required],
       passengerLastName: ['', Validators.required],
       //linea 5
-      initials: ['', Validators.required],
+      initials: [''],
       //linea 6
       bagtags: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
       //linea 7
@@ -131,9 +131,9 @@ export class NewClaimComponent implements OnInit {
       //linea 9
       flightNumber: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
       //linea 10
-      bagIdentification: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      bagIdentification: this.fb.array([], [Validators.maxLength(5)]),
       //linea 11
-      contents: this.fb.array([], [Validators.minLength(1), Validators.maxLength(5)]),
+      contents: this.fb.array([], [Validators.maxLength(5)]),
       //linea 12
       permanentAddress: [''],
       //linea 13
@@ -148,15 +148,15 @@ export class NewClaimComponent implements OnInit {
       //linea 16
       additionalInfo: [''],
       //equipaje facturado
-      checkedBaggageWeight: [null],
+      checkedBaggageWeight: [null, Validators.required],
       //equipaje entregado
-      deliveredBaggageWeight: [null],
+      deliveredBaggageWeight: [null, Validators.required],
       //diferencia de peso
       weightDifference: [null],
       language: [''],
       passportNumber: [''],
-      ticketNumber: [''],
-      pnr: [''],
+      ticketNumber: ['', Validators.required],
+      pnr: ['', Validators.required],
       frequentFlyerId: [''],
       lossReason: [''],
       faultStation: [''],
@@ -167,9 +167,11 @@ export class NewClaimComponent implements OnInit {
       damageType: [null],
       condition: [null],
       damageLocations: this.fb.array([])
-      
-      
-
+    }, {
+      validators: [
+        this.atLeastOneControlRequired(['permanentAddress', 'temporaryAddress'], 'addressRequired'),
+        this.atLeastOneControlRequired(['permanentPhone', 'temporaryPhone'], 'phoneRequired'),
+      ],
     });
 
     this.pIR.get('checkedBaggageWeight')?.valueChanges.subscribe(() => {
@@ -190,6 +192,36 @@ export class NewClaimComponent implements OnInit {
     this.agregarVuelo();
     this.agregarIdentificacion();
     this.agregarContenido();
+  }
+
+  isFieldInvalid(controlName: string): boolean {
+    const control = this.pIR.get(controlName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
+  isNestedFieldInvalid(group: AbstractControl, controlName: string): boolean {
+    const control = group.get(controlName);
+    return !!control && control.invalid && (control.dirty || control.touched);
+  }
+
+  isGroupRequirementInvalid(errorKey: string): boolean {
+    return !!this.pIR.errors?.[errorKey] && (this.pIR.dirty || this.pIR.touched);
+  }
+
+  getRequiredFieldMessage(): string {
+    return 'El campo es obligatorio';
+  }
+
+  onPhoneNumberChange(controlName: 'permanentPhone' | 'temporaryPhone', value: string): void {
+    if (controlName === 'permanentPhone') {
+      this.permanentPhoneNumber = value;
+    } else {
+      this.temporaryPhoneNumber = value;
+    }
+
+    this.pIR.get(controlName)?.setValue(value);
+    this.pIR.get(controlName)?.markAsDirty();
+    this.pIR.updateValueAndValidity();
   }
 
   claimType = [
@@ -383,7 +415,7 @@ export class NewClaimComponent implements OnInit {
 
   crearIdentificacion(): FormGroup {
     return this.fb.group({
-      mark: ['', Validators.required]
+      mark: ['']
     });
   }
 
@@ -401,7 +433,7 @@ export class NewClaimComponent implements OnInit {
 
   crearContenido(): FormGroup {
     return this.fb.group({
-      description: ['', Validators.required]
+      description: ['']
     });
   }
 
@@ -454,6 +486,8 @@ export class NewClaimComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.syncPhoneControls();
+
     if (this.pIR.valid) {
       this.pIR.patchValue({
         permanentPhone: this.buildInternationalPhone(this.permanentPhoneCountryCode, this.permanentPhoneNumber),
@@ -480,8 +514,29 @@ export class NewClaimComponent implements OnInit {
         }
       });
     } else {
+      this.pIR.markAllAsTouched();
       alert('Por favor completa todos los campos requeridos');
     }
+  }
+
+  private syncPhoneControls(): void {
+    this.pIR.patchValue({
+      permanentPhone: this.permanentPhoneNumber,
+      temporaryPhone: this.temporaryPhoneNumber,
+    }, { emitEvent: false });
+
+    this.pIR.updateValueAndValidity();
+  }
+
+  private atLeastOneControlRequired(controlNames: string[], errorKey: string): ValidatorFn {
+    return (form: AbstractControl): ValidationErrors | null => {
+      const hasValue = controlNames.some((controlName) => {
+        const value = form.get(controlName)?.value;
+        return value !== null && value !== undefined && String(value).trim().length > 0;
+      });
+
+      return hasValue ? null : { [errorKey]: true };
+    };
   }
 
   private buildInternationalPhone(countryCode: string, phoneNumber: string): string {

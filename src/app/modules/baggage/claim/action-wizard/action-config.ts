@@ -86,7 +86,7 @@ export const INDICATE_RECEIVED = {
   title: 'Indicar Equipaje Recibido',
 
   fields: [
-    { name: 'receivedLocation', label: 'Lugar de recepción', type: 'text', placeholder: 'Ej: Oficina de equipajes CBB', required: true },
+    { name: 'receivedLocation', label: 'Lugar de destino', type: 'text', placeholder: 'Ej: Oficina de equipajes CBB', required: true },
     { name: 'receivedDate', label: 'Fecha de recepción', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true },
     { name: 'receivedBy', label: 'Recibido por', type: 'text', placeholder: 'Nombre del responsable', required: true },
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
@@ -113,6 +113,22 @@ export const ASSIGN_TRANSPORT = {
     `Equipaje asignado a la empresa de transporte ${data.transportCompanyName || 'seleccionada'}. Responsable: ${data.responsiblePerson}. Fecha: ${data.assignedDate}. ${data.notes || ''}`,
 
   newStatus: 'ASSIGNED'
+};
+
+export const AIRPORT_PICKUP = {
+  id: 'AIRPORT_PICKUP',
+  title: 'Recojo en Aeropuerto',
+
+  fields: [
+    { name: 'pickupDate', label: 'Fecha de recojo', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true},
+    { name: 'pickedUpBy', label: 'Recogido por', type: 'text', required: true, placeholder: 'Nombre del pasajero o responsable'},
+    { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Condición del equipaje, notas...' }
+  ],
+
+  getMessage: (data: any) =>
+    `Equipaje recogido en aeropuerto el ${data.pickupDate}. Recogido por: ${data.pickedUpBy}. ${data.notes || ''}`,
+
+  newStatus: 'CLOSED'
 };
 
 export const DELIVER = {
@@ -446,6 +462,7 @@ export const ACTIONS: Record<string, any> = {
   INDICATE_RECEIVED,
   ASSIGN_TRANSPORT,
   DELIVER,
+  AIRPORT_PICKUP,
   SEND_TO_REPAIR,
   PICKUP_REPAIRED,
   TRANSFER_TO_CBB,

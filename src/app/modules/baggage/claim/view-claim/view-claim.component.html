@@ -116,6 +116,11 @@
                 <mat-icon>local_shipping</mat-icon>
                 <span>Asignar empresa de Transporte</span>
               </button>
+              <button class="btn-action-primary btn-action-primary--success" (click)="recojoEnAeropuerto()">
+                <mat-icon>flight_land</mat-icon>
+                <span>Recojo en Aeropuerto</span>
+                <span class="btn-action-primary__sub">Pasajero recoge su maleta</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'ASSIGNED'">
               <button class="btn-action-primary" (click)="realizarEntrega()">
@@ -184,6 +189,11 @@
               <button class="btn-action-primary" (click)="asignarTransporte()">
                 <mat-icon>local_shipping</mat-icon>
                 <span>Asignar empresa de Transporte</span>
+              </button>
+              <button class="btn-action-primary btn-action-primary--success" (click)="recojoEnAeropuerto()">
+                <mat-icon>flight_land</mat-icon>
+                <span>Recojo en Aeropuerto</span>
+                <span class="btn-action-primary__sub">Pasajero recoge su maleta</span>
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'ASSIGNED'">
