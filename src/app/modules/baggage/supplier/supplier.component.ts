@@ -1,22 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ListSupplierComponent } from './list-supplier/list-supplier.component';
+import {
+    ApiCompaniesService,
+    Company,
+    ServiceType,
+} from '../services/api-companies.service';
 
 export enum EstadoAsignacion {
     Pendiente = 'Pendiente',
-    Entregado = 'Entregado'
-}
-
-export interface Empresa {
-    id: string;
-    tipo: string;
-    nombre: string;
-    telefono: string;
-    email: string;
-    direccion: string;
-    razon?: string;
-    activo: boolean;
+    Entregado = 'Entregado',
 }
 
 export interface Asignacion {
@@ -33,250 +27,433 @@ export interface Asignacion {
     standalone: true,
     imports: [CommonModule, FormsModule, ListSupplierComponent],
     templateUrl: './supplier.component.html',
-    styleUrls: ['./supplier.component.scss']
+    styleUrls: ['./supplier.component.scss'],
 })
-export class SupplierComponent {
+export class SupplierComponent implements OnInit {
+    private companiesApi = inject(ApiCompaniesService);
+
     constructor() {
         document.addEventListener('click', () => {
             this.menuEmpresaAbierto = null;
             this.menuTipoAbierto = null;
         });
     }
-    detenerPropagacion(event: Event) {
+
+    detenerPropagacion(event: Event): void {
         event.stopPropagation();
     }
 
-    // =============================================
-    //                VARIABLES BASE
-    // =============================================
-
     vista: 'lista' | 'detalle' = 'lista';
 
-    empresas: Empresa[] = [];
+    companies: Company[] = [];
+    serviceTypes: ServiceType[] = [];
 
+    // Temporal hasta tener backend de assignments
     asignaciones: Asignacion[] = [];
+    empresaSel: Company | null = null;
 
-    empresaSel: Empresa | null = null;
-
-    tiposEmpresa: string[] = ['Transporte', 'Reparación'];
-
-
-    // =============================================
-    //            MENÚ DE TRES PUNTITOS
-    // =============================================
+    loading = false;
 
     menuTipoAbierto: string | null = null;
-    menuEmpresaAbierto: Empresa | null = null;
-
-    toggleMenuTipo(tipo: string) {
-        this.menuTipoAbierto = this.menuTipoAbierto === tipo ? null : tipo;
-    }
-
-    toggleMenuEmpresa(e: Empresa) {
-        this.menuEmpresaAbierto = this.menuEmpresaAbierto === e ? null : e;
-    }
-
-
-    // =============================================
-    //              CREAR / EDITAR TIPO
-    // =============================================
+    menuEmpresaAbierto: Company | null = null;
 
     modalTipo = false;
     nuevoTipo = '';
-    editarTipoSeleccionado: string | null = null;
-
-    agregarTipo() {
-        if (!this.nuevoTipo.trim()) return;
-
-        // Si se está editando
-        if (this.editarTipoSeleccionado) {
-            const index = this.tiposEmpresa.indexOf(this.editarTipoSeleccionado);
-            if (index >= 0) {
-                this.tiposEmpresa[index] = this.nuevoTipo.trim();
-
-                // Actualizar empresas que usen este tipo
-                this.empresas.forEach(e => {
-                    if (e.tipo === this.editarTipoSeleccionado) {
-                        e.tipo = this.nuevoTipo.trim();
-                    }
-                });
-            }
-            this.editarTipoSeleccionado = null;
-        } else {
-            // Modo crear
-            this.tiposEmpresa.push(this.nuevoTipo.trim());
-        }
-
-        this.nuevoTipo = '';
-        this.modalTipo = false;
-    }
-
-    editarTipo(tipo: string) {
-        this.editarTipoSeleccionado = tipo;
-        this.nuevoTipo = tipo;
-        this.modalTipo = true;
-        this.menuTipoAbierto = null;
-    }
-
-    eliminarTipo(tipo: string) {
-        if (!confirm(`¿Eliminar tipo "${tipo}" y todas sus empresas?`)) return;
-
-        this.tiposEmpresa = this.tiposEmpresa.filter(t => t !== tipo);
-        this.empresas = this.empresas.filter(e => e.tipo !== tipo);
-
-        this.menuTipoAbierto = null;
-    }
-
-
-    // =============================================
-    //              CREAR / EDITAR EMPRESA
-    // =============================================
+    editarTipoSeleccionado: ServiceType | null = null;
 
     modalCrear = false;
 
     formEmpresa = {
-        tipo: '',
-        nombre: '',
-        telefono: '',
+        serviceTypeId: '',
+        name: '',
+        phone: '',
         email: '',
-        direccion: '',
-        razon: ''
+        address: '',
+        businessName: '',
     };
 
-    editarEmpresaData: Empresa | null = null;
+    editarEmpresaData: Company | null = null;
 
-    abrirCrearEmpresa(tipo: string) {
-        this.formEmpresa.tipo = tipo;
-        this.editarEmpresaData = null; // modo crear
+    modalAsignar = false;
+    empresaAsignar: Company | null = null;
+
+    pirBuscar = '';
+    pirSeleccionados: string[] = [];
+    fechaEntrega = '';
+
+    pirLista: string[] = [
+        'CBBO1315449',
+        'CBBO1315450',
+        'CBBO1315451',
+        'LPZ778899',
+        'VVI112233',
+        'VVI889900',
+    ];
+
+    tipoError = '';
+
+    empresaError = '';
+    empresaFieldErrors = {
+        serviceTypeId: '',
+        name: '',
+        businessName: '',
+        phone: '',
+        email: '',
+        address: '',
+    };
+
+    ngOnInit(): void {
+        this.cargarTodo();
+    }
+
+    cargarTodo(): void {
+        this.loading = true;
+
+        this.companiesApi.getServiceTypes().subscribe({
+            next: (types: ServiceType[]) => {
+                this.serviceTypes = types;
+
+                this.companiesApi.getCompanies().subscribe({
+                    next: (companies: Company[]) => {
+                        this.companies = companies;
+                        this.loading = false;
+                    },
+                    error: (err) => {
+                        console.error('Error cargando companies', err);
+                        this.loading = false;
+                    },
+                });
+            },
+            error: (err) => {
+                console.error('Error cargando service types', err);
+                this.loading = false;
+            },
+        });
+    }
+
+    toggleMenuTipo(tipoId: string): void {
+        this.menuTipoAbierto = this.menuTipoAbierto === tipoId ? null : tipoId;
+    }
+
+    toggleMenuEmpresa(company: Company): void {
+        this.menuEmpresaAbierto =
+            this.menuEmpresaAbierto?.id === company.id ? null : company;
+    }
+
+    limpiarErroresTipo(): void {
+        this.tipoError = '';
+    }
+
+    limpiarErroresEmpresa(): void {
+        this.empresaError = '';
+        this.empresaFieldErrors = {
+            serviceTypeId: '',
+            name: '',
+            businessName: '',
+            phone: '',
+            email: '',
+            address: '',
+        };
+    }
+
+    // =========================
+    // TIPOS DE SERVICIO
+    // =========================
+    agregarTipo(): void {
+        const nombre = this.nuevoTipo.trim();
+        this.limpiarErroresTipo();
+
+        if (!nombre) {
+            this.tipoError = 'Debes ingresar un nombre para el tipo.';
+            return;
+        }
+
+        const yaExiste = this.serviceTypes.some(
+            (t) =>
+                t.name.trim().toLowerCase() === nombre.toLowerCase() &&
+                (!this.editarTipoSeleccionado || t.id !== this.editarTipoSeleccionado.id)
+        );
+
+        if (yaExiste) {
+            this.tipoError = 'Ya existe un tipo de servicio con ese nombre.';
+            return;
+        }
+
+        if (this.editarTipoSeleccionado) {
+            this.companiesApi.updateServiceType(this.editarTipoSeleccionado.id, {
+                name: nombre,
+            }).subscribe({
+                next: () => {
+                    this.nuevoTipo = '';
+                    this.editarTipoSeleccionado = null;
+                    this.modalTipo = false;
+                    this.cargarTodo();
+                },
+                error: (err) => {
+                    console.error('Error actualizando tipo', err);
+
+                    if (err.status === 409) {
+                        this.tipoError = 'Ya existe otro tipo de servicio con ese nombre.';
+                        return;
+                    }
+
+                    this.tipoError = 'No se pudo actualizar el tipo.';
+                },
+            });
+        } else {
+            this.companiesApi.createServiceType({
+                name: nombre,
+                isActive: true,
+            }).subscribe({
+                next: () => {
+                    this.nuevoTipo = '';
+                    this.modalTipo = false;
+                    this.cargarTodo();
+                },
+                error: (err) => {
+                    console.error('Error creando tipo', err);
+
+                    if (err.status === 409) {
+                        this.tipoError = 'Ya existe un tipo de servicio con ese nombre.';
+                        return;
+                    }
+
+                    this.tipoError = 'No se pudo crear el tipo.';
+                },
+            });
+        }
+    }
+
+    editarTipo(tipo: ServiceType): void {
+        this.limpiarErroresTipo();
+        this.editarTipoSeleccionado = tipo;
+        this.nuevoTipo = tipo.name;
+        this.modalTipo = true;
+        this.menuTipoAbierto = null;
+    }
+
+    cambiarEstadoTipo(tipo: ServiceType): void {
+        this.companiesApi.updateServiceTypeStatus(tipo.id, !tipo.isActive).subscribe({
+            next: () => this.cargarTodo(),
+            error: (err) => console.error('Error cambiando estado tipo', err),
+        });
+    }
+
+    // =========================
+    // EMPRESAS
+    // =========================
+    abrirCrearEmpresa(serviceTypeId: string): void {
+        this.limpiarErroresEmpresa();
+
+        this.formEmpresa = {
+            serviceTypeId,
+            name: '',
+            phone: '',
+            email: '',
+            address: '',
+            businessName: '',
+        };
+
+        this.editarEmpresaData = null;
         this.modalCrear = true;
     }
 
-    editarEmpresa(e: Empresa) {
-        this.editarEmpresaData = e;
+    editarEmpresa(company: Company): void {
+        this.limpiarErroresEmpresa();
+
+        this.editarEmpresaData = company;
 
         this.formEmpresa = {
-            tipo: e.tipo,
-            nombre: e.nombre,
-            telefono: e.telefono,
-            email: e.email,
-            direccion: e.direccion,
-            razon: e.razon ?? ''
+            serviceTypeId: company.serviceTypeId,
+            name: company.name,
+            phone: company.phone,
+            email: company.email,
+            address: company.address,
+            businessName: company.businessName,
         };
 
         this.modalCrear = true;
         this.menuEmpresaAbierto = null;
     }
 
-    guardarEmpresa() {
-        if (this.editarEmpresaData) {
-            // EDITAR
-            this.editarEmpresaData.nombre = this.formEmpresa.nombre;
-            this.editarEmpresaData.telefono = this.formEmpresa.telefono;
-            this.editarEmpresaData.email = this.formEmpresa.email;
-            this.editarEmpresaData.direccion = this.formEmpresa.direccion;
-            this.editarEmpresaData.razon = this.formEmpresa.razon;
-
-            this.editarEmpresaData = null;
-        } else {
-            // CREAR
-            const nueva: Empresa = {
-                id: Date.now().toString(),
-                activo: true,
-                ...this.formEmpresa
-            };
-
-            this.empresas.push(nueva);
-        }
-
-        // Reiniciar
-        this.formEmpresa = {
-            tipo: '',
-            nombre: '',
-            telefono: '',
-            email: '',
-            direccion: '',
-            razon: ''
+    guardarEmpresa(): void {
+        const body = {
+            serviceTypeId: this.formEmpresa.serviceTypeId.trim(),
+            name: this.formEmpresa.name.trim(),
+            phone: this.formEmpresa.phone.trim(),
+            email: this.formEmpresa.email.trim(),
+            address: this.formEmpresa.address.trim(),
+            businessName: this.formEmpresa.businessName.trim(),
         };
 
-        this.modalCrear = false;
+        this.limpiarErroresEmpresa();
+
+        let hayErrores = false;
+
+        if (!body.serviceTypeId) {
+            this.empresaFieldErrors.serviceTypeId = 'No se encontró el tipo seleccionado.';
+            hayErrores = true;
+        }
+
+        if (!body.name) {
+            this.empresaFieldErrors.name = 'Debes ingresar el nombre de la empresa.';
+            hayErrores = true;
+        }
+
+        if (!body.businessName) {
+            this.empresaFieldErrors.businessName = 'Debes ingresar la razón social.';
+            hayErrores = true;
+        }
+
+        if (!body.phone) {
+            this.empresaFieldErrors.phone = 'Debes ingresar el teléfono.';
+            hayErrores = true;
+        }
+
+        if (!body.email) {
+            this.empresaFieldErrors.email = 'Debes ingresar el email.';
+            hayErrores = true;
+        }
+
+        if (!body.address) {
+            this.empresaFieldErrors.address = 'Debes ingresar la dirección.';
+            hayErrores = true;
+        }
+
+        if (hayErrores) return;
+
+        if (this.editarEmpresaData) {
+            this.companiesApi.updateCompany(this.editarEmpresaData.id, body).subscribe({
+                next: () => {
+                    this.resetFormEmpresa();
+                    this.cargarTodo();
+                },
+                error: (err) => {
+                    console.error('Error actualizando empresa', err);
+
+                    if (err.status === 409) {
+                        this.empresaError = 'Ya existe una empresa con ese nombre para ese tipo.';
+                        return;
+                    }
+
+                    this.empresaError = 'No se pudo actualizar la empresa.';
+                },
+            });
+        } else {
+            this.companiesApi.createCompany({
+                ...body,
+                isActive: true,
+            }).subscribe({
+                next: () => {
+                    this.resetFormEmpresa();
+                    this.cargarTodo();
+                },
+                error: (err) => {
+                    console.error('Error creando empresa', err);
+
+                    if (err.status === 409) {
+                        this.empresaError = 'Ya existe una empresa con ese nombre para ese tipo.';
+                        return;
+                    }
+
+                    this.empresaError = 'No se pudo registrar la empresa.';
+                },
+            });
+        }
     }
 
+    resetFormEmpresa(): void {
+        this.formEmpresa = {
+            serviceTypeId: '',
+            name: '',
+            phone: '',
+            email: '',
+            address: '',
+            businessName: '',
+        };
 
-    // =============================================
-    //              NAVEGAR ENTRE VISTAS
-    // =============================================
+        this.editarEmpresaData = null;
+        this.modalCrear = false;
+        this.limpiarErroresEmpresa();
+    }
 
-    verDetalle(e: Empresa) {
-        this.empresaSel = e;
+    getNombreTipoSeleccionado(): string {
+        const tipo = this.serviceTypes.find(
+            (t) => t.id === this.formEmpresa.serviceTypeId
+        );
+
+        return tipo?.name ?? '';
+    }
+
+    verDetalle(company: Company): void {
+        this.empresaSel = company;
         this.vista = 'detalle';
     }
 
-    volver() {
+    volver(): void {
         this.empresaSel = null;
         this.vista = 'lista';
     }
 
-
-    // =============================================
-    //              ACTIVAR / DESACTIVAR
-    // =============================================
-
-    cambiarEstado(e: Empresa) {
-        e.activo = !e.activo;
+    cambiarEstado(company: Company): void {
+        this.companiesApi
+            .updateCompanyStatus(company.id, !company.isActive)
+            .subscribe({
+                next: () => this.cargarTodo(),
+                error: (err) => console.error('Error cambiando estado empresa', err),
+            });
     }
 
-
-    // =============================================
-    //              FILTRAR EMPRESAS POR TIPO
-    // =============================================
-
-    getEmpresasPorTipo(tipo: string) {
-        return this.empresas.filter(e => e.tipo === tipo);
+    getEmpresasPorTipo(serviceTypeId: string): Company[] {
+        return this.companies.filter(
+            (company) => company.serviceTypeId === serviceTypeId
+        );
     }
 
-
-    // =============================================
-    //              ASIGNAR PIR
-    // =============================================
-
-    modalAsignar = false;
-    empresaAsignar: Empresa | null = null;
-
-    pirBuscar = '';
-    pirSeleccionados: string[] = [];
-    fechaEntrega = '';
-
-    pirLista = [
-        'CBBO1315449', 'CBBO1315450', 'CBBO1315451',
-        'LPZ778899', 'VVI112233', 'VVI889900'
-    ];
-
-    get pirYaAsignadosPorTipo() {
+    // =========================
+    // ASIGNACIONES
+    // =========================
+    // Temporal: sigue local hasta tener backend de CompanyAssignment
+    get pirYaAsignadosPorTipo(): string[] {
         if (!this.empresaAsignar) return [];
 
-        const tipo = this.empresaAsignar.tipo;
+        const serviceTypeId = this.empresaAsignar.serviceTypeId;
 
         return this.asignaciones
-            .filter(a => this.empresas.find(e => e.id === a.empresaId)?.tipo === tipo)
-            .map(a => a.pir);
+            .filter(
+                (a) =>
+                    this.companies.find((e) => e.id === a.empresaId)?.serviceTypeId ===
+                    serviceTypeId
+            )
+            .map((a) => a.pir);
     }
 
-    get pirFiltrado() {
+    get pirFiltrado(): string[] {
         return this.pirLista
-            .filter(p => p.toUpperCase().includes(this.pirBuscar.toUpperCase()))
-            .filter(p => !this.pirYaAsignadosPorTipo.includes(p))
-            .filter(p => !this.pirSeleccionados.includes(p));
+            .filter((p) => p.toUpperCase().includes(this.pirBuscar.toUpperCase()))
+            .filter((p) => !this.pirYaAsignadosPorTipo.includes(p))
+            .filter((p) => !this.pirSeleccionados.includes(p));
     }
 
-    abrirAsignar(e: Empresa) {
-        this.empresaAsignar = e;
+    abrirAsignar(company: Company): void {
+        this.empresaAsignar = company;
         this.pirSeleccionados = [];
         this.pirBuscar = '';
-        this.fechaEntrega = '';
+
+        const nombreTipo =
+            company.serviceType?.name?.toLowerCase() || '';
+
+        // SOLO para empresas de reparación
+        if (nombreTipo.includes('repar')) {
+            this.fechaEntrega = this.getFechaHabilMas5();
+        } else {
+            this.fechaEntrega = '';
+        }
+
         this.modalAsignar = true;
     }
 
-    cerrarAsignar() {
+    cerrarAsignar(): void {
         this.modalAsignar = false;
         this.pirSeleccionados = [];
         this.pirBuscar = '';
@@ -284,31 +461,47 @@ export class SupplierComponent {
         this.empresaAsignar = null;
     }
 
-    addPIR(p: string) {
-        if (!this.pirSeleccionados.includes(p)) {
-            this.pirSeleccionados.push(p);
+    getFechaHabilMas5(): string {
+        const fecha = new Date();
+        let dias = 0;
+
+        while (dias < 5) {
+            fecha.setDate(fecha.getDate() + 1);
+
+            const dia = fecha.getDay();
+
+            // 0 domingo, 6 sábado
+            if (dia !== 0 && dia !== 6) {
+                dias++;
+            }
+        }
+
+        return fecha.toISOString().slice(0, 10);
+    }
+
+    addPIR(pir: string): void {
+        if (!this.pirSeleccionados.includes(pir)) {
+            this.pirSeleccionados.push(pir);
         }
     }
 
-    removePIR(p: string) {
-        this.pirSeleccionados = this.pirSeleccionados.filter(x => x !== p);
+    removePIR(pir: string): void {
+        this.pirSeleccionados = this.pirSeleccionados.filter((x) => x !== pir);
     }
 
-    guardarAsignaciones() {
+    guardarAsignaciones(): void {
         if (!this.empresaAsignar) return;
 
-        const nuevas = this.pirSeleccionados.map(p => ({
-            id: Date.now().toString() + Math.random(),
-            pir: p,
+        const nuevas: Asignacion[] = this.pirSeleccionados.map((pir) => ({
+            id: Date.now().toString() + Math.random().toString(36).slice(2),
+            pir,
             empresaId: this.empresaAsignar!.id,
             fechaAsignacion: new Date().toISOString().slice(0, 10),
             fechaEntrega: this.fechaEntrega || null,
-            estado: EstadoAsignacion.Pendiente
+            estado: EstadoAsignacion.Pendiente,
         }));
 
         this.asignaciones.push(...nuevas);
-
         this.cerrarAsignar();
     }
-
 }

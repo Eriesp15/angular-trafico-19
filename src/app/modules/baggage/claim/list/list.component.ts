@@ -27,14 +27,15 @@ interface PIR {
   claimType: ClaimType
   status: ClaimStatus
   createdAt: Date
+  updatedAt: Date
   flight: string
   route: string
   bagTag: string
+  worldTracerCode: string
+  permanentPhone: string
+  temporaryPhone: string
   tipo: string
   aeropuerto?: string
-  derivedFromRegional?: string | null
-  derivedAt?: Date | null
-  originalRegional?: string | null
 }
 
 @Component({
@@ -58,7 +59,6 @@ export class ListComponent implements OnInit, OnDestroy {
   selectedStatus: "ALL" | "PENDING" | "IN_PROCESS" | "PURCHASED" | "REPAIRED" | "LOST" | "FOUND" | "COMPENSATED" | "CLOSED" = "ALL"
   selectedType: "ALL" | ClaimType = "ALL"
   selectedAeropuerto = "ALL"
-  selectedDerivedFilter: "all" | "derived" | "original" = "all"
   filterOption: "all" | "recent" | "date" = "all"
   selectedDate = ""
 
@@ -123,9 +123,13 @@ export class ListComponent implements OnInit, OnDestroy {
               claimType: item.Tipo,
               status: item.Estado,
               createdAt: new Date(item.Fecha),
+              updatedAt: new Date(item.UltimaActualizacion ?? item.Fecha),
               flight: item.Vuelo ?? "",
               route: item.Ruta,
               bagTag: item.BagTag ?? "",
+              worldTracerCode: item.WorldTracer ?? "",
+              permanentPhone: item.TelefonoPermanente ?? "",
+              temporaryPhone: item.TelefonoTemporal ?? "",
               tipo: item.Tipo,
               aeropuerto: item.PIR.substring(0, 3), // Extraer código aeropuerto del PIR
             } as PIR
@@ -164,11 +168,6 @@ export class ListComponent implements OnInit, OnDestroy {
     this.applyFilters()
   }
 
-  filterByDerived(filter: "all" | "derived" | "original"): void {
-    this.selectedDerivedFilter = filter
-    this.applyFilters()
-  }
-
   setFilterOption(option: "all" | "recent" | "date"): void {
     this.filterOption = option
     if (option !== "date") this.selectedDate = ""
@@ -196,13 +195,6 @@ export class ListComponent implements OnInit, OnDestroy {
       result = result.filter((c) => c.aeropuerto === this.selectedAeropuerto)
     }
 
-    // Filtro por reclamos derivados
-    if (this.selectedDerivedFilter === "derived") {
-      result = result.filter((c) => c.derivedFromRegional !== null && c.derivedFromRegional !== undefined)
-    } else if (this.selectedDerivedFilter === "original") {
-      result = result.filter((c) => !c.derivedFromRegional || c.derivedFromRegional === null)
-    }
-
     if (this.filterOption === "recent") {
       const sevenDaysAgo = new Date()
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
@@ -224,6 +216,9 @@ export class ListComponent implements OnInit, OnDestroy {
           c.flight.toLowerCase().includes(lower) ||
           c.route.toLowerCase().includes(lower) ||
           c.bagTag.toLowerCase().includes(lower) ||
+          c.worldTracerCode.toLowerCase().includes(lower) ||
+          c.permanentPhone.toLowerCase().includes(lower) ||
+          c.temporaryPhone.toLowerCase().includes(lower) ||
           c.claimType.toLowerCase().includes(lower) ||
           c.status.toLowerCase().includes(lower),
       )
@@ -284,11 +279,28 @@ export class ListComponent implements OnInit, OnDestroy {
     AHL: "Equipaje Faltante",
     DPR: "Equipaje Dañado",
     PILFERED: "Equipaje Saqueado",
-    OHL: "Equipaje Sobrante",
+    OHD: "Equipaje Sobrante",
   }
 
   getTipoLabel(tipo: string): string {
     return this.tipoLabels[tipo] ?? tipo
+  }
+
+  getClaimAgeDays(createdAt: Date): number {
+    const now = new Date()
+    const diffMs = now.getTime() - createdAt.getTime()
+    return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)))
+  }
+
+  getAgeBadgeClass(createdAt: Date): string {
+    const age = this.getClaimAgeDays(createdAt)
+    if (age > 30) return "age-badge age-badge--critical"
+    if (age > 21) return "age-badge age-badge--warn"
+    return "age-badge age-badge--ok"
+  }
+
+  hasWorldTracer(claim: PIR): boolean {
+    return !!claim.worldTracerCode?.trim()
   }
 
   clearSearch(): void {
@@ -313,7 +325,7 @@ export class ListComponent implements OnInit, OnDestroy {
     this.router.navigate(["/baggage/claim/new"])
   }
 
-  createOHL(): void {
-    this.router.navigate(["/baggage/ohl/new"])
+  createOHD(): void {
+    this.router.navigate(["/baggage/ohd/new"])
   }
 }

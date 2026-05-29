@@ -34,7 +34,13 @@
     color: #6b7280;
   }
 
-  .btn-back {
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-back,
+  .btn-add {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -50,6 +56,16 @@
 
     &:hover {
       background-color: #e5e7eb;
+    }
+  }
+
+  .btn-add {
+    background-color: #003366;
+    color: #ffffff;
+    border-color: #003366;
+
+    &:hover {
+      background-color: #002244;
     }
   }
 }
@@ -196,6 +212,30 @@
       color: #003366;
     }
   }
+}
+
+.loading-state,
+.error-state,
+.empty-state {
+  padding: 14px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.loading-state {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.error-state {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.empty-state {
+  background: #eff6ff;
+  color: #1d4ed8;
 }
 
 .actions {

@@ -10,11 +10,20 @@ import { MatDialogModule, MatDialog } from "@angular/material/dialog"
 import { ClaimStatusService } from "app/services/claim-status/claim-status.service"
 import { ActionWizardService } from "../action-wizard/action-wizard.service"
 import { ActionWizardComponent } from "../action-wizard/action-wizard.component"
+import { DerivarButtonComponent } from '../../derivar-button/derivar-button.component';
+
+type FlowState = 'done' | 'current' | 'upcoming';
+
+type FlowStep = {
+  key: string;
+  label: string;
+  statuses: string[];
+};
 
 @Component({
   selector: "app-view-claim",
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule, ActionWizardComponent],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule, BreadcrumbComponent, MatDialogModule, ActionWizardComponent,DerivarButtonComponent],
   templateUrl: "./view-claim.component.html",
   styleUrls: ["./view-claim.component.scss"],
 })
@@ -31,6 +40,7 @@ export class ViewClaimComponent implements OnInit {
   worldTracerCodigo = ""
   worldTracerEstado = ""
   worldTracerDescripcion = ""
+  flowSteps: FlowStep[] = [];
 
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view";
@@ -68,6 +78,7 @@ export class ViewClaimComponent implements OnInit {
 
         console.log("PIR cargado:", this.pirData)
         console.log("tipo de reclamo:", this.pirData.claimType)
+        this.flowSteps = this.getFlowByClaimType(this.pirData?.claimType);
       },
       error: (err) => {
         console.error("Error cargando PIR:", err)
@@ -84,13 +95,9 @@ export class ViewClaimComponent implements OnInit {
     const fechaCreacion = new Date(this.pirData.createdAt);
     const ahora = new Date();
     const diferenciaMilisegundos = ahora.getTime() - fechaCreacion.getTime();
-    
+
     // Calcular días
     this.antiguedadDias = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
-  }
-
-  verHojaSeguimiento(): void {
-    this.router.navigate(["/baggage/claim/trackingsheet", this.claimId])
   }
 
   verFormularioContenido(): void {
@@ -129,11 +136,34 @@ export class ViewClaimComponent implements OnInit {
     });
   }
 
-  enviarAReparacion() {
-    this.actionWizard.open('SEND_TO_REPAIR', this.pirData, () => {
+  indicarRecibido() {
+    this.actionWizard.open('INDICATE_RECEIVED', this.pirData, () => {
       this.loadClaim(this.claimId);
     });
   }
+
+  asignarTransporte() {
+    this.actionWizard.open('ASSIGN_TRANSPORT', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+  recojoEnAeropuerto() {
+    this.actionWizard.open('AIRPORT_PICKUP', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+  enviarAReparacion(): void {
+  const pirNumber = this.pirData?.pirNumber;
+
+  if (!pirNumber) {
+    console.error('No se encontró pirNumber en pirData');
+    return;
+  }
+
+  this.router.navigate(['/baggage/claim/repair-flow', pirNumber]);
+}
 
   recogerMaleta() {
     this.actionWizard.open('PICKUP_REPAIRED', this.pirData, () => {
@@ -162,6 +192,15 @@ export class ViewClaimComponent implements OnInit {
     this.router.navigate(["/baggage/claim/expenses", this.claimId])
   }
 
+  anadirGasto(): void {
+    this.router.navigate(["/baggage/claim/add-expense", this.claimId], {
+      queryParams: {
+        tipo: this.pirData?.claimType,
+        fecha: this.pirData?.createdAt,
+      },
+    })
+  }
+
   follow(): void {
     this.router.navigate(["/baggage/claim/follow", this.claimId])
   }
@@ -180,6 +219,93 @@ export class ViewClaimComponent implements OnInit {
     return this.pirData?.claimType === 'DPR';
   }
 
-  
+  getFlowState(step: FlowStep): FlowState {
+    const status = this.pirData?.claim?.claimStatus;
+    if (!status) return 'upcoming';
+
+    const index = this.flowSteps.findIndex((item) => item.statuses.includes(status));
+    const stepIndex = this.flowSteps.findIndex((item) => item.key === step.key);
+
+    if (index < 0) return 'upcoming';
+    if (stepIndex < index) return 'done';
+    if (stepIndex === index) return 'current';
+    return 'upcoming';
+  }
+
+  getFlowStateLabel(step: FlowStep): string {
+    const state = this.getFlowState(step);
+    if (state === 'done') return 'Realizado';
+    if (state === 'current') return 'Realizado';
+    return 'Por hacer';
+  }
+
+  getFlowStateIcon(step: FlowStep): string {
+    const state = this.getFlowState(step);
+    if (state === 'done') return 'check_circle';
+    if (state === 'current') return 'check_circle';
+    return 'radio_button_unchecked';
+  }
+
+  private getFlowByClaimType(claimType?: string): FlowStep[] {
+    if (claimType === 'AHL') {
+      return [
+        { key: 'pending', label: 'Pendiente de gestión', statuses: ['PENDING', 'IN_PROCESS'] },
+        { key: 'searching', label: 'En búsqueda', statuses: ['SEARCHING'] },
+        { key: 'found', label: 'Encontrado', statuses: ['FOUND'] },
+        { key: 'received', label: 'Recibido', statuses: ['RECEIVED'] },
+        { key: 'assigned', label: 'Asignado a transporte', statuses: ['ASSIGNED'] },
+        { key: 'delivered', label: 'Entregado', statuses: ['DELIVERED'] },
+        { key: 'closed', label: 'Reclamo cerrado', statuses: ['CLOSED'] },
+      ];
+    }
+
+    if (claimType === 'DPR') {
+      return [
+        { key: 'pending', label: 'Pendiente de gestión', statuses: ['PENDING'] },
+        { key: 'repaired-route', label: 'Reparación / transferencia', statuses: ['REPAIRING', 'TRANSFERRED'] },
+        { key: 'received', label: 'Recibido de reparación', statuses: ['REPAIRED'] },
+        { key: 'assigned', label: 'Asignado a transporte', statuses: ['ASSIGNED'] },
+        { key: 'compensated', label: 'Compra/indemnización', statuses: ['COMPENSATED'] },
+        { key: 'delivered', label: 'Entregado', statuses: ['DELIVERED'] },
+        { key: 'closed', label: 'Reclamo cerrado', statuses: ['CLOSED'] },
+      ];
+    }
+
+    if (claimType === 'PILFERED') {
+      return [
+        { key: 'pending', label: 'Pendiente de gestión', statuses: ['PENDING'] },
+        { key: 'compensated', label: 'Indemnizado', statuses: ['COMPENSATED'] },
+        { key: 'closed', label: 'Reclamo cerrado', statuses: ['CLOSED'] },
+      ];
+    }
+
+    return [];
+  }
+
+  getStatusBadgeClass(estado: string): string {
+    switch (estado) {
+      case "PENDING":
+        return "badge-warning"
+      case "IN_PROCESS":
+      case "REPAIRED":
+      case "REPAIRING":
+      case "SEARCHING":
+      case "TRANSFERRED":
+      case "RECEIVED":
+      case "ASSIGNED":
+        return "badge-processing"
+      case "PURCHASED":
+      case "FOUND":
+      case "DELIVERED":
+        return "badge-registered"
+      case "COMPENSATED":
+        return "badge-resolved"
+      case "CLOSED":
+        return "badge-closed"
+      default:
+        return "badge-default"
+    }
+  }
+
 
 }

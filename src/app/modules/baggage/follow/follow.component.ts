@@ -23,6 +23,7 @@ import {
 
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
+import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
 
 type Canal = 'whatsapp' | 'email' | 'nota';
 
@@ -121,6 +122,7 @@ export class ConfirmSendDialogComponent {
         MatSnackBarModule,
         MatTooltipModule,
         MatChipsModule,
+        BreadcrumbComponent,
     ],
     templateUrl: './follow.component.html',
     styleUrl: './follow.component.scss',
@@ -141,6 +143,9 @@ export class FollowComponent implements OnInit, OnDestroy {
 
     currentUserName = '';
     pirNumber = '';
+    breadcrumbItems: BreadcrumbItem[] = [
+        { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
+    ];
 
     private saveSeguimiento$ = new Subject<SeguimientoRow>();
     private saveLlamada$ = new Subject<LlamadaRow>();
@@ -213,6 +218,14 @@ export class FollowComponent implements OnInit, OnDestroy {
                 correo: '',
             };
 
+            // Update breadcrumb with PIR data
+            this.breadcrumbItems = [
+                { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
+                { label: 'Visualizar Reclamo', url: `/baggage/claim/view/${response.pirNumber}` },
+                { label: response.pirNumber },
+                { label: 'Hoja de Seguimiento' }
+            ];
+
             const entries = response.follow?.entries ?? response.claim?.follow?.entries ?? [];
             const sorted = [...entries].sort(
                 (a, b) => new Date(a.eventAt).getTime() - new Date(b.eventAt).getTime()
@@ -260,6 +273,7 @@ export class FollowComponent implements OnInit, OnDestroy {
             );
         } finally {
             this.loading = false;
+            this.resizeAllTextareas();
         }
     }
 
@@ -290,12 +304,23 @@ export class FollowComponent implements OnInit, OnDestroy {
         const locked = e.status !== 'PENDING';
         const confirmedAt = e.confirmedAt ?? (locked ? (e.updatedAt ?? e.createdAt) : undefined);
 
+        let metadata: any = {};
+
+        try {
+            metadata =
+                typeof (e as any).metadata === 'string'
+                    ? JSON.parse((e as any).metadata || '{}')
+                    : ((e as any).metadata || {});
+        } catch {
+            metadata = {};
+        }
+
         return {
             id: e.id,
             fecha,
             hora,
             celularCorreo: e.contact ?? '',
-            aQuien: '',
+            aQuien: metadata?.aQuien ?? '',
             observaciones: e.message ?? '',
             locked,
             createdAt: e.createdAt,
@@ -330,7 +355,11 @@ export class FollowComponent implements OnInit, OnDestroy {
     }
 
     print(): void {
-        window.print();
+        this.resizeAllTextareas();
+
+        setTimeout(() => {
+            window.print();
+        }, 100);
     }
 
     private clamp(n: number, min: number, max: number): number {
@@ -400,7 +429,7 @@ export class FollowComponent implements OnInit, OnDestroy {
             eventAt: iso,
             performedByName: this.currentUserName,
             contact: (c.celularCorreo || '').trim() || undefined,
-            title: null as any,
+            title: ((c.aQuien || '').trim() || null) as any,
             followUpAt: undefined,
         };
     }
@@ -799,6 +828,7 @@ export class FollowComponent implements OnInit, OnDestroy {
         c.autoObs = auto;
 
         this.onLlamadaChange(c);
+        this.resizeAllTextareas();
     }
 
     onObservacionesInput(c: LlamadaRow): void {
@@ -818,9 +848,21 @@ export class FollowComponent implements OnInit, OnDestroy {
 
     autoGrow(ev: Event): void {
         const el = ev.target as HTMLTextAreaElement;
+        this.resizeTextarea(el);
+    }
+    private resizeTextarea(el: HTMLTextAreaElement): void {
         if (!el) return;
+
         el.style.height = 'auto';
         el.style.height = `${el.scrollHeight}px`;
+    }
+
+    resizeAllTextareas(): void {
+        setTimeout(() => {
+            document
+                .querySelectorAll<HTMLTextAreaElement>('textarea.auto-grow')
+                .forEach((textarea) => this.resizeTextarea(textarea));
+        }, 0);
     }
 
     formatIso(iso?: string): string {

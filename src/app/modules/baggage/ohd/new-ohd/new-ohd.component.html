@@ -1,18 +1,18 @@
-<div class="new-ohl-container">
-  <div class="ohl-card">
+<div class="new-ohd-container">
+  <div class="ohd-card">
     <!-- Header -->
-    <div class="ohl-header">
+    <div class="ohd-header">
       <div class="header-icon">
         <mat-icon>luggage</mat-icon>
       </div>
       <div class="header-text">
-        <h1>Registrar Equipaje Sobrante (OHL)</h1>
+        <h1>Registrar Equipaje Sobrante (OHD)</h1>
         <p class="subtitle">Equipaje encontrado sin reclamar - Será enviado a Central Cochabamba</p>
       </div>
     </div>
 
     <!-- Formulario -->
-    <form [formGroup]="ohlForm" *ngIf="!showConfirmation">
+    <form [formGroup]="ohdForm" *ngIf="!showConfirmation">
       <!-- Sección: Datos del Equipaje -->
       <div class="form-section">
         <h2 class="section-title">
@@ -197,29 +197,29 @@
     <div class="confirmation-section" *ngIf="showConfirmation">
       <div class="confirmation-header">
         <mat-icon>check_circle</mat-icon>
-        <h2>Confirmar Registro de OHL</h2>
+        <h2>Confirmar Registro de OHD</h2>
       </div>
 
       <div class="confirmation-details">
         <div class="detail-row">
           <span class="label">BagTag:</span>
-          <span class="value">{{ ohlForm.get('bagTag')?.value }}</span>
+          <span class="value">{{ ohdForm.get('bagTag')?.value }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Tipo:</span>
-          <span class="value">{{ ohlForm.get('tipoEquipaje')?.value }}</span>
+          <span class="value">{{ ohdForm.get('tipoEquipaje')?.value }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Color:</span>
-          <span class="value">{{ ohlForm.get('color')?.value }}</span>
+          <span class="value">{{ ohdForm.get('color')?.value }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Peso:</span>
-          <span class="value">{{ ohlForm.get('peso')?.value }} kg</span>
+          <span class="value">{{ ohdForm.get('peso')?.value }} kg</span>
         </div>
         <div class="detail-row">
           <span class="label">Aeropuerto Origen:</span>
-          <span class="value">{{ getAeropuertoNombre(ohlForm.get('aeropuertoOrigen')?.value) }}</span>
+          <span class="value">{{ getAeropuertoNombre(ohdForm.get('aeropuertoOrigen')?.value) }}</span>
         </div>
         <div class="detail-row highlight">
           <span class="label">Destino:</span>

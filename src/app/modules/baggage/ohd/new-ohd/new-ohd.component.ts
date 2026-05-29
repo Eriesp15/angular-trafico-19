@@ -10,7 +10,7 @@ import { MatInputModule } from "@angular/material/input"
 import { AEROPUERTOS_BOA, getAeropuertoCentral } from "../../models/claim-type-config.model"
 
 @Component({
-  selector: "app-new-ohl",
+  selector: "app-new-ohd",
   standalone: true,
   imports: [
     CommonModule,
@@ -23,11 +23,11 @@ import { AEROPUERTOS_BOA, getAeropuertoCentral } from "../../models/claim-type-c
     MatFormFieldModule,
     MatInputModule,
   ],
-  templateUrl: "./new-ohl.component.html",
-  styleUrls: ["./new-ohl.component.scss"],
+  templateUrl: "./new-ohd.component.html",
+  styleUrls: ["./new-ohd.component.scss"],
 })
-export class NewOhlComponent implements OnInit {
-  ohlForm!: FormGroup
+export class NewOhdComponent implements OnInit {
+  ohdForm!: FormGroup
   aeropuertos = AEROPUERTOS_BOA
   aeropuertoCentral = getAeropuertoCentral()
 
@@ -68,7 +68,7 @@ export class NewOhlComponent implements OnInit {
   }
 
   initializeForm(): void {
-    this.ohlForm = this.fb.group({
+    this.ohdForm = this.fb.group({
       // Datos del equipaje
       bagTag: ["", Validators.required],
       tipoEquipaje: ["MALETA", Validators.required],
@@ -92,15 +92,15 @@ export class NewOhlComponent implements OnInit {
   }
 
   isFieldInvalid(fieldName: string): boolean {
-    const control = this.ohlForm.get(fieldName)
+    const control = this.ohdForm.get(fieldName)
     return (control?.invalid && control?.touched) || false
   }
 
   continuar(): void {
-    if (this.ohlForm.valid) {
+    if (this.ohdForm.valid) {
       this.showConfirmation = true
     } else {
-      this.ohlForm.markAllAsTouched()
+      this.ohdForm.markAllAsTouched()
     }
   }
 
@@ -109,15 +109,15 @@ export class NewOhlComponent implements OnInit {
   }
 
   confirmar(): void {
-    const ohlData = {
-      ...this.ohlForm.value,
-      tipo: "OHL",
+    const ohdData = {
+      ...this.ohdForm.value,
+      tipo: "OHD",
       estado: "ABIERTO",
       destino: this.aeropuertoCentral?.codigo, // Siempre a Central CBB
       fechaRegistro: new Date().toISOString(),
     }
 
-    console.log("[v0] OHL registrado:", ohlData)
+    console.log("[v0] OHD registrado:", ohdData)
     this.router.navigate(["/baggage/claim/list"])
   }
 
