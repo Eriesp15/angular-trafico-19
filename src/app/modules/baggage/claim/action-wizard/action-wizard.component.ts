@@ -154,8 +154,8 @@ export class ActionWizardComponent {
             .get<any[]>(`${environment.protocol}//${environment.host}/api/v1/companies/${companyId}/users`)
             .subscribe((users) => {
                 this.transportCompanyUsers = users.map((u: any) => ({
-                    value: u.user.id,
-                    label: `${u.user.name} — ${u.user.email}${u.user.phone ? ' — ' + u.user.phone : ''}`
+                    value: u.personnel.id,
+                    label: `${u.personnel.name} — ${u.personnel.email}${u.personnel.phone ? ' — ' + u.personnel.phone : ''}`
                 }));
             });
     }

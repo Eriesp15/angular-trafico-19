@@ -11,13 +11,12 @@ export interface ServiceType {
 export interface CompanyUser {
     id: string;
     companyId: string;
-    userId: string;
+    personnelId: string;
     createdAt: string;
-    user: {
+    personnel: {
         id: string;
         name: string;
         email: string;
-        role: string;
         phone?: string;
     };
 }
@@ -126,18 +125,18 @@ export class ApiCompaniesService {
         return this.http.get<CompanyUser[]>(`${this.baseUrl}/${companyId}/users`);
     }
 
-    getAvailableUsers(companyId: string): Observable<{ id: string; name: string; email: string; role: string }[]> {
-        return this.http.get<{ id: string; name: string; email: string; role: string }[]>(
+    getAvailableUsers(companyId: string): Observable<{ id: string; name: string; email: string; phone?: string }[]> {
+        return this.http.get<{ id: string; name: string; email: string; phone?: string }[]>(
             `${this.baseUrl}/${companyId}/users/available`
         );
     }
 
-    addCompanyUser(companyId: string, userId: string): Observable<CompanyUser> {
-        return this.http.post<CompanyUser>(`${this.baseUrl}/${companyId}/users`, { userId });
+    addCompanyUser(companyId: string, personnelId: string): Observable<CompanyUser> {
+        return this.http.post<CompanyUser>(`${this.baseUrl}/${companyId}/users`, { personnelId });
     }
 
-    removeCompanyUser(companyId: string, userId: string): Observable<{ message: string }> {
-        return this.http.delete<{ message: string }>(`${this.baseUrl}/${companyId}/users/${userId}`);
+    removeCompanyUser(companyId: string, personnelId: string): Observable<{ message: string }> {
+        return this.http.delete<{ message: string }>(`${this.baseUrl}/${companyId}/users/${personnelId}`);
     }
 
     // =========================

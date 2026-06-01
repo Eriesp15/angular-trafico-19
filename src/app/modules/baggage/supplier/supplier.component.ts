@@ -77,8 +77,8 @@ export class SupplierComponent implements OnInit {
     modalUsers = false;
     modalUsersEmpresa: Company | null = null;
     companyUsers: CompanyUser[] = [];
-    availableUsers: { id: string; name: string; email: string; role: string; phone?: string }[] = [];
-    selectedUserId = '';
+    availableUsers: { id: string; name: string; email: string; phone?: string }[] = [];
+    selectedPersonnelId = '';
     userLoading = false;
     userSearch = '';
 
@@ -303,7 +303,7 @@ export class SupplierComponent implements OnInit {
         this.modalUsers = true;
         this.companyUsers = [];
         this.availableUsers = [];
-        this.selectedUserId = '';
+        this.selectedPersonnelId = '';
         this.userSearch = '';
         this.newUserName = '';
         this.newUserEmail = '';
@@ -356,11 +356,11 @@ export class SupplierComponent implements OnInit {
     }
 
     agregarUsuario(): void {
-        if (!this.modalUsersEmpresa || !this.selectedUserId) return;
+        if (!this.modalUsersEmpresa || !this.selectedPersonnelId) return;
 
-        this.companiesApi.addCompanyUser(this.modalUsersEmpresa.id, this.selectedUserId).subscribe({
+        this.companiesApi.addCompanyUser(this.modalUsersEmpresa.id, this.selectedPersonnelId).subscribe({
             next: () => {
-                this.selectedUserId = '';
+                this.selectedPersonnelId = '';
                 this.userSearch = '';
                 this.cargarUsuariosEmpresa(this.modalUsersEmpresa!.id);
                 this.cargarUsuariosDisponibles(this.modalUsersEmpresa!.id);
@@ -371,10 +371,10 @@ export class SupplierComponent implements OnInit {
         });
     }
 
-    eliminarUsuario(userId: string): void {
+    eliminarUsuario(personnelId: string): void {
         if (!this.modalUsersEmpresa) return;
 
-        this.companiesApi.removeCompanyUser(this.modalUsersEmpresa.id, userId).subscribe({
+        this.companiesApi.removeCompanyUser(this.modalUsersEmpresa.id, personnelId).subscribe({
             next: () => {
                 this.cargarUsuariosEmpresa(this.modalUsersEmpresa!.id);
                 this.cargarUsuariosDisponibles(this.modalUsersEmpresa!.id);

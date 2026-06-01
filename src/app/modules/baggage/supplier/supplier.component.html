@@ -265,11 +265,11 @@
         <div class="users-list" *ngIf="!userLoading">
             <div class="user-row" *ngFor="let cu of companyUsers">
                 <div class="user-info">
-                    <span class="user-name">{{ cu.user.name }}</span>
-                    <span class="user-email">{{ cu.user.email }}</span>
-                    <span class="user-phone" *ngIf="cu.user.phone">{{ cu.user.phone }}</span>
+                    <span class="user-name">{{ cu.personnel.name }}</span>
+                    <span class="user-email">{{ cu.personnel.email }}</span>
+                    <span class="user-phone" *ngIf="cu.personnel.phone">{{ cu.personnel.phone }}</span>
                 </div>
-                <button class="btn btn-danger small" (click)="eliminarUsuario(cu.user.id)">
+                <button class="btn btn-danger small" (click)="eliminarUsuario(cu.personnel.id)">
                     Eliminar
                 </button>
             </div>
