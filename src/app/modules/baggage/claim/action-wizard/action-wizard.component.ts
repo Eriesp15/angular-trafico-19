@@ -30,6 +30,7 @@ export class ActionWizardComponent implements OnInit {
     onSuccessCallback?: () => void;
     repairCompanyOptions: any[] = [];
     transportCompanyOptions: any[] = [];
+    transportCompanyUsers: any[] = [];
     user: any;
 
     // Nuevos para validación y mensajes bonitos
@@ -159,6 +160,22 @@ export class ActionWizardComponent implements OnInit {
             });
     }
 
+    loadTransportCompanyUsers(companyId: string) {
+        if (!companyId) {
+            this.transportCompanyUsers = [];
+            return;
+        }
+
+        this.http
+            .get<any[]>(`${environment.protocol}//${environment.host}/api/v1/companies/${companyId}/users`)
+            .subscribe((users) => {
+                this.transportCompanyUsers = users.map((u: any) => ({
+                    value: u.personnel.id,
+                    label: `${u.personnel.name} — ${u.personnel.email}${u.personnel.phone ? ' — ' + u.personnel.phone : ''}`
+                }));
+            });
+    }
+
     getOptions(field: any) {
         if (field.optionsFrom === 'repairCompanies') {
             return this.repairCompanyOptions;
@@ -166,6 +183,10 @@ export class ActionWizardComponent implements OnInit {
 
         if (field.optionsFrom === 'transportCompanies') {
             return this.transportCompanyOptions;
+        }
+
+        if (field.optionsFrom === 'transportCompanyUsers') {
+            return this.transportCompanyUsers;
         }
 
         return field.options || [];
@@ -323,6 +344,11 @@ export class ActionWizardComponent implements OnInit {
         if (this.config?.id === 'PICKUP_REPAIRED' && fieldName === 'pickupDate') {
             this.formData.pickupDay = this.getDayName(value);
         }
+
+        if (this.config?.id === 'ASSIGN_TRANSPORT' && fieldName === 'transportCompanyId') {
+            this.formData.responsiblePerson = '';
+            this.loadTransportCompanyUsers(value);
+        }
     }
     //funcion que devuelve nombre del la empresa
     // función que devuelve el texto visible de un campo en el resumen
@@ -345,6 +371,14 @@ export class ActionWizardComponent implements OnInit {
             );
 
             return company?.label || value;
+        }
+
+        if (field.optionsFrom === 'transportCompanyUsers') {
+            const user = this.transportCompanyUsers.find((item: any) =>
+                String(item.value) === String(value)
+            );
+
+            return user?.label || value;
         }
 
         return value;

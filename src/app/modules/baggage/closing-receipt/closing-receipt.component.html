@@ -84,7 +84,10 @@
             </div>
 
             <div *ngIf="form.entregaModo === 'domicilio'" class="direccion-group">
-                <label>Dirección de entrega:</label>
+                <div *ngIf="form.deliveryAddressType === 'OTHER'" class="otro-indicator">
+                    Otro
+                </div>
+                <label *ngIf="form.deliveryAddressType !== 'OTHER'">Dirección de entrega:</label>
                 <input
                     type="text"
                     class="direccion-input"
