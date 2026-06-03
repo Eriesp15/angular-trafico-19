@@ -189,21 +189,66 @@ export const TRANSFER_TO_CBB = {
   newStatus: 'TRANSFERRED'
 };
 
+// ===== CIERRE DE RECLAMO
 export const CLOSE_CLAIM = {
-  id: 'CLOSE_CLAIM',
-  title: 'Cerrar Reclamo',
+    id: 'CLOSE_CLAIM',
+    title: 'Cerrar reclamo',
 
-  fields: [
-    { name: 'closureReason', label: 'Motivo de cierre', type: 'select',
-      options: ['Resuelto satisfactoriamente', 'Indemnizado', 'Equipaje entregado', 'Otro'] },
-    { name: 'closureNotes', label: 'Notas de cierre', type: 'textarea',
-      placeholder: 'Resumen final del caso...' }
-  ],
+    autofill: {
+        registeredBy: 'loggedUserName',
+        closedAt: 'todayFlightDate',
+        sendPassengerMessage: 'sendPassengerMessageDefault'
+    },
 
-  getMessage: (data: any) =>
-    `Reclamo cerrado. Motivo: ${data.closureReason}. ${data.closureNotes}`,
+    fields: [
+        {
+            name: 'registeredBy',
+            label: 'Usuario que cierra',
+            type: 'text',
+            readonly: true,
+            required: true
+        },
+        {
+            name: 'closedAt',
+            label: 'Fecha y hora de cierre',
+            type: 'datetime-local',
+            readonly: true,
+            required: true
+        },
+        {
+            name: 'closureReason',
+            label: 'Motivo de cierre',
+            type: 'datalist',
+            required: true,
+            options: [
+                'Reclamo resuelto satisfactoriamente',
+                'Indemnización pagada',
+                'Pasajero conforme con la solución',
+                'Equipaje entregado al pasajero',
+                'Cierre administrativo',
+                'Otro'
+            ],
+            placeholder: 'Seleccione o escriba un motivo'
+        },
+        {
+            name: 'sendPassengerMessage',
+            label: 'Enviar mensaje al pasajero',
+            type: 'select',
+            required: true,
+            options: ['Sí', 'No']
+        },
+        {
+            name: 'notes',
+            label: 'Observaciones',
+            type: 'textarea',
+            placeholder: 'Detalle adicional del cierre...'
+        }
+    ],
 
-  newStatus: 'CLOSED'
+    getMessage: (data: any) =>
+        `Reclamo cerrado por ${data.registeredBy}. Fecha: ${data.closedAt}. Motivo: ${data.closureReason}. Mensaje al pasajero: ${data.sendPassengerMessage}. ${data.notes || ''}`,
+
+    newStatus: 'CLOSED'
 };
 
 

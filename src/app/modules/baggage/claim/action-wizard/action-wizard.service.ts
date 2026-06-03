@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 export class ActionWizardService {
   private showModal = new BehaviorSubject<boolean>(false);
   private currentAction = new BehaviorSubject<any>(null);
-  
+
   show$ = this.showModal.asObservable();
   action$ = this.currentAction.asObservable();
 
@@ -17,11 +17,11 @@ export class ActionWizardService {
       console.error(`Acción ${actionId} no encontrada`);
       return;
     }
-    
-    this.currentAction.next({ 
-      config, 
+
+    this.currentAction.next({
+      config,
       pirData,
-      onSuccess 
+      onSuccess
     });
     this.showModal.next(true);
   }
@@ -29,6 +29,10 @@ export class ActionWizardService {
   close() {
     this.showModal.next(false);
     this.currentAction.next(null);
+  }
+
+  getUser(){
+
   }
 }
 

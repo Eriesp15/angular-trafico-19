@@ -1,10 +1,10 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, OnDestroy, OnInit, EventEmitter } from '@angular/core';import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Subject, takeUntil } from 'rxjs';
 import { ActionWizardService } from '../claim/action-wizard/action-wizard.service';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
+import { ApiClaimService } from '../services/api-claim.service';
 
 @Component({
     selector: 'app-derivar-button',
@@ -22,21 +22,27 @@ export class DerivarButtonComponent implements OnInit, OnDestroy {
 
     constructor(
         private wizardService: ActionWizardService,
-        private userService: UserService
+        private userService: UserService,
+        private claimService: ApiClaimService
     ) {}
 
     ngOnInit(): void {
+
         this.userService.user$
             .pipe(takeUntil(this.destroy$))
             .subscribe((user: User) => {
                 this.currentUserName = (user as any)?.name || (user as any)?.email || '';
             });
+        this.claimService.getUser().subscribe((user: any) => {
+            console.warn()
+        })
     }
 
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
     }
+    @Output() completed = new EventEmitter<void>();
 
     openDerivar(): void {
         if (!this.claim) return;
@@ -62,7 +68,9 @@ export class DerivarButtonComponent implements OnInit, OnDestroy {
             todayFlightDate: this.getTodayDateTimeLocal()
         };
 
-        this.wizardService.open('TRANSFER_BAG', enrichedPirData);
+        this.wizardService.open('TRANSFER_BAG', enrichedPirData, () => {
+            this.completed.emit();
+        });
     }
 
     getTodayDateTimeLocal(): string {

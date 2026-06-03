@@ -36,4 +36,8 @@ export class ApiClaimService {
     closeClaim(pir: string, body: any) {
         return this.http.post(`${this.api}/claims/${pir}/close`, body);
     }
+
+    getUser(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.api}/claims/get-user`);
+    }
 }

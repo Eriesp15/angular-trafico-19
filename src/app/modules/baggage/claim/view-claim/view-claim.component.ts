@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core"
+import { Component, OnDestroy, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormsModule } from "@angular/forms"
 import { ActivatedRoute, Router, RouterModule } from "@angular/router"
@@ -11,6 +11,9 @@ import { ClaimStatusService } from "app/services/claim-status/claim-status.servi
 import { ActionWizardService } from "../action-wizard/action-wizard.service"
 import { ActionWizardComponent } from "../action-wizard/action-wizard.component"
 import { DerivarButtonComponent } from '../../derivar-button/derivar-button.component';
+import { Subject, takeUntil } from "rxjs"
+import { UserService } from "app/core/user/user.service"
+import { User } from "app/core/user/user.types"
 
 type FlowState = 'done' | 'current' | 'upcoming';
 
@@ -45,7 +48,8 @@ export class ViewClaimComponent implements OnInit {
   // URL base del backend
   private readonly apiUrl = "http://localhost:3700/api/v1/claims/view";
 
-
+    currentUserName = "";
+    private destroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
@@ -54,15 +58,35 @@ export class ViewClaimComponent implements OnInit {
     private dialog: MatDialog,
     public claimStatusService: ClaimStatusService,
     private actionWizard: ActionWizardService,
+    private userService: UserService
   ) {}
 
-  ngOnInit(): void {
-    this.claimId = this.route.snapshot.params["id"]
-    if (this.claimId) {
-      this.loadClaim(this.claimId)
-    }
-  }
+    ngOnInit(): void {
+        this.userService.user$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((user: User) => {
+                this.currentUserName =
+                    (user as any)?.name ||
+                    (user as any)?.email ||
+                    "";
+            });
 
+        this.claimId = this.route.snapshot.params["id"];
+
+        if (this.claimId) {
+            this.loadClaim(this.claimId);
+        }
+    }
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+    getTodayDateTimeLocal(): string {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        const localDate = new Date(now.getTime() - offset * 60000);
+        return localDate.toISOString().slice(0, 16);
+    }
   // Cargar un PIR desde el backend
   private loadClaim(pirNumber: string): void {
     this.http.get<any>(`${this.apiUrl}/${pirNumber}`).subscribe({
@@ -180,11 +204,19 @@ export class ViewClaimComponent implements OnInit {
     this.router.navigate([`/baggage/claim/closing-receipt/${this.claimId}`])
   }
 
-  cerrarReclamo(): void {
-    this.actionWizard.open('CLOSE_CLAIM', this.pirData, () => {
-      this.loadClaim(this.claimId);
-    });
-  }
+    cerrarReclamo(): void {
+        const enrichedPirData = {
+            ...this.pirData,
+            loggedUserName: this.currentUserName,
+            registeredBy: this.currentUserName,
+            todayFlightDate: this.getTodayDateTimeLocal(),
+            sendPassengerMessageDefault: "Sí",
+        };
+
+        this.actionWizard.open("CLOSE_CLAIM", enrichedPirData, () => {
+            this.loadClaim(this.claimId);
+        });
+    }
 
   verGastos(): void {
     this.router.navigate(["/baggage/claim/expenses", this.claimId])

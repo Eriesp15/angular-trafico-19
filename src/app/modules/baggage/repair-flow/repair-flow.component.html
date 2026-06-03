@@ -82,6 +82,7 @@
             <app-derivar-button
                 [claim]="claim"
                 buttonLabel="Envio de maleta a otra estación"
+                (completed)="loadClaim()"
             ></app-derivar-button>
         </div>
 
@@ -144,7 +145,7 @@
                         →
                     </div>
                 </ng-container>
-                <ng-container *ngIf="isRepairFinishedAsRepaired()">
+                <ng-container *ngIf="canShowReturnToStation()">
                     <div class="step-arrow">
                         →
                     </div>
@@ -165,11 +166,13 @@
                                 <app-derivar-button
                                     [claim]="claim"
                                     buttonLabel="Devolución de equipaje a estación responsable"
+                                    (completed)="loadClaim()"
                                 ></app-derivar-button>
                             </div>
                         </div>
                     </div>
                 </ng-container>
+
             </div>
 
         </div>

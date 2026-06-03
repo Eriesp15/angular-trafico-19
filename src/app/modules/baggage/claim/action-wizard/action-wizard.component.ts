@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -6,6 +6,7 @@ import { ActionWizardService } from "./action-wizard.service";
 import { ExpenseService } from "../../services/expense.service";
 
 import { environment } from '../../../../../environments/environment';
+import { ApiClaimService } from '../../services/api-claim.service';
 
 @Component({
     selector: 'app-action-wizard',
@@ -17,7 +18,7 @@ import { environment } from '../../../../../environments/environment';
     templateUrl: './action-wizard.component.html',
     styleUrls: ['./action-wizard.component.scss']
 })
-export class ActionWizardComponent {
+export class ActionWizardComponent implements OnInit {
     isOpen = false;
     step = 1;
     saving = false;
@@ -28,6 +29,7 @@ export class ActionWizardComponent {
     message = '';
     onSuccessCallback?: () => void;
     repairCompanyOptions: any[] = [];
+    user: any;
 
     // Nuevos para validación y mensajes bonitos
     fieldErrors: Record<string, string> = {};
@@ -36,7 +38,8 @@ export class ActionWizardComponent {
     constructor(
         public wizardService: ActionWizardService,
         private http: HttpClient,
-        private expenseService: ExpenseService
+        private expenseService: ExpenseService,
+        private apiClaimService: ApiClaimService
     ) {
         wizardService.show$.subscribe(show => {
             this.isOpen = show;
@@ -66,6 +69,19 @@ export class ActionWizardComponent {
         });
     }
 
+    ngOnInit() {
+        console.warn('DIALOGO');
+        this.apiClaimService.getUser().subscribe({
+            next: (res) => {
+                this.user = res;
+                console.log('Usuario:', this.user);
+            },
+            error: (err) => {
+                console.error('Error al obtener usuario:', err);
+            }
+        });
+
+    }
     resetState() {
         this.step = 1;
         this.saving = false;
@@ -200,10 +216,13 @@ export class ActionWizardComponent {
             }
 
             this.wizardService.close();
-        } catch (error) {
-            console.error('Error:', error);
-            this.generalError = 'No se pudo guardar la acción.';
-        } finally {
+            } catch (error: any) {
+                console.error('Error:', error);
+                this.generalError =
+                    error?.error?.message ||
+                    error?.message ||
+                    'No se pudo guardar la acción.';
+            } finally {
             this.saving = false;
         }
     }
