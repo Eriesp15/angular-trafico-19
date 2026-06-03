@@ -139,13 +139,42 @@
   .item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 12px;
     padding: 8px 0;
     font-size: 13px;
 
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
     .item-desc {
       color: #374151;
-      flex: 1;
+    }
+
+    .item-receipt {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #003366;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      width: fit-content;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
 
     .item-amount {
@@ -153,6 +182,7 @@
       font-weight: 600;
       min-width: 80px;
       text-align: right;
+      flex-shrink: 0;
     }
   }
 

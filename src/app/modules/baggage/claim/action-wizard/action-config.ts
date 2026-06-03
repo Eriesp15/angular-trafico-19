@@ -19,12 +19,12 @@ export const COMPENSATE = {
     { name: 'checkedWeight', label: 'Peso facturado (kg)', type: 'number', readonly: true },
     { name: 'deliveredWeight', label: 'Peso entregado (kg)', type: 'number', readonly: true },
     { name: 'weightDifference', label: 'Diferencia (kg)', type: 'number', readonly: true },
-    { name: 'pricePerKg', label: 'Precio por kg ($)', type: 'number', placeholder: 'Ej: 50', required: true },
-    { name: 'total', label: 'Total a pagar ($)', type: 'number', readonly: true }
+    { name: 'pricePerKg', label: 'Precio por kg (Bs.)', type: 'number', placeholder: 'Ej: 104.4', required: true },
+    { name: 'total', label: 'Total a pagar (Bs.)', type: 'number', readonly: true }
   ],
 
   getMessage: (data: any) =>
-    `Se procedió con la indemnización por ${data.weightDifference}kg de equipaje perdido. Total pagado: $${data.total}`,
+    `Se procedió con la indemnización por ${data.weightDifference}kg de equipaje perdido. Total pagado: Bs. ${data.total}`,
 
   newStatus: 'COMPENSATED'
 };
@@ -86,7 +86,7 @@ export const INDICATE_RECEIVED = {
   title: 'Indicar Equipaje Recibido',
 
   fields: [
-    { name: 'receivedLocation', label: 'Lugar de recepción', type: 'text', placeholder: 'Ej: Oficina de equipajes CBB', required: true },
+    { name: 'receivedLocation', label: 'Lugar de destino', type: 'text', placeholder: 'Ej: Oficina de equipajes CBB', required: true },
     { name: 'receivedDate', label: 'Fecha de recepción', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true },
     { name: 'receivedBy', label: 'Recibido por', type: 'text', placeholder: 'Nombre del responsable', required: true },
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
@@ -103,16 +103,32 @@ export const ASSIGN_TRANSPORT = {
   title: 'Asignar Empresa de Transporte',
 
   fields: [
-    { name: 'transportCompany', label: 'Empresa de transporte', type: 'text', placeholder: 'Nombre de la empresa', required: true },
+    { name: 'transportCompanyId', label: 'Empresa de transporte', type: 'select', required: true, optionsFrom: 'transportCompanies' },
     { name: 'assignedDate', label: 'Fecha de asignación', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true },
     { name: 'responsiblePerson', label: 'Responsable', type: 'text', placeholder: 'Nombre del responsable', required: true },
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
 
   getMessage: (data: any) =>
-    `Equipaje asignado a la empresa de transporte ${data.transportCompany}. Responsable: ${data.responsiblePerson}. Fecha: ${data.assignedDate}. ${data.notes || ''}`,
+    `Equipaje asignado a la empresa de transporte ${data.transportCompanyName || 'seleccionada'}. Responsable: ${data.responsiblePerson}. Fecha: ${data.assignedDate}. ${data.notes || ''}`,
 
   newStatus: 'ASSIGNED'
+};
+
+export const AIRPORT_PICKUP = {
+  id: 'AIRPORT_PICKUP',
+  title: 'Recojo en Aeropuerto',
+
+  fields: [
+    { name: 'pickupDate', label: 'Fecha de recojo', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true},
+    { name: 'pickedUpBy', label: 'Recogido por', type: 'text', required: true, placeholder: 'Nombre del pasajero o responsable'},
+    { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Condición del equipaje, notas...' }
+  ],
+
+  getMessage: (data: any) =>
+    `Equipaje recogido en aeropuerto el ${data.pickupDate}. Recogido por: ${data.pickedUpBy}. ${data.notes || ''}`,
+
+  newStatus: 'CLOSED'
 };
 
 export const DELIVER = {
@@ -120,20 +136,27 @@ export const DELIVER = {
   title: 'Realizar Entrega',
 
   autofill: {
-    recipientName: 'passengerName'
+    recipientName: 'passengerName',
+    deliveryAddress: 'permanentAddress'
   },
 
   fields: [
-    { name: 'deliveryCompany', label: 'Empresa de envio', type: 'text', required: true},
-    { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16)},
+    { name: 'deliveryDate', label: 'Fecha de entrega', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true},
+    { name: 'deliveryAddressType', label: 'Dirección de entrega', type: 'select', required: true,
+      defaultValue: 'PERMANENT',
+      options: [
+        { value: 'PERMANENT', label: 'Dirección permanente' },
+        { value: 'TEMPORARY', label: 'Dirección temporal' },
+        { value: 'OTHER', label: 'Otros' }
+      ] },
+    { name: 'deliveryAddress', label: 'Dirección a la cual dejar', type: 'textarea', required: true, placeholder: 'Ingrese la dirección de entrega' },
     { name: 'recipientName', label: 'Nombre de quien recibe', type: 'text', required: true},
-    { name: 'relationship', label: 'Relación con el pasajero', type: 'select', required: true,
-      options: ['El mismo pasajero', 'Familiar', 'Persona autorizada'] },
+
     { name: 'notes', label: 'Observaciones', type: 'textarea', placeholder: 'Condición del equipaje, notas...' }
   ],
 
   getMessage: (data: any) =>
-    `Equipaje entregado a ${data.recipientName}, siendo ${data.relationship}. ${data.notes || ''}`,
+    `Equipaje entregado por ${data.deliveryCompanyName || 'empresa de transporte'} en ${data.deliveryAddress}. Recibe ${data.recipientName}, siendo ${data.relationship}. ${data.notes || ''}`,
 
   newStatus: 'DELIVERED'
 };
@@ -157,18 +180,17 @@ export const SEND_TO_REPAIR = {
 
 export const PICKUP_REPAIRED = {
   id: 'PICKUP_REPAIRED',
-  title: 'Recoger Maleta de Reparación',
+  title: 'Recibido de Reparación',
 
   fields: [
-    { name: 'pickupDate', label: 'Fecha de recogida', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required:true},
-    { name: 'actualCost', label: 'Costo real ($)', type: 'number', required:true},
-    { name: 'condition', label: 'Estado después de reparación', type: 'select', required:true,
-      options: ['Excelente', 'Buena', 'Aceptable']},
-    { name: 'notes', label: 'Notas de reparación', type: 'textarea' }
+    { name: 'pickupDate', label: 'Fecha de recepción de reparación', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required:true},
+    { name: 'pickupDay', label: 'Día de recepción', type: 'text', readonly: true },
+    { name: 'receivedBy', label: 'Recibido por', type: 'text', placeholder: 'Nombre del responsable', required: true },
+    { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
 
   getMessage: (data: any) =>
-    `Recogido de reparación. Costo: $${data.actualCost}. Estado: ${data.condition}. ${data.notes || ''}`,
+    `Equipaje recibido de reparación el ${data.pickupDate}. Día: ${data.pickupDay}. Recibido por: ${data.receivedBy}. ${data.notes || ''}`,
 
   newStatus: 'REPAIRED'
 };
@@ -463,6 +485,26 @@ export const MARK_AS_REPAIRED = {
         `Se confirmó la reparación del equipaje con fecha ${data.repairDate}. ${data.notes || ''}`,
     newStatus: 'REPAIRED'
 };
+export const CHANGE_CLAIM_TYPE = {
+  id: 'CHANGE_CLAIM_TYPE',
+  title: 'Cambiar Tipo de Reclamo',
+
+  fields: [
+    {
+      name: 'newClaimType',
+      label: 'Nuevo tipo de reclamo',
+      type: 'select',
+      required: true,
+      options: ['AHL', 'DPR', 'PILFERED']
+    }
+  ],
+
+  getMessage: (data: any) =>
+    `Se cambió el tipo de reclamo a ${data.newClaimType}. El estado se reinició a Pendiente.`,
+
+  newStatus: 'PENDING'
+};
+
 export const MARK_IRREPARABLE = {
     id: 'MARK_IRREPARABLE',
     title: 'Marcar como irreparable',
@@ -485,6 +527,7 @@ export const ACTIONS: Record<string, any> = {
   INDICATE_RECEIVED,
   ASSIGN_TRANSPORT,
   DELIVER,
+  AIRPORT_PICKUP,
   SEND_TO_REPAIR,
   PICKUP_REPAIRED,
   TRANSFER_TO_CBB,
@@ -494,6 +537,7 @@ export const ACTIONS: Record<string, any> = {
     ASSIGN_REPAIR_COMPANY,
     DELIVER_TO_REPAIR_COMPANY,
     RECEIVE_FROM_REPAIR_COMPANY,
+    CHANGE_CLAIM_TYPE,
     MARK_IRREPARABLE
 };
 

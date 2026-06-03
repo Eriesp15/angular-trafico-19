@@ -13,6 +13,7 @@
           <p class="pir-sub" *ngIf="pirData.worldTracerCode">
             Código World Tracer: <span class="pir-num">{{ pirData.worldTracerCode }}</span>
           </p>
+          <p class="pir-sub">Pasajero: <span class="pir-num">{{ pirData.passengerLastName }} {{ pirData.passengerName }}</span></p>
         </div>
         <div class="claim-badge">
           <div class="badge-item">
@@ -115,6 +116,11 @@
                 <mat-icon>local_shipping</mat-icon>
                 <span>Asignar empresa de Transporte</span>
               </button>
+              <button class="btn-action-primary btn-action-primary--success" (click)="recojoEnAeropuerto()">
+                <mat-icon>flight_land</mat-icon>
+                <span>Recojo en Aeropuerto</span>
+                <span class="btn-action-primary__sub">Pasajero recoge su maleta</span>
+              </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'ASSIGNED'">
               <button class="btn-action-primary" (click)="realizarEntrega()">
@@ -164,8 +170,8 @@
             <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRING'">
               <button class="btn-action-primary" (click)="recogerMaleta()">
                 <mat-icon>inventory</mat-icon>
-                <span>Recoger Maleta</span>
-                <span class="btn-action-primary__sub">En reparación</span>
+                <span>Recibido de reparación</span>
+                <span class="btn-action-primary__sub">Registrar fecha de recepción</span>
               </button>
               <button class="btn-action-primary btn-action-primary--warn" (click)="indemnizar()">
                 <mat-icon>shopping_bag</mat-icon>
@@ -180,6 +186,17 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRED'">
+              <button class="btn-action-primary" (click)="asignarTransporte()">
+                <mat-icon>local_shipping</mat-icon>
+                <span>Asignar empresa de Transporte</span>
+              </button>
+              <button class="btn-action-primary btn-action-primary--success" (click)="recojoEnAeropuerto()">
+                <mat-icon>flight_land</mat-icon>
+                <span>Recojo en Aeropuerto</span>
+                <span class="btn-action-primary__sub">Pasajero recoge su maleta</span>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="pirData.claim.claimStatus === 'ASSIGNED'">
               <button class="btn-action-primary" (click)="realizarEntrega()">
                 <mat-icon>local_shipping</mat-icon>
                 <span>Realizar Entrega</span>
@@ -208,7 +225,7 @@
           </div>
         </div>
         <div class="btn-secondary-grid">
-          <button class="btn-action-secondary" (click)="verHojaSeguimiento()">
+          <button class="btn-action-secondary" (click)="follow()">
             <mat-icon>description</mat-icon>
             <span>Ver Hoja de Seguimiento</span>
           </button>
@@ -235,13 +252,13 @@
             <mat-icon>receipt_long</mat-icon>
             <span>Ver Gastos</span>
           </button>
-          <button class="btn-action-secondary" (click)="follow()">
-            <mat-icon>timeline</mat-icon>
-            <span>Ir a Follow</span>
-          </button>
           <button *ngIf="isAHL()" class="btn-action-secondary" (click)="indicarBusquedaWorldTracer()">
             <mat-icon>travel_explore</mat-icon>
             <span>World Tracer</span>
+          </button>
+          <button class="btn-action-secondary" (click)="cambiarTipo()">
+            <mat-icon>swap_horiz</mat-icon>
+            <span>Cambiar Tipo de Reclamo</span>
           </button>
         </div>
       </div>
@@ -256,28 +273,8 @@
         <h1 class="page-title">PROPERTY IRREGULARITY REPORT (PIR)</h1>
       </div>
 
-      <!-- Rutas de Vuelo -->
-      <div class="form-group">
-        <h2 class="input-label">Introduzca las estaciones involucradas / Enter the stations involved</h2>
-        <div class="row">
-          <span class="code">QD</span>
-          <div class="field-grow">
-            <div class="field-value route-display">
-              <span *ngFor="let routeStop of pirData.route?.routeStops; let i = index">
-                {{ routeStop.stop.code }}<span *ngIf="i < pirData.route.routeStops.length - 1"> → </span>
-              </span>
-              <span *ngIf="!pirData.route?.routeStops?.length">—</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Originador + Tipo de reclamo -->
+      <!-- Tipo de reclamo -->
       <div class="row-spaced">
-        <div class="field">
-          <label class="input-label">Originador</label>
-          <div class="field-value">{{ pirData.originatorAirport }}</div>
-        </div>
         <div class="field">
           <label class="input-label">Tipo de Reclamo *</label>
           <div class="row">

@@ -23,6 +23,7 @@ import {
 
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
+import { BreadcrumbComponent, BreadcrumbItem } from '@erp/components/breadcrumb/breadcrumb.component';
 
 type Canal = 'whatsapp' | 'email' | 'nota';
 
@@ -121,6 +122,7 @@ export class ConfirmSendDialogComponent {
         MatSnackBarModule,
         MatTooltipModule,
         MatChipsModule,
+        BreadcrumbComponent,
     ],
     templateUrl: './follow.component.html',
     styleUrl: './follow.component.scss',
@@ -141,6 +143,9 @@ export class FollowComponent implements OnInit, OnDestroy {
 
     currentUserName = '';
     pirNumber = '';
+    breadcrumbItems: BreadcrumbItem[] = [
+        { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
+    ];
 
     private saveSeguimiento$ = new Subject<SeguimientoRow>();
     private saveLlamada$ = new Subject<LlamadaRow>();
@@ -212,6 +217,14 @@ export class FollowComponent implements OnInit, OnDestroy {
                 celular: (response.temporaryPhone || response.permanentPhone || '') as string,
                 correo: '',
             };
+
+            // Update breadcrumb with PIR data
+            this.breadcrumbItems = [
+                { label: 'Lista de Reclamos', url: '/baggage/claim/list' },
+                { label: 'Visualizar Reclamo', url: `/baggage/claim/view/${response.pirNumber}` },
+                { label: response.pirNumber },
+                { label: 'Hoja de Seguimiento' }
+            ];
 
             const entries = response.follow?.entries ?? response.claim?.follow?.entries ?? [];
             const sorted = [...entries].sort(

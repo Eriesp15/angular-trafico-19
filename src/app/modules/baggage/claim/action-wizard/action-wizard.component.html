@@ -43,7 +43,7 @@
                            type="text"
                            [(ngModel)]="formData[field.name]"
                            (ngModelChange)="onFieldChange(field.name, $event)"
-                           [readonly]="field.readonly"
+                           [readonly]="isFieldReadonly(field)"
                            [placeholder]="field.placeholder || ''">
 
                     <!-- Error por campo -->
@@ -56,7 +56,7 @@
                            type="number"
                            [(ngModel)]="formData[field.name]"
                            (ngModelChange)="onFieldChange(field.name, $event)"
-                           [readonly]="field.readonly"
+                           [readonly]="isFieldReadonly(field)"
                            [placeholder]="field.placeholder || ''">
 
                     <!-- Error por campo -->
@@ -68,6 +68,7 @@
                     <textarea *ngIf="field.type === 'textarea'"
                               [(ngModel)]="formData[field.name]"
                               (ngModelChange)="onFieldChange(field.name, $event)"
+                              [readonly]="isFieldReadonly(field)"
                               [placeholder]="field.placeholder || ''"
                               rows="3">
           </textarea>
@@ -98,7 +99,7 @@
                                [(ngModel)]="formData[field.name]"
                                (ngModelChange)="onFieldChange(field.name, $event)"
                                [attr.list]="'list-' + field.name"
-                               [readonly]="field.readonly"
+                               [readonly]="isFieldReadonly(field)"
                                [placeholder]="field.placeholder || ''">
 
                         <datalist [id]="'list-' + field.name">
@@ -116,7 +117,7 @@
                            [type]="field.type"
                            [(ngModel)]="formData[field.name]"
                            (ngModelChange)="onFieldChange(field.name, $event)"
-                           [readonly]="field.readonly">
+                           [readonly]="isFieldReadonly(field)">
 
                     <!-- Error por campo -->
                     <div class="error-text" *ngIf="fieldErrors?.[field.name] && (field.type === 'date' || field.type === 'datetime-local')">

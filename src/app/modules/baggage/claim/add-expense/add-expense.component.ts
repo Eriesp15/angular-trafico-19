@@ -7,6 +7,13 @@ import { FormsModule } from "@angular/forms"
 import {  ClaimType, getClaimTypeConfig, isExpenseAllowed } from "../../models/claim-type-config.model"
 import { ExpenseService } from "../../services/expense.service"
 
+interface CurrencyInfo {
+  code: string
+  symbol: string
+  name: string
+  rateToBob: number
+}
+
 interface TipoGasto {
   id: string
   nombre: string
@@ -14,7 +21,7 @@ interface TipoGasto {
   icon: string
   habilitado: boolean
   requiereCalculo?: boolean
-  requiereDias?: number // Días mínimos para habilitar
+  requiereDias?: number
 }
 
 @Component({
@@ -63,14 +70,14 @@ export class AddExpenseComponent implements OnInit {
     {
       id: "indemnizacion_faltante_contenido",
       nombre: "Indemnización - Faltante de Contenido",
-      descripcion: "Compensación por contenido faltante (15 USD/kg)",
+      descripcion: "Compensación por contenido faltante (104.4 Bs./kg)",
       icon: "inventory_2",
       habilitado: true,
     },
     {
       id: "indemnizacion_extravio_maleta",
       nombre: "Indemnización - Extravío de Maleta",
-      descripcion: "Compensación por equipaje no encontrado después de 21 días (15 USD/kg)",
+      descripcion: "Compensación por equipaje no encontrado después de 21 días (104.4 Bs./kg)",
       icon: "paid",
       habilitado: true,
       requiereCalculo: true,
@@ -93,10 +100,18 @@ export class AddExpenseComponent implements OnInit {
   descripcionGasto = ""
   montoGasto: number | null = null
 
+  currencies: CurrencyInfo[] = [
+    { code: 'BOB', symbol: 'Bs.', name: 'Boliviano', rateToBob: 1 },
+    { code: 'USD', symbol: '$', name: 'Dólar Americano', rateToBob: 6.96 },
+    { code: 'EUR', symbol: '€', name: 'Euro', rateToBob: 7.57 },
+  ]
+  monedaEntrada: CurrencyInfo = this.currencies[0]
+  conversionMonedas = this.currencies.filter(c => c.code !== 'BOB')
+
   // Campos para indemnización (cálculo por peso)
   pesoRecibido: number | null = null
   pesoEntregado: number | null = null
-  precioPorKilo = 15 // USD por kilo según manual BOA
+  precioPorKilo = 104.4 // Bs. por kilo (15 USD * 6.96)
   diferenciaPeso = 0
   totalIndemnizar = 0
 
@@ -110,6 +125,8 @@ export class AddExpenseComponent implements OnInit {
   mostrarConfirmacion = false
   guardando = false
   error = ""
+  receiptFile: File | null = null
+  receiptFileName = ""
 
   constructor(
     private route: ActivatedRoute,
@@ -170,18 +187,18 @@ export class AddExpenseComponent implements OnInit {
       AHL: {
         primera_necesidad: "Artículos esenciales mientras espera su equipaje (ropa, higiene, etc.)",
         transporte: "Gastos de entrega del equipaje cuando sea encontrado",
-        indemnizacion_extravio_maleta: "Compensación por equipaje no encontrado (15 USD/kg)",
+        indemnizacion_extravio_maleta: "Compensación por equipaje no encontrado (104.4 Bs./kg)",
         otro: "Otros gastos relacionados al reclamo",
       },
       DPR: {
         reparacion_maleta: "Costo de reparación del daño en el equipaje",
         compra_maleta: "Reemplazo de maleta cuando el daño es irreparable",
         transporte: "Gastos de traslado para reparación/entrega",
-        indemnizacion_faltante_contenido: "Compensación por contenido faltante (15 USD/kg)",
+        indemnizacion_faltante_contenido: "Compensación por contenido faltante (104.4 Bs./kg)",
         otro: "Otros gastos relacionados al reclamo",
       },
       PILFERED: {
-        indemnizacion_faltante_contenido: "Indemnización por diferencia de peso (15 USD/kg)",
+        indemnizacion_faltante_contenido: "Indemnización por diferencia de peso (104.4 Bs./kg)",
         otro: "Otros gastos relacionados al reclamo",
       },
       OHD: {
@@ -207,6 +224,19 @@ export class AddExpenseComponent implements OnInit {
     this.limpiarFormulario()
   }
 
+  onFileSelected(event: any): void {
+    const file = event.target.files[0]
+    if (file) {
+      this.receiptFile = file
+      this.receiptFileName = file.name
+    }
+  }
+
+  limpiarArchivo(): void {
+    this.receiptFile = null
+    this.receiptFileName = ""
+  }
+
   limpiarFormulario(): void {
     this.descripcionGasto = ""
     this.montoGasto = null
@@ -216,6 +246,8 @@ export class AddExpenseComponent implements OnInit {
     this.totalIndemnizar = 0
     this.mostrarConfirmacion = false
     this.subtipoDPRSeleccionado = null
+    this.receiptFile = null
+    this.receiptFileName = ""
   }
 
   calcularIndemnizacion(): void {
@@ -226,12 +258,27 @@ export class AddExpenseComponent implements OnInit {
     this.totalIndemnizar = this.diferenciaPeso * this.precioPorKilo
   }
 
-  obtenerMontoTotal(): number {
+  seleccionarMoneda(moneda: CurrencyInfo): void {
+    this.monedaEntrada = moneda
+  }
+
+  obtenerMontoTotalBOB(): number {
     if (this.gastoSeleccionado?.id.startsWith("indemnizacion")) {
       return this.totalIndemnizar
     }
-    return this.montoGasto || 0
+    return (this.montoGasto || 0) * this.monedaEntrada.rateToBob
   }
+
+  getConversionList(montoBOB: number): { code: string; symbol: string; value: number }[] {
+    if (!montoBOB || montoBOB <= 0) return []
+    return this.conversionMonedas.map(c => ({
+      code: c.code,
+      symbol: c.symbol,
+      value: montoBOB / c.rateToBob,
+    }))
+  }
+
+
 
   formularioValido(): boolean {
     if (!this.gastoSeleccionado) return false
@@ -254,29 +301,26 @@ export class AddExpenseComponent implements OnInit {
   }
 
   confirmarGasto(): void {
-    if (!this.gastoSeleccionado) {
-      return
-    }
-
+    if (!this.gastoSeleccionado) return
     this.guardando = true
     this.error = ""
+    const description = this.gastoSeleccionado.id === "otro" ? this.descripcionGasto.trim() : this.gastoSeleccionado.descripcion
 
-    const description = this.gastoSeleccionado.id === "otro"
-      ? this.descripcionGasto.trim()
-      : this.gastoSeleccionado.descripcion
-
-    this.expenseService.createByPir(this.claimId, {
+    const payload = {
       title: this.gastoSeleccionado.nombre,
-      cost: this.obtenerMontoTotal(),
+      cost: this.obtenerMontoTotalBOB(),
       description,
-    }).subscribe({
-      next: () => {
+    }
+
+    const request$ = this.receiptFile
+      ? this.expenseService.createByPirWithReceipt(this.claimId, payload, this.receiptFile)
+      : this.expenseService.createByPir(this.claimId, payload)
+
+    request$.subscribe({
+      next: () => { this.guardando = false; this.router.navigate([`/baggage/claim/expenses/${this.claimId}`]) },
+      error: (err) => {
         this.guardando = false
-        this.router.navigate([`/baggage/claim/expenses/${this.claimId}`])
-      },
-      error: () => {
-        this.guardando = false
-        this.error = "No se pudo registrar el gasto. Intente nuevamente."
+        this.error = err?.error?.message || 'No se pudo registrar el gasto. Intente nuevamente.'
       },
     })
   }

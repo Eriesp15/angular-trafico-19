@@ -11,6 +11,7 @@ import { ClaimStatusService } from "app/services/claim-status/claim-status.servi
 import { ActionWizardService } from "../action-wizard/action-wizard.service"
 import { ActionWizardComponent } from "../action-wizard/action-wizard.component"
 import { DerivarButtonComponent } from '../../derivar-button/derivar-button.component';
+import { ACTIONS } from "../action-wizard/action-config"
 import { Subject, takeUntil } from "rxjs"
 import { UserService } from "app/core/user/user.service"
 import { User } from "app/core/user/user.types"
@@ -124,10 +125,6 @@ export class ViewClaimComponent implements OnInit {
     this.antiguedadDias = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
   }
 
-  verHojaSeguimiento(): void {
-    this.router.navigate(["/baggage/claim/trackingsheet", this.claimId])
-  }
-
   verFormularioContenido(): void {
     this.router.navigate([`/baggage/claim/content/${this.claimId}`])
   }
@@ -172,6 +169,12 @@ export class ViewClaimComponent implements OnInit {
 
   asignarTransporte() {
     this.actionWizard.open('ASSIGN_TRANSPORT', this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
+  recojoEnAeropuerto() {
+    this.actionWizard.open('AIRPORT_PICKUP', this.pirData, () => {
       this.loadClaim(this.claimId);
     });
   }
@@ -239,6 +242,24 @@ export class ViewClaimComponent implements OnInit {
     this.router.navigate(["/baggage/claim/station-contact", this.claimId])
   }
 
+  cambiarTipo() {
+    const currentType = this.pirData.claimType;
+    const allTypes = ['AHL', 'DPR', 'PILFERED'];
+    const availableTypes = allTypes.filter(t => t !== currentType);
+
+    const baseConfig = ACTIONS['CHANGE_CLAIM_TYPE'];
+    const fields = baseConfig.fields.map((f: any) => {
+      if (f.name === 'newClaimType') {
+        return { ...f, options: availableTypes };
+      }
+      return f;
+    });
+
+    this.actionWizard.open({ ...baseConfig, fields }, this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
+  }
+
   isAHL(): boolean {
     return this.pirData?.claimType === 'AHL';
   }
@@ -265,14 +286,14 @@ export class ViewClaimComponent implements OnInit {
   getFlowStateLabel(step: FlowStep): string {
     const state = this.getFlowState(step);
     if (state === 'done') return 'Realizado';
-    if (state === 'current') return 'Paso actual';
+    if (state === 'current') return 'Realizado';
     return 'Por hacer';
   }
 
   getFlowStateIcon(step: FlowStep): string {
     const state = this.getFlowState(step);
     if (state === 'done') return 'check_circle';
-    if (state === 'current') return 'radio_button_checked';
+    if (state === 'current') return 'check_circle';
     return 'radio_button_unchecked';
   }
 
@@ -293,8 +314,10 @@ export class ViewClaimComponent implements OnInit {
       return [
         { key: 'pending', label: 'Pendiente de gestión', statuses: ['PENDING'] },
         { key: 'repaired-route', label: 'Reparación / transferencia', statuses: ['REPAIRING', 'TRANSFERRED'] },
-        { key: 'compensated', label: 'Indemnizado/Reparado', statuses: ['COMPENSATED', 'REPAIRED'] },
-        { key: 'delivered', label: 'Entrega realizada', statuses: ['DELIVERED'] },
+        { key: 'received', label: 'Recibido de reparación', statuses: ['REPAIRED'] },
+        { key: 'assigned', label: 'Asignado a transporte', statuses: ['ASSIGNED'] },
+        { key: 'compensated', label: 'Compra/indemnización', statuses: ['COMPENSATED'] },
+        { key: 'delivered', label: 'Entregado', statuses: ['DELIVERED'] },
         { key: 'closed', label: 'Reclamo cerrado', statuses: ['CLOSED'] },
       ];
     }

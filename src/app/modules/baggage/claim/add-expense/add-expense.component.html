@@ -96,7 +96,8 @@
         <div class="calculation-info">
           <mat-icon>info</mat-icon>
           <span>
-            Según el Manual MSA de BOA, la indemnización es de <strong>15 USD por kilogramo</strong> 
+            Según el Manual MSA de BOA, la indemnización es de 
+            <strong>104.4 Bs./kg ($15 USD/kg)</strong> 
             de diferencia de peso.
           </span>
         </div>
@@ -139,11 +140,19 @@
           </div>
           <div class="summary-row">
             <span class="summary-label">Precio por kilo:</span>
-            <span class="summary-value">${{ precioPorKilo }} USD</span>
+            <span class="summary-value">Bs. {{ precioPorKilo.toFixed(2) }}/kg ($15 USD/kg)</span>
           </div>
           <div class="total-row">
             <span class="total-label">Total a Indemnizar</span>
-            <span class="total-amount">${{ totalIndemnizar.toFixed(2) }} USD</span>
+            <span class="total-amount">Bs. {{ totalIndemnizar.toFixed(2) }}</span>
+          </div>
+          <div class="conversion-row" *ngIf="totalIndemnizar > 0">
+            <span class="conversion-label">Otras monedas:</span>
+            <div class="conversion-values">
+              <span class="conversion-value" *ngFor="let conv of getConversionList(totalIndemnizar)">
+                {{ conv.symbol }} {{ conv.value.toFixed(2) }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -162,12 +171,35 @@
         </div>
 
         <div class="form-group">
-          <label>Monto (USD)</label>
-          <input 
-            type="number" 
-            [(ngModel)]="montoGasto" 
-            placeholder="Ingrese el monto"
-          />
+          <label>Monto</label>
+          <div class="currency-input-group">
+            <div class="currency-selector">
+              <button 
+                class="currency-btn" 
+                *ngFor="let moneda of currencies" 
+                [class.active]="monedaEntrada.code === moneda.code"
+                (click)="seleccionarMoneda(moneda)"
+              >{{ moneda.symbol }}</button>
+            </div>
+            <input 
+              type="number" 
+              [(ngModel)]="montoGasto" 
+              placeholder="Ingrese el monto"
+            />
+          </div>
+        </div>
+
+        <div class="conversion-row" *ngIf="montoGasto && montoGasto > 0">
+          <span class="conversion-label">Equivalente en Bolivianos:</span>
+          <div class="conversion-values">
+            <span class="conversion-value main">Bs. {{ obtenerMontoTotalBOB().toFixed(2) }}</span>
+          </div>
+          <span class="conversion-label" style="margin-top: 4px;">Otras monedas:</span>
+          <div class="conversion-values">
+            <span class="conversion-value" *ngFor="let conv of getConversionList(obtenerMontoTotalBOB())">
+              {{ conv.symbol }} {{ conv.value.toFixed(2) }}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -176,12 +208,35 @@
         <p class="form-description">{{ gastoSeleccionado.descripcion }}</p>
         
         <div class="form-group">
-          <label>Monto (USD)</label>
-          <input 
-            type="number" 
-            [(ngModel)]="montoGasto" 
-            placeholder="Ingrese el monto del gasto"
-          />
+          <label>Monto</label>
+          <div class="currency-input-group">
+            <div class="currency-selector">
+              <button 
+                class="currency-btn" 
+                *ngFor="let moneda of currencies" 
+                [class.active]="monedaEntrada.code === moneda.code"
+                (click)="seleccionarMoneda(moneda)"
+              >{{ moneda.symbol }}</button>
+            </div>
+            <input 
+              type="number" 
+              [(ngModel)]="montoGasto" 
+              placeholder="Ingrese el monto del gasto"
+            />
+          </div>
+        </div>
+
+        <div class="conversion-row" *ngIf="montoGasto && montoGasto > 0">
+          <span class="conversion-label">Equivalente en Bolivianos:</span>
+          <div class="conversion-values">
+            <span class="conversion-value main">Bs. {{ obtenerMontoTotalBOB().toFixed(2) }}</span>
+          </div>
+          <span class="conversion-label" style="margin-top: 4px;">Otras monedas:</span>
+          <div class="conversion-values">
+            <span class="conversion-value" *ngFor="let conv of getConversionList(obtenerMontoTotalBOB())">
+              {{ conv.symbol }} {{ conv.value.toFixed(2) }}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -224,10 +279,43 @@
           <span class="detalle-label">Diferencia de peso:</span>
           <span class="detalle-value">{{ diferenciaPeso.toFixed(2) }} kg</span>
         </div>
+        <div class="detalle-row" *ngIf="gastoSeleccionado?.id.startsWith('indemnizacion')">
+          <span class="detalle-label">Precio por kilo:</span>
+          <span class="detalle-value">Bs. 104.4/kg ($15 USD/kg)</span>
+        </div>
         <div class="detalle-row total">
           <span class="detalle-label">Monto total:</span>
-          <span class="detalle-value">${{ obtenerMontoTotal().toFixed(2) }} USD</span>
+          <span class="detalle-value">Bs. {{ obtenerMontoTotalBOB().toFixed(2) }}</span>
         </div>
+        <div class="detalle-row conversion" *ngIf="obtenerMontoTotalBOB() > 0">
+          <span class="detalle-label">Otras monedas:</span>
+          <div class="detalle-value conversion-values">
+            <span class="conversion-value" *ngFor="let conv of getConversionList(obtenerMontoTotalBOB())">
+              {{ conv.symbol }} {{ conv.value.toFixed(2) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group receipt-upload">
+        <label>Comprobante de pago (opcional)</label>
+        <div class="file-input-wrapper">
+          <input
+            type="file"
+            accept=".pdf,.png,.jpg,.jpeg,.webp"
+            (change)="onFileSelected($event)"
+            id="receiptFile"
+            class="file-input-hidden"
+          />
+          <label for="receiptFile" class="file-input-label">
+            <mat-icon>cloud_upload</mat-icon>
+            <span>{{ receiptFileName || 'Seleccionar archivo' }}</span>
+          </label>
+          <button *ngIf="receiptFile" type="button" class="btn-clear-file" (click)="limpiarArchivo()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <span class="field-hint">Formatos aceptados: PDF, PNG, JPG, WEBP</span>
       </div>
 
       <p class="error-message" *ngIf="error">{{ error }}</p>

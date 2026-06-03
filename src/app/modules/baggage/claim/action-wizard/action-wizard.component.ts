@@ -29,6 +29,7 @@ export class ActionWizardComponent implements OnInit {
     message = '';
     onSuccessCallback?: () => void;
     repairCompanyOptions: any[] = [];
+    transportCompanyOptions: any[] = [];
     user: any;
 
     // Nuevos para validación y mensajes bonitos
@@ -62,8 +63,12 @@ export class ActionWizardComponent implements OnInit {
                 // método de autocompletado
                 this.formData = this.autofillForm();
 
-                if (this.config?.id === 'ASSIGN_REPAIR_COMPANY') {
+                if (this.hasOptionsFrom('repairCompanies')) {
                     this.loadRepairCompanies();
+                }
+
+                if (this.hasOptionsFrom('transportCompanies')) {
+                    this.loadTransportCompanies();
                 }
             }
         });
@@ -95,6 +100,16 @@ export class ActionWizardComponent implements OnInit {
   autofillForm() {
     let data: any = {};
 
+    if (this.config?.fields?.length) {
+      for (const field of this.config.fields) {
+        if (field.defaultValue !== undefined) {
+          data[field.name] = typeof field.defaultValue === 'function'
+            ? field.defaultValue()
+            : field.defaultValue;
+        }
+      }
+    }
+
     if (this.config.autofill) {
       // Para cada campo que tiene autofill
       for (const [formField, pirField] of Object.entries(this.config.autofill)) {
@@ -102,6 +117,15 @@ export class ActionWizardComponent implements OnInit {
         data[formField] = this.pirData[pirField as string];
       }
     }
+
+        if (this.config?.id === 'DELIVER') {
+            data.deliveryAddressType = data.deliveryAddressType || 'PERMANENT';
+            data.deliveryAddress = this.getDeliveryAddress(data.deliveryAddressType);
+        }
+
+        if (this.config?.id === 'PICKUP_REPAIRED') {
+            data.pickupDay = this.getDayName(data.pickupDate);
+        }
 
         if (this.config?.calculate) {
             data = this.config.calculate(data);
@@ -121,10 +145,29 @@ export class ActionWizardComponent implements OnInit {
                     }));
             });
     }
+
+    loadTransportCompanies() {
+        this.http
+            .get<any[]>(`${environment.protocol}//${environment.host}/api/v1/companies?active=true`)
+            .subscribe((companies) => {
+                this.transportCompanyOptions = companies
+                    .filter(c => this.normalizeText(c.serviceType?.name) === 'transporte')
+                    .map(c => ({
+                        value: c.id,
+                        label: c.name || c.name
+                    }));
+            });
+    }
+
     getOptions(field: any) {
         if (field.optionsFrom === 'repairCompanies') {
             return this.repairCompanyOptions;
         }
+
+        if (field.optionsFrom === 'transportCompanies') {
+            return this.transportCompanyOptions;
+        }
+
         return field.options || [];
     }
     validateFields(): boolean {
@@ -173,6 +216,31 @@ export class ActionWizardComponent implements OnInit {
             this.formData = {
                 ...this.formData,
                 repairCompanyName: company?.label || this.formData?.repairCompanyId
+            };
+        }
+
+        if (this.config?.id === 'DELIVER') {
+            const company = this.transportCompanyOptions.find((item: any) =>
+                String(item.value) === String(this.formData?.deliveryCompanyId)
+            );
+
+            this.formData = {
+                ...this.formData,
+                deliveryCompanyName: company?.label || this.formData?.deliveryCompanyId,
+                deliveryAddress: this.formData?.deliveryAddressType === 'OTHER'
+                    ? this.formData?.deliveryAddress
+                    : this.getDeliveryAddress(this.formData?.deliveryAddressType)
+            };
+        }
+
+        if (this.config?.id === 'ASSIGN_TRANSPORT') {
+            const company = this.transportCompanyOptions.find((item: any) =>
+                String(item.value) === String(this.formData?.transportCompanyId)
+            );
+
+            this.formData = {
+                ...this.formData,
+                transportCompanyName: company?.label || this.formData?.transportCompanyId
             };
         }
 
@@ -245,6 +313,16 @@ export class ActionWizardComponent implements OnInit {
         if (this.config?.calculate) {
             this.formData = this.config.calculate(this.formData);
         }
+
+        if (this.config?.id === 'DELIVER' && fieldName === 'deliveryAddressType') {
+            this.formData.deliveryAddress = value === 'OTHER'
+                ? ''
+                : this.getDeliveryAddress(value);
+        }
+
+        if (this.config?.id === 'PICKUP_REPAIRED' && fieldName === 'pickupDate') {
+            this.formData.pickupDay = this.getDayName(value);
+        }
     }
     //funcion que devuelve nombre del la empresa
     // función que devuelve el texto visible de un campo en el resumen
@@ -261,7 +339,63 @@ export class ActionWizardComponent implements OnInit {
             return company?.label || value;
         }
 
+        if (field.optionsFrom === 'transportCompanies') {
+            const company = this.transportCompanyOptions.find((item: any) =>
+                String(item.value) === String(value)
+            );
+
+            return company?.label || value;
+        }
+
         return value;
+    }
+
+    isFieldReadonly(field: any): boolean {
+        if (field.readonly) {
+            return true;
+        }
+
+        return this.config?.id === 'DELIVER' &&
+            field.name === 'deliveryAddress' &&
+            this.formData?.deliveryAddressType !== 'OTHER';
+    }
+
+    private getDeliveryAddress(addressType: string): string {
+        if (addressType === 'TEMPORARY') {
+            return this.pirData?.temporaryAddress || '';
+        }
+
+        if (addressType === 'PERMANENT') {
+            return this.pirData?.permanentAddress || '';
+        }
+
+        return '';
+    }
+
+    private hasOptionsFrom(optionsFrom: string): boolean {
+        return this.config?.fields?.some((field: any) => field.optionsFrom === optionsFrom);
+    }
+
+    private normalizeText(value: any): string {
+        return String(value || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim()
+            .toLowerCase();
+    }
+
+    private getDayName(value: any): string {
+        if (!value) {
+            return '';
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return '';
+        }
+
+        return date.toLocaleDateString('es-BO', { weekday: 'long' });
     }
 
     //------------------
@@ -278,7 +412,7 @@ export class ActionWizardComponent implements OnInit {
 
     const description = `Indemnización registrada desde acción del expediente. ` +
       `Diferencia: ${this.formData?.weightDifference ?? 0}kg, ` +
-      `Precio por kg: $${this.formData?.pricePerKg ?? 0}.`;
+      `Precio por kg: Bs. ${this.formData?.pricePerKg ?? 0}.`;
 
     const title = this.pirData?.claimType === "AHL"
       ? "Indemnización - Extravío de Maleta"
