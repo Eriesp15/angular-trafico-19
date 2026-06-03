@@ -11,10 +11,10 @@ export class ActionWizardService {
   show$ = this.showModal.asObservable();
   action$ = this.currentAction.asObservable();
 
-  open(actionId: string, pirData: any, onSuccess?: () => void) {
-    const config = ACTIONS[actionId];
+  open(configOrId: string | any, pirData: any, onSuccess?: () => void) {
+    const config = typeof configOrId === 'string' ? ACTIONS[configOrId] : configOrId;
     if (!config) {
-      console.error(`Acción ${actionId} no encontrada`);
+      console.error(`Acción no encontrada`);
       return;
     }
     

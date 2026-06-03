@@ -11,6 +11,7 @@ import { ClaimStatusService } from "app/services/claim-status/claim-status.servi
 import { ActionWizardService } from "../action-wizard/action-wizard.service"
 import { ActionWizardComponent } from "../action-wizard/action-wizard.component"
 import { DerivarButtonComponent } from '../../derivar-button/derivar-button.component';
+import { ACTIONS } from "../action-wizard/action-config"
 
 type FlowState = 'done' | 'current' | 'upcoming';
 
@@ -207,6 +208,24 @@ export class ViewClaimComponent implements OnInit {
 
   contactoEstaciones(): void {
     this.router.navigate(["/baggage/claim/station-contact", this.claimId])
+  }
+
+  cambiarTipo() {
+    const currentType = this.pirData.claimType;
+    const allTypes = ['AHL', 'DPR', 'PILFERED'];
+    const availableTypes = allTypes.filter(t => t !== currentType);
+
+    const baseConfig = ACTIONS['CHANGE_CLAIM_TYPE'];
+    const fields = baseConfig.fields.map((f: any) => {
+      if (f.name === 'newClaimType') {
+        return { ...f, options: availableTypes };
+      }
+      return f;
+    });
+
+    this.actionWizard.open({ ...baseConfig, fields }, this.pirData, () => {
+      this.loadClaim(this.claimId);
+    });
   }
 
   isAHL(): boolean {

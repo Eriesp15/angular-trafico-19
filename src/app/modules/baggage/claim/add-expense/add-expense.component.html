@@ -297,6 +297,27 @@
         </div>
       </div>
 
+      <div class="form-group receipt-upload">
+        <label>Comprobante de pago (opcional)</label>
+        <div class="file-input-wrapper">
+          <input
+            type="file"
+            accept=".pdf,.png,.jpg,.jpeg,.webp"
+            (change)="onFileSelected($event)"
+            id="receiptFile"
+            class="file-input-hidden"
+          />
+          <label for="receiptFile" class="file-input-label">
+            <mat-icon>cloud_upload</mat-icon>
+            <span>{{ receiptFileName || 'Seleccionar archivo' }}</span>
+          </label>
+          <button *ngIf="receiptFile" type="button" class="btn-clear-file" (click)="limpiarArchivo()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <span class="field-hint">Formatos aceptados: PDF, PNG, JPG, WEBP</span>
+      </div>
+
       <p class="error-message" *ngIf="error">{{ error }}</p>
 
       <div class="actions">

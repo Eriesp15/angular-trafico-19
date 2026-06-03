@@ -256,6 +256,10 @@
             <mat-icon>travel_explore</mat-icon>
             <span>World Tracer</span>
           </button>
+          <button class="btn-action-secondary" (click)="cambiarTipo()">
+            <mat-icon>swap_horiz</mat-icon>
+            <span>Cambiar Tipo de Reclamo</span>
+          </button>
         </div>
       </div>
 
@@ -269,28 +273,8 @@
         <h1 class="page-title">PROPERTY IRREGULARITY REPORT (PIR)</h1>
       </div>
 
-      <!-- Rutas de Vuelo -->
-      <div class="form-group">
-        <h2 class="input-label">Introduzca las estaciones involucradas / Enter the stations involved</h2>
-        <div class="row">
-          <span class="code">QD</span>
-          <div class="field-grow">
-            <div class="field-value route-display">
-              <span *ngFor="let routeStop of pirData.route?.routeStops; let i = index">
-                {{ routeStop.stop.code }}<span *ngIf="i < pirData.route.routeStops.length - 1"> → </span>
-              </span>
-              <span *ngIf="!pirData.route?.routeStops?.length">—</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Originador + Tipo de reclamo -->
+      <!-- Tipo de reclamo -->
       <div class="row-spaced">
-        <div class="field">
-          <label class="input-label">Originador</label>
-          <div class="field-value">{{ pirData.originatorAirport }}</div>
-        </div>
         <div class="field">
           <label class="input-label">Tipo de Reclamo *</label>
           <div class="row">

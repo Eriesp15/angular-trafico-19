@@ -440,6 +440,26 @@ export const MARK_AS_REPAIRED = {
         `Se confirmó la reparación del equipaje con fecha ${data.repairDate}. ${data.notes || ''}`,
     newStatus: 'REPAIRED'
 };
+export const CHANGE_CLAIM_TYPE = {
+  id: 'CHANGE_CLAIM_TYPE',
+  title: 'Cambiar Tipo de Reclamo',
+
+  fields: [
+    {
+      name: 'newClaimType',
+      label: 'Nuevo tipo de reclamo',
+      type: 'select',
+      required: true,
+      options: ['AHL', 'DPR', 'PILFERED']
+    }
+  ],
+
+  getMessage: (data: any) =>
+    `Se cambió el tipo de reclamo a ${data.newClaimType}. El estado se reinició a Pendiente.`,
+
+  newStatus: 'PENDING'
+};
+
 export const MARK_IRREPARABLE = {
     id: 'MARK_IRREPARABLE',
     title: 'Marcar como irreparable',
@@ -472,6 +492,7 @@ export const ACTIONS: Record<string, any> = {
     ASSIGN_REPAIR_COMPANY,
     DELIVER_TO_REPAIR_COMPANY,
     RECEIVE_FROM_REPAIR_COMPANY,
+    CHANGE_CLAIM_TYPE,
     MARK_IRREPARABLE
 };
 

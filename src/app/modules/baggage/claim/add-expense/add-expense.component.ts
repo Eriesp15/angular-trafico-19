@@ -125,6 +125,8 @@ export class AddExpenseComponent implements OnInit {
   mostrarConfirmacion = false
   guardando = false
   error = ""
+  receiptFile: File | null = null
+  receiptFileName = ""
 
   constructor(
     private route: ActivatedRoute,
@@ -222,6 +224,19 @@ export class AddExpenseComponent implements OnInit {
     this.limpiarFormulario()
   }
 
+  onFileSelected(event: any): void {
+    const file = event.target.files[0]
+    if (file) {
+      this.receiptFile = file
+      this.receiptFileName = file.name
+    }
+  }
+
+  limpiarArchivo(): void {
+    this.receiptFile = null
+    this.receiptFileName = ""
+  }
+
   limpiarFormulario(): void {
     this.descripcionGasto = ""
     this.montoGasto = null
@@ -231,6 +246,8 @@ export class AddExpenseComponent implements OnInit {
     this.totalIndemnizar = 0
     this.mostrarConfirmacion = false
     this.subtipoDPRSeleccionado = null
+    this.receiptFile = null
+    this.receiptFileName = ""
   }
 
   calcularIndemnizacion(): void {
@@ -284,29 +301,26 @@ export class AddExpenseComponent implements OnInit {
   }
 
   confirmarGasto(): void {
-    if (!this.gastoSeleccionado) {
-      return
-    }
-
+    if (!this.gastoSeleccionado) return
     this.guardando = true
     this.error = ""
+    const description = this.gastoSeleccionado.id === "otro" ? this.descripcionGasto.trim() : this.gastoSeleccionado.descripcion
 
-    const description = this.gastoSeleccionado.id === "otro"
-      ? this.descripcionGasto.trim()
-      : this.gastoSeleccionado.descripcion
-
-    this.expenseService.createByPir(this.claimId, {
+    const payload = {
       title: this.gastoSeleccionado.nombre,
       cost: this.obtenerMontoTotalBOB(),
       description,
-    }).subscribe({
-      next: () => {
+    }
+
+    const request$ = this.receiptFile
+      ? this.expenseService.createByPirWithReceipt(this.claimId, payload, this.receiptFile)
+      : this.expenseService.createByPir(this.claimId, payload)
+
+    request$.subscribe({
+      next: () => { this.guardando = false; this.router.navigate([`/baggage/claim/expenses/${this.claimId}`]) },
+      error: (err) => {
         this.guardando = false
-        this.router.navigate([`/baggage/claim/expenses/${this.claimId}`])
-      },
-      error: () => {
-        this.guardando = false
-        this.error = "No se pudo registrar el gasto. Intente nuevamente."
+        this.error = err?.error?.message || 'No se pudo registrar el gasto. Intente nuevamente.'
       },
     })
   }

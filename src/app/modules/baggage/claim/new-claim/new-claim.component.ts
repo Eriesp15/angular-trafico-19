@@ -107,10 +107,6 @@ export class NewClaimComponent implements OnInit {
     this.initializePhoneCountryCodes();
 
     this.pIR = this.fb.group({
-      //linea 1
-      route: this.fb.array([], [Validators.minLength(2), Validators.maxLength(5)]),
-      //linea 2
-      originatorAirport: [''],
       //linea 2.1
       claimType: ['', Validators.required],
       //linea 3
@@ -180,11 +176,14 @@ export class NewClaimComponent implements OnInit {
     this.pIR.get('deliveredBaggageWeight')?.valueChanges.subscribe(() => {
       this.calcularDiferenciaPeso();
     });
+
+    this.pIR.get('claimType')?.valueChanges.subscribe((claimType) => {
+      if (claimType !== 'DPR') {
+        this.clearDamageInfo();
+      }
+    });
   
     
-    // Inicializar con 2 rutas por defecto
-    this.agregarRuta();
-    this.agregarRuta();
     this.agregarBagtag();
     this.agregarBagDescription();
     this.agregarRutaARastrear();
@@ -265,10 +264,6 @@ export class NewClaimComponent implements OnInit {
   };
 
 
-  get route(): FormArray {
-    return this.pIR.get('route') as FormArray;
-  }
-
   get bagtags(): FormArray {
     return this.pIR.get('bagtags') as FormArray;
   }
@@ -313,25 +308,21 @@ export class NewClaimComponent implements OnInit {
     this.pIR.get('condition')?.setValue(null);
   }
 
-
-
-  crearRuta(): FormGroup {
-    return this.fb.group({
-      stop: ['', Validators.required],
-    });
+  isDprClaim(): boolean {
+    return this.pIR.get('claimType')?.value === 'DPR';
   }
 
-  agregarRuta(): void {
-    if (this.route.length < 5) {
-      this.route.push(this.crearRuta());
-    }
+  clearDamageInfo(): void {
+    this.clearInsurance();
+    this.clearKeysAttached();
+    this.clearNightKit();
+    this.clearDamageType();
+    this.clearCondition();
+    this.pIR.get('lockCombination')?.setValue('');
+    this.damageLocationsArray.clear();
   }
 
-  eliminarRuta(index: number): void {
-    if (this.route.length > 2) {
-      this.route.removeAt(index);
-    }
-  }
+
 
   crearRutaARastrear(): FormGroup {
     return this.fb.group({
@@ -494,7 +485,16 @@ export class NewClaimComponent implements OnInit {
         temporaryPhone: this.buildInternationalPhone(this.temporaryPhoneCountryCode, this.temporaryPhoneNumber),
       });
 
-      const datos = this.pIR.value;
+      const datos = { ...this.pIR.value };
+      if (datos.claimType !== 'DPR') {
+        datos.hasInsurance = null;
+        datos.keysAttached = null;
+        datos.lockCombination = '';
+        datos.nightKit = null;
+        datos.damageType = null;
+        datos.condition = null;
+        datos.damageLocations = [];
+      }
       console.log('Datos del formulario:', datos);
       this.claimService.createClaim(datos).subscribe({
         next: (response) => {

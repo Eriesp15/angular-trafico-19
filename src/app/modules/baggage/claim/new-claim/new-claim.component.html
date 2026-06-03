@@ -8,32 +8,8 @@
       <h1 class="page-title">PROPERTY IRREGULARITY REPORT (PIR)</h1>
     </div>
 
-    <!-- Rutas de Vuelo -->
-    <div class="form-group" formArrayName="route">
-      <h2 class="input-label">Introduzca las estaciones involucradas / Enter the stations involved <span class="required-marker">*</span></h2>
-      <div class="row">
-        <span class="code">QD</span>
-        <div *ngFor="let stop of route.controls; let i = index" class="array-item">
-          <div [formGroupName]="i" class="field">
-            <input class="input-field" [class.input-field-error]="isNestedFieldInvalid(stop, 'stop')" type="text" formControlName="stop" placeholder="Direccion/Address {{ i + 1 }}" maxlength="7">
-            <span *ngIf="isNestedFieldInvalid(stop, 'stop')" class="field-error">{{ getRequiredFieldMessage() }}</span>
-          </div>
-        </div>
-        <button type="button" class="btn-remove" (click)="eliminarRuta(route.length - 1)" [disabled]="route.length <= 2">
-          ✕
-        </button>
-      </div>
-      <button type="button" class="btn-add" (click)="agregarRuta()" [disabled]="route.length >= 5">
-        + Agregar Ruta
-      </button>
-    </div>
-
-    <!-- Originador + Tipo de reclamo -->
+    <!-- Tipo de reclamo -->
     <div class="row-spaced">
-      <div class="field">
-        <label class="input-label">Originador</label>
-        <input class="input-field" type="text" formControlName="originatorAirport" placeholder="Aeropuerto" maxlength="7">
-      </div>
       <div class="field">
         <label class="input-label">Tipo de Reclamo <span class="required-marker">*</span></label>
         <div class="row">
@@ -472,6 +448,7 @@
       </div>
     </div>
     
+    <ng-container *ngIf="isDprClaim()">
     <h1 class="section-title">INFORMACION DE DANO / DAMAGE INFORMATION</h1>
 
     <!-- Opciones booleanas -->
@@ -585,6 +562,7 @@
         No se han seleccionado ubicaciones
       </div>
     </div>
+    </ng-container>
 
     <!-- Submit -->
     <div class="row">

@@ -19,6 +19,8 @@ interface ExpenseGroup {
   styleUrls: ["./expenses.component.scss"],
 })
 export class ExpensesComponent implements OnInit {
+  private readonly filesBaseUrl = "http://localhost:3700"
+
   claimId = ""
   groups: ExpenseGroup[] = []
   totalGastos = 0
@@ -79,5 +81,15 @@ export class ExpensesComponent implements OnInit {
 
   volver(): void {
     this.router.navigate(["/baggage/claim/view", this.claimId])
+  }
+
+  getReceiptUrl(item: ExpenseItem): string | null {
+    if (!item.receiptPath) return null
+    if (item.receiptPath.startsWith("http")) return item.receiptPath
+    return `${this.filesBaseUrl}/${item.receiptPath.replace(/^\/+/, "")}`
+  }
+
+  getReceiptLabel(_item: ExpenseItem): string {
+    return "Ver comprobante"
   }
 }
