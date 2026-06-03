@@ -105,7 +105,7 @@ export const ASSIGN_TRANSPORT = {
   fields: [
     { name: 'transportCompanyId', label: 'Empresa de transporte', type: 'select', required: true, optionsFrom: 'transportCompanies' },
     { name: 'assignedDate', label: 'Fecha de asignación', type: 'datetime-local', defaultValue: new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16), required: true },
-    { name: 'responsiblePerson', label: 'Responsable', type: 'text', placeholder: 'Nombre del responsable', required: true },
+    { name: 'responsiblePerson', label: 'Responsable', type: 'select', required: true, optionsFrom: 'transportCompanyUsers' },
     { name: 'notes', label: 'Observaciones', type: 'textarea' }
   ],
 

@@ -70,6 +70,7 @@ export class ClosingReceiptComponent
         fechaEntrega: new Date().toISOString().slice(0, 10),
         cantidadEquipajes: 1,
         entregaModo: 'aeropuerto' as EntregaModo,
+        deliveryAddressType: '',
         direccion: '',
         ci: '',
         aclaracion: '',
@@ -162,6 +163,7 @@ export class ClosingReceiptComponent
             fechaEntrega: this.form.fechaEntrega,
             cantidadEquipajes: this.form.cantidadEquipajes,
             entregaModo: this.form.entregaModo,
+            deliveryAddressType: this.form.deliveryAddressType,
             direccion: this.form.direccion,
             ci: this.form.ci,
             aclaracion: this.form.aclaracion,
@@ -260,6 +262,23 @@ export class ClosingReceiptComponent
                     this.firmaVistaSrc = null;
                     this.firmaBase64 = null;
                     this.firmaBloqueada = false;
+                }
+            }
+
+            const entries = data.claim?.follow?.entries ?? [];
+            const deliverEntry = [...entries].reverse().find((e: any) =>
+                e.metadata?.deliveryAddressType || e.metadata?.pickedUpBy
+            );
+
+            if (deliverEntry?.metadata) {
+                const meta = deliverEntry.metadata;
+
+                if (meta.pickedUpBy) {
+                    this.form.entregaModo = 'aeropuerto';
+                } else if (meta.deliveryAddressType) {
+                    this.form.entregaModo = 'domicilio';
+                    this.form.deliveryAddressType = meta.deliveryAddressType;
+                    this.form.direccion = meta.deliveryAddress || '';
                 }
             }
         } catch (error) {

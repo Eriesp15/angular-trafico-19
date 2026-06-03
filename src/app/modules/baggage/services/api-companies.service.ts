@@ -8,6 +8,19 @@ export interface ServiceType {
     isActive: boolean;
 }
 
+export interface CompanyUser {
+    id: string;
+    companyId: string;
+    personnelId: string;
+    createdAt: string;
+    personnel: {
+        id: string;
+        name: string;
+        email: string;
+        phone?: string;
+    };
+}
+
 export interface Company {
     id: string;
     name: string;
@@ -18,6 +31,7 @@ export interface Company {
     isActive: boolean;
     serviceTypeId: string;
     serviceType?: ServiceType;
+    companyUsers?: CompanyUser[];
 }
 
 @Injectable({
@@ -102,5 +116,37 @@ export class ApiCompaniesService {
 
     updateCompanyStatus(id: string, isActive: boolean): Observable<Company> {
         return this.http.patch<Company>(`${this.baseUrl}/${id}/status`, { isActive });
+    }
+
+    // =========================
+    // COMPANY USERS
+    // =========================
+    getCompanyUsers(companyId: string): Observable<CompanyUser[]> {
+        return this.http.get<CompanyUser[]>(`${this.baseUrl}/${companyId}/users`);
+    }
+
+    getAvailableUsers(companyId: string): Observable<{ id: string; name: string; email: string; phone?: string }[]> {
+        return this.http.get<{ id: string; name: string; email: string; phone?: string }[]>(
+            `${this.baseUrl}/${companyId}/users/available`
+        );
+    }
+
+    addCompanyUser(companyId: string, personnelId: string): Observable<CompanyUser> {
+        return this.http.post<CompanyUser>(`${this.baseUrl}/${companyId}/users`, { personnelId });
+    }
+
+    removeCompanyUser(companyId: string, personnelId: string): Observable<{ message: string }> {
+        return this.http.delete<{ message: string }>(`${this.baseUrl}/${companyId}/users/${personnelId}`);
+    }
+
+    // =========================
+    // CREATE COMPANY USER
+    // =========================
+    createCompanyUser(companyId: string, body: {
+        name: string;
+        email: string;
+        phone?: string;
+    }): Observable<any> {
+        return this.http.post(`${this.baseUrl}/${companyId}/users/create`, body);
     }
 }
