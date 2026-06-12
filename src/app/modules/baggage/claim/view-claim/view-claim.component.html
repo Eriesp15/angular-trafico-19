@@ -13,7 +13,6 @@
           <p class="pir-sub" *ngIf="pirData.worldTracerCode">
             Código World Tracer: <span class="pir-num">{{ pirData.worldTracerCode }}</span>
           </p>
-          <p class="pir-sub">Pasajero: <span class="pir-num">{{ pirData.passengerLastName }} {{ pirData.passengerName }}</span></p>
         </div>
         <div class="claim-badge">
           <div class="badge-item">
@@ -51,13 +50,7 @@
         </div>
 
         <div class="flow-diagram" *ngIf="flowSteps.length">
-          <div class="flow-diagram__header">
-            <div>
-              <span class="flow-diagram__eyebrow">Flujo de atención</span>
-              <strong>{{ pirData.claimType }}</strong>
-            </div>
-            <span class="flow-diagram__count">{{ flowSteps.length }} pasos</span>
-          </div>
+          <div class="flow-diagram__header">Flujo de atención ({{ pirData.claimType }})</div>
           <div class="flow-diagram__steps">
             <div
               class="flow-step"
@@ -66,7 +59,6 @@
               [class.flow-step--current]="getFlowState(step) === 'current'"
               [class.flow-step--upcoming]="getFlowState(step) === 'upcoming'"
             >
-              <div class="flow-step__number">Paso {{ i + 1 }}</div>
               <div class="flow-step__dot">
                 <mat-icon>{{ getFlowStateIcon(step) }}</mat-icon>
               </div>
@@ -74,9 +66,7 @@
                 <div class="flow-step__title">{{ step.label }}</div>
                 <div class="flow-step__status">{{ getFlowStateLabel(step) }}</div>
               </div>
-              <div class="flow-step__connector" *ngIf="i < flowSteps.length - 1">
-                <mat-icon>arrow_forward</mat-icon>
-              </div>
+              <div class="flow-step__connector" *ngIf="i < flowSteps.length - 1"></div>
             </div>
           </div>
         </div>
@@ -106,39 +96,41 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'FOUND'">
-              <button class="btn-action-primary" (click)="indicarRecibido()">
-                <mat-icon>local_shipping</mat-icon>
-                <span>Recibido</span>
-              </button>
-            </ng-container>
-            <ng-container *ngIf="pirData.claim.claimStatus === 'RECEIVED'">
-              <button class="btn-action-primary" (click)="asignarTransporte()">
-                <mat-icon>local_shipping</mat-icon>
-                <span>Asignar empresa de Transporte</span>
-              </button>
-              <button class="btn-action-primary btn-action-primary--success" (click)="recojoEnAeropuerto()">
-                <mat-icon>flight_land</mat-icon>
-                <span>Recojo en Aeropuerto</span>
-                <span class="btn-action-primary__sub">Pasajero recoge su maleta</span>
-              </button>
-            </ng-container>
-            <ng-container *ngIf="pirData.claim.claimStatus === 'ASSIGNED'">
               <button class="btn-action-primary" (click)="realizarEntrega()">
                 <mat-icon>local_shipping</mat-icon>
                 <span>Realizar Entrega</span>
               </button>
             </ng-container>
-            <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamoMal()">
-                <mat-icon>task_alt</mat-icon>
-                <span>Cerrar Reclamo</span>
-              </button>
-              <button class="btn-action-primary btn-action-primary--neutral" (click)="cerrarReclamoMal()">
-                <mat-icon>cancel</mat-icon>
-                <span>Cerrar Reclamo</span>
-                <span class="btn-action-primary__sub">Melvi</span>
-              </button>
-            </ng-container>
+              <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED'">
+                  <button
+                      *ngIf="canShowDeliveryReceiptButton()"
+                      class="btn-action-primary btn-action-primary--success"
+                      (click)="generarReciboEntrega()"
+                  >
+                      <mat-icon>assignment</mat-icon>
+                      <span>Llenar recibo de entrega</span>
+                      <span class="btn-action-primary__sub">Debe subir el documento firmado</span>
+                  </button>
+
+                  <button
+                      *ngIf="canShowCloseClaimButton()"
+                      class="btn-action-primary btn-action-primary--success"
+                      (click)="cerrarReclamo()"
+                  >
+                      <mat-icon>task_alt</mat-icon>
+                      <span>Cerrar Reclamo</span>
+                  </button>
+              </ng-container>
+
+              <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
+                  <button
+                      class="btn-action-primary btn-action-primary--success"
+                      (click)="cerrarReclamo()"
+                  >
+                      <mat-icon>task_alt</mat-icon>
+                      <span>Cerrar Reclamo</span>
+                  </button>
+              </ng-container>
           </ng-container>
 
           <ng-container *ngIf="isPILFERED()">
@@ -149,7 +141,7 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamoMal()">
+              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamo()">
                 <mat-icon>task_alt</mat-icon>
                 <span>Cerrar Reclamo</span>
               </button>
@@ -170,8 +162,8 @@
             <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRING'">
               <button class="btn-action-primary" (click)="recogerMaleta()">
                 <mat-icon>inventory</mat-icon>
-                <span>Recibido de reparación</span>
-                <span class="btn-action-primary__sub">Registrar fecha de recepción</span>
+                <span>Recoger Maleta</span>
+                <span class="btn-action-primary__sub">En reparación</span>
               </button>
               <button class="btn-action-primary btn-action-primary--warn" (click)="indemnizar()">
                 <mat-icon>shopping_bag</mat-icon>
@@ -186,28 +178,41 @@
               </button>
             </ng-container>
             <ng-container *ngIf="pirData.claim.claimStatus === 'REPAIRED'">
-              <button class="btn-action-primary" (click)="asignarTransporte()">
-                <mat-icon>local_shipping</mat-icon>
-                <span>Asignar empresa de Transporte</span>
-              </button>
-              <button class="btn-action-primary btn-action-primary--success" (click)="recojoEnAeropuerto()">
-                <mat-icon>flight_land</mat-icon>
-                <span>Recojo en Aeropuerto</span>
-                <span class="btn-action-primary__sub">Pasajero recoge su maleta</span>
-              </button>
-            </ng-container>
-            <ng-container *ngIf="pirData.claim.claimStatus === 'ASSIGNED'">
               <button class="btn-action-primary" (click)="realizarEntrega()">
                 <mat-icon>local_shipping</mat-icon>
                 <span>Realizar Entrega</span>
               </button>
             </ng-container>
-            <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED' || pirData.claim.claimStatus === 'COMPENSATED'">
-              <button class="btn-action-primary btn-action-primary--success" (click)="cerrarReclamoMal()">
-                <mat-icon>task_alt</mat-icon>
-                <span>Cerrar Reclamo</span>
-              </button>
-            </ng-container>
+              <ng-container *ngIf="pirData.claim.claimStatus === 'DELIVERED'">
+                  <button
+                      *ngIf="canShowDeliveryReceiptButton()"
+                      class="btn-action-primary btn-action-primary--success"
+                      (click)="generarReciboEntrega()"
+                  >
+                      <mat-icon>assignment</mat-icon>
+                      <span>Llenar recibo de entrega</span>
+                      <span class="btn-action-primary__sub">Debe subir el documento firmado</span>
+                  </button>
+
+                  <button
+                      *ngIf="canShowCloseClaimButton()"
+                      class="btn-action-primary btn-action-primary--success"
+                      (click)="cerrarReclamo()"
+                  >
+                      <mat-icon>task_alt</mat-icon>
+                      <span>Cerrar Reclamo</span>
+                  </button>
+              </ng-container>
+
+              <ng-container *ngIf="pirData.claim.claimStatus === 'COMPENSATED'">
+                  <button
+                      class="btn-action-primary btn-action-primary--success"
+                      (click)="cerrarReclamo()"
+                  >
+                      <mat-icon>task_alt</mat-icon>
+                      <span>Cerrar Reclamo</span>
+                  </button>
+              </ng-container>
           </ng-container>
 
         </div>
@@ -225,10 +230,10 @@
           </div>
         </div>
         <div class="btn-secondary-grid">
-          <button class="btn-action-secondary" (click)="follow()">
-            <mat-icon>description</mat-icon>
-            <span>Ver Hoja de Seguimiento</span>
-          </button>
+            <button class="btn-action-secondary" (click)="follow()">
+                <mat-icon>description</mat-icon>
+                <span>Ver Hoja de Seguimiento</span>
+            </button>
 
           <app-derivar-button [claim]="pirData"></app-derivar-button>
 
@@ -244,7 +249,7 @@
             <mat-icon>paid</mat-icon>
             <span>Añadir Gasto</span>
           </button>
-          <button class="btn-action-secondary" (click)="cerrarReclamoMal()">
+          <button class="btn-action-secondary" (click)="cerrarReclamo()">
             <mat-icon>check_circle</mat-icon>
             <span>Cerrar Reclamo</span>
           </button>
@@ -255,10 +260,6 @@
           <button *ngIf="isAHL()" class="btn-action-secondary" (click)="indicarBusquedaWorldTracer()">
             <mat-icon>travel_explore</mat-icon>
             <span>World Tracer</span>
-          </button>
-          <button class="btn-action-secondary" (click)="cambiarTipo()">
-            <mat-icon>swap_horiz</mat-icon>
-            <span>Cambiar Tipo de Reclamo</span>
           </button>
         </div>
       </div>
@@ -273,8 +274,28 @@
         <h1 class="page-title">PROPERTY IRREGULARITY REPORT (PIR)</h1>
       </div>
 
-      <!-- Tipo de reclamo -->
+      <!-- Rutas de Vuelo -->
+      <div class="form-group">
+        <h2 class="input-label">Introduzca las estaciones involucradas / Enter the stations involved</h2>
+        <div class="row">
+          <span class="code">QD</span>
+          <div class="field-grow">
+            <div class="field-value route-display">
+              <span *ngFor="let routeStop of pirData.route?.routeStops; let i = index">
+                {{ routeStop.stop.code }}<span *ngIf="i < pirData.route.routeStops.length - 1"> → </span>
+              </span>
+              <span *ngIf="!pirData.route?.routeStops?.length">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Originador + Tipo de reclamo -->
       <div class="row-spaced">
+        <div class="field">
+          <label class="input-label">Originador</label>
+          <div class="field-value">{{ pirData.originatorAirport }}</div>
+        </div>
         <div class="field">
           <label class="input-label">Tipo de Reclamo *</label>
           <div class="row">

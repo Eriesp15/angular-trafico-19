@@ -32,8 +32,7 @@ export class ClosingReceiptComponent
 {
     private readonly apiUrl = 'http://localhost:3700/api/v1';
     private readonly fileBaseUrl = 'http://localhost:3700';
-    private readonly documentType = 'CLOSING_RECEIPT';
-
+    private readonly documentType = 'DELIVERY_RECEIPT';
     @ViewChild('signatureCanvas')
     signatureCanvasRef!: ElementRef<HTMLCanvasElement>;
 

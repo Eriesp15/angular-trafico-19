@@ -203,10 +203,54 @@ export class ViewClaimComponent implements OnInit {
     });
   }
 
-  cerrarReclamoMal(): void {
-    this.router.navigate([`/baggage/claim/closing-receipt/${this.claimId}`])
-  }
+    generarReciboEntrega(): void {
+        this.router.navigate([`/baggage/claim/closing-receipt/${this.claimId}`])
+    }
+    hasDeliveryReceipt(): boolean {
+        const docs =
+            this.pirData?.documents ||
+            this.pirData?.claim?.documents ||
+            this.pirData?.claim?.Document ||
+            [];
 
+        const hasDocument = docs.some((doc: any) => {
+            const type = doc.documentType || doc.type;
+            return [
+                'DELIVERY_RECEIPT',
+                'CLOSING_RECEIPT',
+                'GENERAL'
+            ].includes(type);
+        });
+
+        const hasSignature =
+            !!this.pirData?.claim?.closingReceiptSignaturePath ||
+            !!this.pirData?.closingReceiptSignaturePath ||
+            !!this.pirData?.claim?.closingReceipt?.signaturePath ||
+            !!this.pirData?.closingReceipt?.signaturePath;
+
+        return hasDocument || hasSignature;
+    }
+
+    requiresDeliveryReceipt(): boolean {
+        const claimType = this.pirData?.claimType;
+        const status = this.pirData?.claim?.claimStatus;
+
+        return ['AHL', 'DPR'].includes(claimType) && status === 'DELIVERED';
+    }
+
+    canShowDeliveryReceiptButton(): boolean {
+        return this.requiresDeliveryReceipt() && !this.hasDeliveryReceipt();
+    }
+
+    canShowCloseClaimButton(): boolean {
+        const status = this.pirData?.claim?.claimStatus;
+
+        if (this.requiresDeliveryReceipt()) {
+            return this.hasDeliveryReceipt();
+        }
+
+        return status === 'COMPENSATED';
+    }
     cerrarReclamo(): void {
         const enrichedPirData = {
             ...this.pirData,
